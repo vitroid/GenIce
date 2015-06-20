@@ -14,7 +14,6 @@ def usage(parser):
     sys.exit(1)
 
 
-    
 def readcolumns(file):
     line = file.readline()
     comment = line.find("#")
@@ -22,43 +21,7 @@ def readcolumns(file):
     return line.split()
 
 
-
-def LoadComFile(filename):
-    file = open(filename)
-    density = None
-    box     = None
-    pos     = None
-    bondlen = None
-    while True:
-        columns = readcolumns(file)
-        if len(columns) > 0:
-            if density is None:
-                density = float(columns[0])
-            elif bondlen is None:
-                bondlen = float(columns[0])
-            elif box is None:
-                box = np.array([float(x) for x in columns])
-            elif pos is None:
-                nmol = int(columns[0])
-                pos = None
-                count = 0
-                while count < nmol:
-                    columns = readcolumns(file)
-                    if len(columns) >= 3:
-                        count += 1
-                        X = np.array([float(x) for x in columns[0:3]])
-                        if pos is None:
-                            pos = X
-                        else:
-                            pos = np.vstack([pos, X])
-                pos.reshape((3,nmol))
-                return pos,box,density,bondlen
-
-
-
-def generate_graph(pairs):
-    graph = dg.MyDiGraph()
-    graph.register_pairs(pairs)
+def ice_rule(graph):
     if not graph.isZ4():
         print("Error: Some water molecules do not have four HBs.")
         sys.exit(1)
@@ -123,6 +86,42 @@ def format_mdv(atoms, cell):
 
 
 
+def replicate(positions, rep, cell):
+    repx = positions.copy()
+    for m in range(1,rep[0]):
+        v = np.array([m*cell[0],0,0])
+        repx = np.concatenate((repx,positions+v))
+    repy = repx.copy()
+    for m in range(1,rep[1]):
+        v = np.array([0,m*cell[1],0])
+        repy = np.concatenate((repy,repx+v))
+    repz = repy.copy()
+    for m in range(1,rep[2]):
+        v = np.array([0,0,m*lat.cell[2]])
+        repz = np.concatenate((repz,repy+v))
+    return repz
+
+
+
+def replicate_graph(graph, positions, rep, cell):
+    repgraph = dg.MyDiGraph()
+    for i,j,k in graph.edges_iter(data=True):
+        vec = positions[j] - positions[i]
+        delta = np.floor( vec / cell + 0.5 ).astype(int)
+        #print(i,j,delta)
+        for x in range(rep[0]):
+            for y in range(rep[1]):
+                for z in range(rep[2]):
+                    xi = (x + delta[0] + rep[0]) % rep[0]
+                    yi = (y + delta[1] + rep[1]) % rep[1]
+                    zi = (z + delta[2] + rep[2]) % rep[2]
+                    newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
+                    newj = j+nmol*(x +rep[0]*(y +rep[1]*z ))
+                    repgraph.add_edge(newi,newj)
+    return repgraph
+
+    
+
 def zerodipole(coord, graph_, cell):
     graph = graph_.copy()
     dipole = np.zeros(3)
@@ -170,7 +169,21 @@ lat = __import__(options.Type[0])
 lat.positions = np.fromstring(lat.positions, sep=" ")
 lat.positions = lat.positions.reshape((lat.positions.size//3,3))
 lat.cell      = np.fromstring(lat.cell, sep=" ")
-
+pairs = None
+bondlen = None
+try:
+    pairs = set()
+    lines = lat.pairs.split("\n")
+    for line in lines:
+        columns = line.split()
+        if len(columns) == 2:
+            pairs.add(tuple([int(x) for x in columns]))
+except AttributeError:
+    pass #print("Graph is not defined.")
+try:
+    bondlen = lat.bondlen
+except AttributeError:
+    pass #print("Bond length is not defined.")
 random.seed(options.seed[0])
 
 
@@ -185,39 +198,55 @@ d    = mass * nmol / (NB*lat.cell[0]*lat.cell[1]*lat.cell[2]*1e-21)
 ratio = (d / lat.density)**(1.0/3.0)
 lat.positions *= ratio
 lat.cell      *= ratio
-lat.bondlen   *= ratio
+if bondlen is not None:
+    bondlen   *= ratio
+
+
+
+#replicate to make a large cell
+reppositions = replicate(lat.positions, options.rep, lat.cell)
+#print(reppositions)
+
+
+#if the topology is given, register them as a digraph and label the intersecting ones.
+if pairs is not None:
+    graph = dg.MyDiGraph()
+    graph.register_pairs(pairs)
+    graph = replicate_graph(graph, lat.positions, options.rep, lat.cell)
+                    
+                    
+
+lat.cell *= options.rep
+
+
+if pairs is None:
+    #make bonded pairs
+    pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell)
+    graph = dg.MyDiGraph()
+    graph.register_pairs(pairs)
+#else:
+#    for i,j,k in graph.edges_iter(data=True):
+#        vec = reppositions[j] - reppositions[i]
+#        vec -= np.floor( vec / lat.cell + 0.5 ) * lat.cell
+#        print(i,j,np.linalg.norm(vec))
 
     
-#replicate to make a large cell
-rep = options.rep
-coord = None
-for m in it.product(range(rep[0]),range(rep[1]),range(rep[2])):
-    mnp = np.array(m)
-    shift = lat.positions + lat.cell*mnp
-    if coord is None:
-        coord = shift
-    else:
-        coord = np.concatenate((coord,shift))
-lat.cell *= rep
-
-
-#make bonded pairs
-pairs = pl.pairlist_fine(coord, lat.bondlen, lat.cell)
-if len(pairs) != len(coord)*2:
-    print("Inconsistent number of HBs. {0} {1}".format(len(pairs),len(coord)*2))
+    
+if graph.number_of_edges() != len(reppositions)*2:
+    print("Inconsistent number of HBs. {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
     sys.exit(1)
 
 
 #make them obey the ice rule
-graph = generate_graph(pairs)
+graph = ice_rule(graph)
 
 
 #Rearrange HBs to purge the total dipole moment.
-graph = zerodipole(coord, graph, lat.cell)
+graph = zerodipole(reppositions, graph, lat.cell)
 
 
 #arrange molecules
-atoms = arrange_atoms_TIP4P(coord, graph, lat.cell)
+atoms = arrange_atoms_TIP4P(reppositions, graph, lat.cell)
 
 
 #in GROMACS .gro format

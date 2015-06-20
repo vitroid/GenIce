@@ -17,3 +17,4 @@ positions = """
 3 1 3
 1 3 3
 """
+coord = "absolute"

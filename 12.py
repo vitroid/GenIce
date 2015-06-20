@@ -22,3 +22,4 @@ positions = """
 5.279 6.228 0.504018988388
 """
 
+coord = "absolute"
