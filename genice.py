@@ -28,11 +28,14 @@ def LoadComFile(filename):
     density = None
     box     = None
     pos     = None
+    bondlen = None
     while True:
         columns = readcolumns(file)
         if len(columns) > 0:
             if density is None:
                 density = float(columns[0])
+            elif bondlen is None:
+                bondlen = float(columns[0])
             elif box is None:
                 box = np.array([float(x) for x in columns])
             elif pos is None:
@@ -49,7 +52,7 @@ def LoadComFile(filename):
                         else:
                             pos = np.vstack([pos, X])
                 pos.reshape((3,nmol))
-                return pos,box,density
+                return pos,box,density,bondlen
 
 
 
@@ -65,7 +68,7 @@ def generate_graph(pairs):
     return graph
 
 
-def arrange_atoms_TIP4P(coord, graph):
+def arrange_atoms_TIP4P(coord, graph, cell):
     TIP4P = np.matrix([[0,0,-6.50980307353661025e-03],
                        [0,7.56950327263661182e-02,5.20784245882928820e-02],
                        [0,-7.56950327263661182e-02,5.20784245882928820e-02],
@@ -137,33 +140,32 @@ def zerodipole(coord, graph_, cell):
     
 #make 1h
 parser = ap.ArgumentParser(description='')
-parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(1,1,1),
+parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(2,2,2),
                     help='Repeat the unit cell')
 parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
                     help='Specify the density in g/cm3')
 parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                     help='Random seed')
-parser.add_argument('--bond', '-b', nargs = 1, type=float, dest='bond', default=(0.3,),  #nm
-                    help='Bond length threshold')
 parser.add_argument('Type', type=str, nargs=1,
                    help='Crystal type (1c,1h,etc.)')
 options = parser.parse_args()
 
-pos,cell,density = LoadComFile("{0}.com".format(options.Type[0]))
+lat = __import__(options.Type[0])
 random.seed(options.seed[0])
 
 
 #set density
 if options.dens is not None:
-    density = options.dens[0]
+    lat.density = options.dens[0]
     
 mass = 18  #water
 NB   = 6.022e23
-nmol = pos.shape[0]   #nmol in a unit cell
-d    = mass * nmol / (NB*cell[0]*cell[1]*cell[2]*1e-21)
-ratio = (density * d)**(1.0/3.0)
-pos  *= ratio
-cell *= ratio
+nmol = lat.positions.shape[0]   #nmol in a unit cell
+d    = mass * nmol / (NB*lat.cell[0]*lat.cell[1]*lat.cell[2]*1e-21)
+ratio = (d / lat.density)**(1.0/3.0)
+lat.positions *= ratio
+lat.cell      *= ratio
+lat.bondlen   *= ratio
 
     
 #replicate to make a large cell
@@ -171,16 +173,19 @@ rep = options.rep
 coord = None
 for m in it.product(range(rep[0]),range(rep[1]),range(rep[2])):
     mnp = np.array(m)
-    shift = pos + cell*mnp
+    shift = lat.positions + lat.cell*mnp
     if coord is None:
         coord = shift
     else:
         coord = np.concatenate((coord,shift))
-cell *= rep
+lat.cell *= rep
 
 
 #make bonded pairs
-pairs = pl.pairlist_fine(coord, options.bond[0], cell)
+pairs = pl.pairlist_fine(coord, lat.bondlen, lat.cell)
+if len(pairs) != len(coord)*2:
+    print("Inconsistent number of HBs. {0} {1}".format(len(pairs),len(coord)*2))
+    sys.exit(1)
 
 
 #make them obey the ice rule
@@ -188,13 +193,13 @@ graph = generate_graph(pairs)
 
 
 #Rearrange HBs to purge the total dipole moment.
-graph = zerodipole(coord, graph, cell)
+graph = zerodipole(coord, graph, lat.cell)
 
 
 #arrange molecules
-atoms = arrange_atoms_TIP4P(coord, graph)
+atoms = arrange_atoms_TIP4P(coord, graph, lat.cell)
 
 
 #in GROMACS .gro format
-str = format_gro(atoms, cell)
+str = format_gro(atoms, lat.cell)
 print(str,end="")
