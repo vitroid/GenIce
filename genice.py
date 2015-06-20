@@ -93,7 +93,7 @@ def arrange_atoms_TIP4P(coord, graph, cell):
         rotated = np.dot(TIP4P,rotmat)  #(A^t B^t)^t == B A
         #print(rotated)
         for i in range(len(TIP4P_sites)):
-            atoms.append([node+1,"SOL",TIP4P_sites[i],rotated[i,:]+coord[i]])
+            atoms.append([node+1,"SOL",TIP4P_sites[i],rotated[i,:]+coord[node]])
     return atoms
 
 
@@ -107,6 +107,20 @@ def format_gro(atoms, cell):
         s += "{0:5d}{1:6s}{2:>4s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(molorder,molname, sitename, i+1,position[0,0],position[0,1],position[0,2])
     s += "    {0} {1} {2}\n".format(cell[0],cell[1],cell[2])
     return s
+
+
+
+def format_mdv(atoms, cell):
+    s = ""
+    s += "-length '({0}, {1}, {2})'\n".format(cell[0]*10,cell[1]*10,cell[2]*10)
+    s += "-center 0 0 0\n"
+    s += "-fold\n"
+    s += "{0}\n".format(len(atoms))
+    for i in range(len(atoms)):
+        molorder, molname, sitename, position = atoms[i]
+        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(sitename,position[0,0]*10,position[0,1]*10,position[0,2]*10)
+    return s
+
 
 
 def zerodipole(coord, graph_, cell):
@@ -146,6 +160,8 @@ parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
                     help='Specify the density in g/cm3')
 parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                     help='Random seed')
+parser.add_argument('--mdview', '-m', action='store_true', dest='mdv',
+                    help='Write in MDView format')
 parser.add_argument('Type', type=str, nargs=1,
                    help='Crystal type (1c,1h,etc.)')
 options = parser.parse_args()
@@ -201,5 +217,8 @@ atoms = arrange_atoms_TIP4P(coord, graph, lat.cell)
 
 
 #in GROMACS .gro format
-str = format_gro(atoms, lat.cell)
+if options.mdv:
+    str = format_mdv(atoms, lat.cell)
+else:
+    str = format_gro(atoms, lat.cell)
 print(str,end="")
