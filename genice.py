@@ -167,6 +167,10 @@ parser.add_argument('Type', type=str, nargs=1,
 options = parser.parse_args()
 
 lat = __import__(options.Type[0])
+lat.positions = np.fromstring(lat.positions, sep=" ")
+lat.positions = lat.positions.reshape((lat.positions.size//3,3))
+lat.cell      = np.fromstring(lat.cell, sep=" ")
+
 random.seed(options.seed[0])
 
 

@@ -1,12 +1,13 @@
-import numpy as np
 density = 0.81     #default density
 
 
 bondlen = 1.1      #bond threshold	 
 celltype = "rect"
-cell = np.array([6.20577, 6.20577, 6.20577])
+cell = """
+6.20577 6.20577 6.20577
+"""
 
-positions = np.fromstring("""
+positions = """
 3.5250014754 5.4040465737 3.5250014754
 4.2322110246 2.3011615737 1.1293260246
 1.9735589754 5.7836535246 0.7497190737
@@ -143,5 +144,4 @@ positions = np.fromstring("""
 0.7497190737 5.0764439754 2.6807685246
 4.8531603708 1.7502753708 4.8531603708
 4.2322110246 3.5250014754 2.3531659263
-""", sep=" ")
-positions = positions.reshape((positions.size//3,3))
+"""
