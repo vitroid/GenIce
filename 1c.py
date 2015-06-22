@@ -7,7 +7,7 @@ cell = """
 4 4 4
 """
 
-positions = """
+waters = """
 0 0 0
 2 2 0
 2 0 2

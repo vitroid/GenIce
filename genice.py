@@ -117,7 +117,10 @@ def replicate_graph(graph, positions, rep, cell):
                     zi = (z + delta[2] + rep[2]) % rep[2]
                     newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
                     newj = j+nmol*(x +rep[0]*(y +rep[1]*z ))
-                    repgraph.add_edge(newi,newj)
+                    if 0 == random.randint(0,1):         #shuffle the bond directions
+                        repgraph.add_edge(newi,newj)
+                    else:
+                        repgraph.add_edge(newj,newi)
     return repgraph
 
     
@@ -166,25 +169,27 @@ parser.add_argument('Type', type=str, nargs=1,
 options = parser.parse_args()
 
 lat = __import__(options.Type[0])
-lat.positions = np.fromstring(lat.positions, sep=" ")
-lat.positions = lat.positions.reshape((lat.positions.size//3,3))
+lat.waters = np.fromstring(lat.waters, sep=" ")
+lat.waters = lat.waters.reshape((lat.waters.size//3,3))
 lat.cell      = np.fromstring(lat.cell, sep=" ")
+random.seed(options.seed[0])
+
 pairs = None
 bondlen = None
 try:
-    pairs = set()
     lines = lat.pairs.split("\n")
+    pairs = set()
     for line in lines:
         columns = line.split()
         if len(columns) == 2:
-            pairs.add(tuple([int(x) for x in columns]))
+            i,j = [int(x) for x in columns]
+            pairs.add((i,j))
 except AttributeError:
     pass #print("Graph is not defined.")
 try:
     bondlen = lat.bondlen
 except AttributeError:
     pass #print("Bond length is not defined.")
-random.seed(options.seed[0])
 
 
 #set density
@@ -193,10 +198,10 @@ if options.dens is not None:
     
 mass = 18  #water
 NB   = 6.022e23
-nmol = lat.positions.shape[0]   #nmol in a unit cell
+nmol = lat.waters.shape[0]   #nmol in a unit cell
 d    = mass * nmol / (NB*lat.cell[0]*lat.cell[1]*lat.cell[2]*1e-21)
 ratio = (d / lat.density)**(1.0/3.0)
-lat.positions *= ratio
+lat.waters *= ratio
 lat.cell      *= ratio
 if bondlen is not None:
     bondlen   *= ratio
@@ -204,7 +209,7 @@ if bondlen is not None:
 
 
 #replicate to make a large cell
-reppositions = replicate(lat.positions, options.rep, lat.cell)
+reppositions = replicate(lat.waters, options.rep, lat.cell)
 #print(reppositions)
 
 
@@ -212,7 +217,7 @@ reppositions = replicate(lat.positions, options.rep, lat.cell)
 if pairs is not None:
     graph = dg.MyDiGraph()
     graph.register_pairs(pairs)
-    graph = replicate_graph(graph, lat.positions, options.rep, lat.cell)
+    graph = replicate_graph(graph, lat.waters, options.rep, lat.cell)
                     
                     
 
@@ -224,6 +229,8 @@ if pairs is None:
     pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell)
     graph = dg.MyDiGraph()
     graph.register_pairs(pairs)
+#    for i,j,k in graph.edges_iter(data=True):
+#        print(i+8,j+8)
 #else:
 #    for i,j,k in graph.edges_iter(data=True):
 #        vec = reppositions[j] - reppositions[i]
