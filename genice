@@ -1,4 +1,4 @@
-#!/usr/bin/nv python
+#!/usr/bin/env python3
 
 import numpy     as np
 import argparse  as ap
@@ -7,6 +7,8 @@ import pairlist  as pl
 import digraph   as dg
 import random
 import sys
+import math
+import rigid
 
 def usage(parser):
     parser.print_help()
@@ -34,16 +36,9 @@ def ice_rule(graph):
     return graph
 
 
-def arrange_atoms_TIP4P(coord, graph, cell):
-    TIP4P = np.matrix([[0,0,-6.50980307353661025e-03],
-                       [0,7.56950327263661182e-02,5.20784245882928820e-02],
-                       [0,-7.56950327263661182e-02,5.20784245882928820e-02],
-                       [0,0,8.49019692646338919e-03]])   # nm, OHHM
-    TIP4P_sites = ["OW","HW1","HW2","MW"]
-
-    atoms = []
+def orientations(coord, graph, cell):
+    rotmatrices = []
     for node in range(graph.number_of_nodes()):
-        abscom = np.dot(coord[node],cell)
         nei = graph.neighbors(node)
         oh1 = coord[nei[0]] - coord[node]
         oh1 -= np.floor( oh1 + 0.5 )
@@ -51,18 +46,28 @@ def arrange_atoms_TIP4P(coord, graph, cell):
         oh2 = coord[nei[1]] - coord[node]
         oh2 -= np.floor( oh2 + 0.5 )
         oh2 = np.dot(oh2,cell)                #abs coord
+        #print(abscom,node,nei[0],nei[1],oh1,oh2)
         y  = oh2 - oh1
         y /= np.linalg.norm(y)
         z = (oh1 + oh2)/2
+        #print(z)
         z /= np.linalg.norm(z)
         x = np.cross(y,z)
-        #print(x,y,z)
-        rotmat = np.matrix([x,y,z])
-        #print(rotmat)
-        rotated = np.dot(TIP4P,rotmat)  #(A^t B^t)^t == B A
+        #print(type(x),type(y),type(z))
+        rotmat = np.vstack([x,y,z])
+        rotmatrices.append(rotmat)
+    return rotmatrices
+
+
+
+def arrange_atoms(coord, cell, rotmatrices, intra, labels):
+    atoms = []
+    for node in range(len(coord)):
+        abscom = np.dot(coord[node],cell)
+        rotated = np.dot(intra,rotmatrices[node])  #(A^t B^t)^t == B A
         #print(rotated)
-        for i in range(len(TIP4P_sites)):
-            atoms.append([node+1,"SOL",TIP4P_sites[i],rotated[i,:]+abscom])
+        for i in range(len(labels)):
+            atoms.append([node+1,"SOL",labels[i],rotated[i,:]+abscom])
     return atoms
 
 
@@ -73,8 +78,9 @@ def format_gro(atoms, cell, celltype):
     s += "{0}\n".format(len(atoms))
     for i in range(len(atoms)):
         molorder, molname, sitename, position = atoms[i]
-        s += "{0:5d}{1:6s}{2:>4s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(molorder,molname, sitename, i+1,position[0,0],position[0,1],position[0,2])
-    s += "    {0} {1} {2}\n".format(cell[0,0],cell[1,1],cell[2,2])
+        s += "{0:5d}{1:6s}{2:>4s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(molorder,molname, sitename, i+1,position[0],position[1],position[2])
+    if celltype == "rect":
+        s += "    {0} {1} {2}\n".format(cell[0,0],cell[1,1],cell[2,2])
     return s
 
 
@@ -88,9 +94,66 @@ def format_mdv(atoms, cell, celltype):
     s += "{0}\n".format(len(atoms))
     for i in range(len(atoms)):
         molorder, molname, sitename, position = atoms[i]
-        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(sitename,position[0,0]*10,position[0,1]*10,position[0,2]*10)
+        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(sitename,position[0]*10,position[1]*10,position[2]*10)
     return s
 
+
+
+def format_euler(positions, cell, rotmatrices, celltype):
+    s = ""
+    if celltype == "rect":
+        s += "@BOX3\n"
+        s += "{0} {1} {2}\n".format(cell[0,0]*10,cell[1,1]*10,cell[2,2]*10)
+    else:
+        s += "@BOX9\n"
+        for d in range(3):
+            s += "{0} {1} {2}\n".format(cell[0,d]*10,cell[1,d]*10,cell[2,d]*10)
+    s += "@NX3A\n"
+    s += "{0}\n".format(len(positions))
+    for i in range(len(positions)):
+        position = np.dot(positions[i],cell)*10   #in Angstrom
+        euler = rigid.quat2euler(rigid.rotmat2quat(rotmatrices[i]))
+        s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f}\n".format(position[0],
+                                                                               position[1],
+                                                                               position[2],
+                                                                               euler[0],
+                                                                               euler[1],
+                                                                               euler[2])
+    return s
+
+
+def format_quaternion(positions, cell, rotmatrices, celltype):
+    s = ""
+    if celltype == "rect":
+        s += "@BOX3\n"
+        s += "{0} {1} {2}\n".format(cell[0,0]*10,cell[1,1]*10,cell[2,2]*10)
+    else:
+        s += "@BOX9\n"
+        for d in range(3):
+            s += "{0} {1} {2}\n".format(cell[0,d]*10,cell[1,d]*10,cell[2,d]*10)
+    s += "@NX4A\n"
+    s += "{0}\n".format(len(positions))
+    for i in range(len(positions)):
+        position = np.dot(positions[i],cell)*10   #in Angstrom
+        quat     = rigid.rotmat2quat(rotmatrices[i])
+        s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(position[0],
+                                                                               position[1],
+                                                                               position[2],
+                                                                               quat[0],
+                                                                               quat[1],
+                                                                               quat[2],
+                                                                               quat[3])
+    return s
+
+
+def format_digraph(graph, positions):
+    s = ""
+    s += "["
+    for i,j,k in graph.edges_iter(data=True):
+        d = positions[j] - positions[i]
+        d = np.floor( d + 0.5 ).astype(int)
+        s += "[{0},{1},({2},{3},{4})],\n".format(i,j,d[0],d[1],d[2])
+    return s
 
 
 def replicate(positions, rep):
@@ -112,6 +175,7 @@ def replicate(positions, rep):
 
 def replicate_graph(graph, positions, rep):
     repgraph = dg.MyDiGraph()
+    nmol = positions.shape[0]
     for i,j,k in graph.edges_iter(data=True):
         vec = positions[j] - positions[i]    #positions in the unreplicated cell
         delta = np.floor( vec + 0.5 ).astype(int)
@@ -120,6 +184,7 @@ def replicate_graph(graph, positions, rep):
             for y in range(rep[1]):
                 for z in range(rep[2]):
                     xi = (x + delta[0] + rep[0]) % rep[0]
+                    #print(rep,delta,x,y,z)
                     yi = (y + delta[1] + rep[1]) % rep[1]
                     zi = (z + delta[2] + rep[2]) % rep[2]
                     newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
@@ -169,8 +234,8 @@ parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
                     help='Specify the density in g/cm3')
 parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                     help='Random seed')
-parser.add_argument('--mdview', '-m', action='store_true', dest='mdv',
-                    help='Write in MDView format')
+parser.add_argument('--format', '-f', nargs = 1, type=str, dest='format', default=("gromacs"),
+                    help='Specify file format (gromacs|mdview|euler|quaternion|digraph)')
 parser.add_argument('Type', type=str, nargs=1,
                    help='Crystal type (1c,1h,etc.)')
 options = parser.parse_args()
@@ -181,9 +246,21 @@ lat.waters = lat.waters.reshape((lat.waters.size//3,3))
 if lat.celltype == "rect":
     lat.cell = np.fromstring(lat.cell, sep=" ")
     lat.cell = np.diag(lat.cell)
-    if lat.coord == "absolute":
-        lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
-       
+elif lat.celltype == "monoclinic":
+    lat.cell = np.fromstring(lat.cell, sep=" ")
+    beta = lat.cell[3] * math.pi / 180.
+    lat.cell = np.array(((lat.cell[0]*1.0, lat.cell[1]*0.0, lat.cell[2]*math.cos(beta)),
+                         (lat.cell[0]*0.0, lat.cell[1]*1.0, lat.cell[2]*0.0),
+                         (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
+    lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
+else:
+    print("Error: unknown cell type: {0}".format(lat.celltype))
+    sys.exit(1)
+
+#express molecular positions in the relative coordinate
+if lat.coord == "absolute":
+    lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
+    lat.waters = np.array(lat.waters)
 random.seed(options.seed[0])
     
 
@@ -196,6 +273,8 @@ try:
         columns = line.split()
         if len(columns) == 2:
             i,j = [int(x) for x in columns]
+            if j<i:
+                i,j = j,i
             pairs.add((i,j))
 except AttributeError:
     pass #print("Graph is not defined.")
@@ -215,23 +294,15 @@ nmol = lat.waters.shape[0]        #nmol in a unit cell
 volume = np.linalg.det(lat.cell)  #volume of a unit cell in nm**3
 d    = mass * nmol / (NB*volume*1e-21)
 ratio = (d / lat.density)**(1.0/3.0)
-#lat.waters *= ratio
-lat.cell      *= ratio
+lat.cell *= ratio
 if bondlen is not None:
     bondlen   *= ratio
 
 
-#for i,j in pairs:
-#        vec = lat.waters[j] - lat.waters[i]
-#        vec -= np.floor( vec + 0.5 )
-#        vec = np.dot(vec,lat.cell)
-#        print(i,j,np.linalg.norm(vec))
-#sys.exit(1)
-
 
 #replicate to make a large cell
 reppositions = replicate(lat.waters, options.rep)
-#print(reppositions)
+
 
 
 #if the topology is given, register them as a digraph and label the intersecting ones.
@@ -240,38 +311,24 @@ if pairs is not None:
     graph.register_pairs(pairs)
     graph = replicate_graph(graph, lat.waters, options.rep)
                     
-                    
 
-lat.cell *= options.rep
+for d in range(3):
+    lat.cell[:,d] *= options.rep[d]
 
-
-#if pairs is not None:
-#    for i,j,k in graph.edges_iter(data=True):
-#        vec = reppositions[j] - reppositions[i]
-#        vec -= np.floor( vec + 0.5 )
-#        vec = np.dot(vec,lat.cell)
-#        print(i,j,np.linalg.norm(vec))
-#    sys.exit(1)
 
 
 if pairs is None:
     #make bonded pairs
     grid = pl.determine_grid(lat.cell, bondlen)
     pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell, grid)
+    
     graph = dg.MyDiGraph()
     graph.register_pairs(pairs)
-#    for i,j,k in graph.edges_iter(data=True):
-#        print(i+8,j+8)
-#else:
-#    for i,j,k in graph.edges_iter(data=True):
-#        vec = reppositions[j] - reppositions[i]
-#        vec -= np.floor( vec / lat.cell + 0.5 ) * lat.cell
-#        print(i,j,np.linalg.norm(vec))
 
-    
-    
+
+#Test 
 if graph.number_of_edges() != len(reppositions)*2:
-    print("Inconsistent number of HBs. {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
+    print("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
     sys.exit(1)
 
 
@@ -281,15 +338,32 @@ graph = ice_rule(graph)
 
 #Rearrange HBs to purge the total dipole moment.
 graph = zerodipole(reppositions, graph)
+if options.format[0][0] == "d":
+    s = format_digraph(graph, reppositions)
+    print(s,end="")
+    sys.exit(0)
 
 
-#arrange molecules
-atoms = arrange_atoms_TIP4P(reppositions, graph, lat.cell)
+TIP4P = np.array([[0,0,-6.50980307353661025e-03],
+                       [0,7.56950327263661182e-02,5.20784245882928820e-02],
+                       [0,-7.56950327263661182e-02,5.20784245882928820e-02],
+                       [0,0,8.49019692646338919e-03]])   # nm, OHHM
+TIP4P_sites = ["OW","HW1","HW2","MW"]
 
 
-#in GROMACS .gro format
-if options.mdv:
-    str = format_mdv(atoms, lat.cell, lat.celltype)
+rotmatrices = orientations(reppositions, graph, lat.cell)
+if options.format[0][0] == "e":
+    str = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
+elif options.format[0][0] == "q":
+    str = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
 else:
-    str = format_gro(atoms, lat.cell, lat.celltype)
+    #arrange molecules
+    atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, TIP4P, TIP4P_sites)
+    if options.format[0][0] == "m":
+        str = format_mdv(atoms, lat.cell, lat.celltype)
+    elif options.format[0][0] == "g":
+        str = format_gro(atoms, lat.cell, lat.celltype)
+
+
+
 print(str,end="")
