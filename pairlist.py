@@ -6,13 +6,13 @@ import itertools
 import numpy as np
 
 
-def ArrangeAddress(xyz,grid,box):
+def ArrangeAddress(xyz,grid):
     #residents in each grid cell
     residents = dict()
     for i in range(len(xyz)):
         mol = xyz[i]
-        mol -= np.floor( mol / box ) * box
-        address = tuple((mol / box * grid).astype(int))
+        mol -= np.floor( mol )
+        address = tuple((mol * grid).astype(int))
         if address not in residents:
             residents[address] = set()
         residents[address].add(i)
@@ -20,11 +20,9 @@ def ArrangeAddress(xyz,grid,box):
 
 
 
-def pairlist(xyz,rc,box):
-    #residents in each grid cell
-    grid = (np.floor(box/rc)).astype(int)
+def pairlist(xyz,grid):
     #print "START Arrange"
-    residents = ArrangeAddress(xyz,grid,box)
+    residents = ArrangeAddress(xyz,grid)
     #print "END Arrange"
 
     pair = set()
@@ -54,17 +52,44 @@ def pairlist(xyz,rc,box):
 
 
 #assume xyz and box are numpy.array
-def pairlist_fine(xyz,rc,box):
+def pairlist_fine(xyz,rc,cell,grid):
     newpairs = []
-    for i,j in pairlist(xyz,rc,box):
+    for i,j in pairlist(xyz,grid):
         moli = xyz[i]
         molj = xyz[j]
         d = moli-molj
-        d -= np.floor( d/box + 0.5 )*box
+        d -= np.floor( d + 0.5 )
+        d = np.dot(d,cell)
         rr = np.dot(d,d)
         if rr < rc**2:
             newpairs.append((i,j,math.sqrt(rr)))
     return newpairs
+
+
+#
+def determine_grid(cell, radius):
+    ct = cell.transpose()
+    a = ct[0]
+    b = ct[1]
+    c = ct[2]
+    al = np.linalg.norm(a)   #vector length
+    bl = np.linalg.norm(b)
+    cl = np.linalg.norm(c)
+    ae = a / al              #unit vectors
+    be = b / bl
+    ce = c / cl
+    ad = np.dot(ae,np.cross(be,ce)) #distance to the bc plane
+    bd = np.dot(be,np.cross(ce,ae))
+    cd = np.dot(ce,np.cross(ae,be))
+    ax = radius / ad        # required length of a vector to contain a sphere of radius 
+    bx = radius / bd
+    cx = radius / cd
+    gf = np.array([al/ax, bl/bx, cl/cx])  # required number of grid cells
+    #print(cell,radius,gf)
+    #import sys
+    #sys.exit(1)
+    return np.floor(gf).astype(int)
+
 
 
 def test():
