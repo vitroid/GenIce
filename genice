@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- python -*-
+
 
 import numpy     as np
 import argparse  as ap
@@ -10,19 +12,14 @@ import sys
 import math
 import rigid
 
+
+
 def usage(parser):
     parser.print_help()
-    #print "usage: genice.py [--rep=x,y,z][--seed=n][--density=d] icephase"
     sys.exit(1)
 
 
-def readcolumns(file):
-    line = file.readline()
-    comment = line.find("#")
-    line    = line[0:comment]
-    return line.split()
-
-
+    
 def ice_rule(graph):
     if not graph.isZ4():
         print("Error: Some water molecules do not have four HBs.")
@@ -34,6 +31,7 @@ def ice_rule(graph):
         print("Error: Some water molecules do not obey the ice rule.")
         sys.exit(1)
     return graph
+
 
 
 def orientations(coord, graph, cell):
@@ -64,8 +62,7 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels):
     atoms = []
     for node in range(len(coord)):
         abscom = np.dot(coord[node],cell)
-        rotated = np.dot(intra,rotmatrices[node])  #(A^t B^t)^t == B A
-        #print(rotated)
+        rotated = np.dot(intra,rotmatrices[node])
         for i in range(len(labels)):
             atoms.append([node+1,"SOL",labels[i],rotated[i,:]+abscom])
     return atoms
@@ -148,11 +145,14 @@ def format_quaternion(positions, cell, rotmatrices, celltype):
 
 def format_digraph(graph, positions):
     s = ""
-    s += "["
+    s += "@NGPH\n"
+    s += "{0}\n".format(len(positions))
     for i,j,k in graph.edges_iter(data=True):
-        d = positions[j] - positions[i]
-        d = np.floor( d + 0.5 ).astype(int)
-        s += "[{0},{1},({2},{3},{4})],\n".format(i,j,d[0],d[1],d[2])
+        #d = positions[j] - positions[i]
+        #d = np.floor( d + 0.5 ).astype(int)
+        #s += "[{0},{1},({2},{3},{4})],\n".format(i,j,d[0],d[1],d[2])
+        s += "{0} {1}\n".format(i,j)
+    s += "-1 -1\n"
     return s
 
 
@@ -229,13 +229,15 @@ def zerodipole(coord, graph_):
 #make 1h
 parser = ap.ArgumentParser(description='')
 parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(2,2,2),
-                    help='Repeat the unit cell')
+                    help='Repeat the unit cell in x,y, and z directions. [2,2,2]')
 parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
-                    help='Specify the density in g/cm3')
+                    help='Specify the ice density in g/cm3')
 parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
-                    help='Random seed')
-parser.add_argument('--format', '-f', nargs = 1, type=str, dest='format', default=("gromacs"),
-                    help='Specify file format (gromacs|mdview|euler|quaternion|digraph)')
+                    help='Random seed [1000]')
+parser.add_argument('--format', '-f', nargs = 1, type=str, dest='format', default=("gromacs"), metavar="gmeqd",
+                    help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]')
+parser.add_argument('--cages', '-c', action='store_true', dest='cages',
+                    help='Also output the cage positions. (g and m format only)')
 parser.add_argument('Type', type=str, nargs=1,
                    help='Crystal type (1c,1h,etc.)')
 options = parser.parse_args()
@@ -282,6 +284,18 @@ try:
     bondlen = lat.bondlen
 except AttributeError:
     pass #print("Bond length is not defined.")
+try:
+    cagetype = []
+    cages = []
+    for line in lat.cages.split("\n"):
+        cols = line.split()
+        if len(cols)>0:
+            cagetype.append(cols[0])
+            cages.append([float(x) for x in cols[1:4]])
+    cages = np.array(cages)
+    print(cages)
+except AttributeError:
+    cages = []
 
 
 #set density
@@ -302,7 +316,7 @@ if bondlen is not None:
 
 #replicate to make a large cell
 reppositions = replicate(lat.waters, options.rep)
-
+repcages     = replicate(cages,      options.rep)
 
 
 #if the topology is given, register them as a digraph and label the intersecting ones.
@@ -312,6 +326,8 @@ if pairs is not None:
     graph = replicate_graph(graph, lat.waters, options.rep)
                     
 
+
+#scale the cell
 for d in range(3):
     lat.cell[:,d] *= options.rep[d]
 
@@ -359,6 +375,11 @@ elif options.format[0][0] == "q":
 else:
     #arrange molecules
     atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, TIP4P, TIP4P_sites)
+    if options.cages:
+        molidx = atoms[-1][0] + 1
+        for i in range(len(cages)):
+            xyz = np.dot(cages[i],lat.cell)
+            atoms.append([molidx+i,"C"+cagetype[i],"G"+cagetype[i],xyz])
     if options.format[0][0] == "m":
         str = format_mdv(atoms, lat.cell, lat.celltype)
     elif options.format[0][0] == "g":

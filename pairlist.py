@@ -52,7 +52,7 @@ def pairlist(xyz,grid):
 
 
 #assume xyz and box are numpy.array
-def pairlist_fine(xyz,rc,cell,grid):
+def pairlist_fine(xyz,rc,cell,grid,distance=True):
     newpairs = []
     for i,j in pairlist(xyz,grid):
         moli = xyz[i]
@@ -61,8 +61,12 @@ def pairlist_fine(xyz,rc,cell,grid):
         d -= np.floor( d + 0.5 )
         d = np.dot(d,cell)
         rr = np.dot(d,d)
+            
         if rr < rc**2:
-            newpairs.append((i,j,math.sqrt(rr)))
+            if distance:
+                newpairs.append((i,j,math.sqrt(rr)))
+            else:
+                newpairs.append((i,j))
     return newpairs
 
 
