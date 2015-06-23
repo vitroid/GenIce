@@ -284,18 +284,18 @@ try:
     bondlen = lat.bondlen
 except AttributeError:
     pass #print("Bond length is not defined.")
-try:
-    cagetype = []
-    cages = []
-    for line in lat.cages.split("\n"):
-        cols = line.split()
-        if len(cols)>0:
-            cagetype.append(cols[0])
-            cages.append([float(x) for x in cols[1:4]])
-    cages = np.array(cages)
-    print(cages)
-except AttributeError:
-    cages = []
+if options.cages:
+    try:
+        cagetype = []
+        cages = []
+        for line in lat.cages.split("\n"):
+            cols = line.split()
+            if len(cols)>0:
+                cagetype.append(cols[0])
+                cages.append([float(x) for x in cols[1:4]])
+        cages = np.array(cages)
+    except AttributeError:
+        cages = np.array([])
 
 
 #set density
@@ -316,7 +316,8 @@ if bondlen is not None:
 
 #replicate to make a large cell
 reppositions = replicate(lat.waters, options.rep)
-repcages     = replicate(cages,      options.rep)
+if options.cages:
+    repcages     = replicate(cages,      options.rep)
 
 
 #if the topology is given, register them as a digraph and label the intersecting ones.

@@ -54,7 +54,7 @@ def rotmat2quat0(i,j,k):
         if a.size == 0:
             a = op(k-ez, j-ey)
             if a.size == 0:
-                sys.stderr.write("outer prod warning\n")
+                #sys.stderr.write("outer prod warning\n")
                 #//全く回転しないケース
                 return 1.0, 0.0, 0.0, 0.0
     a /= np.linalg.norm(a)
