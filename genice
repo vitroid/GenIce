@@ -142,6 +142,7 @@ def getoptions():
 def main():
     options = getoptions()
     positions, rotmatrices, graph, cell, celltype = generate_ice(options.Type[0], seed=options.seed[0], rep=options.rep, density=options.dens[0])
+    cagepos = None
     if options.cages:
         cagepos, cagetype = generate_cages(options.Type[0], options.rep)
         

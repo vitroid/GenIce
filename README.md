@@ -36,7 +36,10 @@ Generate proton-disordered ice structures for GROMACS.
                             Specify guest in the 16-hedral cage.
       --cages, -c           Also output the cage positions. (g and m format only)
 
-
+##Example
+* To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
+.gro format:
+    ./genice --cages --g12 co2 --g14 co2 --water tip4p CS1 > cs1.gro
 ##Structure generation
 The program generates various ice lattice with proton disorder and
 without defect.  Total dipole moment is always set to zero.  The
