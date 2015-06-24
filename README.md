@@ -27,10 +27,20 @@ Generate proton-disordered ice structures for GROMACS.
                             Specify water model.
       --cages, -c           Also output the cage positions. (g and m format only)
 
+##Structure generation
+The program generates various ice lattice with proton disorder and
+without defect.  Total dipole moment is always set to zero.  The
+minimal structure (with --rep 1 1 1 option) is not always the unit
+cell of the lattice because it is difficult to deal with the hydrogen
+bond network topology of tiny lattice under periodic boundary
+condition.  Note that the generated structure is not optimal according
+to the potential energy.  
+
 ##Ice structures
-* Ice 1h and Ic.
+* Most popular Ices 1h and Ic.
 * Hypothetical Proton-disordered Ice 2.
-* Conventional ices 3, 4, 5, 6, 7, 12.
+* Conventional ices 3, 4,  6, 7, and 12.
+* Monoclinic ice 5 (testing).
 * Ice 16.  [Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231–233 (2014).]
 * Hypothetical ice 0.  [Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733–739 (2014).]
 * Hypothetical ice i.  [Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662–667 (2005).]
