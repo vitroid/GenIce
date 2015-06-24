@@ -7,35 +7,7 @@ Generate proton-disordered ice structures for GROMACS.
 * numpy
 
 ##Usage
-    usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqd] [--water model] [--g12 model] [--g14 model]
-                  [--g15 model] [--g16 model] [--cages]
-                  Type
-    
-    positional arguments:
-      Type                  Crystal type (1c,1h,etc.)
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      --rep REP REP REP, -r REP REP REP
-                            Repeat the unit cell in x,y, and z directions. [2,2,2]
-      --dens DENS, -d DENS  Specify the ice density in g/cm3
-      --seed SEED, -s SEED  Random seed [1000]
-      --format gmeqd, -f gmeqd
-                            Specify file format
-                            [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]
-      --water model, -w model
-                            Specify water model.
-      --g12 model, -D model
-                            Specify guest in the 12-hedral cage.
-      --g14 model, -T model
-                            Specify guest in the 14-hedral cage.
-      --g15 model, -P model
-                            Specify guest in the 15-hedral cage.
-      --g16 model, -H model
-                            Specify guest in the 16-hedral cage.
-      --cages, -c           Also output the cage positions. (g and m format only)
-
+%%usage%%
 
 ##Structure generation
 The program generates various ice lattice with proton disorder and
