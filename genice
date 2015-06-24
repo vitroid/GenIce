@@ -47,14 +47,11 @@ def orientations(coord, graph, cell):
         oh2 = coord[nei[1]] - coord[node]
         oh2 -= np.floor( oh2 + 0.5 )
         oh2 = np.dot(oh2,cell)                #abs coord
-        #print(abscom,node,nei[0],nei[1],oh1,oh2)
         y  = oh2 - oh1
         y /= np.linalg.norm(y)
         z = (oh1 + oh2)/2
-        #print(z)
         z /= np.linalg.norm(z)
         x = np.cross(y,z)
-        #print(type(x),type(y),type(z))
         rotmat = np.vstack([x,y,z])
         rotmatrices.append(rotmat)
     return rotmatrices
@@ -151,9 +148,6 @@ def format_digraph(graph, positions):
     s += "@NGPH\n"
     s += "{0}\n".format(len(positions))
     for i,j,k in graph.edges_iter(data=True):
-        #d = positions[j] - positions[i]
-        #d = np.floor( d + 0.5 ).astype(int)
-        #s += "[{0},{1},({2},{3},{4})],\n".format(i,j,d[0],d[1],d[2])
         s += "{0} {1}\n".format(i,j)
     s += "-1 -1\n"
     return s
@@ -182,12 +176,10 @@ def replicate_graph(graph, positions, rep):
     for i,j,k in graph.edges_iter(data=True):
         vec = positions[j] - positions[i]    #positions in the unreplicated cell
         delta = np.floor( vec + 0.5 ).astype(int)
-        #print(i,j,delta)
         for x in range(rep[0]):
             for y in range(rep[1]):
                 for z in range(rep[2]):
                     xi = (x + delta[0] + rep[0]) % rep[0]
-                    #print(rep,delta,x,y,z)
                     yi = (y + delta[1] + rep[1]) % rep[1]
                     zi = (z + delta[2] + rep[2]) % rep[2]
                     newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
@@ -207,16 +199,13 @@ def zerodipole(coord, graph_):
         vec = coord[j] - coord[i]
         vec -= np.floor(vec + 0.5)
         dipole += vec
-        #add the direction vector as an attribute of the edge
         k["vector"] = vec
     s0 = np.linalg.norm(dipole)
     #In the following calculations, there must be error allowances.
     while s0 > 0.1:
-        #print(s0)
         path,pathdipole = graph.homodromiccycle()
         s1 = np.linalg.norm(dipole - 2.0 * pathdipole)
         if s1 - s0 < 1.50:
-            #print(s0,s1,dipole,pathdipole)
             #accept the inversion
             for i in range(len(path)-1):
                 f = path[i]
@@ -230,7 +219,7 @@ def zerodipole(coord, graph_):
     return graph
 
 
-def main():
+def getoptions():
     parser = ap.ArgumentParser(description='')
     parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(2,2,2),
                         help='Repeat the unit cell in x,y, and z directions. [2,2,2]')
@@ -246,11 +235,17 @@ def main():
                         help='Also output the cage positions. (g and m format only)')
     parser.add_argument('Type', nargs=1,
                        help='Crystal type (1c,1h,etc.)')
-    options = parser.parse_args()
+    return parser.parse_args()
+
+
+def main():
+    options = getoptions()
+
     water   = __import__(options.water[0])
     lat     = __import__(options.Type[0])
     lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
+    #prepare cell transformation matrix
     if lat.celltype == "rect":
         lat.cell = np.fromstring(lat.cell, sep=" ")
         lat.cell = np.diag(lat.cell)
@@ -265,13 +260,13 @@ def main():
         print("Error: unknown cell type: {0}".format(lat.celltype))
         sys.exit(1)
 
-    #express molecular positions in the relative coordinate
+    #express molecular positions in the coordinate relative to the cell
     if lat.coord == "absolute":
         lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
         lat.waters = np.array(lat.waters)
     random.seed(options.seed[0])
 
-
+    #Prearranged network topology information (if available)
     pairs = None
     bondlen = None
     try:
@@ -286,10 +281,14 @@ def main():
                 pairs.add((i,j))
     except AttributeError:
         pass #print("Graph is not defined.")
+
+    #Bond length threshold
     try:
         bondlen = lat.bondlen
     except AttributeError:
         pass #print("Bond length is not defined.")
+
+    #Prearranged cage positions
     if options.cages:
         try:
             cagetype = []
@@ -303,11 +302,11 @@ def main():
         except AttributeError:
             cages = np.array([])
 
-
     #set density
     if options.dens is not None:
         lat.density = options.dens[0]
 
+    #scale the cell according to the (specified) density
     mass = 18  #water
     NB   = 6.022e23
     nmol = lat.waters.shape[0]        #nmol in a unit cell
@@ -319,36 +318,31 @@ def main():
         bondlen   *= ratio
 
 
-
-    #replicate to make a large cell
+    #replicate water molecules and cages to make a repeated cell
     reppositions = replicate(lat.waters, options.rep)
     if options.cages:
         repcages     = replicate(cages,      options.rep)
-
-
-    #if the topology is given, register them as a digraph and label the intersecting ones.
-    if pairs is not None:
-        graph = dg.MyDiGraph()
-        graph.register_pairs(pairs)
-        graph = replicate_graph(graph, lat.waters, options.rep)
-
 
 
     #scale the cell
     for d in range(3):
         lat.cell[:,d] *= options.rep[d]
 
-
-
+        
     if pairs is None:
-        #make bonded pairs
+        #make bonded pairs according to the pair distance.
         grid = pl.determine_grid(lat.cell, bondlen)
         pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell, grid)
-
         graph = dg.MyDiGraph()
         graph.register_pairs(pairs)
+    #if the topology is given, replicate the edges to make a repeated cell
+    else:
+        graph = dg.MyDiGraph()
+        graph.register_pairs(pairs)
+        graph = replicate_graph(graph, lat.waters, options.rep)
 
 
+                
     #Test
     if graph.number_of_edges() != len(reppositions)*2:
         print("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
@@ -361,33 +355,41 @@ def main():
 
     #Rearrange HBs to purge the total dipole moment.
     graph = zerodipole(reppositions, graph)
+
+
+    #In case only the graph is wanted.
     if options.format[0][0] == "d":
         s = format_digraph(graph, reppositions)
         print(s,end="")
         sys.exit(0)
 
 
+    #determine the orientations of the water molecules based on edge directions.
     rotmatrices = orientations(reppositions, graph, lat.cell)
-    if options.format[0][0] == "e":
-        str = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
-    elif options.format[0][0] == "q":
-        str = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
+
+
+    #Final output formats
+    #For rigid rotors; no atomic information is required.
+    if options.format[0][0] == "e":          # NX3A
+        s = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
+    elif options.format[0][0] == "q":        # NX4A
+        s = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
     else:
-        #arrange molecules
+        #arrange atoms
         atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, water.sites, water.labels)
         if options.cages:
             molidx = atoms[-1][0] + 1
             for i in range(len(cages)):
                 xyz = np.dot(cages[i],lat.cell)
                 atoms.append([molidx+i,"C"+cagetype[i],"G"+cagetype[i],xyz])
-        if options.format[0][0] == "m":
-            str = format_mdv(atoms, lat.cell, lat.celltype)
-        elif options.format[0][0] == "g":
-            str = format_gro(atoms, lat.cell, lat.celltype)
+        if options.format[0][0] == "m":      # MDView
+            s = format_mdv(atoms, lat.cell, lat.celltype)
+        elif options.format[0][0] == "g":    # GROMACS
+            s = format_gro(atoms, lat.cell, lat.celltype)
 
 
 
-    print(str,end="")
+    print(s, end="")
 
 
 
