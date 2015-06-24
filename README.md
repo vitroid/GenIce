@@ -39,9 +39,9 @@ to the potential energy.
 ##Ice structures
 * Most popular Ices 1h and Ic.
 * Hypothetical Proton-disordered Ice 2.
-* Conventional ices 3, 4,  6, 7, and 12.
+* Conventional high-pressure ices 3, 4,  6, 7, and 12.
 * Monoclinic ice 5 (testing).
-* Ice 16.  [Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231–233 (2014).]
+* Negative-pressure ice 16.  [Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231–233 (2014).]
 * Hypothetical ice 0.  [Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733–739 (2014).]
 * Hypothetical ice i.  [Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662–667 (2005).]
 * Hypothetical ices sT' and C0-II.  [Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560–3564 (2013).]
