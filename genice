@@ -135,7 +135,7 @@ def getoptions():
     parser.add_argument('--g16', '-H', nargs = 1,           dest='g16', default=("g16",), metavar="model",
                         help='Specify guest in the 16-hedral cage. (empty, co2, uathf, etc.)')
     parser.add_argument('--cages', '-c', action='store_true', dest='cages',
-                        help='Also output the cage positions. (g and m format only)')
+                        help='Also output the cage positions. (g or m format only)')
     parser.add_argument('Type', nargs=1,
                        help='Crystal type (1c,1h,etc.)')
     return parser.parse_args()
