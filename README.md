@@ -1,7 +1,7 @@
 # GenIce
 Generate proton-disordered ice structures for GROMACS.
 
-##INSTALL
-###Extrnal libraries
+##Requirements
+* Python 3
 * NetworkX
 * numpy
