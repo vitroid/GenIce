@@ -3,6 +3,7 @@
 
 import sys
 sys.path.append('Lattices')
+sys.path.append('Molecules')
 sys.path.append('lib')
 
 import numpy     as np
@@ -237,15 +238,17 @@ def main():
                         help='Specify the ice density in g/cm3')
     parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                         help='Random seed [1000]')
-    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs"), metavar="gmeqd",
+    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqd",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]')
+    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
+                        help='Specify water model.')
     parser.add_argument('--cages', '-c', action='store_true', dest='cages',
                         help='Also output the cage positions. (g and m format only)')
     parser.add_argument('Type', nargs=1,
                        help='Crystal type (1c,1h,etc.)')
     options = parser.parse_args()
-
-    lat = __import__(options.Type[0])
+    water   = __import__(options.water[0])
+    lat     = __import__(options.Type[0])
     lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     if lat.celltype == "rect":
@@ -364,13 +367,6 @@ def main():
         sys.exit(0)
 
 
-    TIP4P = np.array([[0,0,-6.50980307353661025e-03],
-                           [0,7.56950327263661182e-02,5.20784245882928820e-02],
-                           [0,-7.56950327263661182e-02,5.20784245882928820e-02],
-                           [0,0,8.49019692646338919e-03]])   # nm, OHHM
-    TIP4P_sites = ["OW","HW1","HW2","MW"]
-
-
     rotmatrices = orientations(reppositions, graph, lat.cell)
     if options.format[0][0] == "e":
         str = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
@@ -378,7 +374,7 @@ def main():
         str = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
     else:
         #arrange molecules
-        atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, TIP4P, TIP4P_sites)
+        atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, water.sites, water.labels)
         if options.cages:
             molidx = atoms[-1][0] + 1
             for i in range(len(cages)):
