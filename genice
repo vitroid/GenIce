@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- python -*-
 
+import sys
+sys.path.append('Lattices')
+sys.path.append('lib')
 
 import numpy     as np
 import argparse  as ap
@@ -8,7 +11,6 @@ import itertools as it
 import pairlist  as pl
 import digraph   as dg
 import random
-import sys
 import math
 import rigid
 
@@ -19,7 +21,7 @@ def usage(parser):
     sys.exit(1)
 
 
-    
+
 def ice_rule(graph):
     if not graph.isZ4():
         print("Error: Some water molecules do not have four HBs.")
@@ -195,7 +197,7 @@ def replicate_graph(graph, positions, rep):
                         repgraph.add_edge(newj,newi)
     return repgraph
 
-    
+
 
 def zerodipole(coord, graph_):
     graph = graph_.copy()
@@ -225,167 +227,173 @@ def zerodipole(coord, graph_):
             dipole -= 2.0 * pathdipole
 
     return graph
-    
-#make 1h
-parser = ap.ArgumentParser(description='')
-parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(2,2,2),
-                    help='Repeat the unit cell in x,y, and z directions. [2,2,2]')
-parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
-                    help='Specify the ice density in g/cm3')
-parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
-                    help='Random seed [1000]')
-parser.add_argument('--format', '-f', nargs = 1, type=str, dest='format', default=("gromacs"), metavar="gmeqd",
-                    help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]')
-parser.add_argument('--cages', '-c', action='store_true', dest='cages',
-                    help='Also output the cage positions. (g and m format only)')
-parser.add_argument('Type', type=str, nargs=1,
-                   help='Crystal type (1c,1h,etc.)')
-options = parser.parse_args()
 
-lat = __import__(options.Type[0])
-lat.waters = np.fromstring(lat.waters, sep=" ")
-lat.waters = lat.waters.reshape((lat.waters.size//3,3))
-if lat.celltype == "rect":
-    lat.cell = np.fromstring(lat.cell, sep=" ")
-    lat.cell = np.diag(lat.cell)
-elif lat.celltype == "monoclinic":
-    lat.cell = np.fromstring(lat.cell, sep=" ")
-    beta = lat.cell[3] * math.pi / 180.
-    lat.cell = np.array(((lat.cell[0]*1.0, lat.cell[1]*0.0, lat.cell[2]*math.cos(beta)),
-                         (lat.cell[0]*0.0, lat.cell[1]*1.0, lat.cell[2]*0.0),
-                         (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
-    lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
-else:
-    print("Error: unknown cell type: {0}".format(lat.celltype))
-    sys.exit(1)
 
-#express molecular positions in the relative coordinate
-if lat.coord == "absolute":
-    lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
-    lat.waters = np.array(lat.waters)
-random.seed(options.seed[0])
-    
+def main():
+    parser = ap.ArgumentParser(description='')
+    parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=(2,2,2),
+                        help='Repeat the unit cell in x,y, and z directions. [2,2,2]')
+    parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens',
+                        help='Specify the ice density in g/cm3')
+    parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
+                        help='Random seed [1000]')
+    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs"), metavar="gmeqd",
+                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]')
+    parser.add_argument('--cages', '-c', action='store_true', dest='cages',
+                        help='Also output the cage positions. (g and m format only)')
+    parser.add_argument('Type', nargs=1,
+                       help='Crystal type (1c,1h,etc.)')
+    options = parser.parse_args()
 
-pairs = None
-bondlen = None
-try:
-    lines = lat.pairs.split("\n")
-    pairs = set()
-    for line in lines:
-        columns = line.split()
-        if len(columns) == 2:
-            i,j = [int(x) for x in columns]
-            if j<i:
-                i,j = j,i
-            pairs.add((i,j))
-except AttributeError:
-    pass #print("Graph is not defined.")
-try:
-    bondlen = lat.bondlen
-except AttributeError:
-    pass #print("Bond length is not defined.")
-if options.cages:
+    lat = __import__(options.Type[0])
+    lat.waters = np.fromstring(lat.waters, sep=" ")
+    lat.waters = lat.waters.reshape((lat.waters.size//3,3))
+    if lat.celltype == "rect":
+        lat.cell = np.fromstring(lat.cell, sep=" ")
+        lat.cell = np.diag(lat.cell)
+    elif lat.celltype == "monoclinic":
+        lat.cell = np.fromstring(lat.cell, sep=" ")
+        beta = lat.cell[3] * math.pi / 180.
+        lat.cell = np.array(((lat.cell[0]*1.0, lat.cell[1]*0.0, lat.cell[2]*math.cos(beta)),
+                             (lat.cell[0]*0.0, lat.cell[1]*1.0, lat.cell[2]*0.0),
+                             (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
+        lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
+    else:
+        print("Error: unknown cell type: {0}".format(lat.celltype))
+        sys.exit(1)
+
+    #express molecular positions in the relative coordinate
+    if lat.coord == "absolute":
+        lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
+        lat.waters = np.array(lat.waters)
+    random.seed(options.seed[0])
+
+
+    pairs = None
+    bondlen = None
     try:
-        cagetype = []
-        cages = []
-        for line in lat.cages.split("\n"):
-            cols = line.split()
-            if len(cols)>0:
-                cagetype.append(cols[0])
-                cages.append([float(x) for x in cols[1:4]])
-        cages = np.array(cages)
+        lines = lat.pairs.split("\n")
+        pairs = set()
+        for line in lines:
+            columns = line.split()
+            if len(columns) == 2:
+                i,j = [int(x) for x in columns]
+                if j<i:
+                    i,j = j,i
+                pairs.add((i,j))
     except AttributeError:
-        cages = np.array([])
-
-
-#set density
-if options.dens is not None:
-    lat.density = options.dens[0]
-
-mass = 18  #water
-NB   = 6.022e23
-nmol = lat.waters.shape[0]        #nmol in a unit cell
-volume = np.linalg.det(lat.cell)  #volume of a unit cell in nm**3
-d    = mass * nmol / (NB*volume*1e-21)
-ratio = (d / lat.density)**(1.0/3.0)
-lat.cell *= ratio
-if bondlen is not None:
-    bondlen   *= ratio
-
-
-
-#replicate to make a large cell
-reppositions = replicate(lat.waters, options.rep)
-if options.cages:
-    repcages     = replicate(cages,      options.rep)
-
-
-#if the topology is given, register them as a digraph and label the intersecting ones.
-if pairs is not None:
-    graph = dg.MyDiGraph()
-    graph.register_pairs(pairs)
-    graph = replicate_graph(graph, lat.waters, options.rep)
-                    
-
-
-#scale the cell
-for d in range(3):
-    lat.cell[:,d] *= options.rep[d]
-
-
-
-if pairs is None:
-    #make bonded pairs
-    grid = pl.determine_grid(lat.cell, bondlen)
-    pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell, grid)
-    
-    graph = dg.MyDiGraph()
-    graph.register_pairs(pairs)
-
-
-#Test 
-if graph.number_of_edges() != len(reppositions)*2:
-    print("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
-    sys.exit(1)
-
-
-#make them obey the ice rule
-graph = ice_rule(graph)
-
-
-#Rearrange HBs to purge the total dipole moment.
-graph = zerodipole(reppositions, graph)
-if options.format[0][0] == "d":
-    s = format_digraph(graph, reppositions)
-    print(s,end="")
-    sys.exit(0)
-
-
-TIP4P = np.array([[0,0,-6.50980307353661025e-03],
-                       [0,7.56950327263661182e-02,5.20784245882928820e-02],
-                       [0,-7.56950327263661182e-02,5.20784245882928820e-02],
-                       [0,0,8.49019692646338919e-03]])   # nm, OHHM
-TIP4P_sites = ["OW","HW1","HW2","MW"]
-
-
-rotmatrices = orientations(reppositions, graph, lat.cell)
-if options.format[0][0] == "e":
-    str = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
-elif options.format[0][0] == "q":
-    str = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
-else:
-    #arrange molecules
-    atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, TIP4P, TIP4P_sites)
+        pass #print("Graph is not defined.")
+    try:
+        bondlen = lat.bondlen
+    except AttributeError:
+        pass #print("Bond length is not defined.")
     if options.cages:
-        molidx = atoms[-1][0] + 1
-        for i in range(len(cages)):
-            xyz = np.dot(cages[i],lat.cell)
-            atoms.append([molidx+i,"C"+cagetype[i],"G"+cagetype[i],xyz])
-    if options.format[0][0] == "m":
-        str = format_mdv(atoms, lat.cell, lat.celltype)
-    elif options.format[0][0] == "g":
-        str = format_gro(atoms, lat.cell, lat.celltype)
+        try:
+            cagetype = []
+            cages = []
+            for line in lat.cages.split("\n"):
+                cols = line.split()
+                if len(cols)>0:
+                    cagetype.append(cols[0])
+                    cages.append([float(x) for x in cols[1:4]])
+            cages = np.array(cages)
+        except AttributeError:
+            cages = np.array([])
+
+
+    #set density
+    if options.dens is not None:
+        lat.density = options.dens[0]
+
+    mass = 18  #water
+    NB   = 6.022e23
+    nmol = lat.waters.shape[0]        #nmol in a unit cell
+    volume = np.linalg.det(lat.cell)  #volume of a unit cell in nm**3
+    d    = mass * nmol / (NB*volume*1e-21)
+    ratio = (d / lat.density)**(1.0/3.0)
+    lat.cell *= ratio
+    if bondlen is not None:
+        bondlen   *= ratio
 
 
 
-print(str,end="")
+    #replicate to make a large cell
+    reppositions = replicate(lat.waters, options.rep)
+    if options.cages:
+        repcages     = replicate(cages,      options.rep)
+
+
+    #if the topology is given, register them as a digraph and label the intersecting ones.
+    if pairs is not None:
+        graph = dg.MyDiGraph()
+        graph.register_pairs(pairs)
+        graph = replicate_graph(graph, lat.waters, options.rep)
+
+
+
+    #scale the cell
+    for d in range(3):
+        lat.cell[:,d] *= options.rep[d]
+
+
+
+    if pairs is None:
+        #make bonded pairs
+        grid = pl.determine_grid(lat.cell, bondlen)
+        pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell, grid)
+
+        graph = dg.MyDiGraph()
+        graph.register_pairs(pairs)
+
+
+    #Test
+    if graph.number_of_edges() != len(reppositions)*2:
+        print("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
+        sys.exit(1)
+
+
+    #make them obey the ice rule
+    graph = ice_rule(graph)
+
+
+    #Rearrange HBs to purge the total dipole moment.
+    graph = zerodipole(reppositions, graph)
+    if options.format[0][0] == "d":
+        s = format_digraph(graph, reppositions)
+        print(s,end="")
+        sys.exit(0)
+
+
+    TIP4P = np.array([[0,0,-6.50980307353661025e-03],
+                           [0,7.56950327263661182e-02,5.20784245882928820e-02],
+                           [0,-7.56950327263661182e-02,5.20784245882928820e-02],
+                           [0,0,8.49019692646338919e-03]])   # nm, OHHM
+    TIP4P_sites = ["OW","HW1","HW2","MW"]
+
+
+    rotmatrices = orientations(reppositions, graph, lat.cell)
+    if options.format[0][0] == "e":
+        str = format_euler(reppositions, lat.cell, rotmatrices, lat.celltype)
+    elif options.format[0][0] == "q":
+        str = format_quaternion(reppositions, lat.cell, rotmatrices, lat.celltype)
+    else:
+        #arrange molecules
+        atoms = arrange_atoms(reppositions, lat.cell, rotmatrices, TIP4P, TIP4P_sites)
+        if options.cages:
+            molidx = atoms[-1][0] + 1
+            for i in range(len(cages)):
+                xyz = np.dot(cages[i],lat.cell)
+                atoms.append([molidx+i,"C"+cagetype[i],"G"+cagetype[i],xyz])
+        if options.format[0][0] == "m":
+            str = format_mdv(atoms, lat.cell, lat.celltype)
+        elif options.format[0][0] == "g":
+            str = format_gro(atoms, lat.cell, lat.celltype)
+
+
+
+    print(str,end="")
+
+
+
+if __name__ == "__main__":
+    main()

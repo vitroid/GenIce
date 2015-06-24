@@ -2,3 +2,7 @@ __pycache__/*
 *~
 *.mdv
 Prepare/*
+*~
+#*
+@*
+*pyc
