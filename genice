@@ -15,6 +15,8 @@ from libgenice import generate_ice, generate_cages
 
 def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
     atoms = []
+    if len(intra) == 0:
+        return atoms
     for node in range(len(coord)):
         abscom = np.dot(coord[node],cell)
         rotated = np.dot(intra,rotmatrices[node])
