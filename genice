@@ -318,6 +318,13 @@ def main():
         bondlen   *= ratio
 
 
+    if pairs is None:
+        #make bonded pairs according to the pair distance.
+        #make before replicating them.
+        grid = pl.determine_grid(lat.cell, bondlen)
+        pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
+
+
     #replicate water molecules and cages to make a repeated cell
     reppositions = replicate(lat.waters, options.rep)
     if options.cages:
@@ -329,17 +336,9 @@ def main():
         lat.cell[:,d] *= options.rep[d]
 
         
-    if pairs is None:
-        #make bonded pairs according to the pair distance.
-        grid = pl.determine_grid(lat.cell, bondlen)
-        pairs = pl.pairlist_fine(reppositions, bondlen, lat.cell, grid)
-        graph = dg.MyDiGraph()
-        graph.register_pairs(pairs)
-    #if the topology is given, replicate the edges to make a repeated cell
-    else:
-        graph = dg.MyDiGraph()
-        graph.register_pairs(pairs)
-        graph = replicate_graph(graph, lat.waters, options.rep)
+    graph = dg.MyDiGraph()
+    graph.register_pairs(pairs)
+    graph = replicate_graph(graph, lat.waters, options.rep)
 
 
                 
