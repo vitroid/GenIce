@@ -22,3 +22,4 @@ sites = np.array([[0, 0,oz],
                   ]) # nm, OHHMM
 
 labels = ["OW","HW1","HW2","MW1","MW2"]
+name = "SOL"

@@ -15,3 +15,4 @@ sites = np.array([[0, 0,oz],
                   [0,-ohy,ohz+oz]]) # nm, OHHM
 
 labels = ["OW","HW1","HW2"]
+name = "SOL"
