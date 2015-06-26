@@ -6,6 +6,7 @@ Generate proton-disordered ice structures for GROMACS.
 * NetworkX
 * numpy
 
+Note: WinPython includes all of these requirements.
 ##Usage
     usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
                   [--format gmeqd] [--water model] [--g12 model] [--g14 model]
