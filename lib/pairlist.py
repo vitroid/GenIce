@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+####Note: xyz are in coord relative to the cell.
+
+
 import math
 import itertools
 import numpy as np
