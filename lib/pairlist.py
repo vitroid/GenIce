@@ -54,12 +54,58 @@ def pairlist(xyz,grid):
     return pair
 
 
+def pairlist_hetero(xyz,xyz2,grid):
+    #print "START Arrange"
+    residents  = ArrangeAddress(xyz,grid)
+    residents2 = ArrangeAddress(xyz2,grid)
+    #print "END Arrange"
+
+    pair = set()
+    #key-value pairs in the dictionary
+    donecellpair = set()
+    for address in residents:
+        members = residents[address]
+        ix,iy,iz = address
+        #neighbor cells
+        npa = np.array(address)
+        k = np.array([(npa + j + grid)%grid for j in range(-1,2)])
+        for a2 in itertools.product(k[:,0],k[:,1],k[:,2]):
+            if a2 in residents2:
+                if not ((address,a2) in donecellpair):
+                        donecellpair.add((address,a2))
+                        #print("HETEROCELL",address,a2,donecellpair)
+                        for a in members:
+                            for b in residents2[a2]:
+                                pair.add((a,b))
+    #print "PAIRLIST finished"
+    return pair
+
+
 #assume xyz and box are numpy.array
 def pairlist_fine(xyz,rc,cell,grid,distance=True):
     newpairs = []
     for i,j in pairlist(xyz,grid):
         moli = xyz[i]
         molj = xyz[j]
+        d = moli-molj
+        d -= np.floor( d + 0.5 )
+        d = np.dot(d,cell)
+        rr = np.dot(d,d)
+            
+        if rr < rc**2:
+            if distance:
+                newpairs.append((i,j,math.sqrt(rr)))
+            else:
+                newpairs.append((i,j))
+    return newpairs
+
+
+#assume xyz and box are numpy.array
+def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
+    newpairs = []
+    for i,j in pairlist_hetero(xyz,xyz2,grid):
+        moli = xyz[i]
+        molj = xyz2[j]
         d = moli-molj
         d -= np.floor( d + 0.5 )
         d = np.dot(d,cell)
@@ -101,16 +147,21 @@ def determine_grid(cell, radius):
 
 def test():
     xyz = []
-    for x in range(4):
-        for y in range(4):
-            for z in range(4):
-                xyz.append(np.array((x,y,z)))
-    box = np.array((4,4,4))
-    rc = 1.1
-    pairs = pairlist_fine(xyz,rc,box)
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                xyz.append(np.array((x/100.+1,y/100.+1,z/100.+1)) / 4.)
+    xyz2 = []
+    for x in range(2):
+        for y in range(2):
+            for z in range(2):
+                xyz2.append(np.array((x/100.+2,y/100.+1,z/100.+1)) / 4.)
+    box = np.diag((4,4,4))
+    rc = 1.000000001
+    grid = determine_grid(box,rc)
+    pairs = pairlist_fine_hetero(xyz,xyz2,rc,box,grid)
     for i,j,l in pairs:
-        print(i,j)
-        print(j,i)
+        print(i,j,l)
     print(len(pairs))
 
 if __name__ == "__main__":

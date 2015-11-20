@@ -18,7 +18,7 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
     if len(intra) == 0:
         return atoms
     for node in range(len(coord)):
-        abscom = np.dot(coord[node],cell)
+        abscom = np.dot(coord[node],cell)  # relative to absolute
         rotated = np.dot(intra,rotmatrices[node])
         for i in range(len(labels)):
             atoms.append([i,name,labels[i],rotated[i,:]+abscom])
@@ -103,6 +103,25 @@ def format_quaternion(positions, cell, rotmatrices, celltype):
     return s
 
 
+def format_python(positions, cell, celltype, bondlen):
+    s = ""
+    s += "bondlen={0}\n".format(bondlen)
+    s += "celltype='{0}'\n".format(celltype)
+    s += "coord='absolute'\n"
+    if celltype != "rect":
+        sys.exit(1)
+    NB   = 6.022e23
+    density = 18.0 * len(positions) / (cell[0,0]*cell[1,1]*cell[2,2]*1e-24*NB) * 1e-3
+    s += "density={0}\n".format(density)
+    s += "cell='{0} {1} {2}'\n".format(cell[0,0],cell[1,1],cell[2,2])
+    s += "waters=\"\"\"\n"
+    for i in range(len(positions)):
+        position = np.dot(positions[i],cell)
+        s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(position[0],position[1],position[2])
+    s += "\"\"\"\n"
+    return s
+
+
 def format_digraph(graph, positions):
     s = ""
     s += "@NGPH\n"
@@ -122,7 +141,7 @@ def getoptions():
                         help='Specify the ice density in g/cm3')
     parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                         help='Random seed [1000]')
-    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqd",
+    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdX",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)]')
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
                         help='Specify water model. (tip3p, tip4p, etc.)')
@@ -143,7 +162,6 @@ def getoptions():
 
 def main():
     options = getoptions()
-    positions, rotmatrices, graph, cell, celltype = generate_ice(options.Type[0], seed=options.seed[0], rep=options.rep, density=options.dens[0])
     cagepos = None
     if options.cages:
         cagepos, cagetype = generate_cages(options.Type[0], options.rep)
@@ -154,6 +172,12 @@ def main():
     g15_type      = options.g15[0]
     g16_type      = options.g16[0]
     output_format = options.format[0][0]
+
+    noGraph = False
+    if output_format == "X":
+        noGraph = True
+    positions, rotmatrices, graph, cell, celltype, bondlen = generate_ice(options.Type[0], seed=options.seed[0], rep=options.rep, density=options.dens[0], noGraph = noGraph)
+
     #Final output formats
     #In case only the graph is wanted.
     if output_format == "d":
@@ -166,6 +190,8 @@ def main():
         s = format_euler(positions, cell, rotmatrices, celltype)
     elif output_format == "q":        # NX4A
         s = format_quaternion(positions, cell, rotmatrices, celltype)
+    elif output_format == "X":        # python Lattice library
+        s = format_python(positions, cell, celltype, bondlen)
     else:
         #arrange atoms
         water = __import__(water_type)

@@ -120,7 +120,7 @@ def zerodipole(coord, graph_):
 
 
 
-def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1)):
+def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False):
     lat     = __import__(lattice_type)
     lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
@@ -184,15 +184,15 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1)):
         bondlen   *= ratio
 
 
-    if pairs is None:
-        #make bonded pairs according to the pair distance.
-        #make before replicating them.
-        grid = pl.determine_grid(lat.cell, bondlen)
-        pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
+    if not noGraph:
+        if pairs is None:
+            #make bonded pairs according to the pair distance.
+            #make before replicating them.
+            grid = pl.determine_grid(lat.cell, bondlen)
+            pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
 
-    graph = dg.MyDiGraph()
-    graph.register_pairs(pairs)
-
+        graph = dg.MyDiGraph()
+        graph.register_pairs(pairs)
 
     
     #replicate water molecules to make a repeated cell
@@ -203,6 +203,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1)):
     for d in range(3):
         lat.cell[:,d] *= rep[d]
         
+    if noGraph:
+        return reppositions, None, None, lat.cell, lat.celltype, bondlen
+
     #replicate the graph
     graph = replicate_graph(graph, lat.waters, rep)
 
@@ -226,7 +229,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1)):
     #determine the orientations of the water molecules based on edge directions.
     rotmatrices = orientations(reppositions, graph, lat.cell)
 
-    return reppositions, rotmatrices, graph, lat.cell, lat.celltype
+    return reppositions, rotmatrices, graph, lat.cell, lat.celltype, bondlen
 
 
 

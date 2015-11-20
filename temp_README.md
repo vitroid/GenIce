@@ -6,8 +6,10 @@ Generate proton-disordered ice structures for GROMACS.
 * NetworkX
 * numpy
 
+Note: WinPython includes all of these requirements.
 ##Usage
 %%usage%%
+
 ##Example
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format:
@@ -39,3 +41,12 @@ Please ask vitroid@gmail.com to add new ice structures.
 * 3-site: TIP3P (default)
 * 4-site: TIP4P
 * 5-site: TIP5P
+
+##追記(In preparation)
+一部の単位胞(Lattice/1h_unit.pyなど)は、その大きさが小さすぎて、グラフを定義できないため、単位胞として2x1x1倍格子(1h.py)を収録している。しかし、2x1x1単位胞をrepeatすると、x軸方向が単位格子の奇数倍の格子を作れない。
+
+そのような場合のために、単位胞の座標だけを定数倍した、新しい単位胞をpython moduleの形で作る機能を追加した。例えば、
+    genice --format X --density 0.92 -r 7 1 1 1h_unit > 1hx711
+で、単位胞の7x1x1倍の構造をpython module形式で生成できる。これを使って、グラフを含む7x4x5倍格子を作りたい場合は、通常通り、
+    genice --format g -r 1 4 5 1hx711 > 1hx745.gro
+などとすれば良い。
