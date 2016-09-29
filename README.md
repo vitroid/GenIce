@@ -43,10 +43,22 @@ Note: WinPython includes all of these requirements.
 
 
 ##Example
+
+* To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
+.gro format:
+
+    ./genice --water tip4p --rep 3 3 3  4 > ice4.gro
+
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format:
 
     ./genice --cages --g12 co2 --g14 co2 --water tip4p CS1 > cs1.gro
+
+* To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
+THF (united atom with a dummy site) in the large cage in GROMACS
+.gro format:
+
+    ./genice --cages --g12 empty --g16 uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 ##Structure generation
 The program generates various ice lattice with proton disorder and
