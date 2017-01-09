@@ -8,6 +8,7 @@ import math
 import networkx
 import random
 import numpy
+import logging
 
 class MyDiGraph(networkx.DiGraph):
     def register_pairs(self,pairs):
@@ -21,11 +22,10 @@ class MyDiGraph(networkx.DiGraph):
         while not marked[node]:
             marked[node] = True
             order.append(node)
-            #print order
             nei = self.neighbors(node)
             next = random.randint(0,1)
             if len(nei) != 2:
-                print("ERROR",node,nei)
+                logging.getLogger().error("Dangling bond: {0} {1}".format(node,nei))
             node = nei[next]
         #a cyclic path is found.
         #trim the uncyclic part
@@ -40,6 +40,9 @@ class MyDiGraph(networkx.DiGraph):
 
 
     def homodromiccycle(self):
+        """
+        Randomly select a homodromic cycle
+        """
         marked = [False] * self.number_of_nodes()
         order = []
         node = random.randint(0,self.number_of_nodes()-1)
@@ -47,6 +50,9 @@ class MyDiGraph(networkx.DiGraph):
 
 
     def isZ4(self):
+        """
+        Reply whether all the vertices have four neighbors or not.
+        """
         good = True
         undir = self.to_undirected()
         for node in range(undir.number_of_nodes()):
@@ -60,7 +66,6 @@ class MyDiGraph(networkx.DiGraph):
         if self.in_degree(d) == 2 and self.out_degree(d) == 2:
             defects.pop(0)
             return
-        #print d,len(defects)
         if self.in_degree(d) > 2:
             nodes = self.predecessors(d)
             i = random.randint(0,len(nodes)-1)
@@ -78,10 +83,14 @@ class MyDiGraph(networkx.DiGraph):
 
             
     def defects(self):
+        """
+        Reply the list of defective vertices.
+        """
         defects = []
         for i in range(self.number_of_nodes()):
             if self.in_degree(i) != 2 or self.out_degree(i) != 2:
                 defects.append(i)
             if self.degree(i) != 4:
-                print("ERROR",i,self.degree(i),self.successors(i),self.predecessors(i))
+                logger = logging.getLogger()
+                logger.error("Non Z4 vertex: {0} {1} {2} {3}".format(i,self.degree(i),self.successors(i),self.predecessors(i)))
         return defects

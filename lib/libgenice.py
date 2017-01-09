@@ -7,8 +7,7 @@ import pairlist  as pl
 import digraph   as dg
 import random
 import math
-
-
+import logging
 
 def usage(parser):
     parser.print_help()
@@ -18,13 +17,13 @@ def usage(parser):
 
 def ice_rule(graph):
     if not graph.isZ4():
-        print("Error: Some water molecules do not have four HBs.")
+        logging.getLogger().error("Some water molecules do not have four HBs.")
         sys.exit(1)
     defects = graph.defects()
     while len(defects)>0:
         graph.purgedefects(defects)
     if len(graph.defects()) != 0:
-        print("Error: Some water molecules do not obey the ice rule.")
+        logging.getLogger().error("Error: Some water molecules do not obey the ice rule.")
         sys.exit(1)
     return graph
 
@@ -92,6 +91,8 @@ def replicate_graph(graph, positions, rep):
 
 
 
+#This is too slow for a big system.  Improve it.
+
 def zerodipole(coord, graph_):
     graph = graph_.copy()
     dipole = np.zeros(3)
@@ -99,13 +100,13 @@ def zerodipole(coord, graph_):
         vec = coord[j] - coord[i]
         vec -= np.floor(vec + 0.5)
         dipole += vec
-        k["vector"] = vec
+        k["vector"] = vec  #each edge has "vector" attribute
     s0 = np.linalg.norm(dipole)
     #In the following calculations, there must be error allowances.
     while s0 > 0.1:
         path,pathdipole = graph.homodromiccycle()
         s1 = np.linalg.norm(dipole - 2.0 * pathdipole)
-        if s1 - s0 < 1.50:
+        if s1 - s0 < 1.0:
             #accept the inversion
             for i in range(len(path)-1):
                 f = path[i]
@@ -115,6 +116,7 @@ def zerodipole(coord, graph_):
                 graph.add_edge(t,f,vector=-v)
             s0 = s1
             dipole -= 2.0 * pathdipole
+        logging.getLogger().debug("Score: {0}".format(s0))
 
     return graph
 
@@ -136,7 +138,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
                              (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
         lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
     else:
-        print("Error: unknown cell type: {0}".format(lat.celltype))
+        logging.getLogger().error("unknown cell type: {0}".format(lat.celltype))
         sys.exit(1)
 
     #express molecular positions in the coordinate relative to the cell
@@ -159,13 +161,13 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
                     i,j = j,i
                 pairs.add((i,j))
     except AttributeError:
-        pass #print("Graph is not defined.")
+        logging.getLogger().error("Graph is not defined.")
 
     #Bond length threshold
     try:
         bondlen = lat.bondlen
     except AttributeError:
-        pass #print("Bond length is not defined.")
+        logging.getLogger().error("Bond length is not defined.")
 
 
     #set density
@@ -207,23 +209,26 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         return reppositions, None, None, lat.cell, lat.celltype, bondlen
 
     #replicate the graph
+    #This also shuffles the bond directions
     graph = replicate_graph(graph, lat.waters, rep)
 
 
     #Test
     if graph.number_of_edges() != len(reppositions)*2:
-        print("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
+        logging.getLogger().error("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
         sys.exit(1)
 
 
     #make them obey the ice rule
+    logging.getLogger().info("Start making the bonds to obey the ice rules.")
     graph = ice_rule(graph)
+    logging.getLogger().info("End making the bonds to obey the ice rules.")
 
 
     #Rearrange HBs to purge the total dipole moment.
+    logging.getLogger().info("Start zeroing the total dipole moment.")
     graph = zerodipole(reppositions, graph)
-
-
+    logging.getLogger().info("End zeroing the total dipole moment.")
 
 
     #determine the orientations of the water molecules based on edge directions.

@@ -58,7 +58,7 @@ while True:
     if len(columns) > 0:
         if columns[0] =="@BOX3":
             box = fl.LoadBOX3(sys.stdin)
-        elif columns[0] == "@AR3A":
+        elif columns[0] in ("@AR3A", "@NX4A"):
             coord = fl.LoadAR3A(sys.stdin)
 
 ii = np.dot(iv,iv)

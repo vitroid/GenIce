@@ -4,6 +4,7 @@
 import sys
 import numpy     as np
 import argparse  as ap
+import logging
 
 #local libraries
 sys.path.append('Lattices')
@@ -155,6 +156,8 @@ def getoptions():
                         help='Specify guest in the 16-hedral cage. (empty, co2, uathf, etc.)')
     parser.add_argument('--cages', '-c', action='store_true', dest='cages',
                         help='Also output the cage positions. (g or m format only)')
+    parser.add_argument('--debug', action='store_true', dest='debug',
+                        help='Output debugging info.')
     parser.add_argument('Type', nargs=1,
                        help='Crystal type (1c,1h,etc.)')
     return parser.parse_args()
@@ -172,6 +175,13 @@ def main():
     g15_type      = options.g15[0]
     g16_type      = options.g16[0]
     output_format = options.format[0][0]
+    if options.debug:
+        logging.basicConfig(level=logging.DEBUG,
+                            filename='log.txt',
+                            format="%(asctime)s %(levelname)s %(message)s")
+    else:
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)s %(levelname)s %(message)s")
 
     noGraph = False
     if output_format == "X":
