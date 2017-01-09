@@ -15,20 +15,6 @@ def usage(parser):
 
 
 
-def ice_rule(graph):
-    if not graph.isZ4():
-        logging.getLogger().error("Some water molecules do not have four HBs.")
-        sys.exit(1)
-    defects = graph.defects()
-    while len(defects)>0:
-        graph.purgedefects(defects)
-    if len(graph.defects()) != 0:
-        logging.getLogger().error("Error: Some water molecules do not obey the ice rule.")
-        sys.exit(1)
-    return graph
-
-
-
 def orientations(coord, graph, cell):
     rotmatrices = []
     for node in range(graph.number_of_nodes()):
@@ -50,8 +36,6 @@ def orientations(coord, graph, cell):
 
 
 
-
-
 def replicate(positions, rep):
     repx = positions.copy()
     for m in range(1,rep[0]):
@@ -70,7 +54,7 @@ def replicate(positions, rep):
 
 
 def replicate_graph(graph, positions, rep):
-    repgraph = dg.MyDiGraph()
+    repgraph = dg.IceGraph()
     nmol = positions.shape[0]
     for i,j,k in graph.edges_iter(data=True):
         vec = positions[j] - positions[i]    #positions in the unreplicated cell
@@ -91,41 +75,6 @@ def replicate_graph(graph, positions, rep):
 
 
 
-#This is too slow for a big system.  Improve it.
-
-def zerodipole(coord, graph_):
-    logger = logging.getLogger()
-    graph = graph_.copy()
-    for i,j,k in graph.edges_iter(data=True):
-        vec = coord[j] - coord[i]
-        delta = np.floor(vec + 0.5)
-        #delta is usually a zero vector.
-        #When two vertices reside at the different image cell,
-        #it becomes +1 or -1, according to the direction of the vector
-        k["vector"] = delta  #each edge has "vector" attribute
-    dipole = graph.polarization()
-    logger.debug("Initial dipole: {0}".format(dipole))
-    s0 = np.dot(dipole, dipole)
-    #In the following calculations, there must be error allowances.
-    while s0 > 0.1:
-        path,pathdipole = graph.homodromiccycle()
-        newdipole = dipole - 2.0 * pathdipole
-        logger.debug("Updated dipole: {0}".format(newdipole))
-        #logger.debug("Debugged dipole: {0}".format(graph.polarization()))
-        s1 = np.dot(newdipole, newdipole)
-        if s1 - s0 < 1.0 and s1 != s0:
-            #accept the inversion
-            for i in range(len(path)-1):
-                f = path[i]
-                t = path[i+1]
-                v = graph.get_edge_data(f,t)["vector"]
-                graph.remove_edge(f,t)
-                graph.add_edge(t,f,vector=-v)
-            s0 = s1
-            dipole -= 2.0 * pathdipole
-        logger.debug("Score: {0}".format(s0))
-
-    return graph
 
 
 
@@ -200,7 +149,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
             grid = pl.determine_grid(lat.cell, bondlen)
             pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
 
-        graph = dg.MyDiGraph()
+        graph = dg.IceGraph()
         graph.register_pairs(pairs)
 
     
@@ -228,20 +177,21 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
 
     #make them obey the ice rule
     logging.getLogger().info("Start making the bonds to obey the ice rules.")
-    graph = ice_rule(graph)
+    graph.purge_ice_defects()
     logging.getLogger().info("End making the bonds to obey the ice rules.")
 
 
     #Rearrange HBs to purge the total dipole moment.
     logging.getLogger().info("Start zeroing the total dipole moment.")
-    graph = zerodipole(reppositions, graph)
+    spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
+    spacegraph.depolarize()
     logging.getLogger().info("End zeroing the total dipole moment.")
 
 
     #determine the orientations of the water molecules based on edge directions.
-    rotmatrices = orientations(reppositions, graph, lat.cell)
+    rotmatrices = orientations(reppositions, spacegraph, lat.cell)
 
-    return reppositions, rotmatrices, graph, lat.cell, lat.celltype, bondlen
+    return reppositions, rotmatrices, spacegraph, lat.cell, lat.celltype, bondlen
 
 
 

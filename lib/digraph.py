@@ -10,7 +10,10 @@ import random
 import numpy as np
 import logging
 
-class MyDiGraph(networkx.DiGraph):
+class IceGraph(networkx.DiGraph):
+    #def __init__(data=None):
+    #    super(IceGraph, self).__init__(data)
+
     def register_pairs(self,pairs):
         self.clear()
         for pair in pairs:
@@ -33,17 +36,8 @@ class MyDiGraph(networkx.DiGraph):
             order.pop(0)
         #add the node at the last again
         order.append(node)
-        delta = np.zeros(3)
-        for i in range(len(order)-1):
-            delta += self.get_edge_data(order[i],order[i+1])["vector"]
-        return order, delta
+        return order
 
-
-    def polarization(self):
-        dipole = np.zeros(3)
-        for i,j,k in self.edges_iter(data=True):
-            dipole += k["vector"]
-        return dipole
 
     def homodromiccycle(self):
         """
@@ -100,3 +94,88 @@ class MyDiGraph(networkx.DiGraph):
                 logger = logging.getLogger()
                 logger.error("Non Z4 vertex: {0} {1} {2} {3}".format(i,self.degree(i),self.successors(i),self.predecessors(i)))
         return defects
+
+    def purge_ice_defects(self):
+        logger = logging.getLogger()
+        if not self.isZ4():
+            logger.error("Some water molecules do not have four HBs.")
+            sys.exit(1)
+        defects = self.defects()
+        while len(defects)>0:
+            self.purgedefects(defects)
+        if len(self.defects()) != 0:
+            logger.error("Some water molecules do not obey the ice rule.")
+            sys.exit(1)
+
+
+class SpaceIceGraph(IceGraph):
+    """
+    Digraph with geometrical info
+    """
+    def __init__(self, data=None, coord=None, pbc=True):
+        super(SpaceIceGraph, self).__init__(data)
+        if coord is not None:
+            self.add_vectors(coord, pbc)
+            
+    def add_vectors(self, coord, pbc=True):
+        """
+        add vector attributes to each edge
+        """
+        for i,j,k in self.edges_iter(data=True):
+            vec = coord[j] - coord[i]
+            if pbc:
+                vec -= np.floor(vec + 0.5)
+            k["vector"] = vec  #each edge has "vector" attribute
+        
+    def dipole_of_a_cycle(self, order):
+        """
+        normally zero.
+        Non-zero when it goes across the cell.
+        """
+        delta = np.zeros(3)
+        for i in range(len(order)-1):
+            delta += self.get_edge_data(order[i],order[i+1])["vector"]
+        return delta
+            
+    def invert_edge(self,from_,to_):
+        """
+        also invert the attribute vector
+        """
+        v = self.get_edge_data(from_,to_)["vector"]
+        self.remove_edge(from_,to_)
+        self.add_edge(to_,from_,vector=-v)
+
+
+    def net_polarization(self):
+        dipole = np.zeros(3)
+        for i,j,k in self.edges_iter(data=True):
+            dipole += k["vector"]
+        return dipole
+
+
+    #This is too slow for a big system.  Improve it.
+    def depolarize(self):
+        """
+        It assumes vector attribute is set
+        """
+        logger = logging.getLogger()
+        dipole = self.net_polarization()
+        logger.debug("Initial dipole: {0}".format(dipole))
+        s0 = np.dot(dipole, dipole)
+        #In the following calculations, there must be error allowances.
+        while s0 > 0.1:
+            path = self.homodromiccycle()
+            pathdipole = self.dipole_of_a_cycle(path)
+            newdipole = dipole - 2.0 * pathdipole
+            logger.debug("Updated dipole: {0}".format(newdipole))
+            #logger.debug("Debugged dipole: {0}".format(self.polarization()))
+            s1 = np.dot(newdipole, newdipole)
+            if s1 < s0:
+                #accept the inversion
+                for i in range(len(path)-1):
+                    f = path[i]
+                    t = path[i+1]
+                    self.invert_edge(f,t) #also invert the attribute vector
+                s0 = s1
+                dipole -= 2.0 * pathdipole
+                logger.debug("Score: {0}".format(s0))
