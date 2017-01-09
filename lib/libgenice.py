@@ -94,19 +94,26 @@ def replicate_graph(graph, positions, rep):
 #This is too slow for a big system.  Improve it.
 
 def zerodipole(coord, graph_):
+    logger = logging.getLogger()
     graph = graph_.copy()
-    dipole = np.zeros(3)
     for i,j,k in graph.edges_iter(data=True):
         vec = coord[j] - coord[i]
-        vec -= np.floor(vec + 0.5)
-        dipole += vec
-        k["vector"] = vec  #each edge has "vector" attribute
-    s0 = np.linalg.norm(dipole)
+        delta = np.floor(vec + 0.5)
+        #delta is usually a zero vector.
+        #When two vertices reside at the different image cell,
+        #it becomes +1 or -1, according to the direction of the vector
+        k["vector"] = delta  #each edge has "vector" attribute
+    dipole = graph.polarization()
+    logger.debug("Initial dipole: {0}".format(dipole))
+    s0 = np.dot(dipole, dipole)
     #In the following calculations, there must be error allowances.
     while s0 > 0.1:
         path,pathdipole = graph.homodromiccycle()
-        s1 = np.linalg.norm(dipole - 2.0 * pathdipole)
-        if s1 - s0 < 1.0:
+        newdipole = dipole - 2.0 * pathdipole
+        logger.debug("Updated dipole: {0}".format(newdipole))
+        #logger.debug("Debugged dipole: {0}".format(graph.polarization()))
+        s1 = np.dot(newdipole, newdipole)
+        if s1 - s0 < 1.0 and s1 != s0:
             #accept the inversion
             for i in range(len(path)-1):
                 f = path[i]
@@ -116,7 +123,7 @@ def zerodipole(coord, graph_):
                 graph.add_edge(t,f,vector=-v)
             s0 = s1
             dipole -= 2.0 * pathdipole
-        logging.getLogger().debug("Score: {0}".format(s0))
+        logger.debug("Score: {0}".format(s0))
 
     return graph
 

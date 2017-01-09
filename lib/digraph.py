@@ -7,7 +7,7 @@ import sys
 import math
 import networkx
 import random
-import numpy
+import numpy as np
 import logging
 
 class MyDiGraph(networkx.DiGraph):
@@ -33,11 +33,17 @@ class MyDiGraph(networkx.DiGraph):
             order.pop(0)
         #add the node at the last again
         order.append(node)
-        delta = numpy.zeros(3)
+        delta = np.zeros(3)
         for i in range(len(order)-1):
             delta += self.get_edge_data(order[i],order[i+1])["vector"]
         return order, delta
 
+
+    def polarization(self):
+        dipole = np.zeros(3)
+        for i,j,k in self.edges_iter(data=True):
+            dipole += k["vector"]
+        return dipole
 
     def homodromiccycle(self):
         """
