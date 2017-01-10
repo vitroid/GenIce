@@ -177,7 +177,7 @@ def main():
     output_format = options.format[0][0]
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,
-                            filename='log.txt',
+                            #filename='log.txt',
                             format="%(asctime)s %(levelname)s %(message)s")
     else:
         logging.basicConfig(level=logging.INFO,
