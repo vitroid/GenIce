@@ -124,6 +124,8 @@ def format_python(positions, cell, celltype, bondlen):
 
 
 def format_digraph(graph, positions):
+    import digraph
+    
     s = ""
     s += "@NGPH\n"
     s += "{0}\n".format(len(positions))

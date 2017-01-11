@@ -184,7 +184,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     #Rearrange HBs to purge the total dipole moment.
     logging.getLogger().info("Start zeroing the total dipole moment.")
     spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
-    spacegraph.depolarize()
+    #spacegraph.depolarize()
+    dg.depolarize(spacegraph,coord=reppositions,cell=lat.cell)
+    sys.exit(1)
     logging.getLogger().info("End zeroing the total dipole moment.")
 
 
