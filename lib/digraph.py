@@ -9,47 +9,40 @@ import networkx
 import random
 import numpy as np
 import logging
+import yaplot as yp
+
+#Dijkstra
+
+
+import heapq
+
+def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
+    while len(L) > 0:
+        yield L[0]
+        L = L[1]
+
+#modified from http://code.activestate.com/recipes/119466/
+#for networkx
+def shortest_path(G, start, end):
+    q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
+    visited = set()       # Visited vertices.
+    while True:
+        ppap = heapq.heappop(q)
+        (cost, v1, path) = ppap
+        if v1 not in visited:
+            visited.add(v1)
+            if v1 == end:
+                return list(flatten(path))[::-1] + [v1]
+            path = (v1, path)
+            for v2 in G[v1]:
+                if v2 not in visited:
+                    heapq.heappush(q, (cost + 1, v2, path))
 
 
 
 
-#convert numpy array to a plain string
-def plaintext(a):
-    s = ""
-    for x in a:
-        s += "{0} ".format(x)
-    return s
 
 
-
-def Line(v0,v1):
-    return "l " + plaintext(v0) + plaintext(v1) + "\n"
-
-
-def Arrow(v0,v1):
-    return "s " + plaintext(v0) + plaintext(v1) + "\n"
-
-
-
-def Polygon(vertices):
-    s = "p {0} ".format(len(vertices))
-    for v in vertices:
-        s += plaintext(v)
-    return s + "\n"
-
-
-
-def Color(x):
-    return "@ {0}\n".format(int(x))
-
-
-
-def Layer(x):
-    return "y {0}\n".format(int(x))
-
-
-def NewPage():
-    return "\n"
 
 
 class YaplotDraw(networkx.DiGraph):
@@ -66,15 +59,15 @@ class YaplotDraw(networkx.DiGraph):
         xi = np.dot(ci,self.cell)
         xj = np.dot(ci+d,self.cell)
         if self.has_edge(i,j):
-            return Color(4) + "a 2\n" + Arrow(xi, xj)
+            return yp.Color(4) + yp.ArrowType(2) + yp.Arrow(xi, xj)
         elif self.has_edge(j,i):
-            return Color(5) + "a 2\n" + Arrow(xj, xi)
+            return yp.Color(5) + yp.ArrowType(2) + yp.Arrow(xj, xi)
         else:
-            return Color(0) + Line(xi, xj)
+            return yp.Color(0) + yp.Line(xi, xj)
             
 
     def draw_cell(self):
-        s = Color(2)
+        s = yp.Color(2)
         ex = np.array([1.,0.,0.])
         ey = np.array([0.,1.,0.])
         ez = np.array([0.,0.,1.])
@@ -84,17 +77,17 @@ class YaplotDraw(networkx.DiGraph):
         zero = np.zeros_like(x)
         for vx in (zero, x):
             for vy in (zero, y):
-                s += Line(vx+vy,vx+vy+z)
+                s += yp.Line(vx+vy,vx+vy+z)
         for vx in (zero, x):
             for vz in (zero, z):
-                s += Line(vx+vz,vx+y+vz)
+                s += yp.Line(vx+vz,vx+y+vz)
         for vz in (zero, z):
             for vy in (zero, y):
-                s += Line(vy+vz,x+vy+vz)
+                s += yp.Line(vy+vz,x+vy+vz)
         return s
 
     def draw_path(self,path):
-        s = Color(3)
+        s = yp.Color(3)
         for i in range(len(path)-1):
             j,k = path[i],path[i+1]
             s += self.draw_edge(j,k)
@@ -215,9 +208,9 @@ class IceGraph(networkx.DiGraph):
             #First resulsts are far from the random walk path.
             #
             generator = networkx.all_shortest_paths(self, source=v, target=vertex)
-            logger.debug(type(generator))
             path = next(generator)
-            logger.debug("path len: {0}".format(len(path)))
+            logger.debug("path: {0}".format(path))
+            sys.exit(0)
             if len(path) < pathlen:
                 generators = [generator,]
                 paths = [path,]
@@ -231,6 +224,26 @@ class IceGraph(networkx.DiGraph):
             for path in generator:
                 yield [vertex,] + path
 
+
+    def some_shortest_cycles(self, vertex):
+        """
+        Return the shortest cycles including the given vertex.
+        """
+        logger = logging.getLogger()
+        pathlen = 999999999999999999999999
+        paths = []
+        for v in self.neighbors(vertex):
+            path = shortest_path(self, v, vertex)
+            logger.debug("path: {0}".format(path))
+            if len(path) < pathlen:
+                paths = [path,]
+                pathlen = len(path)
+            elif len(path) == pathlen:
+                paths.append(path)
+        for path in paths:
+            yield [vertex,] + path
+
+                
     def is_homodromic(self, path):
         for i in range(len(path)-1):
             if not self.has_edge(path[i], path[i+1]):
@@ -351,7 +364,8 @@ class SpaceIceGraph(IceGraph):
         """
         logger = logging.getLogger()
         trial = 0
-        for path in self.all_shortest_cycles(vertex):
+        #for path in self.all_shortest_cycles(vertex):
+        for path in self.some_shortest_cycles(vertex):
             dipole = self.dipole_of_a_cycle(path)
             logger.debug("{0}".format(dipole))
             if axis > 0:
@@ -369,6 +383,8 @@ class SpaceIceGraph(IceGraph):
                         #terminate
                         yield None
                         return
+        yield None
+
 
 
 
@@ -467,7 +483,7 @@ def test_all_backward_paths(directedgraph,cycle):
     logger.debug("test_add_backard_paths: Done")
 
 
-def traversed_homodromic_cycle(spaceicegraph, polarized, vertex, axis, debug=False, draw=None):
+def traversed_homodromic_cycle(spaceicegraph, polarized, vertex, axis, debug=False):
     """
     set True to debug when you want to "make test"
     """
@@ -476,19 +492,15 @@ def traversed_homodromic_cycle(spaceicegraph, polarized, vertex, axis, debug=Fal
         logger.error("Illegal axis: {0}".format(axis))
         sys.exit(1)
     logger.debug("isZ4: {0}".format(polarized.isZ4()))
-    logger.debug("defects: {0}".format(polarized.defects()))
+    #logger.debug("defects: {0}".format(polarized.defects()))
     #Make a "string" connecting between the ceiling and the floor.
     untraversed = polarized.all_untraversed_shortest_cycles(vertex, axis, MaxTrials=10)
     #make it homodromic.
     cycle = next(untraversed)
     if cycle is None:
         logger.debug("No candids.")
-        return None
+        return None, None
     logger.debug("One short cycle: {0}".format(cycle))
-    if draw is not None:
-        print("r 0.02")
-        print(draw.draw_cell(), end="")
-        print(draw.draw_path(cycle), end="")
     #test
     if debug:
         test_all_backward_paths(spaceicegraph,cycle)
@@ -514,8 +526,8 @@ def traversed_homodromic_cycle(spaceicegraph, polarized, vertex, axis, debug=Fal
                 break
         if bestbypass is None:
             #no harvest
-            logger.info("No harvest.".format(detours))
-            return None
+            logger.info("No harvest 1.".format(detours))
+            return None, None
         detours.append((backpath, bestbypass, interv))
     logger.debug("Found detours to make the cycle homodromic: {0}".format(detours))
     #Harvest check
@@ -538,24 +550,30 @@ def traversed_homodromic_cycle(spaceicegraph, polarized, vertex, axis, debug=Fal
     if len(edges) != len(set(edges)):
         logger.debug("The cycle is entangled.")
         #no harvest
-        logger.info("No harvest.".format(detours))
+        logger.info("No harvest 2.".format(detours))
         return None
     logger.info("Dipole of the harvest: {0}".format(spaceicegraph.dipole_of_a_cycle(homodromized)))
-    print(draw.draw_path(homodromized))
-    return homodromized
+    return cycle, homodromized
 
         
-def depolarize(spaceicegraph, debug=False, coord=None, cell=None):
+def depolarize(spaceicegraph, debug=False, draw=None):
     """
     set True to debug when you want to "make test"
     """
-    draw = None
-    if coord is not None:
-        draw = YaplotDraw(coord,cell,data=spaceicegraph)
     logger = logging.getLogger()
+    s = ""
     polarized = dict()
+    ##make a copy from the graph
+    #edges = set()
+    #for i,j,k in spaceicegraph.edges_iter(data=True):
+    #    edges.add(tuple((i,j,tuple(k['vector']))))
+    ##I hope it shuffles the edges. Sorry it does not.
+    #polargraph = SpaceIceGraph()
+    #for i,j,k in sorted(edges):
+    #    polargraph.add_edge(i,j,vector=np.array(k))
     for axis in (+spaceicegraph.XAXIS, +spaceicegraph.YAXIS, +spaceicegraph.ZAXIS,
                  -spaceicegraph.XAXIS, -spaceicegraph.YAXIS, -spaceicegraph.ZAXIS):
+        #polarized[axis] = SpaceIceGraph(polargraph)
         polarized[axis] = SpaceIceGraph(spaceicegraph)
         polarized[axis].polarize(axis)
     while True:
@@ -583,8 +601,15 @@ def depolarize(spaceicegraph, debug=False, coord=None, cell=None):
             axis = -spaceicegraph.ZAXIS
         vertex = random.randint(0,spaceicegraph.number_of_nodes()-1)
         logger.debug("Axis: {0} {1}".format(axis,polarized[axis]))
-        cycle = traversed_homodromic_cycle(spaceicegraph, polarized[axis], vertex, axis, debug, draw=draw)
+        cycle, homodromized = traversed_homodromic_cycle(spaceicegraph, polarized[axis], vertex, axis, debug)
+        if draw is not None and cycle is not None:
+            s += yp.Size(0.02)
+            s += draw.draw_cell()
+            s += draw.draw_path(cycle)
+            s += draw.draw_path(homodromized)
+            s += yp.NewPage()
         logger.debug("----------------------")
-        if cycle is not None:
-            logger.debug("The cycle: {0}".format(cycle))
-            spaceicegraph.invert_path(cycle)
+        if homodromized is not None:
+            logger.debug("The homodromic cycle: {0}".format(homodromized))
+            spaceicegraph.invert_path(homodromized)
+    return s
