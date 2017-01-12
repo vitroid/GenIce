@@ -118,13 +118,13 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
                     i,j = j,i
                 pairs.add((i,j))
     except AttributeError:
-        logger.error("Graph is not defined.")
+        logger.info("Graph is not defined.")
 
     #Bond length threshold
     try:
         bondlen = lat.bondlen
     except AttributeError:
-        logger.error("Bond length is not defined.")
+        logger.info("Bond length is not defined.")
 
 
     #set density

@@ -260,6 +260,8 @@ class SpaceIceGraph(IceGraph):
         """
         also invert the attribute vector
         """
+        if not self.has_edge(from_, to_):
+            logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
         v = self.get_edge_data(from_,to_)["vector"]
         self.remove_edge(from_,to_)
         self.add_edge(to_,from_,vector=-v)
@@ -277,7 +279,12 @@ class SpaceIceGraph(IceGraph):
             dipole += k["vector"]
         return dipole
 
-
+    def vector_check(self):
+        logger = logging.getLogger()
+        for i,j,k in self.edges_iter(data=True):
+            if k is None:
+                logger.error("The edge ({0},{1}) has no vector.".format(i,j))
+                
 
 
 def find_apsis(coord, cell, distance, vertex, axis):
@@ -349,6 +356,9 @@ def depolarize(spaceicegraph, cell, draw=None):
     It works much better than depolarize()
     """
     logger = logging.getLogger()
+    logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
+    logger.info("defects: {0}".format(spaceicegraph.defects()))
+    spaceicegraph.vector_check()
     s = "" # for yaplot
     while True:
         net_polar = spaceicegraph.net_polarization()
@@ -375,12 +385,17 @@ def depolarize(spaceicegraph, cell, draw=None):
             axis = np.array([0.0, 0.0,-1.0])
         cycle = traversing_cycle(spaceicegraph, cell, axis, draw)
         if cycle is not None:
-            if draw is not None:
-                s += yp.Size(0.03)
-                s += draw.draw_cell()
-                s += draw.draw_path(cycle)
-                s += yp.NewPage()
-            spaceicegraph.invert_path(cycle)
+            edges = [(cycle[i], cycle[i+1]) for i in range(len(cycle)-1)]
+            if len(edges) != len(set(edges)):
+                logger.debug("The cycle is entangled.")
+            else:
+                if draw is not None:
+                    s += yp.Size(0.03)
+                    s += draw.draw_cell()
+                    s += draw.draw_path(cycle)
+                    s += yp.NewPage()
+                spaceicegraph.invert_path(cycle)
+                spaceicegraph.vector_check()
     logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
     logger.info("defects: {0}".format(spaceicegraph.defects()))
     return s
