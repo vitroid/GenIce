@@ -24,7 +24,8 @@ def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
 
 #modified from http://code.activestate.com/recipes/119466/
 #for networkx
-def shortest_path(G, start, end):
+#Extended for multiple goals
+def shortest_path(G, start, ends):
     q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
     visited = set()       # Visited vertices.
     while True:
@@ -35,7 +36,7 @@ def shortest_path(G, start, end):
         (cost, v1, path) = ppap
         if v1 not in visited:
             visited.add(v1)
-            if v1 == end:
+            if v1 in ends:
                 return list(flatten(path))[::-1] + [v1]
             path = (v1, path)
             for v2 in G[v1]:
@@ -116,6 +117,22 @@ class IceGraph(networkx.DiGraph):
             x,y = pair[0:2]
             self.add_edge(x,y)
 
+    
+    def invert_edge(self,from_,to_):
+        """
+        also invert the attribute vector
+        """
+        if not self.has_edge(from_, to_):
+            logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
+        self.remove_edge(from_,to_)
+        self.add_edge(to_,from_)
+
+        
+    def invert_path(self, path):
+        for i in range(len(path)-1):
+            f = path[i]
+            t = path[i+1]
+            self.invert_edge(f,t) #also invert the attribute vector
             
     def _goahead(self,node,marked,order):
         while not marked[node]:
@@ -191,6 +208,24 @@ class IceGraph(networkx.DiGraph):
                 logger.error("Non Z4 vertex: {0} {1} {2} {3}".format(i,self.degree(i),self.successors(i),self.predecessors(i)))
         return defects
 
+
+    def excess_in_defects(self):
+        """
+        Reply the list of defective vertices.
+        """
+        for i in range(self.number_of_nodes()):
+            if self.in_degree(i) > 2:
+                yield i
+
+    def excess_out_defects(self):
+        """
+        Reply the list of defective vertices.
+        """
+        for i in range(self.number_of_nodes()):
+            if self.out_degree(i) > 2:
+                yield i
+
+    
     def purge_ice_defects(self):
         logger = logging.getLogger()
         if not self.isZ4():
@@ -267,11 +302,6 @@ class SpaceIceGraph(IceGraph):
         self.add_edge(to_,from_,vector=-v)
 
 
-    def invert_path(self, path):
-        for i in range(len(path)-1):
-            f = path[i]
-            t = path[i+1]
-            self.invert_edge(f,t) #also invert the attribute vector
         
     def net_polarization(self):
         dipole = np.zeros(3)
@@ -329,10 +359,10 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
         apsis = find_apsis(spaceicegraph.coord, cell, distance*1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
-        path1 = shortest_path(spaceicegraph, vertex, apsis)
+        path1 = shortest_path(spaceicegraph, vertex, [apsis,])
         #logger.info("Path1: {0}".format(path1))
         logger.debug("Dipole of the path1: {0}".format(spaceicegraph.dipole_of_a_cycle(path1)))
-        path2 = shortest_path(spaceicegraph, apsis, vertex)
+        path2 = shortest_path(spaceicegraph, apsis, [vertex,])
         #logger.info("Path2: {0}".format(path2))
         logger.debug("Dipole of the path2: {0}".format(spaceicegraph.dipole_of_a_cycle(path2)))
         #they should make a cycle.
@@ -399,3 +429,25 @@ def depolarize(spaceicegraph, cell, draw=None):
     logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
     logger.info("defects: {0}".format(spaceicegraph.defects()))
     return s
+
+
+def purge_ice_defects(icegraph):
+    """
+    This is faster than the method in icegraph, but
+    it also polarizes the graph in the course of purging.
+    """
+    logger = logging.getLogger()
+    while len(icegraph.defects()) > 0:
+        logger.info("# of defects: {0}".format(len(icegraph.defects())))
+        ins = set(icegraph.excess_in_defects())
+        for out in icegraph.excess_out_defects():
+            while icegraph.out_degree(out) > 2:
+                path = shortest_path(icegraph, out, ins)
+                if path is not None:
+                    logger.debug("# of in defects: {0}".format(len(ins)))
+                    icegraph.invert_path(path)
+                    end = path[-1]
+                    if icegraph.in_degree(end) == 2:
+                        ins.remove(end)
+                #logger.debug("IN:{0}".format(len(set(icegraph.excess_in_defects()))))
+                #logger.debug("OUT:{0}".format(len(set(icegraph.excess_out_defects()))))

@@ -179,6 +179,8 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     #make them obey the ice rule
     logger.info("Start making the bonds obey the ice rules.")
     graph.purge_ice_defects()
+    #dg.purge_ice_defects(graph)
+    #sys.exit(0)
     logger.info("End making the bonds obey the ice rules.")
 
 
