@@ -177,9 +177,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
 
 
     #make them obey the ice rule
-    logger.info("Start making the bonds to obey the ice rules.")
+    logger.info("Start making the bonds obey the ice rules.")
     graph.purge_ice_defects()
-    logger.info("End making the bonds to obey the ice rules.")
+    logger.info("End making the bonds obey the ice rules.")
 
 
     #Rearrange HBs to purge the total dipole moment.
@@ -189,7 +189,8 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     draw = None
     if yaplot:
         draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
-    yapresult  = dg.depolarize(spacegraph,draw=draw)
+    yapresult  = dg.depolarize(spacegraph, lat.cell, draw=draw)
+    #yapresult  = dg.depolarize(spacegraph,draw=draw)
     logger.info("End depolarization.")
 
 
