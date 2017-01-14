@@ -50,14 +50,9 @@ from math import *
 sys.path.insert(0, 'pycifrw-4.1.1-min')
 from CifFile import CifFile, CifBlock
 
-debug = True
-if debug:
-    logging.basicConfig(level=logging.DEBUG,
-                        #filename='log.txt',
-                        format="%(asctime)s %(levelname)s %(message)s")
-else:
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s %(levelname)s %(message)s")
+logging.basicConfig(level=logging.DEBUG,
+                    #filename='log.txt',
+                    format="%(levelname)s| %(message)s")
 logger = logging.getLogger()
 
 # =============================================================================
@@ -78,34 +73,34 @@ def float_with_error(x):
 # Tell the user how to use this script, and exits the script.
 def print_usage():
 
-    print('*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *')
-    print('This script reads a Crystallographic Information File (CIF) that describes a crystal,')
-    print('and creates a configuration file that can be used to start a Gromacs or LAMMPS simulation.')
-    print('')
-    print('Copyright (C) 2014  Erik Lascaris')
-    print('')
-    print('This program comes with ABSOLUTELY NO WARRANTY; see details inside this python script.')
-    print('This is free software, and you are welcome to redistribute it under certain conditions.')
-    print('')
-    print('                             --- HOW TO USE  ---')
-    print('Examples:')
-    print('  %s  -i crystal.cif  -o unitcell.xyz  -r' % sys.argv[0])
-    print('  %s  -i crystal.cif  -o conf.gro  -b 5 5 5  -r' % sys.argv[0])
-    print('  %s  -i crystal.cif  -o unitcell.cif' % sys.argv[0])
-    print('')
-    print('List of optional arguments:')
-    print('  -i  filename     CIF file with description of crystal')
-    print('  -o  filename     Output configuration file.  Extension must be one of the following:')
-    print('                     .xyz         XYZ file')
-    print('                     .lammpstrj   LAMMPS trajectory file')
-    print('                     .gro         Gromacs file')
-    print('                     .cif         copy of original CIF file with additional atoms')
-    print('                                  (looks nice with Jmol)')
-    print('  -b int int int   Box size in terms of the unit cell. For example, if the unit cell')
-    print('                   consists of 2 atoms and has size 1x2x3 A, then -b 4 5 6 creates a box')
-    print('                   of size 4x10x18 A consisting of 2x4x5x6=240 atoms. Default is -b 1 1 1')
-    print('  -r               Make the box rectangular (default is shape of the unit cell)')
-    print('*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *')
+    logger.info('*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *')
+    logger.info('This script reads a Crystallographic Information File (CIF) that describes a crystal,')
+    logger.info('and creates a configuration file that can be used to start a Gromacs or LAMMPS simulation.')
+    logger.info('')
+    logger.info('Copyright (C) 2014  Erik Lascaris')
+    logger.info('')
+    logger.info('This program comes with ABSOLUTELY NO WARRANTY; see details inside this python script.')
+    logger.info('This is free software, and you are welcome to redistribute it under certain conditions.')
+    logger.info('')
+    logger.info('                             --- HOW TO USE  ---')
+    logger.info('Examples:')
+    logger.info('  %s  -i crystal.cif  -o unitcell.xyz  -r' % sys.argv[0])
+    logger.info('  %s  -i crystal.cif  -o conf.gro  -b 5 5 5  -r' % sys.argv[0])
+    logger.info('  %s  -i crystal.cif  -o unitcell.cif' % sys.argv[0])
+    logger.info('')
+    logger.info('List of optional arguments:')
+    logger.info('  -i  filename     CIF file with description of crystal')
+    logger.info('  -o  filename     Output configuration file.  Extension must be one of the following:')
+    logger.info('                     .xyz         XYZ file')
+    logger.info('                     .lammpstrj   LAMMPS trajectory file')
+    logger.info('                     .gro         Gromacs file')
+    logger.info('                     .cif         copy of original CIF file with additional atoms')
+    logger.info('                                  (looks nice with Jmol)')
+    logger.info('  -b int int int   Box size in terms of the unit cell. For example, if the unit cell')
+    logger.info('                   consists of 2 atoms and has size 1x2x3 A, then -b 4 5 6 creates a box')
+    logger.info('                   of size 4x10x18 A consisting of 2x4x5x6=240 atoms. Default is -b 1 1 1')
+    logger.info('  -r               Make the box rectangular (default is shape of the unit cell)')
+    logger.info('*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *')
 
     exit(1)
 
@@ -523,412 +518,430 @@ def read_cif(fNameIn):
 # =============================================================================
 # =============================================================================
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Read arguments given.
+
+def parse_commandline(filetypes=['.xyz', '.lammpstrj', '.gro', '.cif']):
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Read arguments given.
 
 
-# Default settings.
-fNameIn = ''
-fNameOut = ''
-Nx = 1
-Ny = 1
-Nz = 1
-make_rect_box = False
+    # Default settings.
+    fNameIn = ''
+    fNameOut = ''
+    Nx = 1
+    Ny = 1
+    Nz = 1
+    make_rect_box = False
 
 
-# Read the arguments.  We expect at least 4.
-if (len(sys.argv) <= 4):
-    print_usage()
+    # Read the arguments.  We expect at least 4.
+    if (len(sys.argv) <= 4):
+        print_usage()
 
-i = 1
-while (i < len(sys.argv)):
-
-
-    # Check if the name of the input file was given.
-    if (sys.argv[i] == '-i'):
-        
-        # Make sure a file name is given.
-        if (i+1 == len(sys.argv)):
-            print_error('no input file name given')
-        
-        fNameIn = sys.argv[i+1]
-        i = i + 2
+    i = 1
+    while (i < len(sys.argv)):
 
 
-    # Check if the name of the output file was given.
-    elif (sys.argv[i] == '-o'):
+        # Check if the name of the input file was given.
+        if (sys.argv[i] == '-i'):
 
-        # Make sure a file name is given.
-        if (i+1 == len(sys.argv)):
-            print_error('no output file name given')
+            # Make sure a file name is given.
+            if (i+1 == len(sys.argv)):
+                print_error('no input file name given')
 
-        # Check we have a valid file extension.
-        fNameOut = sys.argv[i+1]
-        unknown = True
-
-        for ext in ['.xyz', '.lammpstrj', '.gro', '.cif']:
-            if (fNameOut.endswith(ext)):
-                unknown = False
-
-        if (unknown):
-            print_error('unknown file extension of output file')
-
-        i = i + 2
+            fNameIn = sys.argv[i+1]
+            i = i + 2
 
 
-    # Check if the box size was given.
-    elif (sys.argv[i] == '-b'):
+        # Check if the name of the output file was given.
+        elif (sys.argv[i] == '-o'):
 
-        # Make sure 3 integers are given.
-        if (i+3 >= len(sys.argv)):
-            print_error('need 3 integers to indicate box size')
+            # Make sure a file name is given.
+            if (i+1 == len(sys.argv)):
+                print_error('no output file name given')
 
-        Nx = int(sys.argv[i+1])
-        Ny = int(sys.argv[i+2])
-        Nz = int(sys.argv[i+3])
+            # Check we have a valid file extension.
+            fNameOut = sys.argv[i+1]
+            unknown = True
 
-        if (Nx == 0  or  Ny == 0  or  Nz == 0):
-            print_error('box size integers need to be larger than zero')
+            for ext in filetypes:
+                if (fNameOut.endswith(ext)):
+                    unknown = False
 
-        i = i + 4
+            if (unknown):
+                print_error('unknown file extension of output file')
 
-
-    # Check if the final configuration should be in a rectangular shape, or in
-    # the same shape as the unit cell.
-    elif (sys.argv[i] == '-r'):
-
-        make_rect_box = True
-        i = i + 1
+            i = i + 2
 
 
-    # Anything else is wrong.
-    else:
-        print_error('invalid argument "%s"' % sys.argv[i])
+        # Check if the box size was given.
+        elif (sys.argv[i] == '-b'):
+
+            # Make sure 3 integers are given.
+            if (i+3 >= len(sys.argv)):
+                print_error('need 3 integers to indicate box size')
+
+            Nx = int(sys.argv[i+1])
+            Ny = int(sys.argv[i+2])
+            Nz = int(sys.argv[i+3])
+
+            if (Nx == 0  or  Ny == 0  or  Nz == 0):
+                print_error('box size integers need to be larger than zero')
+
+            i = i + 4
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Read input file.
+        # Check if the final configuration should be in a rectangular shape, or in
+        # the same shape as the unit cell.
+        elif (sys.argv[i] == '-r'):
+
+            make_rect_box = True
+            i = i + 1
 
 
-# Make sure an input file was given.
-if (fNameIn == ''):
-    print_error('no input file given.  Use:  -i filename')
+        # Anything else is wrong.
+        else:
+            print_error('invalid argument "%s"' % sys.argv[i])
+
+    return fNameIn, fNameOut, (Nx,Ny,Nz), make_rect_box
+
+def read_and_process(fNameIn, fNameOut, Nbox, make_rect_box=False):
+    Nx,Ny,Nz = Nbox
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Read input file.
 
 
-# Open the CIF file and read the data.
-data = read_cif(fNameIn)
+    # Make sure an input file was given.
+    if (fNameIn == ''):
+        print_error('no input file given.  Use:  -i filename')
 
 
-# Extract lengths and angles from the CIF file.
-La = float(data['_cell_length_a'])
-Lb = float(data['_cell_length_b'])
-Lc = float(data['_cell_length_c'])
-alpha = radians(float(data['_cell_angle_alpha']))
-beta = radians(float(data['_cell_angle_beta']))
-gamma = radians(float(data['_cell_angle_gamma']))
-volume = 0
-if '_cell_volume' in data:
-    volume = float(data['_cell_volume'])
+    # Open the CIF file and read the data.
+    data = read_cif(fNameIn)
 
 
-# Extract the symmetry operations.  This will be a list of strings such as:
-#    ['x,y,z', 'y,x,2/3-z', '-y,x-y,2/3+z', '-x,-x+y,1/3-z', ... ]
-ops = data['_symmetry_equiv_pos_as_xyz']
-
-# For proper evaluation, we need to convert "2/3" into "2./3", etc. to prevent
-# integer division which would turn e.g. 2/3 into 0.
-for i in range(len(ops)):
-    ops[i] = ops[i].replace("0/", "0./") # also for e.g. 10/9
-    ops[i] = ops[i].replace("1/", "1./")
-    ops[i] = ops[i].replace("2/", "2./")
-    ops[i] = ops[i].replace("3/", "3./")
-    ops[i] = ops[i].replace("4/", "4./")
-    ops[i] = ops[i].replace("5/", "5./")
-    ops[i] = ops[i].replace("6/", "6./")
-    ops[i] = ops[i].replace("7/", "7./")
-    ops[i] = ops[i].replace("8/", "8./")
-    ops[i] = ops[i].replace("9/", "9./")
-#    ops[i] = ops[i].replace("/", "./")
+    # Extract lengths and angles from the CIF file.
+    La = float(data['_cell_length_a'])
+    Lb = float(data['_cell_length_b'])
+    Lc = float(data['_cell_length_c'])
+    alpha = radians(float(data['_cell_angle_alpha']))
+    beta = radians(float(data['_cell_angle_beta']))
+    gamma = radians(float(data['_cell_angle_gamma']))
+    volume = 0
+    if '_cell_volume' in data:
+        volume = float(data['_cell_volume'])
 
 
-# Get the atom labels and coordinates.
-labels = data['_atom_site_label']
-fX = [ float(s) for s in data['_atom_site_fract_x'] ]
-fY = [ float(s) for s in data['_atom_site_fract_y'] ]
-fZ = [ float(s) for s in data['_atom_site_fract_z'] ]
+    # Extract the symmetry operations.  This will be a list of strings such as:
+    #    ['x,y,z', 'y,x,2/3-z', '-y,x-y,2/3+z', '-x,-x+y,1/3-z', ... ]
+    ops = data['_symmetry_equiv_pos_as_xyz']
 
-# Create a list of 4-tuples, where each tuple is an atom:
-#   [ ('Si', 0.4697, 0.0, 0.0),  ('O', 0.4135, 0.2669, 0.1191),  ... ]
-atoms = [ (labels[i], fX[i], fY[i], fZ[i]) for i in range(len(labels)) ]
-
-# Make sure that all atoms lie within the unit cell.  Also convert names such
-# as 'Oa1' into 'O'.
-for i in range(len(atoms)):
-    (name,xn,yn,zn) = atoms[i]
-    xn = (xn + 10.0) % 1.0
-    yn = (yn + 10.0) % 1.0
-    zn = (zn + 10.0) % 1.0
-    name = extract_element(name)
-    atoms[i] = (name,xn,yn,zn)
-
-
-# Update the user.
-logger.info('Loaded a CIF file with {0} atom coordinates and {1} symmetry operations.'.format(len(atoms), len(ops)))
+    # For proper evaluation, we need to convert "2/3" into "2./3", etc. to prevent
+    # integer division which would turn e.g. 2/3 into 0.
+    for i in range(len(ops)):
+        ops[i] = ops[i].replace("0/", "0./") # also for e.g. 10/9
+        ops[i] = ops[i].replace("1/", "1./")
+        ops[i] = ops[i].replace("2/", "2./")
+        ops[i] = ops[i].replace("3/", "3./")
+        ops[i] = ops[i].replace("4/", "4./")
+        ops[i] = ops[i].replace("5/", "5./")
+        ops[i] = ops[i].replace("6/", "6./")
+        ops[i] = ops[i].replace("7/", "7./")
+        ops[i] = ops[i].replace("8/", "8./")
+        ops[i] = ops[i].replace("9/", "9./")
+    #    ops[i] = ops[i].replace("/", "./")
 
 
-# Just for reference, here is a typical example of a CIF file:
-"""
-_cell_length_a 4.916
-_cell_length_b 4.916
-_cell_length_c 5.4054
-_cell_angle_alpha 90
-_cell_angle_beta 90
-_cell_angle_gamma 120
-_cell_volume 113.131
-_exptl_crystal_density_diffrn      2.646
-_symmetry_space_group_name_H-M 'P 32 2 1'
-loop_
-_space_group_symop_operation_xyz
-  'x,y,z'
-  'y,x,2/3-z'
-  '-y,x-y,2/3+z'
-  '-x,-x+y,1/3-z'
-  '-x+y,-x,1/3+z'
-  'x-y,-y,-z'
-loop_
-_atom_site_label
-_atom_site_fract_x
-_atom_site_fract_y
-_atom_site_fract_z
-Si   0.46970   0.00000   0.00000
-O   0.41350   0.26690   0.11910
-"""
+    # Get the atom labels and coordinates.
+    labels = data['_atom_site_label']
+    fX = [ float(s) for s in data['_atom_site_fract_x'] ]
+    fY = [ float(s) for s in data['_atom_site_fract_y'] ]
+    fZ = [ float(s) for s in data['_atom_site_fract_z'] ]
 
+    # Create a list of 4-tuples, where each tuple is an atom:
+    #   [ ('Si', 0.4697, 0.0, 0.0),  ('O', 0.4135, 0.2669, 0.1191),  ... ]
+    atoms = [ (labels[i], fX[i], fY[i], fZ[i]) for i in range(len(labels)) ]
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Use symmetry operations to create the unit cell.
-
-
-# The CIF file consists of a few atom positions plus several "symmetry
-# operations" that indicate the other atom positions within the unit cell.  So
-# using these operations, create copies of the atoms until no new copies can be
-# made.
-
-
-# Two atoms are on top of each other if they are less than "eps" away.
-eps = 0.01  # in Angstrom
-
-
-# For each atom, apply each symmetry operation to create a new atom.
-imax = len(atoms)
-i=0
-while (i < imax):
-
-    label,x,y,z = atoms[i]
-
-    for op in ops:
-
-        # Python is awesome: calling e.g. eval('x,y,1./2+z') will convert the
-        # string into a 3-tuple using the current values for x,y,z!
-        xn,yn,zn = eval(op)
-
-        # Make sure that the new atom lies within the unit cell.
+    # Make sure that all atoms lie within the unit cell.  Also convert names such
+    # as 'Oa1' into 'O'.
+    for i in range(len(atoms)):
+        (name,xn,yn,zn) = atoms[i]
         xn = (xn + 10.0) % 1.0
         yn = (yn + 10.0) % 1.0
         zn = (zn + 10.0) % 1.0
-
-        # Check if the new position is actually new, or the same as a previous
-        # atom.
-        new_atom = True
-        for at in atoms:
-            if (abs(at[1]-xn) < eps  and  abs(at[2]-yn) < eps  and  abs(at[3]-zn) < eps):
-                new_atom = False
-
-                # Check that this is the same atom type.
-                if (at[0] != label):
-                    print_error('invalid CIF file: atom of type %s overlaps with atom of type %s' % (at[0],label))
-
-        # If the atom is new, add it to the list!
-        if (new_atom):
-            atoms.append( (label,xn,yn,zn) )  # add a 4-tuple
+        name = extract_element(name)
+        atoms[i] = (name,xn,yn,zn)
 
 
-    # Update the loop iterator.
-    i = i + 1
+    # Update the user.
+    logger.info('Loaded a CIF file with {0} atom coordinates and {1} symmetry operations.'.format(len(atoms), len(ops)))
+
+
+    # Just for reference, here is a typical example of a CIF file:
+    """
+    _cell_length_a 4.916
+    _cell_length_b 4.916
+    _cell_length_c 5.4054
+    _cell_angle_alpha 90
+    _cell_angle_beta 90
+    _cell_angle_gamma 120
+    _cell_volume 113.131
+    _exptl_crystal_density_diffrn      2.646
+    _symmetry_space_group_name_H-M 'P 32 2 1'
+    loop_
+    _space_group_symop_operation_xyz
+      'x,y,z'
+      'y,x,2/3-z'
+      '-y,x-y,2/3+z'
+      '-x,-x+y,1/3-z'
+      '-x+y,-x,1/3+z'
+      'x-y,-y,-z'
+    loop_
+    _atom_site_label
+    _atom_site_fract_x
+    _atom_site_fract_y
+    _atom_site_fract_z
+    Si   0.46970   0.00000   0.00000
+    O   0.41350   0.26690   0.11910
+    """
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Use symmetry operations to create the unit cell.
+
+
+    # The CIF file consists of a few atom positions plus several "symmetry
+    # operations" that indicate the other atom positions within the unit cell.  So
+    # using these operations, create copies of the atoms until no new copies can be
+    # made.
+
+
+    # Two atoms are on top of each other if they are less than "eps" away.
+    eps = 0.01  # in Angstrom
+
+
+    # For each atom, apply each symmetry operation to create a new atom.
     imax = len(atoms)
+    i=0
+    while (i < imax):
+
+        label,x,y,z = atoms[i]
+
+        for op in ops:
+
+            # Python is awesome: calling e.g. eval('x,y,1./2+z') will convert the
+            # string into a 3-tuple using the current values for x,y,z!
+            xn,yn,zn = eval(op)
+
+            # Make sure that the new atom lies within the unit cell.
+            xn = (xn + 10.0) % 1.0
+            yn = (yn + 10.0) % 1.0
+            zn = (zn + 10.0) % 1.0
+
+            # Check if the new position is actually new, or the same as a previous
+            # atom.
+            new_atom = True
+            for at in atoms:
+                if (abs(at[1]-xn) < eps  and  abs(at[2]-yn) < eps  and  abs(at[3]-zn) < eps):
+                    new_atom = False
+
+                    # Check that this is the same atom type.
+                    if (at[0] != label):
+                        print_error('invalid CIF file: atom of type %s overlaps with atom of type %s' % (at[0],label))
+
+            # If the atom is new, add it to the list!
+            if (new_atom):
+                atoms.append( (label,xn,yn,zn) )  # add a 4-tuple
 
 
-# Sort the atoms according to type alphabetically.
-atoms = sorted(atoms, key=lambda at: at[0])
-atoms.reverse()
+        # Update the loop iterator.
+        i = i + 1
+        imax = len(atoms)
 
 
-# Done with creating the unit cell.  Update the user.
-print('Created a unit cell consisting of %d atoms.' % len(atoms))
-
-print('Fractional coordinates:')
-for atom in atoms:
-    print('%10s  %.3f  %.3f  %.3f' % atom)
+    # Sort the atoms according to type alphabetically.
+    atoms = sorted(atoms, key=lambda at: at[0])
+    atoms.reverse()
 
 
+    # Done with creating the unit cell.  Update the user.
+    logger.info('Created a unit cell consisting of %d atoms.' % len(atoms))
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Create a larger box made of several unit cells: the super cell.
-
-
-atomlist = []
-
-for atom in atoms:
-
-    # Get label and fractional coordinates.
-    label,xf,yf,zf = atom
-
-    for i in range(Nx):
-            x = i+xf
-
-            for j in range(Ny):
-                y = j+yf
-
-                for k in range(Nz):
-                    z = k+zf
-                    atomlist.append( (label,x,y,z) ) # add 4-tuple
-
-atoms = atomlist
+    logger.info('Fractional coordinates:')
+    for atom in atoms:
+        logger.info('%10s  %.3f  %.3f  %.3f' % atom)
 
 
-# If the user wants us to create a copy of the current CIF file, with
-# additional atoms, then do that.  Note that the atoms here have *fractional*
-# coordinates!
-if (fNameOut.endswith('.cif')):
-    
-    write_cif(fNameIn, atoms, fNameOut)
 
-    print('Done writing extended CIF file (%d atoms in total).' % len(atoms))
-    exit(0)
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Create a larger box made of several unit cells: the super cell.
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Convert the fractional coordinates into real coordinates.
+    atomlist = []
+
+    for atom in atoms:
+
+        # Get label and fractional coordinates.
+        label,xf,yf,zf = atom
+
+        for i in range(Nx):
+                x = i+xf
+
+                for j in range(Ny):
+                    y = j+yf
+
+                    for k in range(Nz):
+                        z = k+zf
+                        atomlist.append( (label,x,y,z) ) # add 4-tuple
+
+    atoms = atomlist
 
 
-# The primitive vectors a,b,c are such that 
-#
-#   cos(alpha) = b.c / |b||c|
-#   cos(beta)  = a.c / |a||c|
-#   cos(gamma) = a.b / |a||b|
-#
-# with the convention
-#
-#   a = La*xhat
-#   b = bx*xhat + by*yhat
-#   c = cx*xhat + cy*yhat + cz*zhat
-#
-cosa = cos(alpha)
-sina = sin(alpha)
-cosb = cos(beta)
-sinb = sin(beta)
-cosg = cos(gamma)
-sing = sin(gamma)
+    # If the user wants us to create a copy of the current CIF file, with
+    # additional atoms, then do that.  Note that the atoms here have *fractional*
+    # coordinates!
+    ##if (fNameOut.endswith('.cif')):
 
-cosa2 = cosa * cosa
-cosb2 = cosb * cosb
-sing2 = sing * sing
+    ##    write_cif(fNameIn, atoms, fNameOut)
 
-ax = La
-
-bx = Lb * cosg
-by = Lb * sing
-
-cx = Lc * cosb
-cy = Lc * (cosa - cosg*cosb) / sing
-cz = Lc * sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
+    ##    logger.info('Done writing extended CIF file (%d atoms in total).' % len(atoms))
+    ##    exit(0)
 
 
-# Use the volume to check if we did the vectors right.
-V = ax*by*cz
-if volume != 0 and ( abs(V - volume) > 0.1):
-    print_error('volume does not match that calculated from primitive vectors')
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Convert the fractional coordinates into real coordinates.
 
 
-# Check if we have a rectangular box.
-if (bx < eps  and  cx < eps  and cy < eps):
-    make_rect_box = True
+    # The primitive vectors a,b,c are such that 
+    #
+    #   cos(alpha) = b.c / |b||c|
+    #   cos(beta)  = a.c / |a||c|
+    #   cos(gamma) = a.b / |a||b|
+    #
+    # with the convention
+    #
+    #   a = La*xhat
+    #   b = bx*xhat + by*yhat
+    #   c = cx*xhat + cy*yhat + cz*zhat
+    #
+    cosa = cos(alpha)
+    sina = sin(alpha)
+    cosb = cos(beta)
+    sinb = sin(beta)
+    cosg = cos(gamma)
+    sing = sin(gamma)
+
+    cosa2 = cosa * cosa
+    cosb2 = cosb * cosb
+    sing2 = sing * sing
+
+    ax = La
+
+    bx = Lb * cosg
+    by = Lb * sing
+
+    cx = Lc * cosb
+    cy = Lc * (cosa - cosg*cosb) / sing
+    cz = Lc * sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
 
 
-# Update the user.
-print('The primitive unit cell vectors are:')
-print('   a = [%6.4f, %6.4f, %6.4f]' % (ax,0,0))
-print('   b = [%6.4f, %6.4f, %6.4f]' % (bx,by,0))
-print('   c = [%6.4f, %6.4f, %6.4f]' % (cx,cy,cz))
-print('This gives a volume of %f A^3 (CIF file indicates it is %f A^3)' % (V,volume))
+    # Use the volume to check if we did the vectors right.
+    V = ax*by*cz
+    if volume != 0 and ( abs(V - volume) > 0.1):
+        print_error('volume does not match that calculated from primitive vectors')
 
 
-# Determine the box size.
-Lx = Nx * La
-Ly = Ny * Lb
-Lz = Nz * Lc
+    # Check if we have a rectangular box.
+    if (bx < eps  and  cx < eps  and cy < eps):
+        make_rect_box = True
 
 
-for i in range(len(atoms)):
+    # Update the user.
+    logger.info('The primitive unit cell vectors are:')
+    logger.info('   a = [%6.4f, %6.4f, %6.4f]' % (ax,0,0))
+    logger.info('   b = [%6.4f, %6.4f, %6.4f]' % (bx,by,0))
+    logger.info('   c = [%6.4f, %6.4f, %6.4f]' % (cx,cy,cz))
+    logger.info('This gives a volume of %f A^3 (CIF file indicates it is %f A^3)' % (V,volume))
 
-    # Get label and fractional coordinates.
-    label,xf,yf,zf = atoms[i]
 
-    xa = xf * ax  # contribution of a-vector to the x-coordinate of this atom
-    #ya = 0       # a-vector has no y-component, so does not affect y of atom
-    #za = 0       # a-vector has no z-component, so does not affect z of atom
-    
-    xb = yf * bx  # contribution of b-vector to the x-coordinate of this atom
-    yb = yf * by  # contribution of b-vector to the y-coordinate of this atom
-    #zb = 0       # b-vector has no z-component, so does not affect z of atom
+    # Determine the box size.
+    Lx = Nx * La
+    Ly = Ny * Lb
+    Lz = Nz * Lc
 
-    xc = zf * cx  # contribution of c-vector to the x-coordinate of this atom
-    yc = zf * cy  # contribution of c-vector to the y-coordinate of this atom
-    zc = zf * cz  # contribution of c-vector to the z-coordinate of this atom
 
-    # Add all contributions.
-    xn = xa + xb + xc
-    yn = yb + yc
-    zn = zc
+    for i in range(len(atoms)):
 
+        # Get label and fractional coordinates.
+        label,xf,yf,zf = atoms[i]
+
+        xa = xf * ax  # contribution of a-vector to the x-coordinate of this atom
+        #ya = 0       # a-vector has no y-component, so does not affect y of atom
+        #za = 0       # a-vector has no z-component, so does not affect z of atom
+
+        xb = yf * bx  # contribution of b-vector to the x-coordinate of this atom
+        yb = yf * by  # contribution of b-vector to the y-coordinate of this atom
+        #zb = 0       # b-vector has no z-component, so does not affect z of atom
+
+        xc = zf * cx  # contribution of c-vector to the x-coordinate of this atom
+        yc = zf * cy  # contribution of c-vector to the y-coordinate of this atom
+        zc = zf * cz  # contribution of c-vector to the z-coordinate of this atom
+
+        # Add all contributions.
+        xn = xa + xb + xc
+        yn = yb + yc
+        zn = zc
+
+        if (make_rect_box):
+            xn = (xn + Lx) % Lx
+            yn = (yn + Ly) % Ly
+            zn = (zn + Lz) % Lz
+
+        atoms[i] = (label, xn, yn, zn)
+
+
+    # Determine the box-vector.
     if (make_rect_box):
-        xn = (xn + Lx) % Lx
-        yn = (yn + Ly) % Ly
-        zn = (zn + Lz) % Lz
+        box = (Lx, Ly, Lz)
+    else:
+        box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
 
-    atoms[i] = (label, xn, yn, zn)
-
-
-# Determine the box-vector.
-if (make_rect_box):
-    box = (Lx, Ly, Lz)
-else:
-    box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
+    return atoms, box
 
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# Create the output file.
+def write(fNameOut, atoms, box, fNameIn=""):
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    # Create the output file.
 
-try:
-    fOut = open(fNameOut, 'w')
+    try:
+        fOut = open(fNameOut, 'w')
 
-    if (fNameOut.endswith('.xyz')):
-        write_xyz(atoms, box, fOut)
+        if (fNameOut.endswith('.xyz')):
+            write_xyz(atoms, box, fOut)
 
-    elif (fNameOut.endswith('.lammpstrj')):
-        write_lammpstrj(atoms, box, fOut)
+        elif (fNameOut.endswith('.lammpstrj')):
+            write_lammpstrj(atoms, box, fOut)
 
-    elif (fNameOut.endswith('.gro')):
-        write_gro(atoms, box, fOut)
+        elif (fNameOut.endswith('.gro')):
+            write_gro(atoms, box, fOut)
 
-except:
-    print_error('Failed to write to output file')
+        elif (fNameOut.endswith('.cif')):
+            write_cif(fNameIn, atoms, fNameOut)
 
-
-print('Created output file %s (%d atoms in total).' % (fNameOut, len(atoms)))
-fOut.close()
-
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    except:
+        print_error('Failed to write to output file')
 
 
+    logger.info('Created output file %s (%d atoms in total).' % (fNameOut, len(atoms)))
+    fOut.close()
+
+
+    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+def main():
+    fNameIn, fNameOut, Nbox, make_rect_box = parse_commandline()
+    atoms, box = read_and_process(fNameIn, fNameOut, Nbox, make_rect_box)
+    write(fNameOut, atoms, box, fNameIn=fNameIn)
+
+if __name__ == "__main__":
+    main()

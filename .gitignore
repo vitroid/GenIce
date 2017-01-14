@@ -8,3 +8,5 @@ Prepare/*
 *pyc
 
 log.txt
+
+*.cif
