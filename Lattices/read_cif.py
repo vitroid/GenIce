@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2
 #
 # Python script that converts a CIF file (Crystallographic Information File)
 # into a configuration file for Gromacs or LAMMPS.
@@ -31,8 +31,18 @@
 #   website how to use it in a LAMMPS simulation.
 #
 # =============================================================================
+# Modified for GenIce by Masakazu Matsumoto 2017.
+#
+#
+#
+#read_cif is written in Python3 style, while pycifrw is still in python2 style, so we assume read_cif is also executed by python2.
+#Matsumoto add the __future__ feature extension here.
+# =============================================================================
+from __future__ import print_function
 
 import sys
+
+import logging
 
 from math import *
 
@@ -40,8 +50,29 @@ from math import *
 sys.path.insert(0, 'pycifrw-4.1.1-min')
 from CifFile import CifFile, CifBlock
 
+debug = True
+if debug:
+    logging.basicConfig(level=logging.DEBUG,
+                        #filename='log.txt',
+                        format="%(asctime)s %(levelname)s %(message)s")
+else:
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger()
 
 # =============================================================================
+# =============================================================================
+
+def float_with_error(x):
+    """
+    some value in cif accompanies error like "1.234(5)
+    """
+    pos = x.find("(")
+    if pos >= 0:
+        x = x[:pos]
+    return float(x)
+
+
 # =============================================================================
 
 # Tell the user how to use this script, and exits the script.
@@ -84,9 +115,7 @@ def print_usage():
 # Shows an error message and the usage.
 def print_error(msg):
 
-    print('')
-    print('    ERROR:  %s' % msg)
-    print('')
+    logger.error('{0}'.format(msg))
     print_usage()
 
 
@@ -111,7 +140,7 @@ def extract_element(label):
     if (label[0] in elem1):
         return label[0]
 
-    print('WARNING: could not convert "%s" into element name!' % label)
+    logger.warn('could not convert "%s" into element name!' % label)
     return label
 
 # =============================================================================
@@ -400,7 +429,7 @@ def read_cif(fNameIn):
             stripped = line.strip()
             if (len(stripped) > 0):  lines.append(stripped)
     except:
-        print "Failed to open CIF file '{0}'".format(fNameIn)
+        logger.error("Failed to open CIF file '{0}'".format(fNameIn))
         sys.exit()
 
     # Use the CifFile parser to extract the data.  Although there might be
@@ -415,14 +444,14 @@ def read_cif(fNameIn):
     try:
 
         # Extract some parameters, and convert them to floats.
-        data['_cell_length_a']    = float(data_block['_cell_length_a'])
-        data['_cell_length_b']    = float(data_block['_cell_length_b'])
-        data['_cell_length_c']    = float(data_block['_cell_length_c'])
-        data['_cell_angle_alpha'] = float(data_block['_cell_angle_alpha'])
-        data['_cell_angle_beta']  = float(data_block['_cell_angle_beta'])
-        data['_cell_angle_gamma'] = float(data_block['_cell_angle_gamma'])
-        data['_cell_volume']      = float(data_block['_cell_volume'])
-
+        data['_cell_length_a']    = float_with_error(data_block['_cell_length_a'])
+        data['_cell_length_b']    = float_with_error(data_block['_cell_length_b'])
+        data['_cell_length_c']    = float_with_error(data_block['_cell_length_c'])
+        data['_cell_angle_alpha'] = float_with_error(data_block['_cell_angle_alpha'])
+        data['_cell_angle_beta']  = float_with_error(data_block['_cell_angle_beta'])
+        data['_cell_angle_gamma'] = float_with_error(data_block['_cell_angle_gamma'])
+        if data_block.has_key('_cell_volume'):
+            data['_cell_volume']      = float_with_error(data_block['_cell_volume'])
 
         # Get the symbolic operations that define the space group.  In a CIF file
         # that's the part that looks like:
@@ -446,7 +475,7 @@ def read_cif(fNameIn):
             try:
                 xyz = data_block["_space_group_symop_operation_xyz"]
             except KeyError:
-                print "Missing item in CIF file: need either '_symmetry_equiv_pos_as_xyz' or '_space_group_symop_operation_xyz'."
+                logger.error("Missing item in CIF file: need either '_symmetry_equiv_pos_as_xyz' or '_space_group_symop_operation_xyz'.")
                 sys.exit()
 
 
@@ -466,20 +495,20 @@ def read_cif(fNameIn):
 
         data['_atom_site_fract_x'] = []
         for str_x in data_block['_atom_site_fract_x']:
-            data['_atom_site_fract_x'].append( float(str_x.split('(')[0]) )
+            data['_atom_site_fract_x'].append( float_with_error(str_x))
 
         data['_atom_site_fract_y'] = []
         for str_y in data_block['_atom_site_fract_y']:
-            data['_atom_site_fract_y'].append( float(str_y.split('(')[0]) )
+            data['_atom_site_fract_y'].append( float_with_error(str_y))
 
         data['_atom_site_fract_z'] = []
         for str_z in data_block['_atom_site_fract_z']:
-            data['_atom_site_fract_z'].append( float(str_z.split('(')[0]) )
+            data['_atom_site_fract_z'].append( float_with_error(str_z))
 
     
     except KeyError as e:
-        print "Error!  Missing item in file."
-        print e
+        logger.error("Error!  Missing item in file.")
+        logger.error(e)
         sys.exit()
 
 
@@ -597,7 +626,9 @@ Lc = float(data['_cell_length_c'])
 alpha = radians(float(data['_cell_angle_alpha']))
 beta = radians(float(data['_cell_angle_beta']))
 gamma = radians(float(data['_cell_angle_gamma']))
-volume = float(data['_cell_volume'])
+volume = 0
+if '_cell_volume' in data:
+    volume = float(data['_cell_volume'])
 
 
 # Extract the symmetry operations.  This will be a list of strings such as:
@@ -642,7 +673,7 @@ for i in range(len(atoms)):
 
 
 # Update the user.
-print 'Loaded a CIF file with %d atom coordinates and %d symmetry operations.' % (len(atoms), len(ops))
+logger.info('Loaded a CIF file with {0} atom coordinates and {1} symmetry operations.'.format(len(atoms), len(ops)))
 
 
 # Just for reference, here is a typical example of a CIF file:
@@ -815,7 +846,7 @@ cz = Lc * sqrt( 1 - (cosa2 + cosb2 - 2*cosg*cosb*cosa) / sing2 )
 
 # Use the volume to check if we did the vectors right.
 V = ax*by*cz
-if ( abs(V - volume) > 0.1):
+if volume != 0 and ( abs(V - volume) > 0.1):
     print_error('volume does not match that calculated from primitive vectors')
 
 
