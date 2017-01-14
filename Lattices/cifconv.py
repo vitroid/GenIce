@@ -15,11 +15,14 @@ def shortest_distance(atoms):
 
 
 # python format for GenIce.
-def write_py(atoms, box, f, elems):
+def write_py(atoms, box, f, matchfunc=None):
     filtered = []
-    for a in atoms:
-        if a[0] in elems:
-            filtered.append(a)
+    if matchfunc is not None:
+        for a in atoms:
+            if matchfunc(a[0]):
+                filtered.append(a)
+    else:
+        filtered = atoms
     dmin = shortest_distance(filtered)
     scale = 2.76 / dmin
 
@@ -42,11 +45,9 @@ def write_py(atoms, box, f, elems):
     s += 'density = {0}\n'.format(density)
     f.write(s)
     
-
-
 if __name__ == "__main__":
     fNameIn, fNameOut, Nbox, make_rect_box = read_cif.parse_commandline(filetypes = ['.py',])
     atoms, box = read_cif.read_and_process(fNameIn, fNameOut, Nbox, make_rect_box)
     fOut = open(fNameOut, "w")
-    write_py(atoms, box, fOut, ["T1", "T2", "T3", "T4", "T5", "T6", "T7"])
+    write_py(atoms, box, fOut, matchfunc=lambda x: x[0] == "T")
     
