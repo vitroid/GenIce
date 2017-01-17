@@ -12,3 +12,7 @@ BCT.py: BCT.cif
 %.cif:
 	curl http://asia.iza-structure.org/IZA-SC/cif/$@ > $@
 
+prepare:
+	[ -e pycifrw ] || git clone https://bitbucket.org/jamesrhester/pycifrw.git
+	cd pycifrw && git checkout python3 && python3 setup.py install
+
