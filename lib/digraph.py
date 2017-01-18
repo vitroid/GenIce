@@ -9,6 +9,103 @@ import networkx
 import random
 import numpy as np
 import logging
+import yaplot as yp
+import pairlist as pl
+
+#Dijkstra
+
+
+import heapq
+
+def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
+    while len(L) > 0:
+        yield L[0]
+        L = L[1]
+
+#modified from http://code.activestate.com/recipes/119466/
+#for networkx
+#Extended for multiple goals
+def shortest_path(G, start, ends):
+    q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
+    visited = set()       # Visited vertices.
+    while True:
+        try:
+            ppap = heapq.heappop(q)
+        except IndexError:
+            return None
+        (cost, v1, path) = ppap
+        if v1 not in visited:
+            visited.add(v1)
+            if v1 in ends:
+                return list(flatten(path))[::-1] + [v1]
+            path = (v1, path)
+            for v2 in G[v1]:
+                if v2 not in visited:
+                    heapq.heappush(q, (cost + 1, v2, path))
+
+
+
+
+
+
+
+
+class YaplotDraw(networkx.DiGraph):
+    def __init__(self, coord, cell, data=None):
+        super().__init__(data)
+        self.coord = coord
+        self.cell  = cell
+
+    def draw_edge(self,i,j):
+        ci = self.coord[i]  #0..1
+        cj = self.coord[j]
+        d = cj - ci
+        d -= np.floor( d + 0.5 )
+        xi = np.dot(ci,self.cell)
+        xj = np.dot(ci+d,self.cell)
+        if self.has_edge(i,j):
+            return yp.Color(4) + yp.ArrowType(2) + yp.Arrow(xi, xj)
+        elif self.has_edge(j,i):
+            return yp.Color(5) + yp.ArrowType(2) + yp.Arrow(xj, xi)
+        else:
+            return yp.Color(0) + yp.Line(xi, xj)
+            
+
+    def draw_cell(self):
+        s = yp.Color(2)
+        ex = np.array([1.,0.,0.])
+        ey = np.array([0.,1.,0.])
+        ez = np.array([0.,0.,1.])
+        x = np.dot(ex,self.cell)
+        y = np.dot(ey,self.cell)
+        z = np.dot(ez,self.cell)
+        zero = np.zeros_like(x)
+        for vx in (zero, x):
+            for vy in (zero, y):
+                s += yp.Line(vx+vy,vx+vy+z)
+        for vx in (zero, x):
+            for vz in (zero, z):
+                s += yp.Line(vx+vz,vx+y+vz)
+        for vz in (zero, z):
+            for vy in (zero, y):
+                s += yp.Line(vy+vz,x+vy+vz)
+        return s
+
+    def draw_path(self,path):
+        s = yp.Color(3)
+        for i in range(len(path)-1):
+            j,k = path[i],path[i+1]
+            s += self.draw_edge(j,k)
+        return s
+    
+
+    def draw_all(self):
+        s = yp.Color(3)
+        s += self.draw_cell()
+        for i,j in self.edges_iter():
+            s += self.draw_edge(i,j)
+        return s
+
 
 class IceGraph(networkx.DiGraph):
     #def __init__(data=None):
@@ -20,6 +117,22 @@ class IceGraph(networkx.DiGraph):
             x,y = pair[0:2]
             self.add_edge(x,y)
 
+    
+    def invert_edge(self,from_,to_):
+        """
+        also invert the attribute vector
+        """
+        if not self.has_edge(from_, to_):
+            logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
+        self.remove_edge(from_,to_)
+        self.add_edge(to_,from_)
+
+        
+    def invert_path(self, path):
+        for i in range(len(path)-1):
+            f = path[i]
+            t = path[i+1]
+            self.invert_edge(f,t) #also invert the attribute vector
             
     def _goahead(self,node,marked,order):
         while not marked[node]:
@@ -95,23 +208,61 @@ class IceGraph(networkx.DiGraph):
                 logger.error("Non Z4 vertex: {0} {1} {2} {3}".format(i,self.degree(i),self.successors(i),self.predecessors(i)))
         return defects
 
+
+    def excess_in_defects(self):
+        """
+        Reply the list of defective vertices.
+        """
+        for i in range(self.number_of_nodes()):
+            if self.in_degree(i) > 2:
+                yield i
+
+    def excess_out_defects(self):
+        """
+        Reply the list of defective vertices.
+        """
+        for i in range(self.number_of_nodes()):
+            if self.out_degree(i) > 2:
+                yield i
+
+    
     def purge_ice_defects(self):
         logger = logging.getLogger()
         if not self.isZ4():
             logger.error("Some water molecules do not have four HBs.")
             sys.exit(1)
         defects = self.defects()
+        target = 1<<24
+        while len(defects) < target:
+            target //= 2
         while len(defects)>0:
             self.purgedefects(defects)
+            if len(defects) <= target:
+                logger.debug("Defects remain: {0}".format(len(defects)))
+                target //= 2
         if len(self.defects()) != 0:
             logger.error("Some water molecules do not obey the ice rule.")
             sys.exit(1)
+
+
+                
+    def is_homodromic(self, path):
+        for i in range(len(path)-1):
+            if not self.has_edge(path[i], path[i+1]):
+                return False
+        return True
+            
+
+            
 
 
 class SpaceIceGraph(IceGraph):
     """
     Digraph with geometrical info
     """
+    XAXIS=1
+    YAXIS=2
+    ZAXIS=3
     def __init__(self, data=None, coord=None, pbc=True):
         super(SpaceIceGraph, self).__init__(data)
         if coord is not None:
@@ -121,6 +272,7 @@ class SpaceIceGraph(IceGraph):
         """
         add vector attributes to each edge
         """
+        self.coord = coord #Shall it be copied?
         for i,j,k in self.edges_iter(data=True):
             vec = coord[j] - coord[i]
             if pbc:
@@ -131,6 +283,8 @@ class SpaceIceGraph(IceGraph):
         """
         normally zero.
         Non-zero when it goes across the cell.
+
+        the first element of the order must be the same as the last one.
         """
         delta = np.zeros(3)
         for i in range(len(order)-1):
@@ -141,41 +295,159 @@ class SpaceIceGraph(IceGraph):
         """
         also invert the attribute vector
         """
+        if not self.has_edge(from_, to_):
+            logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
         v = self.get_edge_data(from_,to_)["vector"]
         self.remove_edge(from_,to_)
         self.add_edge(to_,from_,vector=-v)
 
 
+        
     def net_polarization(self):
         dipole = np.zeros(3)
         for i,j,k in self.edges_iter(data=True):
             dipole += k["vector"]
         return dipole
 
-
-    #This is too slow for a big system.  Improve it.
-    def depolarize(self):
-        """
-        It assumes vector attribute is set
-        """
+    def vector_check(self):
         logger = logging.getLogger()
-        dipole = self.net_polarization()
-        logger.debug("Initial dipole: {0}".format(dipole))
-        s0 = np.dot(dipole, dipole)
-        #In the following calculations, there must be error allowances.
-        while s0 > 0.1:
-            path = self.homodromiccycle()
-            pathdipole = self.dipole_of_a_cycle(path)
-            newdipole = dipole - 2.0 * pathdipole
-            logger.debug("Updated dipole: {0}".format(newdipole))
-            #logger.debug("Debugged dipole: {0}".format(self.polarization()))
-            s1 = np.dot(newdipole, newdipole)
-            if s1 < s0:
-                #accept the inversion
-                for i in range(len(path)-1):
-                    f = path[i]
-                    t = path[i+1]
-                    self.invert_edge(f,t) #also invert the attribute vector
-                s0 = s1
-                dipole -= 2.0 * pathdipole
-                logger.debug("Score: {0}".format(s0))
+        for i,j,k in self.edges_iter(data=True):
+            if k is None:
+                logger.error("The edge ({0},{1}) has no vector.".format(i,j))
+                
+
+
+def find_apsis(coord, cell, distance, vertex, axis):
+    logger = logging.getLogger()
+    grid = pl.determine_grid(cell, distance)
+    logger.debug("Grid: {0}".format(grid))
+    #for Z case
+    apsis = coord[vertex] + axis*0.5
+    #find the atoms near the apsis
+    pairs = pl.pairlist_fine_hetero([apsis,], coord, distance, cell, grid, distance=True)
+    logger.debug("Neighbors of the apsis: {0}".format(pairs))
+    min_d = 1e99
+    min_a = -1
+    for i,j,d in pairs:
+        if d < min_d:
+            min_a = j
+            min_d = d
+    return min_a
+        
+
+def estimate_edge_length(spaceicegraph, cell, vertex):
+    logger = logging.getLogger()
+    for nei in spaceicegraph.edge[vertex]:
+        logger.debug("Nei of {0}: {1}".format(vertex, nei))
+        break
+    delta = spaceicegraph.coord[vertex] - spaceicegraph.coord[nei]
+    delta -= np.floor( delta + 0.5 )
+    delta = np.dot(delta, cell)
+    distance = np.dot(delta,delta)**0.5
+    logger.debug("Distance={0}".format(distance))
+    return distance
+
+
+def traversing_cycle(spaceicegraph, cell, axis, draw=None):
+    """
+    Find a farthest atom from the given atom, and
+    make the shortest paths between them.
+    """
+    logger = logging.getLogger()
+    while True:
+        vertex = random.randint(0,spaceicegraph.number_of_nodes()-1)
+        distance = estimate_edge_length(spaceicegraph, cell, vertex)
+        apsis = find_apsis(spaceicegraph.coord, cell, distance*1.3, vertex, axis)
+        logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
+        path1 = shortest_path(spaceicegraph, vertex, [apsis,])
+        #logger.info("Path1: {0}".format(path1))
+        logger.debug("Dipole of the path1: {0}".format(spaceicegraph.dipole_of_a_cycle(path1)))
+        path2 = shortest_path(spaceicegraph, apsis, [vertex,])
+        #logger.info("Path2: {0}".format(path2))
+        logger.debug("Dipole of the path2: {0}".format(spaceicegraph.dipole_of_a_cycle(path2)))
+        #they should make a cycle.
+        #It should go across the cell with a probability of 0.5.
+        #It should g across the cell in an expected direction
+        #with a probability of 0.25.
+        #So we need some loops to get the expected one.
+        cycle = path1 + path2[1:]
+        d = spaceicegraph.dipole_of_a_cycle(cycle) - axis
+        rr = np.dot(d,d)
+        if rr < 0.1:
+            break
+    logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_of_a_cycle(cycle)))
+    return cycle
+
+def depolarize(spaceicegraph, cell, draw=None):
+    """
+    Find a farthest atom (apsis) from the given atom, and
+    make the shortest paths between them.
+
+    It works much better than depolarize()
+    """
+    logger = logging.getLogger()
+    logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
+    logger.info("defects: {0}".format(spaceicegraph.defects()))
+    spaceicegraph.vector_check()
+    s = "" # for yaplot
+    while True:
+        net_polar = spaceicegraph.net_polarization()
+        logger.info("Net polarization: {0}".format(net_polar))
+        if np.dot(net_polar, net_polar) < 0.1:
+            break
+        if net_polar[0] > 0.5:
+            logger.debug("Depolarize +X")
+            axis = np.array([+1.0, 0.0, 0.0])
+        elif net_polar[0] < -0.5:
+            logger.debug("Depolarize -X")
+            axis = np.array([-1.0, 0.0, 0.0])
+        elif net_polar[1] > 0.5:
+            logger.debug("Depolarize +Y")
+            axis = np.array([0.0,+1.0, 0.0])
+        elif net_polar[1] < -0.5:
+            logger.debug("Depolarize -Y")
+            axis = np.array([0.0,-1.0, 0.0])
+        elif net_polar[2] > 0.5:
+            logger.debug("Depolarize +Z")
+            axis = np.array([0.0, 0.0,+1.0])
+        elif net_polar[2] < -0.5:
+            logger.debug("Depolarize -Z")
+            axis = np.array([0.0, 0.0,-1.0])
+        cycle = traversing_cycle(spaceicegraph, cell, axis, draw)
+        if cycle is not None:
+            edges = [(cycle[i], cycle[i+1]) for i in range(len(cycle)-1)]
+            if len(edges) != len(set(edges)):
+                logger.debug("The cycle is entangled.")
+            else:
+                if draw is not None:
+                    s += yp.Size(0.03)
+                    s += draw.draw_cell()
+                    s += draw.draw_path(cycle)
+                    s += yp.NewPage()
+                spaceicegraph.invert_path(cycle)
+                spaceicegraph.vector_check()
+    logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
+    logger.info("defects: {0}".format(spaceicegraph.defects()))
+    return s
+
+
+def purge_ice_defects(icegraph):
+    """
+    This is faster than the method in icegraph, but
+    it also polarizes the graph in the course of purging.
+    """
+    logger = logging.getLogger()
+    while len(icegraph.defects()) > 0:
+        logger.info("# of defects: {0}".format(len(icegraph.defects())))
+        ins = set(icegraph.excess_in_defects())
+        for out in icegraph.excess_out_defects():
+            while icegraph.out_degree(out) > 2:
+                path = shortest_path(icegraph, out, ins)
+                if path is not None:
+                    logger.debug("# of in defects: {0}".format(len(ins)))
+                    icegraph.invert_path(path)
+                    end = path[-1]
+                    if icegraph.in_degree(end) == 2:
+                        ins.remove(end)
+                #logger.debug("IN:{0}".format(len(set(icegraph.excess_in_defects()))))
+                #logger.debug("OUT:{0}".format(len(set(icegraph.excess_out_defects()))))

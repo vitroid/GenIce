@@ -78,7 +78,8 @@ def replicate_graph(graph, positions, rep):
 
 
 
-def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False):
+def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False):
+    logger = logging.getLogger()
     lat     = __import__(lattice_type)
     lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
@@ -94,7 +95,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
                              (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
         lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
     else:
-        logging.getLogger().error("unknown cell type: {0}".format(lat.celltype))
+        logger.error("unknown cell type: {0}".format(lat.celltype))
         sys.exit(1)
 
     #express molecular positions in the coordinate relative to the cell
@@ -117,13 +118,13 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
                     i,j = j,i
                 pairs.add((i,j))
     except AttributeError:
-        logging.getLogger().error("Graph is not defined.")
+        logger.info("Graph is not defined.")
 
     #Bond length threshold
     try:
         bondlen = lat.bondlen
     except AttributeError:
-        logging.getLogger().error("Bond length is not defined.")
+        logger.info("Bond length is not defined.")
 
 
     #set density
@@ -171,27 +172,41 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
 
     #Test
     if graph.number_of_edges() != len(reppositions)*2:
-        logging.getLogger().error("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
+        logger.error("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
         sys.exit(1)
 
 
     #make them obey the ice rule
-    logging.getLogger().info("Start making the bonds to obey the ice rules.")
+    logger.info("Start making the bonds obey the ice rules.")
     graph.purge_ice_defects()
-    logging.getLogger().info("End making the bonds to obey the ice rules.")
+    #dg.purge_ice_defects(graph)
+    #sys.exit(0)
+    logger.info("End making the bonds obey the ice rules.")
 
 
     #Rearrange HBs to purge the total dipole moment.
-    logging.getLogger().info("Start zeroing the total dipole moment.")
+    logger.info("Start depolarization.")
     spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
-    spacegraph.depolarize()
-    logging.getLogger().info("End zeroing the total dipole moment.")
+    #spacegraph.depolarize()
+    draw = None
+    if yaplot:
+        draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
+    yapresult  = dg.depolarize(spacegraph, lat.cell, draw=draw)
+    #yapresult  = dg.depolarize(spacegraph,draw=draw)
+    logger.info("End depolarization.")
 
 
     #determine the orientations of the water molecules based on edge directions.
     rotmatrices = orientations(reppositions, spacegraph, lat.cell)
 
-    return reppositions, rotmatrices, spacegraph, lat.cell, lat.celltype, bondlen
+    result = {"positions"   : reppositions,
+              "rotmatrices" : rotmatrices,
+              "graph"       : spacegraph,
+              "cell"        : lat.cell,
+              "celltype"    : lat.celltype,
+              "bondlen"     : bondlen,
+              "yaplot"      : yapresult}
+    return result
 
 
 

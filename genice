@@ -12,6 +12,7 @@ sys.path.append('Molecules')
 sys.path.append('lib')
 import rigid
 from libgenice import generate_ice, generate_cages
+import yaplot as yp
 
 
 def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
@@ -53,6 +54,28 @@ def format_mdv(atoms, cell, celltype):
     for i in range(len(atoms)):
         molorder, molname, sitename, position = atoms[i]
         s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(sitename,position[0]*10,position[1]*10,position[2]*10)
+    return s
+
+
+def format_yaplot(atoms, cell, celltype):
+    s = yp.Color(3)
+    H = []
+    O  = ""
+    for i in range(len(atoms)):
+        rank, molname, sitename, position = atoms[i]
+        if rank == 0:
+            if O is not "":
+                s += yp.Line(O,H[0])
+                s += yp.Line(O,H[1])
+            H = []
+            O = ""
+        if "O" in sitename:
+            O = position
+        elif "H" in sitename:
+            H.append(position)
+    if O is not "":
+        s += yp.Line(O,H[0])
+        s += yp.Line(O,H[1])
     return s
 
 
@@ -124,6 +147,8 @@ def format_python(positions, cell, celltype, bondlen):
 
 
 def format_digraph(graph, positions):
+    import digraph
+    
     s = ""
     s += "@NGPH\n"
     s += "{0}\n".format(len(positions))
@@ -163,6 +188,7 @@ def getoptions():
     return parser.parse_args()
 
 
+
 def main():
     options = getoptions()
     cagepos = None
@@ -186,8 +212,20 @@ def main():
     noGraph = False
     if output_format == "X":
         noGraph = True
-    positions, rotmatrices, graph, cell, celltype, bondlen = generate_ice(options.Type[0], seed=options.seed[0], rep=options.rep, density=options.dens[0], noGraph = noGraph)
-
+    result = generate_ice(options.Type[0],
+                          seed=options.seed[0],
+                          rep=options.rep,
+                          density=options.dens[0],
+                          noGraph = noGraph,
+                          yaplot = (output_format == 'y'))
+    positions   = result["positions"]
+    rotmatrices = result["rotmatrices"]
+    graph       = result["graph"]
+    cell        = result["cell"]
+    celltype    = result["celltype"]
+    bondlen     = result["bondlen"]
+    yaplot      = result["yaplot"]
+    
     #Final output formats
     #In case only the graph is wanted.
     if output_format == "d":
@@ -222,6 +260,9 @@ def main():
             s = format_mdv(atoms, cell, celltype)
         elif output_format == "g":    # GROMACS
             s = format_gro(atoms, cell, celltype)
+        elif output_format == "y":    # yaplot
+            s = yaplot
+            s += format_yaplot(atoms, cell, celltype)
 
     print(s, end="")
 
