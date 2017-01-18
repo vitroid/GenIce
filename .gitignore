@@ -10,3 +10,5 @@ Prepare/*
 log.txt
 
 *.cif
+
+Lattices/pycifrw/

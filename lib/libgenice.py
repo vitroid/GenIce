@@ -16,6 +16,7 @@ def usage(parser):
 
 
 def orientations(coord, graph, cell):
+    logger = logging.getLogger()
     rotmatrices = []
     for node in range(graph.number_of_nodes()):
         nei = graph.neighbors(node)
@@ -25,12 +26,15 @@ def orientations(coord, graph, cell):
         oh2 = coord[nei[1]] - coord[node]
         oh2 -= np.floor( oh2 + 0.5 )
         oh2 = np.dot(oh2,cell)                #abs coord
+        #oh1 /= np.linalg.norm(oh1)
+        #oh2 /= np.linalg.norm(oh2)
+        #logger.debug("bond angle cos:{0}".format(np.dot(oh1,oh2)))
         y  = oh2 - oh1
         y /= np.linalg.norm(y)
         z = (oh1 + oh2)/2
         z /= np.linalg.norm(z)
         x = np.cross(y,z)
-        rotmat = np.vstack([x,y,z])
+        rotmat = np.vstack([x,y,z]).transpose()
         rotmatrices.append(rotmat)
     return rotmatrices
 
