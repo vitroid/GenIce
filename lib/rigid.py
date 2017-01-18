@@ -4,6 +4,7 @@ from math import *
 import sys
 import numpy as np
 import numpy.linalg
+import logging
 
 #rewritten with numpy
 
@@ -217,4 +218,9 @@ if __name__=='__main__':
     print(qadd(q3,q1))
     print(qadd(q1,q3))
     test_rotation()
-    
+    q4 = np.array([0.0000, 0.9239,-0.3827, 0.0000])
+    e4 = quat2euler(q4)
+    print(e4)
+    qe4 = euler2quat(e4)
+    print(qe4)
+
