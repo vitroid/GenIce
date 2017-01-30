@@ -194,6 +194,7 @@ def format_openscad(graph, positions, cell, celltype, rep, scale=50, roxy=0.07, 
     s += openscad.defvar("Rbond", rbond)
     s += openscad.scale(
         [scale,scale,scale],[
+        openscad.translate(-trimoffset,[    
         openscad.intersection(
             [openscad.translate(trimoffset,[openscad.rhomb(trimbox)]),
              openscad.union(
@@ -207,8 +208,49 @@ def format_openscad(graph, positions, cell, celltype, rep, scale=50, roxy=0.07, 
              )
             ]
         )]
-    )
+    )])
     return s
+                     
+def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07, rbond=0.06):
+    """
+    cell is in nm
+
+    openscad2 comes up with OO style
+    """
+    import openscad2
+    rep = np.array(rep)
+    trimbox    = cell *np.array([(rep[i]-2)/rep[i] for i in range(3)])
+    trimoffset = (cell[0]+cell[1]+cell[2])/rep
+
+    margin = 0.2 # expansion relative to the cell size
+    lower = (1.0 - margin) / rep
+    upper = (rep - 1.0 + margin) / rep
+    
+    bonds = []
+    for i,j in graph.edges_iter(data=False):
+        s1 =positions[i]
+        s2 =positions[j]
+        d = s2-s1
+        d -= np.floor( d + 0.5 )
+        s2 = s1 + d
+        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
+             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+            bonds.append( (np.dot(s1,cell), np.dot(s2,cell)))
+        
+    nodes = []
+    for s1 in positions:
+        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+            nodes.append( np.dot(s1, cell) )
+        
+    o = openscad2.OpenScad()
+    objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
+    #operations
+    ops = [o.use("lib/bond.scad"),
+        o.defvar("$fn", 40),
+        o.defvar("Roxy", roxy),
+        o.defvar("Rbond", rbond),
+        ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
+    return o.encode(*ops)
                      
                             
 
@@ -303,7 +345,7 @@ def main():
 
     if output_format == "o":
         #OpenSCAD
-        s = format_openscad(graph, positions, cell, celltype, options.rep)
+        s = format_openscad2(graph, positions, cell, celltype, options.rep)
         print(s,end="")
         sys.exit(0)
 

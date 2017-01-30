@@ -8,21 +8,21 @@ def defvar(name, value):
     return "{0}={1};\n".format(name,value)
 
 def scale(sc, objs):
-    s = "scale([{0},{1},{2}]){{".format(*sc)
+    s = "scale([{0},{1},{2}]){{\n".format(*sc)
     for o in objs:
         s += o
     s += "} //scale\n"
     return s
 
 def translate(sc, objs):
-    s = "translate([{0},{1},{2}]){{".format(*sc)
+    s = "translate([{0},{1},{2}]){{\n".format(*sc)
     for o in objs:
         s += o
     s += "} //translate\n"
     return s
 
 def intersection(objs):
-    s = "intersection(){"
+    s = "intersection(){\n"
     for o in objs:
         s += o
     s += "} //intersection\n"
