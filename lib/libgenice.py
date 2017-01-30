@@ -82,7 +82,7 @@ def replicate_graph(graph, positions, rep):
 
 
 
-def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False):
+def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     lat     = __import__(lattice_type)
     lat.waters = np.fromstring(lat.waters, sep=" ")
@@ -167,12 +167,24 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         lat.cell[:,d] *= rep[d]
         
     if noGraph:
-        return reppositions, None, None, lat.cell, lat.celltype, bondlen
+        result = {"positions"   : reppositions,
+                  "cell"        : lat.cell,
+                  "celltype"    : lat.celltype,
+                  "bondlen"     : bondlen}
+        return result
+        #return reppositions, None, None, lat.cell, lat.celltype, bondlen
 
     #replicate the graph
     #This also shuffles the bond directions
     graph = replicate_graph(graph, lat.waters, rep)
 
+    if scad:
+        result = {"positions"   : reppositions,
+                  "graph"       : graph,
+                  "cell"        : lat.cell,
+                  "celltype"    : lat.celltype,
+                  "bondlen"     : bondlen}
+        return result
 
     #Test
     if graph.number_of_edges() != len(reppositions)*2:
