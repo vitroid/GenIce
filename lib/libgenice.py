@@ -85,7 +85,8 @@ def replicate_graph(graph, positions, rep):
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     lat     = __import__(lattice_type)
-    lat.waters = np.fromstring(lat.waters, sep=" ")
+    if type(lat.waters) == str:
+        lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
     if lat.celltype == "rect":
@@ -145,7 +146,6 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     lat.cell *= ratio
     if bondlen is not None:
         bondlen   *= ratio
-
 
     if not noGraph:
         if pairs is None:

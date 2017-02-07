@@ -12,3 +12,7 @@ log.txt
 *.cif
 
 Lattices/pycifrw/
+
+*.scad
+
+genice-install
