@@ -114,7 +114,7 @@ class IceGraph(networkx.DiGraph):
     def register_pairs(self,pairs):
         self.clear()
         for pair in pairs:
-            x,y = pair[0:2]
+            x,y = pair[:2]
             self.add_edge(x,y)
 
     
@@ -166,12 +166,11 @@ class IceGraph(networkx.DiGraph):
         """
         Reply whether all the vertices have four neighbors or not.
         """
-        good = True
         undir = self.to_undirected()
         for node in range(undir.number_of_nodes()):
             if len(undir.neighbors(node)) != 4:
-                good = False
-        return good
+                return False
+        return True
 
 
     def purgedefects(self, defects):

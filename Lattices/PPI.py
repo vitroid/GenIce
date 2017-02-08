@@ -1,13 +1,13 @@
 import numpy as np
 
-density = 1.5     #default density
+density = 1.7125727202     #default density
 
 
-bondlen = 2.85      #bond threshold for insufficient bonds
 bondlen = 3.10      #bond threshold for too much bonds
+bondlen = 2.80      #bond threshold for insufficient bonds
 celltype = "rect"
 cell = """
-7.3 7.3 7.3
+7.1565 7.1565 7.1565
 """
 
 
@@ -37,10 +37,9 @@ waters = [[0.186,0.186,0.186],  #C3
           [0.953,0.954,0.953]]  #C2
 
 waters = np.array(waters)
-offset = waters[13].copy()
+origin = waters[13].copy()
 for water in waters:
-    water -= offset
-for water in waters:
+    water -= origin
     water -= np.floor(water)
 
 
