@@ -11,6 +11,10 @@ def Line(v0,v1):
     return "l " + plaintext(v0) + plaintext(v1) + "\n"
 
 
+def Circle(v0):
+    return "c " + plaintext(v0) + "\n"
+
+
 def Arrow(v0,v1):
     return "s " + plaintext(v0) + plaintext(v1) + "\n"
 

@@ -85,7 +85,8 @@ def replicate_graph(graph, positions, rep):
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     lat     = __import__(lattice_type)
-    lat.waters = np.fromstring(lat.waters, sep=" ")
+    if type(lat.waters) == str:
+        lat.waters = np.fromstring(lat.waters, sep=" ")
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
     if lat.celltype == "rect":
@@ -146,7 +147,6 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     if bondlen is not None:
         bondlen   *= ratio
 
-
     if not noGraph:
         if pairs is None:
             #make bonded pairs according to the pair distance.
@@ -178,24 +178,23 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     #This also shuffles the bond directions
     graph = replicate_graph(graph, lat.waters, rep)
 
+    result = {"positions"   : reppositions,
+              "graph"       : graph,
+              "cell"        : lat.cell,
+              "celltype"    : lat.celltype,
+              "bondlen"     : bondlen}
     if scad:
-        result = {"positions"   : reppositions,
-                  "graph"       : graph,
-                  "cell"        : lat.cell,
-                  "celltype"    : lat.celltype,
-                  "bondlen"     : bondlen}
         return result
 
     #Test
+    undir = graph.to_undirected()
+    for node in range(undir.number_of_nodes()):
+        z = len(undir.neighbors(node))
+        if  z!= 4:
+            logger.warn("z={0} at {1}".format(z,node))
+
     if graph.number_of_edges() != len(reppositions)*2:
         logger.warn("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
-        result = {"positions"   : reppositions,
-            "rotmatrices" : None,
-            "graph"       : graph,
-            "cell"        : lat.cell,
-            "celltype"    : lat.celltype,
-            "bondlen"     : bondlen,
-            "yaplot"      : None}
         return result
 
     #make them obey the ice rule
@@ -214,13 +213,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     logger.info("End depolarization.")
     #determine the orientations of the water molecules based on edge directions.
     rotmatrices = orientations(reppositions, spacegraph, lat.cell)
-    result = {"positions"   : reppositions,
-                "rotmatrices" : rotmatrices,
-                "graph"       : spacegraph,
-                "cell"        : lat.cell,
-                "celltype"    : lat.celltype,
-                "bondlen"     : bondlen,
-                "yaplot"      : yapresult}
+    result["rotmatrices"] = rotmatrices
+    result["graph"]       = spacegraph
+    result["yaplot"]      = yapresult
     return result
         
 

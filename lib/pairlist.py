@@ -7,7 +7,7 @@
 import math
 import itertools
 import numpy as np
-
+import logging
 
 def ArrangeAddress(xyz,grid):
     #residents in each grid cell
@@ -121,6 +121,7 @@ def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
 
 #
 def determine_grid(cell, radius):
+    logger = logging.getLogger()
     ct = cell.transpose()
     a = ct[0]
     b = ct[1]
