@@ -127,7 +127,7 @@ def format_quaternion(positions, cell, rotmatrices, celltype):
     return s
 
 
-def format_python(positions, cell, celltype, bondlen):
+def format_python(positions, cell, celltype, bondlen, graph):
     s = ""
     s += "bondlen={0}\n".format(bondlen)
     s += "celltype='{0}'\n".format(celltype)
@@ -142,7 +142,7 @@ def format_python(positions, cell, celltype, bondlen):
     for i in range(len(positions)):
         position = np.dot(positions[i],cell)
         s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(position[0],position[1],position[2])
-    s += "\"\"\"\n"
+    s += "\"\"\"\n\n"
     return s
 
 
@@ -218,6 +218,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
     openscad2 comes up with OO style
     """
     import openscad2
+    logger = logging.getLogger()
     rep = np.array(rep)
     trimbox    = cell *np.array([(rep[i]-2)/rep[i] for i in range(3)])
     trimoffset = (cell[0]+cell[1]+cell[2])/rep
@@ -232,6 +233,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
         s2 =positions[j]
         d = s2-s1
         d -= np.floor( d + 0.5 )
+        logger.info("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
         s2 = s1 + d
         if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
              (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
@@ -246,7 +248,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
     objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
     #operations
     ops = [o.use("lib/bond.scad"),
-        o.defvar("$fn", 40),
+        o.defvar("$fn", 20),
         o.defvar("Roxy", roxy),
         o.defvar("Rbond", rbond),
         ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
@@ -349,9 +351,15 @@ def main():
         print(s,end="")
         sys.exit(0)
 
+    
     yaplot      = result["yaplot"]
     rotmatrices = result["rotmatrices"]
-
+    if output_format == "y" and yaplot is None:
+        import digraph as dg
+        draw = dg.YaplotDraw(positions, cell, data=graph)
+        print(draw.draw_all())
+        sys.exit(1)
+        
     #For rigid rotors; no atomic information is required.
     if output_format == "e":          # NX3A
         s = format_euler(positions, cell, rotmatrices, celltype)

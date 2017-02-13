@@ -12,3 +12,9 @@ log.txt
 *.cif
 
 Lattices/pycifrw/
+
+*.scad
+
+*.stl
+
+*.yap
