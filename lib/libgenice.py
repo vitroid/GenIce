@@ -85,20 +85,41 @@ def replicate_graph(graph, positions, rep):
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     lat     = __import__(lattice_type)
-    if type(lat.waters) == str:
+    if type(lat.waters) is str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
+    elif type(lat.waters) is list:
+        lat.waters = np.array(lat.waters)
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
     if lat.celltype == "rect":
-        lat.cell = np.fromstring(lat.cell, sep=" ")
+        if type(lat.cell) is str:
+            lat.cell = np.fromstring(lat.cell, sep=" ")
+        elif type(lat.cell) is list:
+            lat.cell = np.array(lat.cell)
         lat.cell = np.diag(lat.cell)
     elif lat.celltype == "monoclinic":
-        lat.cell = np.fromstring(lat.cell, sep=" ")
+        if type(lat.cell) is str:
+            lat.cell = np.fromstring(lat.cell, sep=" ")
+        elif type(lat.cell) is list:
+            lat.cell = np.array(lat.cell)
         beta = lat.cell[3] * math.pi / 180.
         lat.cell = np.array(((lat.cell[0]*1.0, lat.cell[1]*0.0, lat.cell[2]*math.cos(beta)),
                              (lat.cell[0]*0.0, lat.cell[1]*1.0, lat.cell[2]*0.0),
                              (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
         lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
+    elif lat.celltype == "triclinic":
+        """
+        Put the vectors like following:
+        cell = "ax 0 0 bx by 0 cx cy cz"
+        when you define a unit cell in Lattice/
+        
+        """
+        if type(lat.cell) is str:
+            lat.cell = np.fromstring(lat.cell, sep=" ")
+        elif type(lat.cell) is list:
+            lat.cell = np.array(lat.cell)
+        lat.cell = np.reshape((3,3))
+        #assert lat.cell[0,1] == 0 and lat.cell[0,2] == 0 and lat.cell[1,2] == 0
     else:
         logger.error("unknown cell type: {0}".format(lat.celltype))
         sys.exit(1)
