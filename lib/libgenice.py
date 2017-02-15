@@ -130,6 +130,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
         lat.waters = np.array(lat.waters)
     random.seed(seed)
+    np.random.seed(seed)
 
     #Prearranged network topology information (if available)
     pairs = None
