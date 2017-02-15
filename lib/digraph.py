@@ -359,10 +359,16 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         apsis = find_apsis(spaceicegraph.coord, cell, distance*1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis,])
-        #logger.info("Path1: {0}".format(path1))
+        logger.debug("Path1: {0}".format(path1))
+        if path1 is None:
+            #No path found, probably because of the double networks
+            continue
         logger.debug("Dipole of the path1: {0}".format(spaceicegraph.dipole_of_a_cycle(path1)))
         path2 = shortest_path(spaceicegraph, apsis, [vertex,])
-        #logger.info("Path2: {0}".format(path2))
+        logger.debug("Path2: {0}".format(path2))
+        if path2 is None:
+            #No path found, probably because of the double networks
+            continue
         logger.debug("Dipole of the path2: {0}".format(spaceicegraph.dipole_of_a_cycle(path2)))
         #they should make a cycle.
         #It should go across the cell with a probability of 0.5.
@@ -385,13 +391,13 @@ def depolarize(spaceicegraph, cell, draw=None):
     It works much better than depolarize()
     """
     logger = logging.getLogger()
-    logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.info("defects: {0}".format(spaceicegraph.defects()))
+    logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
+    logger.debug("  defects: {0}".format(spaceicegraph.defects()))
     spaceicegraph.vector_check()
     s = "" # for yaplot
     while True:
         net_polar = spaceicegraph.net_polarization()
-        logger.info("Net polarization: {0}".format(net_polar))
+        logger.info("  Net polarization: {0}".format(net_polar))
         if np.dot(net_polar, net_polar) < 0.1:
             break
         if net_polar[0] > 0.5:
@@ -425,8 +431,8 @@ def depolarize(spaceicegraph, cell, draw=None):
                     s += yp.NewPage()
                 spaceicegraph.invert_path(cycle)
                 spaceicegraph.vector_check()
-    logger.info("isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.info("defects: {0}".format(spaceicegraph.defects()))
+    logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
+    logger.debug("defects: {0}".format(spaceicegraph.defects()))
     return s
 
 

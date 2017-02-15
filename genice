@@ -328,8 +328,10 @@ def getoptions():
                         help='Specify guest in the 16-hedral cage. (empty, co2, uathf, etc.)')
     parser.add_argument('--cages', '-c', action='store_true', dest='cages',
                         help='Also output the cage positions. (g or m format only)')
-    parser.add_argument('--debug', action='store_true', dest='debug',
+    parser.add_argument('--debug', '-g', action='store_true', dest='debug',
                         help='Output debugging info.')
+    parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
+                        help='Do not output progress messages.')
     parser.add_argument('Type', nargs=1,
                        help='Crystal type (1c,1h,etc.)')
     return parser.parse_args()
@@ -338,6 +340,18 @@ def getoptions():
 
 def main():
     options = getoptions()
+    if options.debug:
+        logging.basicConfig(level=logging.DEBUG,
+                            format="%(asctime)s %(levelname)s %(message)s")
+    elif options.quiet:
+        logging.basicConfig(level=logging.WARN,
+                            format="%(asctime)s %(levelname)s %(message)s")
+    else:
+        #normal
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)s %(levelname)s %(message)s")
+    logger = logging.getLogger()
+
     cagepos = None
     if options.cages:
         cagepos, cagetype = generate_cages(options.Type[0], options.rep)
@@ -348,13 +362,6 @@ def main():
     g15_type      = options.g15[0]
     g16_type      = options.g16[0]
     output_format = options.format[0][0]
-    if options.debug:
-        logging.basicConfig(level=logging.DEBUG,
-                            #filename='log.txt',
-                            format="%(asctime)s %(levelname)s %(message)s")
-    else:
-        logging.basicConfig(level=logging.INFO,
-                            format="%(asctime)s %(levelname)s %(message)s")
 
     noGraph = False
     if output_format in ("X", "c"):
@@ -379,6 +386,13 @@ def main():
     cell        = result["cell"]
     celltype    = result["celltype"]
     bondlen     = result["bondlen"]
+
+    logger.info("Cell type: {0}".format(celltype))
+    logger.info("Cell shape (nm): a {0} {1} {2}".format(*cell[0]))
+    logger.info("Cell shape (nm): b {0} {1} {2}".format(*cell[1]))
+    logger.info("Cell shape (nm): c {0} {1} {2}".format(*cell[2]))
+    logger.info("Number of water molecules: {0}".format(len(positions)))
+    logger.info("Water model: {0}".format(water_type))
 
     if output_format == "X":        # python Lattice library
         s = format_python(positions, cell, celltype, bondlen)
@@ -411,6 +425,7 @@ def main():
         rotmatrices = result["rotmatrices"]
     else:
         #Random orientation
+        logger.info("The network is not given.  Water molecules will be orinented randomly.")
         rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
 
     #For rigid rotors; no atomic information is required.
@@ -449,7 +464,7 @@ def main():
             s += format_yaplot(atoms, cell, celltype)
 
     print(s, end="")
-
+    logger.info("Completed.")
 
 
 
