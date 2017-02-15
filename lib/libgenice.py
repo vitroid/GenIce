@@ -84,6 +84,7 @@ def replicate_graph(graph, positions, rep):
 
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
+    logger.info("Ice type: {0}".format(lattice_type))
     lat     = __import__(lattice_type)
     if type(lat.waters) == str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
@@ -148,14 +149,19 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         bondlen   *= ratio
 
     if not noGraph:
+        logger.info("Start placing the bonds.")
         if pairs is None:
+            logger.info("  Pairs are not given explicitly.")
+            logger.info("  Start estimating the bonds according to the pair distances.")
             #make bonded pairs according to the pair distance.
             #make before replicating them.
             grid = pl.determine_grid(lat.cell, bondlen)
             pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
+            logger.info("  End estimating the bonds.")
 
         graph = dg.IceGraph()
         graph.register_pairs(pairs)
+        logger.info("End placing the bonds.")
 
     
     #replicate water molecules to make a repeated cell
@@ -191,10 +197,10 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     for node in range(undir.number_of_nodes()):
         z = len(undir.neighbors(node))
         if  z!= 4:
-            logger.warn("z={0} at {1}".format(z,node))
+            logger.debug("z={0} at {1}".format(z,node))
 
     if graph.number_of_edges() != len(reppositions)*2:
-        logger.warn("Inconsistent number of HBs.[2] {0} {1}".format(graph.number_of_edges(),len(reppositions)*2))
+        logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(reppositions)))
         return result
 
 
@@ -228,6 +234,8 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
 
 
 def generate_cages(lattice_type, rep):
+    logger = logging.getLogger()
+    logger.info("Ice type: {0}".format(lattice_type))
     lat     = __import__(lattice_type)
     try:
         cagetype = []
