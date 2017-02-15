@@ -9,8 +9,8 @@ import networkx
 import random
 import numpy as np
 import logging
-import yaplot as yp
-import pairlist as pl
+from genice import yaplot as yp
+from genice import pairlist as pl
 
 #Dijkstra
 
