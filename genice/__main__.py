@@ -5,11 +5,8 @@ import sys
 import numpy     as np
 import argparse  as ap
 import logging
+import importlib
 
-#local libraries
-sys.path.append('Lattices')
-sys.path.append('Molecules')
-sys.path.append('lib')
 import rigid
 from libgenice import generate_ice, generate_cages, audit_name
 import yaplot as yp
@@ -352,7 +349,7 @@ def getoptions():
 
 
 
-def main():
+def __main__():
     options = getoptions()
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,
@@ -445,13 +442,13 @@ def main():
     elif rotmatrices is None:
         if output_format == "y":    # yaplot
             assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
-            water = __import__(water_type)
+            water = importlib.import_module("molecules."+water_type)
             atoms = oxygenize(positions, cell, water.name)
             s = yaplot
             s += format_yaplot(atoms, cell, celltype)
     else:
         #arrange atoms
-        water = __import__(water_type)
+        water = importlib.import_module("molecules."+water_type)
         atoms = arrange_atoms(positions, cell, rotmatrices, water.sites, water.labels, water.name)
         cagepos, cagetype = generate_cages(options.Type[0], options.rep)
         if cagepos is not None:
@@ -475,7 +472,7 @@ def main():
                     gname = guest_in_cagetype[ctype]
                     #Always check before dynamic import
                     assert audit_name(gname), "Dubious guest name: {0}".format(gname)
-                    gmol = __import__(gname)
+                    gmol = importlib.import_module("molecules."+gname)
                     logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
                     atoms += arrange_atoms(cpos, cell, cmat, gmol.sites, gmol.labels, gmol.name)
         if output_format == "m":      # MDView
@@ -493,4 +490,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    __main__()
