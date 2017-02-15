@@ -3,13 +3,13 @@
 
 import sys
 import numpy     as np
-import pairlist  as pl
-import digraph   as dg
 import random
 import math
 import logging
 import re
 import importlib
+from genice import pairlist  as pl
+from genice import digraph   as dg
 
 def usage(parser):
     parser.print_help()
@@ -88,7 +88,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
     assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
-    lat     = importlib.import_module("lattices."+lattice_type)
+    lat     = importlib.import_module("genice.lattices."+lattice_type)
     if type(lat.waters) is str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
     elif type(lat.waters) is list:
@@ -263,7 +263,7 @@ def generate_cages(lattice_type, rep):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
     assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
-    lat     = importlib.import_module("lattices."+lattice_type)
+    lat     = importlib.import_module("genice.lattices."+lattice_type)
     try:
         cagetype = []
         cagepos = []

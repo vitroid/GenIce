@@ -34,5 +34,14 @@ setup(name='GenIce',
                 'genice.lattices',
                 ],
       install_requires=['numpy', 'networkx', ],
-     )
+      entry_points = {
+              'console_scripts': [
+                  'genice = genice.__main__:main'
+              ]
+          }
+#      entry_points="""
+#      [console_scripts]
+#      genice = genice.__main__:main
+#      """
+      )
 
