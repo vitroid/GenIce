@@ -44,5 +44,3 @@ for water in waters:
 
 
 coord = "relative"
-
-

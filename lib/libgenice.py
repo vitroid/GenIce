@@ -203,33 +203,29 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(reppositions)))
         return result
 
-
     #make them obey the ice rule
     logger.info("Start making the bonds obey the ice rules.")
     graph.purge_ice_defects()
-    #dg.purge_ice_defects(graph)
-    #sys.exit(0)
     logger.info("End making the bonds obey the ice rules.")
-
+        
 
     #Rearrange HBs to purge the total dipole moment.
     logger.info("Start depolarization.")
     spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
-    #spacegraph.depolarize()
     draw = None
     if yaplot:
         draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
     yapresult  = dg.depolarize(spacegraph, lat.cell, draw=draw)
-    #yapresult  = dg.depolarize(spacegraph,draw=draw)
     logger.info("End depolarization.")
-
-
     #determine the orientations of the water molecules based on edge directions.
     rotmatrices = orientations(reppositions, spacegraph, lat.cell)
     result["rotmatrices"] = rotmatrices
     result["graph"]       = spacegraph
     result["yaplot"]      = yapresult
     return result
+        
+
+
 
 
 

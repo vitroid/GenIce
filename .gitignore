@@ -15,4 +15,8 @@ Lattices/pycifrw/
 
 *.scad
 
+
+*.stl
+
+*.yap
 genice-install
