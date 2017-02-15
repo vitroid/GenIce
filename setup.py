@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 import os
 import codecs
 import re
@@ -33,10 +33,6 @@ setup(name='GenIce',
                 'genice.molecules',
                 'genice.lattices',
                 ],
-      #extras_require={
-      #    'genice':    ['numpy', 'networkx', ],
-      #    'molecules': ['numpy',],
-      #    'lattices':  ['numpy',],
-      #    }
+      install_requires=['numpy', 'networkx', ],
      )
 
