@@ -8,6 +8,7 @@ import digraph   as dg
 import random
 import math
 import logging
+import re
 
 def usage(parser):
     parser.print_help()
@@ -85,6 +86,7 @@ def replicate_graph(graph, positions, rep):
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
+    assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
     lat     = __import__(lattice_type)
     if type(lat.waters) is str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
@@ -247,6 +249,11 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     return result
         
 
+def audit_name(name):
+    """
+    Audit the mol name to avoid the access to external files
+    """
+    return re.match('^[A-Za-z0-9]+$', name) is not None
 
 
 
@@ -254,6 +261,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
 def generate_cages(lattice_type, rep):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
+    assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
     lat     = __import__(lattice_type)
     try:
         cagetype = []
