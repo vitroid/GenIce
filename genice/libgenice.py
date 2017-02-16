@@ -120,9 +120,10 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         """
         if type(lat.cell) is str:
             lat.cell = np.fromstring(lat.cell, sep=" ")
+            logger.debug(lat.cell)
         elif type(lat.cell) is list:
             lat.cell = np.array(lat.cell)
-        lat.cell = np.reshape((3,3))
+        lat.cell = np.reshape(lat.cell, (3,3))
         #assert lat.cell[0,1] == 0 and lat.cell[0,2] == 0 and lat.cell[1,2] == 0
     else:
         logger.error("unknown cell type: {0}".format(lat.celltype))
@@ -254,7 +255,7 @@ def audit_name(name):
     """
     Audit the mol name to avoid the access to external files
     """
-    return re.match('^[A-Za-z0-9]+$', name) is not None
+    return re.match('^[A-Za-z0-9-_]+$', name) is not None
 
 
 

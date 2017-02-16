@@ -851,7 +851,7 @@ def read_and_process(fNameIn, fNameOut, Nbox, make_rect_box=False):
 
 
     # Check if we have a rectangular box.
-    if (bx < eps  and  cx < eps  and cy < eps):
+    if (abs(bx) < eps  and  abs(cx) < eps  and abs(cy) < eps):
         make_rect_box = True
 
 
@@ -900,11 +900,11 @@ def read_and_process(fNameIn, fNameOut, Nbox, make_rect_box=False):
 
 
     # Determine the box-vector.
-    if (make_rect_box):
+    if make_rect_box:
         box = (Lx, Ly, Lz)
     else:
-        box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
-
+        #box = (Lx, Ly, Lz, Nx*cx, Ny*cy, Nz*cz)
+        box = (ax*Nx, bx*Ny, by*Ny, cx*Nz, cy*Nz, cz*Nz)
     return atoms, box
 
 
