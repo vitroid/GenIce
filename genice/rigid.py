@@ -6,8 +6,7 @@ import numpy as np
 import numpy.linalg
 import logging
 
-#rewritten with numpy
-
+#Rigid.py uses vertical vectors while other pars of genice uses horizontal vectors.
 
 #v1,v2,v3: numpy arrays
 #return value: fourth vector candidate
