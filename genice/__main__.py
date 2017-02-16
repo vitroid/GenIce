@@ -128,7 +128,7 @@ def format_euler(positions, cell, rotmatrices, celltype):
     s += "{0}\n".format(len(positions))
     for i in range(len(positions)):
         position = np.dot(positions[i],cell)*10   #in Angstrom
-        euler = rigid.quat2euler(rigid.rotmat2quat(rotmatrices[i]))
+        euler = rigid.quat2euler(rigid.rotmat2quat(rotmatrices[i].transpose()))
         s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f}\n".format(position[0],
                                                                                position[1],
                                                                                position[2],
@@ -153,7 +153,7 @@ def format_quaternion(positions, cell, rotmatrices, celltype):
     s += "{0}\n".format(len(positions))
     for i in range(len(positions)):
         position = np.dot(positions[i],cell)*10   #in Angstrom
-        quat     = rigid.rotmat2quat(rotmatrices[i])
+        quat     = rigid.rotmat2quat(rotmatrices[i].transpose())
         s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(position[0],
                                                                                position[1],
                                                                                position[2],
@@ -209,7 +209,7 @@ def format_python(positions, cell, celltype, bondlen):
 def format_digraph(graph, positions):
     logger = logging.getLogger()
     logger.info("Output the hydrogen bond network.")
-    import digraph
+    from genice import digraph
     
     s = ""
     s += "@NGPH\n"
@@ -220,60 +220,6 @@ def format_digraph(graph, positions):
     return s
 
 
-def format_openscad(graph, positions, cell, celltype, rep, scale=50, roxy=0.07, rbond=0.06):
-    """
-    cell is in nm
-    """
-    logger = logging.getLogger()
-    logger.info("Output water molecules in OpenSCAD format.")
-    import openscad
-    rep = np.array(rep)
-    trimbox    = cell *np.array([(rep[i]-2)/rep[i] for i in range(3)])
-    trimoffset = (cell[0]+cell[1]+cell[2])/rep
-
-    margin = 0.2 # expansion relative to the cell size
-    lower = (1.0 - margin) / rep
-    upper = (rep - 1.0 + margin) / rep
-    
-    bonds = []
-    for i,j in graph.edges_iter(data=False):
-        s1 =positions[i]
-        s2 =positions[j]
-        d = s2-s1
-        d -= np.floor( d + 0.5 )
-        s2 = s1 + d
-        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,cell), np.dot(s2,cell)))
-        
-    nodes = []
-    for s1 in positions:
-        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, cell) )
-        
-        
-    s = openscad.use("lib/bond.scad")
-    s += openscad.defvar("$fn", 40)
-    s += openscad.defvar("Roxy", roxy)
-    s += openscad.defvar("Rbond", rbond)
-    s += openscad.scale(
-        [scale,scale,scale],[
-        openscad.translate(-trimoffset,[    
-        openscad.intersection(
-            [openscad.translate(trimoffset,[openscad.rhomb(trimbox)]),
-             openscad.union(
-                 [openscad.translate(
-                     node,
-                     [openscad.sphere(r="Roxy")])
-                     for node in nodes]
-                 + [openscad.bond(s1,s2,r="Rbond")
-                    for s1,s2 in bonds]
-                     
-             )
-            ]
-        )]
-    )])
-    return s
                      
 def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07, rbond=0.06):
     """
@@ -283,7 +229,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
     """
     logger = logging.getLogger()
     logger.info("Output water molecules in OpenSCAD format revised.")
-    import openscad2
+    from genice import openscad2
     #logger = logging.getLogger()
     rep = np.array(rep)
     trimbox    = cell *np.array([(rep[i]-2)/rep[i] for i in range(3)])
@@ -313,7 +259,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
     o = openscad2.OpenScad()
     objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
     #operations
-    ops = [o.use("lib/bond.scad"),
+    ops = [openscad2.bondfunc,
         o.defvar("$fn", 20),
         o.defvar("Roxy", roxy),
         o.defvar("Rbond", rbond),

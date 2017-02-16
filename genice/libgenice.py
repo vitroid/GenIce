@@ -36,7 +36,7 @@ def orientations(coord, graph, cell):
         z = (oh1 + oh2)/2
         z /= np.linalg.norm(z)
         x = np.cross(y,z)
-        rotmat = np.vstack([x,y,z]).transpose()
+        rotmat = np.vstack([x,y,z])
         rotmatrices.append(rotmat)
     return rotmatrices
 
