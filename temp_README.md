@@ -12,13 +12,21 @@ Note: WinPython includes all of these requirements.
 ###Using steuptools (Unix)
 
 1. First, install the [setuptools](https://setuptools.readthedocs.io/en/latest/) by some means.  Skip this step if you already have `pip3` command.
-1. Download the source code from [this page](https://github.com/vitroid/GenIce).
+1. Obtain the source codes.
+    2. Download the [source code (master.zip)](https://github.com/vitroid/GenIce/archive/master.zip) and unarchive it.
+
+            unzip master.zip
+
+    1. Or clone them.
+
+            git clone https://github.com/vitroid/GenIce.git
+    
 1. Run the following command.
 
         cd GenIce
         ./setup.py install
 
-1. Or, just run genice.x command there.
+1. Or, just run genice.x command in-place.
 
         cd GenIce
         ./genice.x 7 > 7.gro 
