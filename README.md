@@ -26,7 +26,7 @@ Note: WinPython includes all of these requirements.
         cd GenIce
         ./setup.py install
 
-1. Or, just run genice.x command there.
+1. Or, just run genice.x command in-place.
 
         cd GenIce
         ./genice.x 7 > 7.gro 
