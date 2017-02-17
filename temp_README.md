@@ -58,15 +58,23 @@ condition.  Note that the generated structure is not optimal according
 to the potential energy.
 
 ##Ice structures
-* Most popular Ices 1h and Ic.
-* Hypothetical Proton-disordered Ice 2.
-* Conventional high-pressure ices 3, 4,  6, 7, and 12.
-* Monoclinic ice 5 (testing).
-* Negative-pressure ice 16.  [Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231-233 (2014).]
-* Hypothetical ice 0.  [Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733-739 (2014).]
-* Hypothetical ice i.  [Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005).]
-* Hypothetical ices sT' and C0-II.  [Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).]
-* Clathrate hydrates CS1, CS2, HS1, and TS1.  [Matsumoto, M. & Tanaka, H. On the structure selectivity of clathrate hydrates. J. Phys. Chem. B 115, 8257-8265 (2011).]
+
+Symbol | Description| Reference
+-------|------------|----------
+1h, 1c | Most popular Ice I (hexagonal or cubic)
+2d     | Hypothetical Proton-disordered Ice II. |Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848. Web.
+3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.
+5      | Monoclinic ice V (testing).
+16     | Negative-pressure ice XVI(16).  |Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231-233 (2014).
+17     | Negative-pressure ice XVII(17).  |del Rosso, Leonardo, Milva Celli, and Lorenzo Ulivi. “Ice XVII as a Novel Material for Hydrogen Storage.” Challenges 8.1 (2017): 3.
+0      | Hypothetical ice "0".  |Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733-739 (2014).
+i      | Hypothetical ice "i".  |Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005).
+C0-II  | Filled ice C0 (Alias of 17). |Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
+C1     | Filled ice C1 (Alias of 2d).
+C2     | Filled ice C2 (Alias of 1c).
+sTprime | Filled ice sT' |Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
+CS1, CS2, TS1, HS1 | Clathrate hydrates CS1 (sI), CS2 (sII), TS1 (sIII), and HS1 (sIV).  |Matsumoto, M. & Tanaka, H. On the structure selectivity of clathrate hydrates. J. Phys. Chem. B 115, 8257-8265 (2011).
+RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
 
 Please ask vitroid@gmail.com to add new ice structures.
 ##Water models
