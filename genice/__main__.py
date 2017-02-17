@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- python -*-
 
+import os
 import sys
 import numpy     as np
 import argparse  as ap
@@ -296,6 +297,14 @@ def getoptions():
 
 
 def main():
+    #prepare user's workarea
+    homegenice = os.path.expanduser("~/.genice")
+    sys.path.append(homegenice)
+    try:
+        os.makedirs(homegenice+"/lattices")
+        os.makedirs(homegenice+"/molecules")
+    except:
+        pass #just ignore.
     options = getoptions()
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,

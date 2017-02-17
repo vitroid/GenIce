@@ -8,8 +8,36 @@ import math
 import logging
 import re
 import importlib
+import os
 from genice import pairlist  as pl
 from genice import digraph   as dg
+
+
+def audit_name(name):
+    """
+    Audit the mol name to avoid the access to external files
+    """
+    return re.match('^[A-Za-z0-9-_]+$', name) is not None
+
+
+
+def safe_import(category, name):
+    assert category in ("lattice", "molecule")
+    assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
+    if category == "lattice":
+        try:
+            module     = importlib.import_module("lattices."+name) #at ~/.genice
+        except ImportError:
+            raise
+            module     = importlib.import_module("genice.lattices."+name)
+    else:
+        try:
+            module     = importlib.import_module("molecules."+name) #at ~/.genice
+        except ImportError:
+            raise
+            module     = importlib.import_module("genice.molecules."+name)
+    return module
+
 
 def usage(parser):
     parser.print_help()
@@ -87,8 +115,7 @@ def replicate_graph(graph, positions, rep):
 def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
-    assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
-    lat     = importlib.import_module("genice.lattices."+lattice_type)
+    lat = safe_import("lattice", lattice_type)
     if type(lat.waters) is str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
     elif type(lat.waters) is list:
@@ -120,9 +147,10 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         """
         if type(lat.cell) is str:
             lat.cell = np.fromstring(lat.cell, sep=" ")
+            logger.debug(lat.cell)
         elif type(lat.cell) is list:
             lat.cell = np.array(lat.cell)
-        lat.cell = np.reshape((3,3))
+        lat.cell = np.reshape(lat.cell, (3,3))
         #assert lat.cell[0,1] == 0 and lat.cell[0,2] == 0 and lat.cell[1,2] == 0
     else:
         logger.error("unknown cell type: {0}".format(lat.celltype))
@@ -250,20 +278,13 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     return result
         
 
-def audit_name(name):
-    """
-    Audit the mol name to avoid the access to external files
-    """
-    return re.match('^[A-Za-z0-9]+$', name) is not None
-
 
 
 
 def generate_cages(lattice_type, rep):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
-    assert audit_name(lattice_type), "Dubious lattice name: {0}".format(lattice_type)
-    lat     = importlib.import_module("genice.lattices."+lattice_type)
+    lat = safe_import("lattice", lattice_type)
     try:
         cagetype = []
         cagepos = []
