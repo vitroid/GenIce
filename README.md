@@ -12,20 +12,20 @@ Note: WinPython includes all of these requirements.
 ###Using steuptools (Unix)
 
 1. First, install the [setuptools](https://setuptools.readthedocs.io/en/latest/) by some means.  Skip this step if you already have `pip3` command.
-2. Download the source code from [this page](https://github.com/vitroid/GenIce).
-3. Run the following command.
+1. Download the source code from [this page](https://github.com/vitroid/GenIce).
+1. Run the following command.
 
-    % cd GenIce
-    % ./setup.py install
+        cd GenIce
+        ./setup.py install
 
-4. Or, just run genice.x command there.
+1. Or, just run genice.x command there.
 
-    % cd GenIce
-    % ./genice.x 7 > 7.gro 
+        cd GenIce
+        ./genice.x 7 > 7.gro 
 
 ##Uninstallation
 
-    % pip3 uninstall GenIce
+    pip3 uninstall GenIce
     
 ##Usage
     usage: genice.x [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
@@ -58,18 +58,18 @@ Note: WinPython includes all of these requirements.
 * To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
 .gro format:
 
-    ./genice --water tip4p --rep 3 3 3  4 > ice4.gro
+        ./genice --water tip4p --rep 3 3 3  4 > ice4.gro
 
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format:
 
-    ./genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
+        ./genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
 
 * To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
 THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
-    ./genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+        ./genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 ##Structure generation
 The program generates various ice lattice with proton disorder and
