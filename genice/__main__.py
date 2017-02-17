@@ -298,7 +298,11 @@ def getoptions():
 
 def main():
     #prepare user's workarea
-    homegenice = os.path.expanduser("~/.genice")
+    home = os.path.expanduser("~")
+    if os.path.exists(home+"/Library/Application Support"): #MacOS
+        homegenice = home+"/Library/Application Support/GenIce"
+    else:
+        homegenice = os.path.expanduser(home + "/.genice") #Other unix
     sys.path.append(homegenice)
     try:
         os.makedirs(homegenice+"/lattices")
