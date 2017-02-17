@@ -2,16 +2,36 @@
 Generate proton-disordered ice structures for GROMACS.
 
 ##Requirements
+
 * Python 3
 * NetworkX
 * numpy
 
 Note: WinPython includes all of these requirements.
+##Installation
+###Using steuptools (Unix)
+
+1. First, install the [setuptools](https://setuptools.readthedocs.io/en/latest/) by some means.  Skip this step if you already have `pip3` command.
+2. Download the source code from [this page](https://github.com/vitroid/GenIce).
+3. Run the following command.
+
+    % cd GenIce
+    % ./setup.py install
+
+4. Or, just run genice.x command there.
+
+    % cd GenIce
+    % ./genice.x 7 > 7.gro 
+
+##Uninstallation
+
+    % pip3 uninstall GenIce
+    
 ##Usage
-    usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqdXo] [--water model] [--g12 model] [--g14 model]
-                  [--g15 model] [--g16 model] [--cages] [--debug]
-                  Type
+    usage: genice.x [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
+                    [--format gmeqdXoc] [--water model] [--guest D=empty]
+                    [--debug] [--quiet]
+                    Type
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc.)
@@ -22,25 +42,15 @@ Note: WinPython includes all of these requirements.
                             Repeat the unit cell in x,y, and z directions. [2,2,2]
       --dens DENS, -d DENS  Specify the ice density in g/cm3
       --seed SEED, -s SEED  Random seed [1000]
-      --format gmeqdXo, -f gmeqdXo
+      --format gmeqdXoc, -f gmeqdXoc
                             Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
-                            rnion)|d(igraph)|o(penScad)]
+                            rnion)|d(igraph)|o(penScad)|c(entersofmass)]
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.)
-      --g12 model, -D model
-                            Specify guest in the 12-hedral cage. (empty, co2,
-                            uathf, etc.)
-      --g14 model, -T model
-                            Specify guest in the 14-hedral cage. (empty, co2,
-                            uathf, etc.)
-      --g15 model, -P model
-                            Specify guest in the 15-hedral cage. (empty, co2,
-                            uathf, etc.)
-      --g16 model, -H model
-                            Specify guest in the 16-hedral cage. (empty, co2,
-                            uathf, etc.)
-      --cages, -c           Also output the cage positions. (g or m format only)
-      --debug               Output debugging info.
+      --guest D=empty, -g D=empty
+                            Specify guest in the cage. (D=empty, T=co2, etc.)
+      --debug, -D           Output debugging info.
+      --quiet, -q           Do not output progress messages.
 
 
 ##Example
@@ -53,13 +63,13 @@ Note: WinPython includes all of these requirements.
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format:
 
-    ./genice --cages --g12 co2 --g14 co2 --water tip4p CS1 > cs1.gro
+    ./genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
 
 * To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
 THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
-    ./genice --cages --g12 empty --g16 uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+    ./genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 ##Structure generation
 The program generates various ice lattice with proton disorder and
