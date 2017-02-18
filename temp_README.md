@@ -75,6 +75,7 @@ symbol   | type
 `tip3p`  | TIP3P (default)
 `tip4p`  | TIP4P
 `tip5p`  | TIP5P
+
 ##Guest molecules
 
 symbol | type
@@ -82,3 +83,4 @@ symbol | type
 `co2`    | CO<sub>2</sub>
 `uathf`  | United atom 5-site THF  
 `g12`,`g14`,`g15`,`g16` | A monatomic dummy site
+
