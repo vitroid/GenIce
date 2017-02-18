@@ -1,10 +1,10 @@
 all:
 	echo Hello.
 %: temp_%
-	./genice.x -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
+	genice -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
 %.rst: %.md
 	md2rst $<
-pypi-prepare:
+pypi:
 	make README.rst
 	./setup.py check
 	./setup.py sdist bdist_wheel upload

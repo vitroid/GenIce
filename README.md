@@ -9,37 +9,20 @@ Generate proton-disordered ice structures for GROMACS.
 
 Note: WinPython includes all of these requirements.
 ##Installation
-###Using steuptools (Unix)
+GenIce is registered to PyPI (Python Package Index). 
+Install with pip3.
 
-1. First, install the [setuptools](https://setuptools.readthedocs.io/en/latest/) by some means.  Skip this step if you already have `pip3` command.
-1. Obtain the source codes.
-    1. Download the [source code (master.zip)](https://github.com/vitroid/GenIce/archive/master.zip) and unarchive it.
-
-            unzip master.zip
-
-    1. Or clone them.
-
-            git clone https://github.com/vitroid/GenIce.git
-    
-1. Run the following command.
-
-        cd GenIce
-        ./setup.py install
-
-1. Or, just run genice.x command in-place.
-
-        cd GenIce
-        ./genice.x 7 > 7.gro 
+    % pip3 install genice
 
 ##Uninstallation
 
-    pip3 uninstall GenIce
+    pip3 uninstall genice
     
 ##Usage
-    usage: genice.x [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                    [--format gmeqdXoc] [--water model] [--guest D=empty]
-                    [--debug] [--quiet]
-                    Type
+    usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
+                  [--format gmeqdXoc] [--water model] [--guest D=empty] [--debug]
+                  [--quiet]
+                  Type
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc.)
@@ -66,18 +49,18 @@ Note: WinPython includes all of these requirements.
 * To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
 .gro format:
 
-        ./genice --water tip4p --rep 3 3 3  4 > ice4.gro
+        genice --water tip4p --rep 3 3 3  4 > ice4.gro
 
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format:
 
-        ./genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
+        genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
 
 * To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
 THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
-        ./genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+        genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 ##Structure generation
 The program generates various ice lattice with proton disorder and
@@ -90,7 +73,7 @@ to the potential energy.
 
 ##Ice structures
 
-Symbol | Description| Reference
+Symbol | Description| References
 -------|------------|----------
 1h, 1c | Most popular Ice I (hexagonal or cubic)
 2d     | Hypothetical Proton-disordered Ice II. |Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848. Web.
@@ -109,6 +92,14 @@ RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models
-* 3-site: TIP3P (default)
-* 4-site: TIP4P
-* 5-site: TIP5P
+symbol   | type
+---------+-----
+`tip3p`  | TIP3P (default)
+`tip4p`  | TIP4P
+`tip5p`  | TIP5P
+##Guest molecules
+symbol | type
+-------+------
+`co2`    | CO<sub>2</sub>
+`uathf`  | United atom 5-site THF  
+`g12`,`g14`,`g15`,`g16` | A monatomic dummy site
