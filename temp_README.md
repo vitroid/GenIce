@@ -69,12 +69,14 @@ RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models
+
 symbol   | type
 ---------+-----
 `tip3p`  | TIP3P (default)
 `tip4p`  | TIP4P
 `tip5p`  | TIP5P
 ##Guest molecules
+
 symbol | type
 -------+------
 `co2`    | CO<sub>2</sub>
