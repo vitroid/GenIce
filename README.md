@@ -75,10 +75,10 @@ to the potential energy.
 
 Symbol | Description| References
 -------|------------|----------
-1h, 1c | Most popular Ice I (hexagonal or cubic)
+1h, 1c | Most popular Ice I (hexagonal or cubic)|
 2d     | Hypothetical Proton-disordered Ice II. |Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848. Web.
-3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.
-5      | Monoclinic ice V (testing).
+3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.|
+5      | Monoclinic ice V (testing).|
 16     | Negative-pressure ice XVI(16).  |Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231-233 (2014).
 17     | Negative-pressure ice XVII(17).  |del Rosso, Leonardo, Milva Celli, and Lorenzo Ulivi. “Ice XVII as a Novel Material for Hydrogen Storage.” Challenges 8.1 (2017): 3.
 0      | Hypothetical ice "0".  |Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733-739 (2014).
@@ -94,15 +94,15 @@ Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structur
 ##Water models
 
 symbol   | type
----------+-----
+---------|--------
 `tip3p`  | TIP3P (default)
 `tip4p`  | TIP4P
 `tip5p`  | TIP5P
 
 ##Guest molecules
 
-symbol | type
--------+------
+symbol | type 
+-------|---------
 `co2`    | CO<sub>2</sub>
 `uathf`  | United atom 5-site THF  
 `g12`,`g14`,`g15`,`g16` | A monatomic dummy site
