@@ -12,7 +12,7 @@ Note: WinPython includes all of these requirements.
 GenIce is registered to PyPI (Python Package Index). 
 Install with pip3.
 
-    % pip3 install genice
+    pip3 install genice
 
 ##Uninstallation
 
