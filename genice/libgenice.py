@@ -24,17 +24,20 @@ def audit_name(name):
 def safe_import(category, name):
     assert category in ("lattice", "molecule")
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
+    module = None
     if category == "lattice":
         try:
             module     = importlib.import_module("lattices."+name) #at ~/.genice
-        except ImportError:
-            raise
+        except ImportError as e:
+            pass
+        if module is None:
             module     = importlib.import_module("genice.lattices."+name)
     else:
         try:
             module     = importlib.import_module("molecules."+name) #at ~/.genice
         except ImportError:
-            raise
+            pass
+        if module is None:
             module     = importlib.import_module("genice.molecules."+name)
     return module
 
