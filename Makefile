@@ -4,6 +4,10 @@ all:
 	genice -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
 %.rst: %.md
 	md2rst $<
+
+install:
+	make README.rst
+	./setup.py install
 pypi:
 	make README.rst
 	./setup.py check
