@@ -237,7 +237,7 @@ class IceGraph(networkx.DiGraph):
         while len(defects)>0:
             self.purgedefects(defects)
             if len(defects) <= target:
-                logger.debug("Defects remain: {0}".format(len(defects)))
+                logger.info("Defects remaining: {0}".format(len(defects)))
                 target //= 2
         if len(self.defects()) != 0:
             logger.error("Some water molecules do not obey the ice rule.")
