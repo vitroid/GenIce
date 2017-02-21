@@ -25,7 +25,9 @@ Install with pip3.
                   Type
     
     positional arguments:
-      Type                  Crystal type (1c,1h,etc.)
+      Type                  Crystal type (1c,1h,etc. See
+                            https://github.com/vitroid/GenIce for available ice
+                            structures.)
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -94,7 +96,21 @@ CRN1,CRN2, CRN3 | 4-coordinated continuous random network, a model for low densi
 Struct01 .. Struct84 | Space Fullerenes | Frank-Kasper type clathrate structures.    Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
 A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes | Aliases of the Struct?? series.  See the data source for their names.  Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
 
-Note: Some structures are identical; A15=CS1=MTN, Z=HS1, sigma=TS1, CS2=16=C15.
+Note: Some structures are identical.
+
+Nomenclature |  Symbol  | Symbol   | Symbol   | Symbol   |References
+-------------|-----|-----|-----|-----|-------
+Frank-Kasper dual | A15 | C15 | sigma | Z |Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.
+ice | - | 16 |- |- 
+Jeffrey | sI | sII | sIII | sIV | Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.
+Kosyakov| CS1 | CS2 | TS1 | HS1 | Kosyakov, Viktor I, V A Shestakov, and S F Solodovnikov. “Calculation of the Gas Hydrate HS-1 Framework Structure and Its Energy Estimation.” Journal of Structural Chemistry 34.5 (1994): 810–813.
+Zeolite | MEP | MTN |  -|- | [New Database of Zeolite Structures](http://www.iza-structure.org/databases/)
+
+###Common structures between pure ices and hydrates
+Nomenclature | Symbol| Symbol | Symbol |Symbol | Remarks and References
+----|----|----|----|----| ---
+ice | 1c | 2  |16 | 17 |
+filled ice | C2 | C1 | sII | C0 |
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models
