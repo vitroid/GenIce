@@ -93,14 +93,15 @@ def format_mdv(atoms, cell, celltype):
 def format_yaplot(atoms, cell, celltype):
     logger = logging.getLogger()
     logger.info("Output in Yaplot format.")
-    s = yp.Color(3)
-    s += yp.Size(0.02)
+    s = ""
     H = []
     O  = ""
     for i in range(len(atoms)):
         resno, resname, atomname, position = atoms[i]
         if resno == 0:
             if O is not "":
+                s += yp.Color(3)
+                s += yp.Size(0.02)
                 s += yp.Circle(O)
                 if len(H):
                     s += yp.Line(O,H[0])
@@ -111,6 +112,10 @@ def format_yaplot(atoms, cell, celltype):
             O = position
         elif "H" in atomname:
             H.append(position)
+        else:
+            s += yp.Color(4)
+            s += yp.Size(0.04)
+            s += yp.Circle(position)
     if O is not "":
         s += yp.Circle(O)
         if len(H):
