@@ -1,3 +1,7 @@
+"""
+Data source: Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
+"""
+
 celltype = "rect"
 cell = """
 13.339813507 13.339813507 13.339813507

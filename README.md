@@ -89,6 +89,8 @@ C2     | Filled ice C2 (Alias of 1c).
 sTprime | Filled ice sT' |Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
 CS1, CS2, TS1, HS1 | Clathrate hydrates CS1 (sI), CS2 (sII), TS1 (sIII), and HS1 (sIV).  |Matsumoto, M. & Tanaka, H. On the structure selectivity of clathrate hydrates. J. Phys. Chem. B 115, 8257-8265 (2011).
 RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
+CRN1,CRN2, CRN3 | 4-coordinated continuous random network, a model for low density amorphous ice. | Mousseau, N, and G T Barkema. “Fast Bond-Transposition Algorithms for Generating Covalent Amorphous Structures.” Current Opinion in Solid State and Materials … 5.6 (2001): 497–502. Web.
+
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models

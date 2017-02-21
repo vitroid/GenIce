@@ -353,6 +353,7 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
     make the shortest paths between them.
     """
     logger = logging.getLogger()
+
     while True:
         vertex = random.randint(0,spaceicegraph.number_of_nodes()-1)
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
@@ -377,6 +378,7 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         #So we need some loops to get the expected one.
         cycle = path1 + path2[1:]
         d = spaceicegraph.dipole_of_a_cycle(cycle) - axis
+        logger.debug("Axis: {0} {1}".format(axis,spaceicegraph.dipole_of_a_cycle(cycle)))
         rr = np.dot(d,d)
         if rr < 0.1:
             break

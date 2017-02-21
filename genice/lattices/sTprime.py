@@ -1,3 +1,7 @@
+"""
+Data source: Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
+"""
+
 density = 1.2     #default density
 
 

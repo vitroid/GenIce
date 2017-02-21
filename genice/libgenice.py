@@ -119,12 +119,13 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
     lat = safe_import("lattice", lattice_type)
+    #Show the document of the module
     try:
-        for line in lat.remarks.splitlines():
+        for line in lat.__doc__.splitlines():
             logger.info("!!! {0}".format(line))
     except:
         pass
-    double_net_test = False
+    double_net_test = True
     try:
         if lat.double_network:
             double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)

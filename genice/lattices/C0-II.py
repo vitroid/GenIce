@@ -1,3 +1,9 @@
+"""
+Data sources
+[C0] Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
+[Ice 17] del Rosso, Leonardo, Milva Celli, and Lorenzo Ulivi. “Ice XVII as a Novel Material for Hydrogen Storage.” Challenges 8.1 (2017): 3.
+"""
+
 density = 1.2     #default density
 
 bondlen = 1.2

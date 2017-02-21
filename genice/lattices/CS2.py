@@ -1,3 +1,7 @@
+"""
+Data source: Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231-233 (2014).
+"""
+
 density = 0.81     #default density
 
 
