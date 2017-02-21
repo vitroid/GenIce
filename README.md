@@ -73,7 +73,7 @@ to the potential energy.
 
 ##Ice structures
 
-Symbol | Description| References
+Symbol | Description| Remarks and data sources
 -------|------------|----------
 1h, 1c | Most popular Ice I (hexagonal or cubic)|
 2d     | Hypothetical Proton-disordered Ice II. |Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848. Web.
@@ -89,8 +89,12 @@ C2     | Filled ice C2 (Alias of 1c).
 sTprime | Filled ice sT' |Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
 CS1, CS2, TS1, HS1 | Clathrate hydrates CS1 (sI), CS2 (sII), TS1 (sIII), and HS1 (sIV).  |Matsumoto, M. & Tanaka, H. On the structure selectivity of clathrate hydrates. J. Phys. Chem. B 115, 8257-8265 (2011).
 RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
+FAU    | Hypothetical ice at negative pressure ice 'sIV'. | “Prediction of a New Ice Clathrate with Record Low Density: a Potential Candidate as Ice XIX in Guest-Free Form.” “Prediction of a New Ice Clathrate with Record Low Density: a Potential Candidate as Ice XIX in Guest-Free Form.” sciencedirect.com. N.p., n.d. Web. 21 Feb. 2017.
 CRN1,CRN2, CRN3 | 4-coordinated continuous random network, a model for low density amorphous ice. | Mousseau, N, and G T Barkema. “Fast Bond-Transposition Algorithms for Generating Covalent Amorphous Structures.” Current Opinion in Solid State and Materials … 5.6 (2001): 497–502. Web.
+Struct01 .. Struct84 | Space Fullerenes | Frank-Kasper type clathrate structures.    Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
+A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes | Aliases of the Struct?? series.  See the data source for their names.  Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
 
+Note: Some structures are identical; A15=CS1=MTN, Z=HS1, sigma=TS1, CS2=16=C15.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models
