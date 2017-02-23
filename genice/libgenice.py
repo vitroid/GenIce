@@ -128,7 +128,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
         pass
     double_net_test = True
     try:
-        if lat.double_network:
+        if lat.double_network and not scad:
             double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)
     except:
         pass #just ignore.
