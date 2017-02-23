@@ -35,16 +35,16 @@ class OpenScad():
         return OpenScad("{0}={1};\n".format(name,value))
 
     def translate(self, value):
-        return OpenScad("translate([{0},{1},{2}]){{\n{3}}} //translate\n".format(*value, self.string))
+        return OpenScad("translate([{1},{2},{3}]){{\n{0}}} //translate\n".format(self.string, *value))
 
     def scale(self, value):
-        return OpenScad("scale([{0},{1},{2}]){{\n{3}}} //scale\n".format(*value, self.string))
+        return OpenScad("scale([{1},{2},{3}]){{\n{0}}} //scale\n".format(self.string, *value))
 
     def rotate(self, value):
-        return OpenScad("rotate([{0},{1},{2}]){{\n{3}}} //rotate\n".format(*value, self.string))
+        return OpenScad("rotate([{1},{2},{3}]){{\n{0}}} //rotate\n".format(self.string, *value))
 
     def mirror(self, value):
-        return OpenScad("mirror([{0},{1},{2}]){{\n{3}}} //mirror\n".format(*value, self.string))
+        return OpenScad("mirror([{1},{2},{3}]){{\n{0}}} //mirror\n".format(self.string, *value))
 
     def add(self, *values):
         return OpenScad("union(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //union\n")
@@ -94,7 +94,10 @@ class OpenScad():
         return OpenScad(s)
 
     def bond(self, s1,s2,r=1.0):
-        return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(*s1,*s2,r))
+        #degraded for py2
+        #return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(*s1,*s2,r))
+        return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(s1[0],s1[1],s1[2],
+                                                                            s2[0],s2[1],s2[2],r))
 
     def sphere(self, r=1):
         return OpenScad("sphere(r={0});\n".format(r))
