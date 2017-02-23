@@ -7,6 +7,7 @@ cell = """
 6.17796478930512 6.17432264229094 5.68970979821475
 """
 
+double_network = True  #It is necessary only for ices 6 and 7
 
 coord = "absolute"
 

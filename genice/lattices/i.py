@@ -1,3 +1,9 @@
+"""
+Hypothetical ice "i".
+
+Data source: Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005).
+"""
+
 density = 0.92     #default density
 
 bondlen = 0.4      #bond threshold	 
