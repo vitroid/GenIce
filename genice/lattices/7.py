@@ -24,6 +24,7 @@ waters = """
 3 3 3
 """
 coord = "absolute"
+double_network = True  #It is necessary only for ices 6 and 7
 
 pairs = """
 0 4

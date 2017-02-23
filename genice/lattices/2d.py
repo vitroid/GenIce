@@ -1,3 +1,9 @@
+"""
+A hydrogen-disordered counterpart of ice II.
+
+Data source: Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848.
+"""
+
 density = 1.2     #default density
 
 

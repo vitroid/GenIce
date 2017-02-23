@@ -119,10 +119,26 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
     lat = safe_import("lattice", lattice_type)
+    #Show the document of the module
+    try:
+        for line in lat.__doc__.splitlines():
+            logger.info("!!! {0}".format(line))
+    except:
+        pass
+    double_net_test = True
+    try:
+        if lat.double_network:
+            double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)
+    except:
+        pass #just ignore.
+    if not double_net_test:
+        logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
+        sys.exit(1)
     if type(lat.waters) is str:
         lat.waters = np.fromstring(lat.waters, sep=" ")
     elif type(lat.waters) is list:
         lat.waters = np.array(lat.waters)
+    logger.debug("Waters: {0}".format(len(lat.waters)))
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
     if lat.celltype == "rect":
@@ -170,15 +186,18 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     pairs = None
     bondlen = None
     try:
-        lines = lat.pairs.split("\n")
-        pairs = set()
-        for line in lines:
-            columns = line.split()
-            if len(columns) == 2:
-                i,j = [int(x) for x in columns]
-                if j<i:
-                    i,j = j,i
-                pairs.add((i,j))
+        if type(lat.pairs) is str:
+            lines = lat.pairs.split("\n")
+            pairs = set()
+            for line in lines:
+                columns = line.split()
+                if len(columns) == 2:
+                    i,j = [int(x) for x in columns]
+                    pairs.add(frozenset([i,j]))
+        elif type(lat.pairs) is list:
+            pairs = set()
+            for pair in pairs:
+                pairs.add(frozenset(pair))
     except AttributeError:
         logger.info("Graph is not defined.")
 
@@ -212,11 +231,18 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
             #make bonded pairs according to the pair distance.
             #make before replicating them.
             grid = pl.determine_grid(lat.cell, bondlen)
-            pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid)
+            pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)
             logger.info("  End estimating the bonds.")
 
+        shuffled_pairs = []
+        for pair in pairs:
+            i,j = pair
+            if random.randint(0,1) == 0:
+                i,j = j,i
+            shuffled_pairs.append((i,j))
+            
         graph = dg.IceGraph()
-        graph.register_pairs(pairs)
+        graph.register_pairs(shuffled_pairs)
         logger.info("End placing the bonds.")
 
     

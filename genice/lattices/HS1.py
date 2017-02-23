@@ -1,3 +1,9 @@
+"""
+[Z] Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.
+[sIV] Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.
+[HS1] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
+"""
+
 density = 0.8     #default density
 
 

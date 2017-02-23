@@ -25,3 +25,5 @@ GenIce.egg*
 *.rst
 
 Utilities/
+
+\.yapviewstack
