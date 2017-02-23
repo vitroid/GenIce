@@ -63,13 +63,7 @@ THF (united atom with a dummy site) in the large cage in GROMACS
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 ##Structure generation
-The program generates various ice lattice with proton disorder and
-without defect.  Total dipole moment is always set to zero.  The
-minimal structure (with --rep 1 1 1 option) is not always the unit
-cell of the lattice because it is difficult to deal with the hydrogen
-bond network topology of tiny lattice under periodic boundary
-condition.  Note that the generated structure is not optimal according
-to the potential energy.
+The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero.  The minimal structure (with `--rep 1 1 1` option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
 
 ##Ice structures
 
@@ -92,12 +86,14 @@ RHO    | Hypothetical ice at negative pressure ice 'sIII'. |Huang, Y et al. “A
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ##Water models
+You can choose water models with `--water` option.
 
-symbol   | type
----------|--------
-`tip3p`  | TIP3P (default)
-`tip4p`  | TIP4P
-`tip5p`  | TIP5P
+symbol   | type|Reference
+---------|--------|-------
+`3site`, `tip3p`  | 3-site TIP3P (default)
+`4site`, `tip4p`  | 4-site TIP4P
+`5site`, `tip5p`  | 5-site TIP5P
+`6site`, `NvdE`   | 6-site NvdE  | Nada, H.; van der Eerden, J. An Intermolecular Potential Model for the Simulation of Ice and Water Near the Melting Point: a Six-Site Model of H 2 O. J. Chem. Phys. 2003, 118, 7401.
 
 ##Guest molecules
 
@@ -105,5 +101,6 @@ symbol | type
 -------|---------
 `co2`    | CO<sub>2</sub>
 `uathf`  | United atom 5-site THF  
-`g12`,`g14`,`g15`,`g16` | A monatomic dummy site
+`uathf6`  | United atom 6-site THF with a dummy site
+`g12`,`g14`,`g15`,`g16` | Monatomic dummy atoms
 
