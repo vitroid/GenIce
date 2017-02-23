@@ -1,6 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- python -*-
 
+from __future__ import print_function
 import sys
 import numpy     as np
 import random
@@ -277,9 +278,12 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     #Test
     undir = graph.to_undirected()
     for node in range(undir.number_of_nodes()):
-        z = len(undir.neighbors(node))
-        if  z!= 4:
-            logger.debug("z={0} at {1} [{2}]".format(z,node,undir.neighbors(node)))
+        if node not in undir:
+            logger.debug("z=0 at {0}".format(node))
+        else:
+            z = len(undir.neighbors(node))
+            if  z!= 4:
+                logger.debug("z={0} at {1} [{2}]".format(z,node,undir.neighbors(node)))
 
     if graph.number_of_edges() != len(reppositions)*2:
         logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(reppositions)))

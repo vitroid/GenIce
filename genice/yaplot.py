@@ -1,3 +1,4 @@
+from __future__ import print_function
 #convert numpy array to a plain string
 def plaintext(a):
     s = ""

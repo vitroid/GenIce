@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #coding: utf-8
 #input: coordinate of the nodes, the digraph obeying the ice rule.
 #output: the digraph with zero net dipole.
 
+from __future__ import print_function
 import sys
 import math
 import networkx

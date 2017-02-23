@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
+from __future__ import print_function
 from math import *
 import sys
 import numpy as np
