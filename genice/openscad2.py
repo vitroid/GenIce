@@ -1,6 +1,7 @@
 #Minimal implementation for genice.
 #openjscad-like postmodifier style
 
+from __future__ import print_function
 import numpy as np
 
 
