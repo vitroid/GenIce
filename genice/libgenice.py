@@ -12,7 +12,8 @@ import importlib
 import os
 from genice import pairlist  as pl
 from genice import digraph   as dg
-
+import networkx as nx
+from collections import defaultdict
 
 def audit_name(name):
     """
@@ -113,10 +114,21 @@ def replicate_graph(graph, positions, rep):
 
 
 
+def load_numbers(v):
+    if type(v) is str:
+        return np.fromstring(v, sep=" ")
+    elif type(v) is list:
+        return np.array(v)
+    
 
 
+#0th stage: determine the molecular positions
+#1st stage: undirected graph (connectivity)
+#2nd stage: directed graph (obeying ice rule)
+#3rd stage: depolarized graph
 
-def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False, yaplot=False, scad=False):
+
+def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
     logger = logging.getLogger()
     logger.info("Ice type: {0}".format(lattice_type))
     lat = safe_import("lattice", lattice_type)
@@ -126,19 +138,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
             logger.info("!!! {0}".format(line))
     except:
         pass
-    double_net_test = True
-    try:
-        if lat.double_network and not scad:
-            double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)
-    except:
-        pass #just ignore.
-    if not double_net_test:
-        logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
-        sys.exit(1)
-    if type(lat.waters) is str:
-        lat.waters = np.fromstring(lat.waters, sep=" ")
-    elif type(lat.waters) is list:
-        lat.waters = np.array(lat.waters)
+    lat.waters = load_numbers(lat.waters)
     logger.debug("Waters: {0}".format(len(lat.waters)))
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
@@ -224,7 +224,7 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     if bondlen is not None:
         bondlen   *= ratio
 
-    if not noGraph:
+    if True:
         logger.info("Start placing the bonds.")
         if pairs is None:
             logger.info("  Pairs are not given explicitly.")
@@ -255,11 +255,11 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     for d in range(3):
         lat.cell[:,d] *= rep[d]
         
-    if noGraph:
-        result = {"positions"   : reppositions,
-                  "cell"        : lat.cell,
-                  "celltype"    : lat.celltype,
-                  "bondlen"     : bondlen}
+    result = {"positions"   : reppositions,
+              "cell"        : lat.cell,
+              "celltype"    : lat.celltype,
+              "bondlen"     : bondlen}
+    if stage == 0:
         return result
         #return reppositions, None, None, lat.cell, lat.celltype, bondlen
 
@@ -267,12 +267,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     #This also shuffles the bond directions
     graph = replicate_graph(graph, lat.waters, rep)
 
-    result = {"positions"   : reppositions,
-              "graph"       : graph,
-              "cell"        : lat.cell,
-              "celltype"    : lat.celltype,
-              "bondlen"     : bondlen}
-    if scad:
+
+    if stage == 1:
+        result["graph"] = graph
         return result
 
     #Test
@@ -293,14 +290,23 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     logger.info("Start making the bonds obey the ice rules.")
     graph.purge_ice_defects()
     logger.info("End making the bonds obey the ice rules.")
-        
+    if stage == 2:
+        result["graph"] = graph
+        return result
 
     #Rearrange HBs to purge the total dipole moment.
     logger.info("Start depolarization.")
+    double_net_test = True
+    try:
+        if lat.double_network:
+            double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)
+    except:
+        pass #just ignore.
+    if not double_net_test:
+        logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
+        sys.exit(1)
     spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
-    draw = None
-    if yaplot:
-        draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
+    draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
     yapresult  = dg.depolarize(spacegraph, lat.cell, draw=draw)
     logger.info("End depolarization.")
     #determine the orientations of the water molecules based on edge directions.
@@ -308,7 +314,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), noGraph=False
     result["rotmatrices"] = rotmatrices
     result["graph"]       = spacegraph
     result["yaplot"]      = yapresult
-    return result
+    if stage == 3:
+        return result
+
         
 
 

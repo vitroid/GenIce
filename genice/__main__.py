@@ -338,10 +338,19 @@ def main():
     water_type    = options.water[0]
 
     output_format = options.format[0][0]
-
-    noGraph = False
-    if output_format in ("p", "c"):
-        noGraph = True
+    if output_format in ["c", ]:
+        #com only
+        stage = 0
+    elif output_format in ["o", ]:
+        #undir graph
+        stage = 1
+    elif output_format in ["d", ]:
+        #directed graph
+        stage = 2
+    else:
+        #everything
+        stage = 3
+        
     if output_format == "o":
         options.rep[0] += 2
         options.rep[1] += 2
@@ -351,9 +360,7 @@ def main():
                           seed=options.seed[0],
                           rep=options.rep,
                           density=options.dens[0],
-                          noGraph = noGraph,
-                          yaplot = (output_format == 'y'),
-                          scad   = (output_format == 'o'),
+                          stage=stage
                           )
     
     #Final output formats
@@ -401,60 +408,58 @@ def main():
         rotmatrices = result["rotmatrices"]
     else:
         #Random orientation
-        logger.info("The network is not given.  Water molecules will be orinented randomly.")
+        logger.info("The network is not specified.  Water molecules will be orinented randomly.")
         rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
 
     #For rigid rotors; no atomic information is required.
     if output_format == "e":          # NX3A
         s = format_euler(positions, cell, rotmatrices, celltype)
+        print(s,end="")
+        sys.exit(0)
     elif output_format == "q":        # NX4A
         s = format_quaternion(positions, cell, rotmatrices, celltype)
-    elif rotmatrices is None:
-        if output_format == "y":    # yaplot
-            assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
-            water = importlib.import_module("genice.molecules."+water_type)
-            atoms = oxygenize(positions, cell, water.name)
-            s = yaplot
-            s += format_yaplot(atoms, cell, celltype)
-    else:
-        #arrange atoms
-        assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
-        water = importlib.import_module("genice.molecules."+water_type)
-        atoms = arrange_atoms(positions, cell, rotmatrices, water.sites, water.labels, water.name)
-        cagepos, cagetype = generate_cages(options.Type[0], options.rep)
-        if cagepos is not None:
-            cagetypes = set(cagetype)
-            logger.info("Cage types: {0}".format(cagetypes))
-        if options.guests is not None and cagepos is not None:
-            #Make the cage type to guest type correspondence
-            guest_in_cagetype = dict()
-            for arg in options.guests:
-                key, value = arg[0].split("=")
-                guest_in_cagetype[key] = value
-            #replicate the cagetype array
-            cagetype = np.array([cagetype[i%len(cagetype)] for i in range(cagepos.shape[0])])
-            for ctype in cagetypes:
-                #filter the cagepos
-                cpos = cagepos[cagetype == ctype]
-                #guest molecules are not rotated.
-                cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
-                #If the guest molecule type is given,
-                if ctype in guest_in_cagetype:
-                    gname = guest_in_cagetype[ctype]
-                    #Always check before dynamic import
-                    assert audit_name(gname), "Dubious guest name: {0}".format(gname)
-                    gmol = importlib.import_module("genice.molecules."+gname)
-                    logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
-                    atoms += arrange_atoms(cpos, cell, cmat, gmol.sites, gmol.labels, gmol.name)
-        if output_format == "m":      # MDView
-            s = format_mdv(atoms, cell, celltype)
-        elif output_format == "g":    # GROMACS
-            s = format_gro(atoms, cell, celltype)
-        elif output_format == "y":    # yaplot
-            #Depolarizing process is drawn in "yaplot" variable.
-            s = yaplot
-            s += format_yaplot(atoms, cell, celltype)
+        print(s,end="")
+        sys.exit(0)
 
+    #arrange water atoms
+    assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
+    water = importlib.import_module("genice.molecules."+water_type)
+    atoms = arrange_atoms(positions, cell, rotmatrices, water.sites, water.labels, water.name)
+
+    #arrange guest atoms
+    cagepos, cagetype = generate_cages(options.Type[0], options.rep)
+    if cagepos is not None:
+        cagetypes = set(cagetype)
+        logger.info("Cage types: {0}".format(cagetypes))
+    if options.guests is not None and cagepos is not None:
+        #Make the cage type to guest type correspondence
+        guest_in_cagetype = dict()
+        for arg in options.guests:
+            key, value = arg[0].split("=")
+            guest_in_cagetype[key] = value
+        #replicate the cagetype array
+        cagetype = np.array([cagetype[i%len(cagetype)] for i in range(cagepos.shape[0])])
+        for ctype in cagetypes:
+            #filter the cagepos
+            cpos = cagepos[cagetype == ctype]
+            #guest molecules are not rotated.
+            cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
+            #If the guest molecule type is given,
+            if ctype in guest_in_cagetype:
+                gname = guest_in_cagetype[ctype]
+                #Always check before dynamic import
+                assert audit_name(gname), "Dubious guest name: {0}".format(gname)
+                gmol = importlib.import_module("genice.molecules."+gname)
+                logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
+                atoms += arrange_atoms(cpos, cell, cmat, gmol.sites, gmol.labels, gmol.name)
+    if output_format == "m":      # MDView
+        s = format_mdv(atoms, cell, celltype)
+    elif output_format == "g":    # GROMACS
+        s = format_gro(atoms, cell, celltype)
+    elif output_format == "y":    # yaplot
+        #Depolarizing process is drawn in "yaplot" variable.
+        s = yaplot
+        s += format_yaplot(atoms, cell, celltype)
     print(s, end="")
     logger.info("Completed.")
 
