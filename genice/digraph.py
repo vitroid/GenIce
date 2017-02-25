@@ -48,9 +48,6 @@ def shortest_path(G, start, ends):
 
 
 
-
-
-
 class YaplotDraw(networkx.DiGraph):
     def __init__(self, coord, cell, data=None):
         super().__init__(data)
@@ -450,7 +447,7 @@ def purge_ice_defects(icegraph):
         ins = set(icegraph.excess_in_defects())
         for out in icegraph.excess_out_defects():
             while icegraph.out_degree(out) > 2:
-                path = shortest_path(icegraph, out, ins)
+                path = shortest_path(icegraph, out, [ins,])
                 if path is not None:
                     logger.debug("# of in defects: {0}".format(len(ins)))
                     icegraph.invert_path(path)

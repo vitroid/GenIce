@@ -20,7 +20,7 @@ test:
 	genice 6  --rep 2 2 2 --format m > 6.mdv
 	genice 7  --rep 2 2 2 --format d > 7.ngph
 	genice 12 --rep 2 2 2 --format o > 12.scad
-	genice 16 --rep 1 1 1 --format X > 16.py
+	genice 16 --rep 1 1 1 --format p > 16.py
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist
