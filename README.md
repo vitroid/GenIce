@@ -20,7 +20,7 @@ Install with pip3.
     
 ##Usage
     usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqdXoc] [--water model] [--guest D=empty] [--debug]
+                  [--format gmeqdypoc] [--water model] [--guest D=empty] [--debug]
                   [--quiet]
                   Type
     
@@ -35,9 +35,10 @@ Install with pip3.
                             Repeat the unit cell in x,y, and z directions. [2,2,2]
       --dens DENS, -d DENS  Specify the ice density in g/cm3
       --seed SEED, -s SEED  Random seed [1000]
-      --format gmeqdXoc, -f gmeqdXoc
+      --format gmeqdypoc, -f gmeqdypoc
                             Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
-                            rnion)|d(igraph)|o(penScad)|c(entersofmass)]
+                            rnion)|d(igraph)|y(aplot)|p(ython
+                            module)|o(penScad)|c(entersofmass)]
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.)
       --guest D=empty, -g D=empty

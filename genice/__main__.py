@@ -224,7 +224,7 @@ def format_python(positions, cell, celltype, bondlen):
     s = ""
     s += "bondlen={0}\n".format(bondlen)
     s += "celltype='{0}'\n".format(celltype)
-    s += "coord='absolute'\n"
+    s += "coord='relative'\n"
     if celltype != "rect":
         sys.exit(1)
     NB   = 6.022e23
@@ -233,7 +233,7 @@ def format_python(positions, cell, celltype, bondlen):
     s += "cell='{0} {1} {2}'\n".format(cell[0,0],cell[1,1],cell[2,2])
     s += "waters=\"\"\"\n"
     for i in range(len(positions)):
-        position = np.dot(positions[i],cell)
+        position = positions[i]
         s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(position[0],position[1],position[2])
     s += "\"\"\"\n\n"
     return s
