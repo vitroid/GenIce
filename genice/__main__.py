@@ -197,6 +197,27 @@ def format_com(positions, cell, celltype):
     return s
 
 
+def format_rcom(positions, cell, celltype):
+    logger = logging.getLogger()
+    logger.info("Output centers of mass of water molecules.")
+    s = ""
+    if celltype == "rect":
+        s += "@BOX3\n"
+        s += "{0} {1} {2}\n".format(cell[0,0]*10,cell[1,1]*10,cell[2,2]*10)
+    else:
+        s += "@BOX9\n"
+        for d in range(3):
+            s += "{0} {1} {2}\n".format(cell[0,d]*10,cell[1,d]*10,cell[2,d]*10)
+    s += "@AR3R\n"
+    s += "{0}\n".format(len(positions))
+    for i in range(len(positions)):
+        position = positions[i]
+        s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(position[0],
+                                                   position[1],
+                                                   position[2])
+    return s
+
+
 def format_python(positions, cell, celltype, bondlen):
     logger = logging.getLogger()
     logger.info("Output water molecules as a Python module.")
@@ -292,7 +313,7 @@ def getoptions():
     parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                         help='Random seed [1000]')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
-                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)]')
+                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)]')
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
                         help='Specify water model. (tip3p, tip4p, etc.)')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
@@ -338,7 +359,7 @@ def main():
     water_type    = options.water[0]
 
     output_format = options.format[0][0]
-    if output_format in ["c", ]:
+    if output_format in ["c", "r", ]:
         #com only
         stage = 0
     elif output_format in ["o", ]:
@@ -383,6 +404,10 @@ def main():
         sys.exit(0)
     elif output_format == "c":          # CoM only, AR3A
         s = format_com(positions, cell, celltype)
+        print(s,end="")
+        sys.exit(0)
+    elif output_format == "r":          # Relative CoM only, AR3R
+        s = format_rcom(positions, cell, celltype)
         print(s,end="")
         sys.exit(0)
 
