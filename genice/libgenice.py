@@ -231,8 +231,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
             logger.info("  Start estimating the bonds according to the pair distances.")
             #make bonded pairs according to the pair distance.
             #make before replicating them.
-            grid = pl.determine_grid(lat.cell, bondlen)
-            pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)
+            #grid = pl.determine_grid(lat.cell, bondlen)
+            #pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)
+            pairs = pl.pairlist_crude(lat.waters, bondlen, lat.cell, distance=False)
             logger.info("  End estimating the bonds.")
 
         shuffled_pairs = []
@@ -267,9 +268,8 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
     #This also shuffles the bond directions
     graph = replicate_graph(graph, lat.waters, rep)
 
-
+    result["graph"] = graph
     if stage == 1:
-        result["graph"] = graph
         return result
 
     #Test

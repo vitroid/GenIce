@@ -278,7 +278,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
         s2 =positions[j]
         d = s2-s1
         d -= np.floor( d + 0.5 )
-        logger.info("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
+        logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
         s2 = s1 + d
         if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
              (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
@@ -299,7 +299,46 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
         ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
     return o.encode(*ops)
                      
+def format_yaplot0(graph, positions, cell, celltype, rep):
+    """
+    cell is in nm
+    HBN in yaplot 
+    """
+    logger = logging.getLogger()
+    logger.info("Output HBN in Yaplot format.")
 
+    rep = np.array(rep)
+
+    margin = 0.2 # expansion relative to the cell size
+    lower = (    - margin) / rep
+    upper = (rep + margin) / rep
+
+    bonds = []
+    for i,j in graph.edges_iter(data=False):
+        s1 =positions[i]
+        s2 =positions[j]
+        d = s2-s1
+        d -= np.floor( d + 0.5 )
+        s2 = s1 + d
+        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
+             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+            bonds.append( (np.dot(s1,cell), np.dot(s2,cell)))
+        
+    nodes = []
+    for s1 in positions:
+        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+            nodes.append( np.dot(s1, cell) )
+        
+    s = ""
+    s += yp.Color(3)
+    s += yp.Size(0.04)
+    for node in nodes:
+        s += yp.Circle(node)
+    s += yp.Color(2)
+    for bond in bonds:
+        p,q = bond
+        s += yp.Line(p,q)
+    return s
 
 
 
@@ -433,6 +472,10 @@ def main():
         rotmatrices = result["rotmatrices"]
     else:
         #Random orientation
+        if output_format == "y":
+            s = format_yaplot0(graph, positions, cell, celltype, options.rep)
+            print(s,end="")
+            sys.exit(0)
         logger.info("The network is not specified.  Water molecules will be orinented randomly.")
         rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
 

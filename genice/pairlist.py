@@ -6,7 +6,7 @@
 
 from __future__ import print_function
 import math
-import itertools
+import itertools as it
 import numpy as np
 import logging
 
@@ -38,10 +38,10 @@ def pairlist(xyz,grid):
         #neighbor cells
         npa = np.array(address)
         k = np.array([(npa + j + grid)%grid for j in range(-1,2)])
-        for a2 in itertools.product(k[:,0],k[:,1],k[:,2]):
+        for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if address == a2:
                 #print("ISOCELL",address,npa,a2)
-                for a,b in itertools.combinations(members,2):
+                for a,b in it.combinations(members,2):
                     pair.add((a,b))
             else:
                 if a2 in residents:
@@ -70,7 +70,7 @@ def pairlist_hetero(xyz,xyz2,grid):
         #neighbor cells
         npa = np.array(address)
         k = np.array([(npa + j + grid)%grid for j in range(-1,2)])
-        for a2 in itertools.product(k[:,0],k[:,1],k[:,2]):
+        for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if a2 in residents2:
                 if not ((address,a2) in donecellpair):
                         donecellpair.add((address,a2))
@@ -101,6 +101,27 @@ def pairlist_fine(xyz,rc,cell,grid,distance=True):
     return newpairs
 
 
+
+def pairlist_crude(xyz,rc,cell,distance=True):
+    newpairs = []
+    for i,j in it.combinations(range(len(xyz)),2):
+        moli = xyz[i]
+        molj = xyz[j]
+        d = moli-molj
+        d -= np.floor( d + 0.5 )
+        d = np.dot(d,cell)
+        rr = np.dot(d,d)
+            
+        if rr < rc**2:
+            if distance:
+                newpairs.append((i,j,math.sqrt(rr)))
+            else:
+                newpairs.append((i,j))
+    return newpairs
+
+
+
+
 #assume xyz and box are numpy.array
 def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
     newpairs = []
@@ -123,16 +144,23 @@ def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
 #
 def determine_grid(cell, radius):
     logger = logging.getLogger()
-    ct = cell.transpose()
+    ct = cell  #.transpose()
+    #Cell vectors
     a = ct[0]
     b = ct[1]
     c = ct[2]
+    logger.debug("cell a {0}".format(a))
+    logger.debug("cell b {0}".format(b))
+    logger.debug("cell c {0}".format(c))
+    #Edge lengths
     al = np.linalg.norm(a)   #vector length
     bl = np.linalg.norm(b)
     cl = np.linalg.norm(c)
+    #Unit vectors of the axes.
     ae = a / al              #unit vectors
     be = b / bl
     ce = c / cl
+    #Distance between the parallel faces
     ad = np.dot(ae,np.cross(be,ce)) #distance to the bc plane
     bd = np.dot(be,np.cross(ce,ae))
     cd = np.dot(ce,np.cross(ae,be))
@@ -140,6 +168,8 @@ def determine_grid(cell, radius):
     bx = radius / bd
     cx = radius / cd
     gf = np.array([al/ax, bl/bx, cl/cx])  # required number of grid cells
+    #Check the lengths of four diagonals.
+    logger.debug("Grid divisions: {0}".format(np.floor(gf)))
     #print(cell,radius,gf)
     #import sys
     #sys.exit(1)
