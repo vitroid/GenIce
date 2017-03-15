@@ -8,6 +8,7 @@ import numpy     as np
 import argparse  as ap
 import logging
 import importlib
+import networkx as nx
 
 from genice import rigid
 from genice.libgenice import generate_ice, generate_cages, audit_name
@@ -313,6 +314,9 @@ def format_yaplot0(graph, positions, cell, celltype, rep):
     lower = (    - margin) / rep
     upper = (rep + margin) / rep
 
+    undir = nx.Graph(graph)
+    #for i in graph.nodes_iter():
+    #    if len(nx.neighbors(i)) ==
     bonds = []
     for i,j in graph.edges_iter(data=False):
         s1 =positions[i]
@@ -325,15 +329,21 @@ def format_yaplot0(graph, positions, cell, celltype, rep):
             bonds.append( (np.dot(s1,cell), np.dot(s2,cell)))
         
     nodes = []
-    for s1 in positions:
+    for i in graph.nodes_iter():
+        s1 = positions[i]
         if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, cell) )
+            nodes.append( i )
         
     s = ""
-    s += yp.Color(3)
-    s += yp.Size(0.04)
-    for node in nodes:
-        s += yp.Circle(node)
+    s += yp.Size(0.06)
+    for i in nodes:
+        pos = np.dot( positions[i], cell )
+        if 4 == len(undir.neighbors(i)):
+            s += yp.Color(3)
+        else:
+            logger.debug("Z={0}".format(undir.neighbors(i)))
+            s += yp.Color(5)
+        s += yp.Circle(pos)
     s += yp.Color(2)
     for bond in bonds:
         p,q = bond
