@@ -300,7 +300,7 @@ def format_openscad2(graph, positions, cell, celltype, rep, scale=50, roxy=0.07,
         ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
     return o.encode(*ops)
                      
-def format_yaplot0(graph, positions, cell, celltype, rep):
+def format_yaplot0(graph, positions, cell, celltype):
     """
     cell is in nm
     HBN in yaplot 
@@ -308,46 +308,30 @@ def format_yaplot0(graph, positions, cell, celltype, rep):
     logger = logging.getLogger()
     logger.info("Output HBN in Yaplot format.")
 
-    rep = np.array(rep)
-
-    margin = 0.2 # expansion relative to the cell size
-    lower = (    - margin) / rep
-    upper = (rep + margin) / rep
-
-    undir = nx.Graph(graph)
+    undir = graph.to_undirected()
     #for i in graph.nodes_iter():
     #    if len(nx.neighbors(i)) ==
-    bonds = []
+        
+    s = ""
+    s += yp.Size(0.06)
+    for i in graph.nodes_iter():
+        pos = np.dot( positions[i], cell )
+        if 4 == len(undir.neighbors(i)):
+            s += yp.Color(3)
+        else:
+            logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
+            s += yp.Color(5)
+        s += yp.Circle(pos)
+    s += yp.Color(2)
     for i,j in graph.edges_iter(data=False):
         s1 =positions[i]
         s2 =positions[j]
         d = s2-s1
         d -= np.floor( d + 0.5 )
         s2 = s1 + d
-        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,cell), np.dot(s2,cell)))
-        
-    nodes = []
-    for i in graph.nodes_iter():
-        s1 = positions[i]
-        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( i )
-        
-    s = ""
-    s += yp.Size(0.06)
-    for i in nodes:
-        pos = np.dot( positions[i], cell )
-        if 4 == len(undir.neighbors(i)):
-            s += yp.Color(3)
-        else:
-            logger.debug("Z={0}".format(undir.neighbors(i)))
-            s += yp.Color(5)
-        s += yp.Circle(pos)
-    s += yp.Color(2)
-    for bond in bonds:
-        p,q = bond
-        s += yp.Line(p,q)
+        #if np.dot(d,d) < 0.0000001:
+        #    logger.debug("{1}={0}".format(i,j))
+        s += yp.Line(np.dot(s1,cell),np.dot(s2,cell))
     return s
 
 
@@ -483,7 +467,7 @@ def main():
     else:
         #Random orientation
         if output_format == "y":
-            s = format_yaplot0(graph, positions, cell, celltype, options.rep)
+            s = format_yaplot0(graph, positions, cell, celltype)
             print(s,end="")
             sys.exit(0)
         logger.info("The network is not specified.  Water molecules will be orinented randomly.")

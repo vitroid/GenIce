@@ -38,7 +38,7 @@ Install with pip3.
       --format gmeqdypoc, -f gmeqdypoc
                             Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
                             rnion)|d(igraph)|y(aplot)|p(ython
-                            module)|o(penScad)|c(entersofmass)]
+                            module)|o(penScad)|c(entersofmass)|r(elative com)]
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.)
       --guest D=empty, -g D=empty
