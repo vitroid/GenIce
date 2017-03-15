@@ -10,13 +10,17 @@ import itertools as it
 import numpy as np
 import logging
 
+def Address(pos,grid):
+    #residents in each grid cell
+    mol = pos - np.floor( pos )
+    return tuple((mol * grid).astype(int))
+
+
 def ArrangeAddress(xyz,grid):
     #residents in each grid cell
     residents = dict()
     for i in range(len(xyz)):
-        mol = xyz[i]
-        mol -= np.floor( mol )
-        address = tuple((mol * grid).astype(int))
+        address = Address(xyz[i], grid)
         if address not in residents:
             residents[address] = set()
         residents[address].add(i)
@@ -25,9 +29,10 @@ def ArrangeAddress(xyz,grid):
 
 
 def pairlist(xyz,grid):
-    #print "START Arrange"
+    logger = logging.getLogger()
+    logger.debug("START Arrange")
     residents = ArrangeAddress(xyz,grid)
-    #print "END Arrange"
+    logger.debug("END Arrange")
 
     pair = set()
     #key-value pairs in the dictionary
@@ -40,26 +45,25 @@ def pairlist(xyz,grid):
         k = np.array([(npa + j + grid)%grid for j in range(-1,2)])
         for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if address == a2:
-                #print("ISOCELL",address,npa,a2)
                 for a,b in it.combinations(members,2):
                     pair.add((a,b))
             else:
                 if a2 in residents:
-                    if not (frozenset((address,a2)) in donecellpair):
+                    if frozenset((address,a2)) not in donecellpair:
                         donecellpair.add(frozenset((address,a2)))
-                        #print("HETEROCELL",address,a2,donecellpair)
                         for a in members:
                             for b in residents[a2]:
                                 pair.add((a,b))
-    #print "PAIRLIST finished"
+    logger.debug("PAIRLIST finished")
     return pair
 
 
 def pairlist_hetero(xyz,xyz2,grid):
-    #print "START Arrange"
+    logger = logging.getLogger()
+    logger.debug("START Arrange")
     residents  = ArrangeAddress(xyz,grid)
     residents2 = ArrangeAddress(xyz2,grid)
-    #print "END Arrange"
+    logger.debug("END Arrange")
 
     pair = set()
     #key-value pairs in the dictionary
@@ -74,17 +78,17 @@ def pairlist_hetero(xyz,xyz2,grid):
             if a2 in residents2:
                 if not ((address,a2) in donecellpair):
                         donecellpair.add((address,a2))
-                        #print("HETEROCELL",address,a2,donecellpair)
                         for a in members:
                             for b in residents2[a2]:
                                 pair.add((a,b))
-    #print "PAIRLIST finished"
+    logger.debug("PAIRLIST finished")
     return pair
 
 
 #assume xyz and box are numpy.array
 def pairlist_fine(xyz,rc,cell,grid,distance=True):
-    newpairs = []
+    logger= logging.getLogger()
+    newpairs = set()
     for i,j in pairlist(xyz,grid):
         moli = xyz[i]
         molj = xyz[j]
@@ -92,18 +96,17 @@ def pairlist_fine(xyz,rc,cell,grid,distance=True):
         d -= np.floor( d + 0.5 )
         d = np.dot(d,cell)
         rr = np.dot(d,d)
-            
         if rr < rc**2:
             if distance:
-                newpairs.append((i,j,math.sqrt(rr)))
+                newpairs.add((i,j,math.sqrt(rr)))
             else:
-                newpairs.append((i,j))
+                newpairs.add((i,j))
     return newpairs
 
 
 
 def pairlist_crude(xyz,rc,cell,distance=True):
-    newpairs = []
+    newpairs = set()
     for i,j in it.combinations(range(len(xyz)),2):
         moli = xyz[i]
         molj = xyz[j]
@@ -114,9 +117,9 @@ def pairlist_crude(xyz,rc,cell,distance=True):
             
         if rr < rc**2:
             if distance:
-                newpairs.append((i,j,math.sqrt(rr)))
+                newpairs.add((i,j,math.sqrt(rr)))
             else:
-                newpairs.append((i,j))
+                newpairs.add((i,j))
     return newpairs
 
 
@@ -161,13 +164,10 @@ def determine_grid(cell, radius):
     be = b / bl
     ce = c / cl
     #Distance between the parallel faces
-    ad = np.dot(ae,np.cross(be,ce)) #distance to the bc plane
-    bd = np.dot(be,np.cross(ce,ae))
-    cd = np.dot(ce,np.cross(ae,be))
-    ax = radius / ad        # required length of a vector to contain a sphere of radius 
-    bx = radius / bd
-    cx = radius / cd
-    gf = np.array([al/ax, bl/bx, cl/cx])  # required number of grid cells
+    an = np.dot(a,np.cross(be,ce)) #distance to the bc plane
+    bn = np.dot(b,np.cross(ce,ae))
+    cn = np.dot(c,np.cross(ae,be))
+    gf = np.array([an/radius, bn/radius, cn/radius])  # required number of grid cells
     #Check the lengths of four diagonals.
     logger.debug("Grid divisions: {0}".format(np.floor(gf)))
     #print(cell,radius,gf)
