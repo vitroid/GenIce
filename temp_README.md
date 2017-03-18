@@ -1,27 +1,27 @@
 # GenIce
 Generate proton-disordered ice structures for GROMACS.
 
-##Requirements
+## Requirements
 
 * Python 3
 * NetworkX
 * numpy
 
 Note: WinPython includes all of these requirements.
-##Installation
+## Installation
 GenIce is registered to PyPI (Python Package Index). 
 Install with pip3.
 
     pip3 install genice
 
-##Uninstallation
+## Uninstallation
 
     pip3 uninstall genice
     
-##Usage
+## Usage
 %%usage%%
 
-##Example
+## Example
 
 * To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
 .gro format:
@@ -39,7 +39,7 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
-##Structure generation
+## Structure generation
 The program generates various ice lattice with proton disorder and
 without defect.  Total dipole moment is always set to zero.  The
 minimal structure (with --rep 1 1 1 option) is not always the unit
@@ -47,7 +47,7 @@ cell of the lattice because it is difficult to deal with the hydrogen
 bond network topology of tiny lattice under periodic boundary
 condition.  Note that the generated structure is not optimal according
 to the potential energy.
-##Output formats
+## Output formats
 
 Format |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
@@ -62,7 +62,7 @@ c      |CenterOfMass| .ar3a     | Center of mass | none | none |
 p      |Python module | .py     | Center of mass | none | none | Under development.
 
 
-##Ice structures
+## Ice structures
 
 Symbol | Description| Remarks and data sources
 -------|------------|----------
@@ -98,14 +98,14 @@ Kosyakov| CS1 | CS2 | TS1 | HS1 |  HS2 | CS3@|CS4| HS3|Kosyakov, Viktor I, and T
 Zeolite | MEP | MTN |  -|- | - | - | SOD |DOH |[New Database of Zeolite Structures](http://www.iza-structure.org/databases/)
 @: not included in GenIce.
 
-###Common structures between pure ices and hydrates
+### Common structures between pure ices and hydrates
 Nomenclature |  |   |   |  | Remarks and References
 ----|----|----|----|----| ---
 ice | 1c | 2  |16 | 17 |
 filled ice | C2 | C1 | sII | C0 |
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
-##Water models
+## Water models
 A water model can be chosen with `--water` option.
 
 symbol   | type|Reference
@@ -115,7 +115,7 @@ symbol   | type|Reference
 `5site`, `tip5p`  | 5-site TIP5P
 `6site`, `NvdE`   | 6-site NvdE  | Nada, H.; van der Eerden, J. An Intermolecular Potential Model for the Simulation of Ice and Water Near the Melting Point: a Six-Site Model of H 2 O. J. Chem. Phys. 2003, 118, 7401.
 
-##Guest molecules
+## Guest molecules
 
 symbol | type 
 -------|---------

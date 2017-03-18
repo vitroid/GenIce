@@ -373,8 +373,10 @@ def main():
         os.makedirs(homegenice+"/lattices")
         os.makedirs(homegenice+"/molecules")
     except:
-        pass #just ignore.
+        pass #just ignore when failed.
+    #Parse options
     options = getoptions()
+    #Set verbosity level
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,
                             format="%(asctime)s %(levelname)s %(message)s")
@@ -389,11 +391,13 @@ def main():
     logger.debug("Debug mode.")
     logger.debug(options.Type)
     
+    #Water type: default is TIP3P, reluctantly.
     water_type    = options.water[0]
 
+    #Output type: default is Gromacs, of course!
     output_format = options.format[0][0]
     if output_format in ["c", "r", ]:
-        #com only
+        #com only ("c" absolute; "r" relative)
         stage = 0
     elif output_format in ["o", ]:
         #undir graph
@@ -406,10 +410,12 @@ def main():
         stage = 3
         
     if output_format == "o":
+        #OpenSCAD
         options.rep[0] += 2
         options.rep[1] += 2
         options.rep[2] += 2 #cut margin
-        
+
+    #Prepare everything here.
     result = generate_ice(options.Type[0],
                           seed=options.seed[0],
                           rep=options.rep,
@@ -431,6 +437,7 @@ def main():
     logger.info("Number of water molecules: {0}".format(len(positions)))
     logger.info("Water model: {0}".format(water_type))
 
+    #These output types do not utilize the graph.
     if output_format == "p":        # python Lattice library
         s = format_python(positions, cell, celltype, bondlen)
         print(s,end="")
@@ -446,7 +453,7 @@ def main():
 
     graph       = result["graph"]
 
-    #In case only the graph is wanted.
+    #In case the graph is wanted.
     if output_format == "d":
         s = format_digraph(graph, positions)
         print(s,end="")
