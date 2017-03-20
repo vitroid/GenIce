@@ -91,12 +91,13 @@ Note: Some structures are identical.
 
 Nomenclature |      |     |     |     |     |      |   |   |References
 -------------|------|-----|-----|-----|-----|------|---|---|---
-Frank-Kasper dual | A15 | C15 | sigma | Z   | C14| *| * | *| *: Non-FK types.  Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.
+Frank-Kasper dual | A15 | C15 | sigma | Z   | C14| *| * | *| Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.
 ice | - | 16 |- |- |- | - |- |-
 Jeffrey | sI | sII | sIII | sIV |  sV | sVI@|sVII | sH* | Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.  (*) sH was not named by Jeffrey.
 Kosyakov| CS1 | CS2 | TS1 | HS1 |  HS2 | CS3@|CS4| HS3|Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 Zeolite | MEP | MTN |  -|- | - | - | SOD |DOH |[New Database of Zeolite Structures](http://www.iza-structure.org/databases/)
-@: not included in GenIce.
+
+-: No correspondence; *: Non-FK types; @: Not included in GenIce.
 
 ### Common structures between pure ices and hydrates
 Nomenclature |  |   |   |  | Remarks and References
