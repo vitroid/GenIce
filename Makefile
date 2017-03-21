@@ -17,6 +17,8 @@ pypi:
 test:
 	genice test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	genice test2 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	genice test3 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	genice test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	genice 2d --rep 2 2 2 > 2d.gro
 	genice 3  --rep 2 2 2 --format e > 3.nx3a
 	genice 4  --rep 2 2 2 --format q > 4.nx4a
