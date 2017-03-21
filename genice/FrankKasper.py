@@ -16,6 +16,7 @@ from genice import libgenice as lg
 
 
 def shortest_distance(atoms, cell):
+    logger = logging.getLogger()
     dmin = 1e99
     for a1,a2 in it.combinations(atoms,2):
         d = a1-a2
@@ -24,13 +25,12 @@ def shortest_distance(atoms, cell):
         dd = np.dot(dv,dv)
         if dd < dmin:
             dmin = dd
+    logger.debug("shortest_distance: {0}".format(dmin**0.5))
     return dmin**0.5
 
 
 def estimate_density(atoms, cell, bondlen):
-    logger = logging.getLogger()
     dmin = shortest_distance(atoms, cell)
-    logger.debug(dmin)
     scale = bondlen / dmin
     return 18/6.022e23*len(atoms) / (np.linalg.det(cell)*1e-24 * scale**3)
 
@@ -46,18 +46,17 @@ def equivalents(v, cell, rc):
     yield a set of vectors pointing to the image of the original point v.
     """
     origin = v.copy()
-    img = [[0.],[0.],[0.]]
+    img = [[0., 1.],[0., 1.],[0., 1.]]
     for d in range(3):
         if origin[d] > 0.0:
             origin[d] -= 1.0
-            img[d] = [-1.0, 0.0]
     for x in img[0]:
         for y in img[1]:
             for z in img[2]:
                 d = origin + np.array([x,y,z])
-                v = np.dot(d,cell)
-                if np.dot(v,v) < rc**2:
-                    yield v
+                r = np.dot(d,cell)
+                if np.dot(r,r) < rc**2:
+                    yield d
 
 
 def adjacency_vectors(pairs, rc, coord, cell):

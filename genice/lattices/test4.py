@@ -30,7 +30,6 @@ cages = """
 16    0.1250    0.1250    0.1250
 """
 
-bondlen = 3
 
 celltype = 'rect'
 
@@ -39,11 +38,9 @@ cell = """
 """
 
 from genice import libgenice, FrankKasper
-import logging
-logger = logging.getLogger()
-
 cagepos, cagetype = libgenice.parse_cages(cages)
-c                 = libgenice.parse_cell(cell, celltype)
-waters = [w for w in FrankKasper.toWater(cagepos, c)]
+cell9             = libgenice.parse_cell(cell, celltype)
+waters = [w for w in FrankKasper.toWater(cagepos, cell9)]
 coord = "relative"
-density = FrankKasper.estimate_density(waters, c, 2.76)
+density = FrankKasper.estimate_density(waters, cell9, 2.76)
+bondlen = 2.76*1.1
