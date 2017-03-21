@@ -41,52 +41,54 @@ def is_zero(v):
     return np.dot(v,v) < 1e-10
 
 
-def equivalents(v):
-    if is_zero(v[0]-0.5):
-        v[0] -= 1.0
-    if is_zero(v[1]-0.5):
-        v[1] -= 1.0
-    if is_zero(v[2]-0.5):
-        v[2] -= 1.0
+def equivalents(v, cell, rc):
+    """
+    yield a set of vectors pointing to the image of the original point v.
+    """
+    origin = v.copy()
     img = [[0.],[0.],[0.]]
-    if is_zero(v[0] + 0.5):
-        img[0] = [0., 1.]
-    if is_zero(v[1] + 0.5):
-        img[1] = [0., 1.]
-    if is_zero(v[2] + 0.5):
-        img[2] = [0., 1.]
-    return v, img
+    for d in range(3):
+        if origin[d] > 0.0:
+            origin[d] -= 1.0
+            img[d] = [-1.0, 0.0]
+    for x in img[0]:
+        for y in img[1]:
+            for z in img[2]:
+                d = origin + np.array([x,y,z])
+                v = np.dot(d,cell)
+                if np.dot(v,v) < rc**2:
+                    yield v
+
+
+def adjacency_vectors(pairs, rc, coord, cell):
+    logger = logging.getLogger()
+    vertices = list(set([v for v in lg.flatten(pairs)]))
+    adjv = dict()
+    adjd = dict()
+    for v in vertices:
+        adjv[v] = []
+        adjd[v] = []
+    for i,j in pairs:
+        d = coord[j] - coord[i]
+        d -= np.floor(d + 0.5)
+        for dd in equivalents(d, cell, rc):
+            adjd[i].append(dd)
+            adjv[i].append(j)
+            adjd[j].append(-dd)
+            adjv[j].append(i)
+    return vertices, adjv, adjd
 
 
 def tetrahedra(pairs, rc, coord, cell):
     logger = logging.getLogger()
-    vertices = list(set([v for v in lg.flatten(pairs)]))
-    logger.debug(vertices)
-    neiv = dict()
-    neid = dict()
+    vertices, adjv, adjd = adjacency_vectors(pairs, rc, coord, cell)
     for v in vertices:
-        neiv[v] = []
-        neid[v] = []
-    for i,j in pairs:
-        d = coord[j] - coord[i]
-        d -= np.floor(d + 0.5)
-        d, img = equivalents(d)
-        logger.debug((d,img))
-        for x in img[0]:
-            for y in img[1]:
-                for z in img[2]:
-                    dd = d + np.array((x,y,z))
-                    neid[i].append(dd)
-                    neiv[i].append(j)
-                    neid[j].append(-dd)
-                    neiv[j].append(i)
-    for v in vertices:
-        logger.debug(len(neiv[v]))
-        for i,j,k in it.combinations(range(len(neiv[v])), 3):
-            vi, vj, vk = neiv[v][i], neiv[v][j], neiv[v][k]
+        logger.debug(len(adjv[v]))
+        for i,j,k in it.combinations(range(len(adjv[v])), 3):
+            vi, vj, vk = adjv[v][i], adjv[v][j], adjv[v][k]
             if vi < v or vj < v or vk < v:
                 continue
-            di, dj, dk = neid[v][i], neid[v][j], neid[v][k]
+            di, dj, dk = adjd[v][i], adjd[v][j], adjd[v][k]
             dij = np.dot(di - dj, cell)
             djk = np.dot(dj - dk, cell)
             dki = np.dot(dk - di, cell)
