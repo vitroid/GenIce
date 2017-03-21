@@ -34,7 +34,6 @@ def pairlist(xyz,grid):
     residents = ArrangeAddress(xyz,grid)
     logger.debug("END Arrange")
 
-    pair = set()
     #key-value pairs in the dictionary
     donecellpair = set()
     for address in residents:
@@ -46,16 +45,14 @@ def pairlist(xyz,grid):
         for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if address == a2:
                 for a,b in it.combinations(members,2):
-                    pair.add((a,b))
+                    yield a,b
             else:
                 if a2 in residents:
                     if frozenset((address,a2)) not in donecellpair:
                         donecellpair.add(frozenset((address,a2)))
                         for a in members:
                             for b in residents[a2]:
-                                pair.add((a,b))
-    logger.debug("PAIRLIST finished")
-    return pair
+                                yield a,b
 
 
 def pairlist_hetero(xyz,xyz2,grid):
@@ -65,7 +62,6 @@ def pairlist_hetero(xyz,xyz2,grid):
     residents2 = ArrangeAddress(xyz2,grid)
     logger.debug("END Arrange")
 
-    pair = set()
     #key-value pairs in the dictionary
     donecellpair = set()
     for address in residents:
@@ -77,18 +73,16 @@ def pairlist_hetero(xyz,xyz2,grid):
         for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if a2 in residents2:
                 if not ((address,a2) in donecellpair):
-                        donecellpair.add((address,a2))
-                        for a in members:
-                            for b in residents2[a2]:
-                                pair.add((a,b))
-    logger.debug("PAIRLIST finished")
-    return pair
+                    donecellpair.add((address,a2))
+                    for a in members:
+                        for b in residents2[a2]:
+                            yield a,b
 
 
+                                
 #assume xyz and box are numpy.array
 def pairlist_fine(xyz,rc,cell,grid,distance=True):
     logger= logging.getLogger()
-    newpairs = set()
     for i,j in pairlist(xyz,grid):
         moli = xyz[i]
         molj = xyz[j]
@@ -98,15 +92,12 @@ def pairlist_fine(xyz,rc,cell,grid,distance=True):
         rr = np.dot(d,d)
         if rr < rc**2:
             if distance:
-                newpairs.add((i,j,math.sqrt(rr)))
+                yield i,j,math.sqrt(rr)
             else:
-                newpairs.add((i,j))
-    return newpairs
-
+                yield i,j
 
 
 def pairlist_crude(xyz,rc,cell,distance=True):
-    newpairs = set()
     for i,j in it.combinations(range(len(xyz)),2):
         moli = xyz[i]
         molj = xyz[j]
@@ -117,10 +108,9 @@ def pairlist_crude(xyz,rc,cell,distance=True):
             
         if rr < rc**2:
             if distance:
-                newpairs.add((i,j,math.sqrt(rr)))
+                yield i,j,math.sqrt(rr)
             else:
-                newpairs.add((i,j))
-    return newpairs
+                yield i,j
 
 
 

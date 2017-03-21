@@ -14,6 +14,7 @@ from genice import pairlist  as pl
 from genice import digraph   as dg
 import networkx as nx
 from collections import defaultdict
+from collections import Iterable
 
 def audit_name(name):
     """
@@ -121,6 +122,77 @@ def load_numbers(v):
         return np.array(v)
     
 
+def flatten(item):
+    """Yield items from any nested iterable; see REF."""
+    if type(item) is str:
+        yield item
+    elif isinstance(item, Iterable):
+        for x in item:
+            yield from flatten(x)
+    else:
+        yield item
+    
+def parse_cages(cages):
+    logger = logging.getLogger()
+    cagetype = []
+    cagepos = []
+    if type(cages) is str:
+        for line in cages.split("\n"):
+            cols = line.split()
+            if len(cols)>0:
+                cagetype.append(cols[0])
+                cagepos.append([float(x) for x in cols[1:4]])
+        cagepos = np.array(cagepos)
+    else:
+        #Assume it is a list of list
+        #flatten
+        c = [x for x in flatten(cages)]
+        while len(c):
+            cagetype.append(c.pop(0))
+            cagepos.append(c[:3])
+            c = c[3:]
+        cagepos = np.array(cagepos)
+    return cagepos, cagetype
+
+
+    
+def parse_cell(cell, celltype):
+    logger = logging.getLogger()
+    if celltype == "rect":
+        if type(cell) is str:
+            cell = np.fromstring(cell, sep=" ")
+        elif type(cell) is list:
+            cell = np.array(cell)
+        logger.debug("parse_cell 1: {0}".format(cell))
+        return np.diag(cell)
+    elif celltype == "monoclinic":
+        if type(cell) is str:
+            cell = np.fromstring(cell, sep=" ")
+        elif type(cell) is list:
+            cell = np.array(cell)
+        beta = cell[3] * math.pi / 180.
+        cell = np.array(((cell[0]*1.0, cell[1]*0.0, cell[2]*math.cos(beta)),
+                             (cell[0]*0.0, cell[1]*1.0, cell[2]*0.0),
+                             (cell[0]*0.0, cell[1]*0.0, cell[2]*math.sin(beta))))
+        return cell.transpose()   #all the vector calculations are done in transposed manner.
+    elif celltype == "triclinic":
+        """
+        Put the vectors like following:
+        cell = "ax 0 0 bx by 0 cx cy cz"
+        when you define a unit cell in Lattice/
+        
+        """
+        if type(cell) is str:
+            cell = np.fromstring(cell, sep=" ")
+            logger.debug(cell)
+        elif type(cell) is list:
+            cell = np.array(cell)
+        return np.reshape(cell, (3,3))
+        #assert cell[0,1] == 0 and cell[0,2] == 0 and cell[1,2] == 0
+    else:
+        logger.error("unknown cell type: {0}".format(celltype))
+        sys.exit(1)
+
 
 #0th stage: determine the molecular positions
 #1st stage: undirected graph (connectivity)
@@ -142,41 +214,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
     logger.debug("Waters: {0}".format(len(lat.waters)))
     lat.waters = lat.waters.reshape((lat.waters.size//3,3))
     #prepare cell transformation matrix
-    if lat.celltype == "rect":
-        if type(lat.cell) is str:
-            lat.cell = np.fromstring(lat.cell, sep=" ")
-        elif type(lat.cell) is list:
-            lat.cell = np.array(lat.cell)
-        lat.cell = np.diag(lat.cell)
-    elif lat.celltype == "monoclinic":
-        if type(lat.cell) is str:
-            lat.cell = np.fromstring(lat.cell, sep=" ")
-        elif type(lat.cell) is list:
-            lat.cell = np.array(lat.cell)
-        beta = lat.cell[3] * math.pi / 180.
-        lat.cell = np.array(((lat.cell[0]*1.0, lat.cell[1]*0.0, lat.cell[2]*math.cos(beta)),
-                             (lat.cell[0]*0.0, lat.cell[1]*1.0, lat.cell[2]*0.0),
-                             (lat.cell[0]*0.0, lat.cell[1]*0.0, lat.cell[2]*math.sin(beta))))
-        lat.cell = lat.cell.transpose()   #all the vector calculations are done in transposed manner.
-    elif lat.celltype == "triclinic":
-        """
-        Put the vectors like following:
-        cell = "ax 0 0 bx by 0 cx cy cz"
-        when you define a unit cell in Lattice/
-        
-        """
-        if type(lat.cell) is str:
-            lat.cell = np.fromstring(lat.cell, sep=" ")
-            logger.debug(lat.cell)
-        elif type(lat.cell) is list:
-            lat.cell = np.array(lat.cell)
-        lat.cell = np.reshape(lat.cell, (3,3))
-        #assert lat.cell[0,1] == 0 and lat.cell[0,2] == 0 and lat.cell[1,2] == 0
-    else:
-        logger.error("unknown cell type: {0}".format(lat.celltype))
-        sys.exit(1)
-
+    lat.cell = parse_cell(lat.cell, lat.celltype)
     #express molecular positions in the coordinate relative to the cell
+    
     if lat.coord == "absolute":
         lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
         lat.waters = np.array(lat.waters)
@@ -232,9 +272,9 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
             #make bonded pairs according to the pair distance.
             #make before replicating them.
             grid = pl.determine_grid(lat.cell, bondlen)
-            pairs = pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)
+            pairs = [v for v in pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)]
             if logger.level <= logging.DEBUG:
-                pairs2 = pl.pairlist_crude(lat.waters, bondlen, lat.cell, distance=False)
+                pairs2 = [v for v in pl.pairlist_crude(lat.waters, bondlen, lat.cell, distance=False)]
                 logger.debug("pairs: {0}".format(len(pairs)))
                 logger.debug("pairs2: {0}".format(len(pairs2)))
                 for pair in pairs:
@@ -336,14 +376,7 @@ def generate_cages(lattice_type, rep):
     logger.info("Ice type: {0}".format(lattice_type))
     lat = safe_import("lattice", lattice_type)
     try:
-        cagetype = []
-        cagepos = []
-        for line in lat.cages.split("\n"):
-            cols = line.split()
-            if len(cols)>0:
-                cagetype.append(cols[0])
-                cagepos.append([float(x) for x in cols[1:4]])
-        cagepos = np.array(cagepos)
+        cagepos, cagetype = parse_cages(lat.cages)
         return replicate(cagepos,      rep), cagetype
     except AttributeError:
         return None, None
