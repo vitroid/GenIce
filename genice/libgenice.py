@@ -25,23 +25,15 @@ def audit_name(name):
 
 
 def safe_import(category, name):
-    assert category in ("lattice", "molecule")
+    assert category in ("lattice", "format", "molecule")
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
     module = None
-    if category == "lattice":
-        try:
-            module     = importlib.import_module("lattices."+name) #at ~/.genice
-        except ImportError as e:
-            pass
-        if module is None:
-            module     = importlib.import_module("genice.lattices."+name)
-    else:
-        try:
-            module     = importlib.import_module("molecules."+name) #at ~/.genice
-        except ImportError:
-            pass
-        if module is None:
-            module     = importlib.import_module("genice.molecules."+name)
+    try:
+        module     = importlib.import_module(category+"s."+name) #at ~/.genice
+    except ImportError as e:
+        pass
+    if module is None:
+        module     = importlib.import_module("genice."+category+"s."+name)
     return module
 
 
@@ -49,6 +41,18 @@ def usage(parser):
     parser.print_help()
     sys.exit(1)
 
+
+
+def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
+    atoms = []
+    if len(intra) == 0:
+        return atoms
+    for node in range(len(coord)):
+        abscom = np.dot(coord[node],cell)  # relative to absolute
+        rotated = np.dot(intra,rotmatrices[node])
+        for i in range(len(labels)):
+            atoms.append([i,name,labels[i],rotated[i,:]+abscom])
+    return atoms
 
 
 def orientations(coord, graph, cell):
@@ -200,93 +204,219 @@ def parse_cell(cell, celltype):
 #3rd stage: depolarized graph
 
 
-def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
-    logger = logging.getLogger()
-    logger.info("Ice type: {0}".format(lattice_type))
-    lat = safe_import("lattice", lattice_type)
-    #Show the document of the module
-    try:
-        for line in lat.__doc__.splitlines():
-            logger.info("!!! {0}".format(line))
-    except:
-        pass
-    lat.waters = load_numbers(lat.waters)
-    logger.debug("Waters: {0}".format(len(lat.waters)))
-    lat.waters = lat.waters.reshape((lat.waters.size//3,3))
-    #prepare cell transformation matrix
-    lat.cell = parse_cell(lat.cell, lat.celltype)
-    #express molecular positions in the coordinate relative to the cell
+
+class GenIce():
+    def __init__(self, lattice_type, density=-1, seed = 1000, rep=(1,1,1)):
+        """
+        setup with options
+        load the lattice module
+        """
+        self.logger = logging.getLogger()
+        self.logger.info("Ice type: {0}".format(lattice_type))
+        lat = safe_import("lattice", lattice_type)
+        #Show the document of the module
+        try:
+            for line in lat.__doc__.splitlines():
+                self.logger.info("!!! {0}".format(line))
+        except:
+            pass
+        #prepare water positions
+        self.waters = load_numbers(lat.waters)
+        self.logger.debug("Waters: {0}".format(len(self.waters)))
+        self.waters = self.waters.reshape((self.waters.size//3,3))
+        #prepare cell transformation matrix
+        self.cell = parse_cell(lat.cell, lat.celltype)
+        #express molecular positions in the coordinate relative to the cell
+        if lat.coord == "absolute":
+            self.waters = np.dot(self.waters,np.linalg.inv(self.cell),)
+            self.waters = np.array(self.waters)
+        #Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
+        #Prearranged network topology information (if available)
+        self.pairs = None
+        try:
+            if type(lat.pairs) is str:
+                lines = lat.pairs.split("\n")
+                self.pairs = set()
+                for line in lines:
+                    columns = line.split()
+                    if len(columns) == 2:
+                        i,j = [int(x) for x in columns]
+                        self.pairs.add(frozenset([i,j]))
+            elif type(lat.pairs) is list:
+                self.pairs = set()
+                for pair in lat.pairs:
+                    self.pairs.add(frozenset(pair))
+        except AttributeError:
+            self.logger.info("Graph is not defined.")
+        #Bond length threshold
+        self.bondlen = None
+        try:
+            self.bondlen = lat.bondlen
+            self.logger.info("Bond length: {0}".format(self.bondlen))
+        except AttributeError:
+            self.logger.info("Bond length is not defined.")
+        #Set density
+        mass = 18  #water
+        NB   = 6.022e23
+        nmol = self.waters.shape[0]        #nmol in a unit cell
+        volume = np.linalg.det(self.cell)  #volume of a unit cell in nm**3
+        density0 = mass * nmol / (NB*volume*1e-21)
+        if density > 0:
+            self.density = density
+        else:
+            try:
+                self.density = lat.density
+            except AttributeError:
+                self.density = density0
+        self.logger.info("Density: {0}".format(self.density))
+        self.logger.info("Density0: {0}".format(density0))
+
+        #scale the cell according to the (specified) density
+        ratio = (density0 / self.density)**(1.0/3.0)
+        self.cell *= ratio
+        if self.bondlen is not None:
+            self.bondlen   *= ratio
+        #
+        try:
+            self.double_network = lat.double_network
+        except AttributeError:
+            self.double_network = False
+        self.rep = rep
+        #prepare cages
+        try:
+            cagepos, self.cagetype = parse_cages(lat.cages)
+            self.cagepos = replicate(cagepos,self.rep)
+        except AttributeError:
+            self.cagepos = None
+            self.cagetype = None
+
+
+    def stage1(self):
+        """
+        replicate water molecules to make a repeated cell
+        """
+        self.logger.info("Stage1: Replication.")
+        self.reppositions = replicate(self.waters, self.rep)
+        #scale the cell
+        for d in range(3):
+            self.cell[:,d] *= self.rep[d]
+        self.logger.info("Stage1: end.")
     
-    if lat.coord == "absolute":
-        lat.waters = np.dot(lat.waters,np.linalg.inv(lat.cell),)
-        lat.waters = np.array(lat.waters)
-    random.seed(seed)
-    np.random.seed(seed)
+    def stage2(self):
+        """
+        make a random graph and replicate.
+        """
+        self.logger.info("Stage2: Graph preparation.")
+        self.graph = self.prepare_random_graph()
+        self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        #test2==True means it is a z=4 graph.
+        self.test2 = self.test_undirected_graph(self.graph)
+        self.logger.info("Stage2: end.")
 
-    #Prearranged network topology information (if available)
-    pairs = None
-    bondlen = None
-    try:
-        if type(lat.pairs) is str:
-            lines = lat.pairs.split("\n")
-            pairs = set()
-            for line in lines:
-                columns = line.split()
-                if len(columns) == 2:
-                    i,j = [int(x) for x in columns]
-                    pairs.add(frozenset([i,j]))
-        elif type(lat.pairs) is list:
-            pairs = set()
-            for pair in pairs:
-                pairs.add(frozenset(pair))
-    except AttributeError:
-        logger.info("Graph is not defined.")
+    def stage3(self):
+        """
+        make a true ice graph.
+        """
+        self.logger.info("Stage3: Bernal-Fowler rule.")
+        self.graph.purge_ice_defects()
+        self.logger.info("Stage3: end.")
 
-    #Bond length threshold
-    try:
-        bondlen = lat.bondlen
-    except AttributeError:
-        logger.info("Bond length is not defined.")
+        
+    def stage4(self):
+        """
+        depolarize.
+        """
+        self.logger.info("Stage4: depolarization.")
+        if self.double_network:
+            if (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0):
+                pass
+            else:
+                self.logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
+                sys.exit(1)
+        self.spacegraph = dg.SpaceIceGraph(self.graph,coord=self.reppositions)
+        draw = dg.YaplotDraw(self.reppositions, self.cell, data=self.spacegraph)
+        self.yapresult  = dg.depolarize(self.spacegraph, self.cell, draw=draw)
+        self.logger.info("Stage4: end.")
 
+    def stage5(self):
+        """
+        orientations for rigid molecules.
+        """
+        self.logger.info("Stage5: Orientation.")
+        #determine the orientations of the water molecules based on edge directions.
+        self.rotmatrices = orientations(self.reppositions, self.spacegraph, self.cell)
+        self.logger.info("Stage5: end.")
+        
 
-    #set density
-    if density < 0:
-        density = lat.density
-
-    #scale the cell according to the (specified) density
-    mass = 18  #water
-    NB   = 6.022e23
-    nmol = lat.waters.shape[0]        #nmol in a unit cell
-    volume = np.linalg.det(lat.cell)  #volume of a unit cell in nm**3
-    d    = mass * nmol / (NB*volume*1e-21)
-    ratio = (d / density)**(1.0/3.0)
-    lat.cell *= ratio
-    if bondlen is not None:
-        bondlen   *= ratio
-
-    if True:
-        logger.info("Start placing the bonds.")
-        if pairs is None:
-            logger.info("  Pairs are not given explicitly.")
-            logger.info("  Start estimating the bonds according to the pair distances.")
+    def stage6(self, water_type):
+        """
+        arrange water atoms
+        """
+        self.logger.info("Stage6: Atomic positions of water.")
+        #assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
+        #water = importlib.import_module("genice.molecules."+water_type)
+        water = safe_import("molecule", water_type)
+        self.atoms = arrange_atoms(self.reppositions, self.cell, self.rotmatrices, water.sites, water.labels, water.name)
+        self.logger.info("Stage6: end.")
+        
+    def stage7(self, guests):
+        """
+        arrange guest atoms
+        """
+        self.logger.info("Stage7: Atomic positions of the guest.")
+        if self.cagepos is not None:
+            cagetypes = set(self.cagetype)
+            self.logger.info("Cage types: {0}".format(cagetypes))
+        if guests is not None and self.cagepos is not None:
+            #Make the cage type to guest type correspondence
+            guest_in_cagetype = dict()
+            for arg in guests:
+                key, value = arg[0].split("=")
+                guest_in_cagetype[key] = value
+            #replicate the cagetype array
+            cagetype = np.array([self.cagetype[i%len(self.cagetype)] for i in range(self.cagepos.shape[0])])
+            for ctype in cagetypes:
+                #filter the cagepos
+                cpos = self.cagepos[cagetype == ctype]
+                #guest molecules are not rotated.
+                cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
+                #If the guest molecule type is given,
+                if ctype in guest_in_cagetype:
+                    gname = guest_in_cagetype[ctype]
+                    #Always check before dynamic import
+                    #assert audit_name(gname), "Dubious guest name: {0}".format(gname)
+                    #gmol = importlib.import_module("genice.molecules."+gname)
+                    gmol = safe_import("molecule", gname)
+                    self.logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
+                    self.atoms += arrange_atoms(cpos, self.cell, cmat, gmol.sites, gmol.labels, gmol.name)
+        self.logger.info("Stage7: end.")
+                    
+        
+    def prepare_random_graph(self):
+        self.logger.info("Start placing the bonds.")
+        if self.pairs is None:
+            self.logger.info("  Pairs are not given explicitly.")
+            self.logger.info("  Start estimating the bonds according to the pair distances.")
             #make bonded pairs according to the pair distance.
             #make before replicating them.
-            grid = pl.determine_grid(lat.cell, bondlen)
-            pairs = [v for v in pl.pairlist_fine(lat.waters, bondlen, lat.cell, grid, distance=False)]
-            if logger.level <= logging.DEBUG:
-                pairs2 = [v for v in pl.pairlist_crude(lat.waters, bondlen, lat.cell, distance=False)]
-                logger.debug("pairs: {0}".format(len(pairs)))
-                logger.debug("pairs2: {0}".format(len(pairs2)))
-                for pair in pairs:
+            grid = pl.determine_grid(self.cell, self.bondlen)
+            self.pairs = [v for v in pl.pairlist_fine(self.waters, self.bondlen, self.cell, grid, distance=False)]
+            if self.logger.level <= logging.DEBUG:
+                pairs2 = [v for v in pl.pairlist_crude(self.waters, self.bondlen, self.cell, distance=False)]
+                self.logger.debug("pairs: {0}".format(len(self.pairs)))
+                self.logger.debug("pairs2: {0}".format(len(pairs2)))
+                for pair in self.pairs:
                     i,j = pair
                     assert (i,j) in pairs2 or (j,i) in pairs2
                 for pair in pairs2:
                     i,j = pair
-                    assert (i,j) in pairs or (j,i) in pairs
-            logger.info("  End estimating the bonds.")
+                    assert (i,j) in self.pairs or (j,i) in self.pairs
+            self.logger.info("  End estimating the bonds.")
 
         shuffled_pairs = []
-        for pair in pairs:
+        for pair in self.pairs:
             i,j = pair
             if random.randint(0,1) == 0:
                 i,j = j,i
@@ -294,90 +424,20 @@ def generate_ice(lattice_type, density=-1, seed=1000, rep=(1,1,1), stage=3):
             
         graph = dg.IceGraph()
         graph.register_pairs(shuffled_pairs)
-        logger.info("End placing the bonds.")
+        self.logger.info("End placing the bonds.")
+        return graph
 
-    
-    #replicate water molecules to make a repeated cell
-    reppositions = replicate(lat.waters, rep)
-
-
-    #scale the cell
-    for d in range(3):
-        lat.cell[:,d] *= rep[d]
-        
-    result = {"positions"   : reppositions,
-              "cell"        : lat.cell,
-              "celltype"    : lat.celltype,
-              "bondlen"     : bondlen}
-    if stage == 0:
-        return result
-        #return reppositions, None, None, lat.cell, lat.celltype, bondlen
-
-    #replicate the graph
-    #This also shuffles the bond directions
-    graph = replicate_graph(graph, lat.waters, rep)
-
-    result["graph"] = graph
-    if stage == 1:
-        return result
-
-    #Test
-    undir = graph.to_undirected()
-    for node in range(undir.number_of_nodes()):
-        if node not in undir:
-            logger.debug("z=0 at {0}".format(node))
-        else:
-            z = len(undir.neighbors(node))
-            if  z!= 4:
-                logger.debug("z={0} at {1}".format(z,node))
-
-    if graph.number_of_edges() != len(reppositions)*2:
-        logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(reppositions)))
-        return result
-
-    #make them obey the ice rule
-    logger.info("Start making the bonds obey the ice rules.")
-    graph.purge_ice_defects()
-    logger.info("End making the bonds obey the ice rules.")
-    if stage == 2:
-        result["graph"] = graph
-        return result
-
-    #Rearrange HBs to purge the total dipole moment.
-    logger.info("Start depolarization.")
-    double_net_test = True
-    try:
-        if lat.double_network:
-            double_net_test = (rep[0] % 2 == 0) and (rep[1] % 2 == 0) and (rep[2] % 2 == 0)
-    except:
-        pass #just ignore.
-    if not double_net_test:
-        logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
-        sys.exit(1)
-    spacegraph = dg.SpaceIceGraph(graph,coord=reppositions)
-    draw = dg.YaplotDraw(reppositions, lat.cell, data=spacegraph)
-    yapresult  = dg.depolarize(spacegraph, lat.cell, draw=draw)
-    logger.info("End depolarization.")
-    #determine the orientations of the water molecules based on edge directions.
-    rotmatrices = orientations(reppositions, spacegraph, lat.cell)
-    result["rotmatrices"] = rotmatrices
-    result["graph"]       = spacegraph
-    result["yaplot"]      = yapresult
-    if stage == 3:
-        return result
-
-        
-
-
-
-
-def generate_cages(lattice_type, rep):
-    logger = logging.getLogger()
-    logger.info("Ice type: {0}".format(lattice_type))
-    lat = safe_import("lattice", lattice_type)
-    try:
-        cagepos, cagetype = parse_cages(lat.cages)
-        return replicate(cagepos,      rep), cagetype
-    except AttributeError:
-        return None, None
-
+    def test_undirected_graph(self, graph):
+        #Test
+        undir = graph.to_undirected()
+        for node in range(undir.number_of_nodes()):
+            if node not in undir:
+                logger.debug("z=0 at {0}".format(node))
+            else:
+                z = len(undir.neighbors(node))
+                if  z!= 4:
+                    logger.debug("z={0} at {1}".format(z,node))
+        if graph.number_of_edges() != len(self.reppositions)*2:
+            self.logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(self.reppositions)))
+            return False
+        return True
