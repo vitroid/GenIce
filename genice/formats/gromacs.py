@@ -1,4 +1,4 @@
-from genice.libgenice import GenIce
+from genice.formats.baseclass import GenIce
 
 
 class Formatter(GenIce):

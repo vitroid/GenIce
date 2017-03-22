@@ -22,9 +22,10 @@ cell = """
 12.747893943706936 12.747893943706936 12.747893943706936
 """
 
-from genice import libgenice, FrankKasper
-cagepos, cagetype = libgenice.parse_cages(cages)
-cell9             = libgenice.parse_cell(cell, celltype)
+from genice import FrankKasper
+from genice.formats.baseclass import parse_cages, parse_cell
+cagepos, cagetype = parse_cages(cages)
+cell9             = parse_cell(cell, celltype)
 waters = [w for w in FrankKasper.toWater(cagepos, cell9)]
 coord = "relative"
 density = FrankKasper.estimate_density(waters, cell9, 2.76)

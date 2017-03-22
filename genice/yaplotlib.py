@@ -1,5 +1,4 @@
-from __future__ import print_function
-#convert numpy array to a plain string
+
 def plaintext(a):
     s = ""
     for x in a:
@@ -47,3 +46,5 @@ def ArrowType(x):
 
 def NewPage():
     return "\n"
+
+

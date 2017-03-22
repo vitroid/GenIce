@@ -10,7 +10,7 @@ import networkx
 import random
 import numpy as np
 import logging
-from genice import yaplot as yp
+from genice import yaplotlib as yp
 from genice import pairlist as pl
 
 #Dijkstra

@@ -1,59 +1,18 @@
-#!/usr/bin/env python
-# -*- python -*-
-
-from __future__ import print_function
-import sys
-import numpy     as np
-import random
-import math
 import logging
-import re
-import importlib
-import os
-from genice import pairlist  as pl
-from genice import digraph   as dg
-import networkx as nx
-from collections import defaultdict
+import random
+import numpy as np
 from collections import Iterable
 
-def audit_name(name):
-    """
-    Audit the mol name to avoid the access to external files
-    """
-    return re.match('^[A-Za-z0-9-_]+$', name) is not None
+from genice.importer import safe_import
+from genice import digraph   as dg
+from genice import pairlist as pl
 
-
-
-def safe_import(category, name):
-    assert category in ("lattice", "format", "molecule")
-    assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
-    module = None
-    try:
-        module     = importlib.import_module(category+"s."+name) #at ~/.genice
-    except ImportError as e:
-        pass
-    if module is None:
-        module     = importlib.import_module("genice."+category+"s."+name)
-    return module
-
-
-def usage(parser):
-    parser.print_help()
-    sys.exit(1)
-
-
-
-def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
-    atoms = []
-    if len(intra) == 0:
-        return atoms
-    for node in range(len(coord)):
-        abscom = np.dot(coord[node],cell)  # relative to absolute
-        rotated = np.dot(intra,rotmatrices[node])
-        for i in range(len(labels)):
-            atoms.append([i,name,labels[i],rotated[i,:]+abscom])
-    return atoms
-
+def load_numbers(v):
+    if type(v) is str:
+        return np.fromstring(v, sep=" ")
+    elif type(v) is list:
+        return np.array(v)
+    
 
 def orientations(coord, graph, cell):
     logger = logging.getLogger()
@@ -80,20 +39,16 @@ def orientations(coord, graph, cell):
 
 
 
-def replicate(positions, rep):
-    repx = positions.copy()
-    for m in range(1,rep[0]):
-        v = np.array([m,0,0])
-        repx = np.concatenate((repx,positions+v))
-    repy = repx.copy()
-    for m in range(1,rep[1]):
-        v = np.array([0,m,0])
-        repy = np.concatenate((repy,repx+v))
-    repz = repy.copy()
-    for m in range(1,rep[2]):
-        v = np.array([0,0,m])
-        repz = np.concatenate((repz,repy+v))
-    return repz / rep
+def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
+    atoms = []
+    if len(intra) == 0:
+        return atoms
+    for node in range(len(coord)):
+        abscom = np.dot(coord[node],cell)  # relative to absolute
+        rotated = np.dot(intra,rotmatrices[node])
+        for i in range(len(labels)):
+            atoms.append([i,name,labels[i],rotated[i,:]+abscom])
+    return atoms
 
 
 
@@ -119,13 +74,6 @@ def replicate_graph(graph, positions, rep):
 
 
 
-def load_numbers(v):
-    if type(v) is str:
-        return np.fromstring(v, sep=" ")
-    elif type(v) is list:
-        return np.array(v)
-    
-
 def flatten(item):
     """Yield items from any nested iterable; see REF."""
     if type(item) is str:
@@ -136,6 +84,24 @@ def flatten(item):
     else:
         yield item
     
+
+def replicate(positions, rep):
+    repx = positions.copy()
+    for m in range(1,rep[0]):
+        v = np.array([m,0,0])
+        repx = np.concatenate((repx,positions+v))
+    repy = repx.copy()
+    for m in range(1,rep[1]):
+        v = np.array([0,m,0])
+        repy = np.concatenate((repy,repx+v))
+    repz = repy.copy()
+    for m in range(1,rep[2]):
+        v = np.array([0,0,m])
+        repz = np.concatenate((repz,repy+v))
+    return repz / rep
+    
+
+
 def parse_cages(cages):
     logger = logging.getLogger()
     cagetype = []
@@ -159,7 +125,7 @@ def parse_cages(cages):
     return cagepos, cagetype
 
 
-    
+
 def parse_cell(cell, celltype):
     logger = logging.getLogger()
     if celltype == "rect":
@@ -198,10 +164,6 @@ def parse_cell(cell, celltype):
         sys.exit(1)
 
 
-#0th stage: determine the molecular positions
-#1st stage: undirected graph (connectivity)
-#2nd stage: directed graph (obeying ice rule)
-#3rd stage: depolarized graph
 
 
 
@@ -437,11 +399,11 @@ class GenIce():
         undir = graph.to_undirected()
         for node in range(undir.number_of_nodes()):
             if node not in undir:
-                logger.debug("z=0 at {0}".format(node))
+                self.logger.debug("z=0 at {0}".format(node))
             else:
                 z = len(undir.neighbors(node))
                 if  z!= 4:
-                    logger.debug("z={0} at {1}".format(z,node))
+                    self.logger.debug("z={0} at {1}".format(z,node))
         if graph.number_of_edges() != len(self.reppositions)*2:
             self.logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(self.reppositions)))
             return False

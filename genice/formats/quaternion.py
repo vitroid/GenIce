@@ -1,4 +1,4 @@
-from genice.libgenice import GenIce
+from genice.formats.baseclass import GenIce
 from genice import rigid
 import numpy     as np
 

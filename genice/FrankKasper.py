@@ -12,8 +12,7 @@ import numpy as np
 
 #genice libs
 from genice import pairlist as pl
-from genice import libgenice as lg
-
+from genice.formats.baseclass import flatten
 
 def shortest_distance(atoms, cell):
     logger = logging.getLogger()
@@ -61,7 +60,7 @@ def equivalents(v, cell, rc):
 
 def adjacency_vectors(pairs, rc, coord, cell):
     logger = logging.getLogger()
-    vertices = list(set([v for v in lg.flatten(pairs)]))
+    vertices = list(set([v for v in flatten(pairs)]))
     adjv = dict()
     adjd = dict()
     for v in vertices:
