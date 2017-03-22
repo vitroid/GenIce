@@ -347,6 +347,11 @@ class GenIce():
         self.logger.info("Stage5: Orientation.")
         #determine the orientations of the water molecules based on edge directions.
         self.rotmatrices = orientations(self.reppositions, self.spacegraph, self.cell)
+
+
+        #Activate it.
+        #logger.info("The network is not specified.  Water molecules will be orinented randomly.")
+        #rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
         self.logger.info("Stage5: end.")
         
 
@@ -441,3 +446,7 @@ class GenIce():
             self.logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(graph.number_of_edges(),len(self.reppositions)))
             return False
         return True
+
+    def __del__(self):
+        self.logger.info("Completed.")
+        
