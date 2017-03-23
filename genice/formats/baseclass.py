@@ -1,5 +1,6 @@
 import logging
 import random
+import math
 import numpy as np
 from collections import Iterable
 
@@ -240,6 +241,7 @@ class GenIce():
         self.cell *= ratio
         if self.bondlen is not None:
             self.bondlen   *= ratio
+        self.logger.info("Bond length (scaled): {0}".format(self.bondlen))
         #
         try:
             self.double_network = lat.double_network
@@ -261,6 +263,8 @@ class GenIce():
         """
         self.logger.info("Stage1: Replication.")
         self.reppositions = replicate(self.waters, self.rep)
+        #This must be done before the replication of the cell.
+        self.graph = self.prepare_random_graph()
         #scale the cell
         for d in range(3):
             self.cell[:,d] *= self.rep[d]
@@ -271,7 +275,6 @@ class GenIce():
         make a random graph and replicate.
         """
         self.logger.info("Stage2: Graph preparation.")
-        self.graph = self.prepare_random_graph()
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
         #test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
@@ -362,7 +365,6 @@ class GenIce():
                     
         
     def prepare_random_graph(self):
-        self.logger.info("Start placing the bonds.")
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
             self.logger.info("  Start estimating the bonds according to the pair distances.")
@@ -380,7 +382,6 @@ class GenIce():
                 for pair in pairs2:
                     i,j = pair
                     assert (i,j) in self.pairs or (j,i) in self.pairs
-            self.logger.info("  End estimating the bonds.")
 
         shuffled_pairs = []
         for pair in self.pairs:
@@ -391,7 +392,6 @@ class GenIce():
             
         graph = dg.IceGraph()
         graph.register_pairs(shuffled_pairs)
-        self.logger.info("End placing the bonds.")
         return graph
 
     def test_undirected_graph(self, graph):

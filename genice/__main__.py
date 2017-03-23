@@ -47,8 +47,12 @@ def main():
         os.makedirs(homegenice+"/formats")
     except:
         pass #just ignore when failed.
+
+
     #Parse options
     options = getoptions()
+
+    
     #Set verbosity level
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,
@@ -64,6 +68,8 @@ def main():
     logger.debug("Debug mode.")
     logger.debug(options.Type)
 
+    
+    #Main part of the program is contained in th Formatter object. (See formats/)
     formatter = safe_import("format", options.format[0])
     f = formatter.Formatter(options.Type[0],
                                 seed=options.seed[0],

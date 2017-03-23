@@ -161,7 +161,7 @@ class Formatter(GenIce):
         o = OpenScad()
         objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
         #operations
-        ops = [openscad2.bondfunc,
+        ops = [bondfunc,
             o.defvar("$fn", 20),
             o.defvar("Roxy", roxy),
             o.defvar("Rbond", rbond),

@@ -1,7 +1,6 @@
-from genice.formats.baseclass import GenIce
 import numpy     as np
-
-
+from genice.formats.baseclass import GenIce
+from genice import yaplotlib as yp
 class Formatter(GenIce):
     """
     Gro file format
@@ -19,23 +18,23 @@ class Formatter(GenIce):
         undir = self.graph.to_undirected()
         
         s = ""
-        s += Size(0.06)
+        s += yp.Size(0.06)
         for i in self.graph.nodes_iter():
             pos = np.dot( self.reppositions[i], self.cell )
             if 4 == len(undir.neighbors(i)):
-                s += Color(3)
+                s += yp.Color(3)
             else:
                 logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
-                s += Color(5)
-            s += Circle(pos)
-        s += Color(2)
+                s += yp.Color(5)
+            s += yp.Circle(pos)
+        s += yp.Color(2)
         for i,j in self.graph.edges_iter(data=False):
             s1 =self.reppositions[i]
             s2 =self.reppositions[j]
             d = s2-s1
             d -= np.floor( d + 0.5 )
             s2 = s1 + d
-            s += Line(np.dot(s1,self.cell),np.dot(s2,self.cell))
+            s += yp.Line(np.dot(s1,self.cell),np.dot(s2,self.cell))
 
         if not self.test2:
             print(s)
@@ -55,12 +54,12 @@ class Formatter(GenIce):
             resno, resname, atomname, position = atom
             if resno == 0:
                 if O is not "":
-                    s += Color(3)
-                    s += Size(0.02)
-                    s += Circle(O)
+                    s += yp.Color(3)
+                    s += yp.Size(0.02)
+                    s += yp.Circle(O)
                     if len(H):
-                        s += Line(O,H[0])
-                        s += Line(O,H[1])
+                        s += yp.Line(O,H[0])
+                        s += yp.Line(O,H[1])
                 H = []
                 O = ""
             if "O" in atomname:
@@ -68,13 +67,13 @@ class Formatter(GenIce):
             elif "H" in atomname:
                 H.append(position)
             else:
-                s += Color(4)
-                s += Size(0.04)
-                s += Circle(position)
+                s += yp.Color(4)
+                s += yp.Size(0.04)
+                s += yp.Circle(position)
         if O is not "":
-            s += Circle(O)
+            s += yp.Circle(O)
             if len(H):
-                s += Line(O,H[0])
-                s += Line(O,H[1])
+                s += yp.Line(O,H[0])
+                s += yp.Line(O,H[1])
         s += network
         print(s)

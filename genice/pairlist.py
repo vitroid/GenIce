@@ -98,15 +98,21 @@ def pairlist_fine(xyz,rc,cell,grid,distance=True):
 
 
 def pairlist_crude(xyz,rc,cell,distance=True):
+    logger = logging.getLogger()
+    logger.debug(xyz)
+    logger.debug(rc)
+    logger.debug(cell)
+    logger.debug(distance)
     for i,j in it.combinations(range(len(xyz)),2):
         moli = xyz[i]
         molj = xyz[j]
         d = moli-molj
         d -= np.floor( d + 0.5 )
-        d = np.dot(d,cell)
-        rr = np.dot(d,d)
+        r = np.dot(d,cell)
+        rr = np.dot(r,r)
             
         if rr < rc**2:
+            logger.debug((d,r,rr,rc**2))
             if distance:
                 yield i,j,math.sqrt(rr)
             else:

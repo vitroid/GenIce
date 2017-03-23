@@ -26,5 +26,5 @@ class Formatter(GenIce):
         s += "{0}\n".format(len(self.atoms))
         for i in range(len(self.atoms)):
             molorder, resname, atomname, position = self.atoms[i]
-        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
+            s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
         print(s,end="")
