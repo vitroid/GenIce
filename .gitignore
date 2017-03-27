@@ -9,6 +9,7 @@ dist/
 GenIce.egg*
 *.rst
 trash/
-Utilities/
+Utilities/*.log
+Utilities/*.yap
 \.yapviewstack
 

@@ -60,6 +60,9 @@ class Formatter(GenIce):
                     if len(H):
                         s += yp.Line(O,H[0])
                         s += yp.Line(O,H[1])
+                        s += yp.Size(0.01)
+                        s += yp.Circle(H[0])
+                        s += yp.Circle(H[1])
                 H = []
                 O = ""
             if "O" in atomname:

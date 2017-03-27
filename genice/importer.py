@@ -1,6 +1,6 @@
 import re
 import importlib
-
+import logging
 
 def audit_name(name):
     """
@@ -11,6 +11,7 @@ def audit_name(name):
 
 
 def safe_import(category, name):
+    logger = logging.getLogger()
     assert category in ("lattice", "format", "molecule")
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
     module = None
@@ -19,5 +20,7 @@ def safe_import(category, name):
     except ImportError as e:
         pass
     if module is None:
-        module     = importlib.import_module("genice."+category+"s."+name)
+        fullname = "genice."+category+"s."+name
+        logger.debug("Load module: {0}".format(fullname))
+        module     = importlib.import_module(fullname)
     return module

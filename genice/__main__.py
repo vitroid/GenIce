@@ -42,9 +42,9 @@ def main():
         homegenice = os.path.expanduser(home + "/.genice") #Other unix
     sys.path.append(homegenice)
     try:
+        os.makedirs(homegenice+"/formats")
         os.makedirs(homegenice+"/lattices")
         os.makedirs(homegenice+"/molecules")
-        os.makedirs(homegenice+"/formats")
     except:
         pass #just ignore when failed.
 
@@ -70,6 +70,7 @@ def main():
 
     
     #Main part of the program is contained in th Formatter object. (See formats/)
+    logger.debug("Format: {0}".format(options.format[0]))
     formatter = safe_import("format", options.format[0])
     f = formatter.Formatter(options.Type[0],
                                 seed=options.seed[0],

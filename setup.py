@@ -32,6 +32,7 @@ setup(name='GenIce',
       packages=['genice',
                 'genice.molecules',
                 'genice.lattices',
+                'genice.formats',
                 ],
       install_requires=['numpy', 'networkx', ],
       entry_points = {
