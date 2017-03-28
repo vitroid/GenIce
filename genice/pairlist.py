@@ -12,7 +12,7 @@ import logging
 
 def Address(pos,grid):
     #residents in each grid cell
-    mol = pos - np.floor( pos )
+    mol = pos % 1 % 1  # avoid cancellation
     return tuple((mol * grid).astype(int))
 
 
@@ -38,14 +38,15 @@ def pairlist(xyz,grid):
     donecellpair = set()
     for address in residents:
         members = residents[address]
-        ix,iy,iz = address
         #neighbor cells
         npa = np.array(address)
         k = np.array([(npa + j + grid)%grid for j in range(-1,2)])
         for a2 in it.product(k[:,0],k[:,1],k[:,2]):
             if address == a2:
-                for a,b in it.combinations(members,2):
-                    yield a,b
+                if frozenset((address,a2)) not in donecellpair:
+                    donecellpair.add(frozenset((address,a2)))
+                    for a,b in it.combinations(members,2):
+                        yield a,b
             else:
                 if a2 in residents:
                     if frozenset((address,a2)) not in donecellpair:

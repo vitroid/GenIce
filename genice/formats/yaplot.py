@@ -24,7 +24,7 @@ class Formatter(GenIce):
             if 4 == len(undir.neighbors(i)):
                 s += yp.Color(3)
             else:
-                logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
+                self.logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
                 s += yp.Color(5)
             s += yp.Circle(pos)
         s += yp.Color(2)

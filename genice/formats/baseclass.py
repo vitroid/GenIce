@@ -1,12 +1,30 @@
 import logging
 import random
 import math
+import itertools as it
+
 import numpy as np
 from collections import Iterable
 
 from genice.importer import safe_import
 from genice import digraph   as dg
 from genice import pairlist as pl
+
+def shortest_distance(coord, cell, pairs=None):
+    dmin = 1e99
+    if pairs is None:
+        iter = it.combinations(coord,2)
+    else:
+        iter = [(coord[i],coord[j]) for i,j in pairs]
+    for c1,c2 in iter:
+        d = c1-c2
+        d -= np.floor(d + 0.5)
+        r = np.dot(d,cell)
+        rr = np.dot(r,r)
+        if rr < dmin:
+            dmin = rr
+    return dmin**0.5
+
 
 def load_numbers(v):
     if type(v) is str:
@@ -16,6 +34,9 @@ def load_numbers(v):
     
 
 def orientations(coord, graph, cell):
+    """
+    Does not work when two OHs are colinear
+    """
     logger = logging.getLogger()
     rotmatrices = []
     for node in range(graph.number_of_nodes()):
@@ -232,7 +253,11 @@ class GenIce():
             try:
                 self.density = lat.density
             except AttributeError:
-                self.density = density0
+                self.logger.info("Density is not specified. Assume the density from lattice.")
+                dmin = shortest_distance(self.waters, self.cell)
+                self.logger.info("Closest pair distance: {0} (should be around 0.276 nm)".format(dmin))
+                self.density = density0 / (0.276/dmin)**3
+                #self.density = density0
         self.logger.info("Density: {0}".format(self.density))
         self.logger.info("Density0: {0}".format(density0))
 
@@ -310,6 +335,8 @@ class GenIce():
         orientations for rigid molecules.
         """
         self.logger.info("Stage5: Orientation.")
+        #Add small noises to the molecular positions
+        self.reppositions += np.dot(np.random.random(self.reppositions.shape)*0.01-0.005, np.linalg.inv(self.cell))
         #determine the orientations of the water molecules based on edge directions.
         self.rotmatrices = orientations(self.reppositions, self.spacegraph, self.cell)
 
