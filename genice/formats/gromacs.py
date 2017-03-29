@@ -46,5 +46,5 @@ class Formatter(GenIce):
                                                                     self.cell[2,0],
                                                                     self.cell[2,1],
                                                                     )
-        s = '#' + "\n#".join(self.doc) + "\n" + s
+        s += '#' + "\n#".join(self.doc) + "\n"
         print(s,end="")

@@ -67,6 +67,7 @@ p      |Python module | .py     | Center of mass | none | none | Under developme
 Symbol | Description| Remarks and data sources
 -------|------------|----------
 1h, 1c | Most popular Ice I (hexagonal or cubic)|
+2|Proton-ordered ice II |
 2d     | Hypothetical Proton-disordered Ice II. |Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848. Web.
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.|
 5      | Monoclinic ice V (testing).|
