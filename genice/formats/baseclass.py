@@ -74,10 +74,10 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
 
 
 
-def replicate_graph(graph, positions, rep):
+def replicate_graph(graph, positions, rep, shuffle=True):
     repgraph = dg.IceGraph()
     nmol = positions.shape[0]
-    for i,j,k in graph.edges_iter(data=True):
+    for i,j in graph.edges_iter(data=False):
         vec = positions[j] - positions[i]    #positions in the unreplicated cell
         delta = np.floor( vec + 0.5 ).astype(int)
         for x in range(rep[0]):
@@ -88,7 +88,7 @@ def replicate_graph(graph, positions, rep):
                     zi = (z + delta[2] + rep[2]) % rep[2]
                     newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
                     newj = j+nmol*(x +rep[0]*(y +rep[1]*z ))
-                    if 0 == random.randint(0,1):         #shuffle the bond directions
+                    if not shuffle or 0 == random.randint(0,1):         #shuffle the bond directions
                         repgraph.add_edge(newi,newj)
                     else:
                         repgraph.add_edge(newj,newi)
@@ -222,16 +222,16 @@ class GenIce():
         try:
             if type(lat.pairs) is str:
                 lines = lat.pairs.split("\n")
-                self.pairs = set()
+                self.pairs = []
                 for line in lines:
                     columns = line.split()
                     if len(columns) == 2:
                         i,j = [int(x) for x in columns]
-                        self.pairs.add(frozenset([i,j]))
+                        self.pairs.append((i,j))
             elif type(lat.pairs) is list:
-                self.pairs = set()
-                for pair in lat.pairs:
-                    self.pairs.add(frozenset(pair))
+                self.pairs = lat.pairs
+                #for pair in lat.pairs:
+                #    self.pairs.append(pair)
         except AttributeError:
             self.logger.info("Graph is not defined.")
         #Bond length threshold
@@ -280,6 +280,10 @@ class GenIce():
         except AttributeError:
             self.cagepos = None
             self.cagetype = None
+        try:
+            self.ordered = lat.ordered
+        except AttributeError:
+            self.ordered = False
 
 
     def stage1(self):
@@ -289,7 +293,12 @@ class GenIce():
         self.logger.info("Stage1: Replication.")
         self.reppositions = replicate(self.waters, self.rep)
         #This must be done before the replication of the cell.
-        self.graph = self.prepare_random_graph()
+        if self.ordered:
+            self.graph = dg.IceGraph()
+            self.graph.register_pairs(self.pairs)
+            self.logger.info("Hydrogen-ordered ice; no shuffling of the network.")
+        else:
+            self.graph = self.prepare_random_graph()
         #scale the cell
         for d in range(3):
             self.cell[:,d] *= self.rep[d]
@@ -300,7 +309,7 @@ class GenIce():
         make a random graph and replicate.
         """
         self.logger.info("Stage2: Graph preparation.")
-        self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        self.graph = replicate_graph(self.graph, self.waters, self.rep, shuffle=not self.ordered)
         #test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         self.logger.info("Stage2: end.")
