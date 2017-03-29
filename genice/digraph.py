@@ -232,6 +232,7 @@ class IceGraph(networkx.DiGraph):
         target = 1<<24
         while len(defects) < target:
             target //= 2
+        logger.info("Defects remaining: {0}".format(len(defects)))
         while len(defects)>0:
             self.purgedefects(defects)
             if len(defects) <= target:

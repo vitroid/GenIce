@@ -26,4 +26,5 @@ class Formatter(GenIce):
             s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(rpos[0],
                                                     rpos[1],
                                                     rpos[2])
+        s = "\n".join(self.doc) + "\n" + s
         print(s,end="")

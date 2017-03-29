@@ -36,4 +36,5 @@ class Formatter(GenIce):
                                                                                 quat[1],
                                                                                 quat[2],
                                                                                 quat[3])
+        s = "\n".join(self.doc) + "\n" + s
         print(s,end="")

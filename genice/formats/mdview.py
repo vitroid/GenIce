@@ -3,8 +3,7 @@ from genice.formats.baseclass import GenIce
 
 class Formatter(GenIce):
     """
-    Gro file format
-    defined in http://manual.gromacs.org/current/online/gro.html
+    MDView file format
     """
     def run(self, options):
         water_type    = options.water[0]
@@ -27,4 +26,5 @@ class Formatter(GenIce):
         for i in range(len(self.atoms)):
             molorder, resname, atomname, position = self.atoms[i]
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
+        s = '#' + "\n#".join(self.doc) + "\n" + s
         print(s,end="")

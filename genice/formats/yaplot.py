@@ -1,10 +1,12 @@
 import numpy     as np
 from genice.formats.baseclass import GenIce
 from genice import yaplotlib as yp
+
+
 class Formatter(GenIce):
     """
-    Gro file format
-    defined in http://manual.gromacs.org/current/online/gro.html
+    Yaplot format.
+    defined in https://github.com/vitroid/Yaplot
     """
     def run(self, options):
         water_type    = options.water[0]
@@ -37,6 +39,7 @@ class Formatter(GenIce):
             s += yp.Line(np.dot(s1,self.cell),np.dot(s2,self.cell))
 
         if not self.test2:
+            s = '#' + "\n#".join(self.doc) + "\n" + s
             print(s)
             return
 
@@ -45,6 +48,7 @@ class Formatter(GenIce):
         self.stage5()   #Orientation
         self.stage6(water_type)  #Water atoms
         self.stage7(guests)      #Guest atoms
+        self.logger.info("Output water molecules in Yaplot format.")
         self.logger.info("Total number of atoms: {0}".format(len(self.atoms)))
         network = s
         s = self.yapresult
@@ -79,4 +83,5 @@ class Formatter(GenIce):
                 s += yp.Line(O,H[0])
                 s += yp.Line(O,H[1])
         s += network
+        s = '#' + "\n#".join(self.doc) + "\n" + s
         print(s)

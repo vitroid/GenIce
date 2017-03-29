@@ -22,6 +22,8 @@ def getoptions():
                         help='Specify water model. (tip3p, tip4p, etc.)')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
                         help='Specify guest in the cage. (D=empty, T=co2, etc.)')
+    parser.add_argument('--nodep', action='store_true', dest='nodep',
+                        help='No depolarization.')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
@@ -72,10 +74,7 @@ def main():
     #Main part of the program is contained in th Formatter object. (See formats/)
     logger.debug("Format: {0}".format(options.format[0]))
     formatter = safe_import("format", options.format[0])
-    f = formatter.Formatter(options.Type[0],
-                                seed=options.seed[0],
-                                rep=options.rep,
-                                density=options.dens[0])
+    f = formatter.Formatter(options)
     f.run(options)
     
     

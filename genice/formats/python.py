@@ -3,8 +3,7 @@ from genice.formats.baseclass import GenIce
 
 class Formatter(GenIce):
     """
-    Gro file format
-    defined in http://manual.gromacs.org/current/online/gro.html
+    re-make python module for GenIce
     """
     def run(self, options):
         water_type    = options.water[0]
@@ -19,6 +18,9 @@ class Formatter(GenIce):
         self.logger.info("Total number of atoms: {0}".format(len(self.atoms)))
         self.logger.info("Output as a python module.")
         s = ""
+        s += '"""\n'
+        s += "\n".join(self.doc) + "\n"
+        s += '"""\n'
         s += "bondlen={0}\n".format(self.bondlen)
         s += "coord='relative'\n"
         if self.cell[1,0] == 0 and self.cell[2,0] == 0 and self.cell[2,1] == 0:

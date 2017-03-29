@@ -2,6 +2,7 @@ import logging
 import random
 import math
 import itertools as it
+import sys
 
 import numpy as np
 from collections import Iterable
@@ -190,20 +191,30 @@ def parse_cell(cell, celltype):
 
 
 class GenIce():
-    def __init__(self, lattice_type, density=-1, seed = 1000, rep=(1,1,1)):
+    def __init__(self, options):
         """
         setup with options
         load the lattice module
         """
         self.logger = logging.getLogger()
+        #pick required data here
+        lattice_type = options.Type[0]
+        seed         = options.seed[0]
+        self.rep     = options.rep
+        self.density = options.dens[0]
+        self.nodep   = options.nodep
+        #never access options from later on
         self.logger.info("Ice type: {0}".format(lattice_type))
         lat = safe_import("lattice", lattice_type)
         #Show the document of the module
         try:
-            for line in lat.__doc__.splitlines():
-                self.logger.info("!!! {0}".format(line))
+            self.doc = lat.__doc__.splitlines()
         except:
-            pass
+            self.doc = []
+        self.doc.append("")
+        self.doc.append("Command line: {0}".format(" ".join(sys.argv)))
+        for line in self.doc:
+            self.logger.info("!!! {0}".format(line))
         #prepare water positions
         self.waters = load_numbers(lat.waters)
         self.logger.debug("Waters: {0}".format(len(self.waters)))
@@ -247,9 +258,7 @@ class GenIce():
         nmol = self.waters.shape[0]        #nmol in a unit cell
         volume = np.linalg.det(self.cell)  #volume of a unit cell in nm**3
         density0 = mass * nmol / (NB*volume*1e-21)
-        if density > 0:
-            self.density = density
-        else:
+        if self.density <= 0:
             try:
                 self.density = lat.density
             except AttributeError:
@@ -272,7 +281,6 @@ class GenIce():
             self.double_network = lat.double_network
         except AttributeError:
             self.double_network = False
-        self.rep = rep
         #prepare cages
         try:
             cagepos, self.cagetype = parse_cages(lat.cages)
@@ -280,6 +288,7 @@ class GenIce():
         except AttributeError:
             self.cagepos = None
             self.cagetype = None
+        self.nodep = options.nodep
         try:
             self.ordered = lat.ordered
         except AttributeError:
@@ -328,15 +337,20 @@ class GenIce():
         depolarize.
         """
         self.logger.info("Stage4: depolarization.")
-        if self.double_network:
-            if (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0):
-                pass
-            else:
-                self.logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
-                sys.exit(1)
-        self.spacegraph = dg.SpaceIceGraph(self.graph,coord=self.reppositions)
-        draw = dg.YaplotDraw(self.reppositions, self.cell, data=self.spacegraph)
-        self.yapresult  = dg.depolarize(self.spacegraph, self.cell, draw=draw)
+        if self.nodep:
+            self.logger.info("Skip depolarization by request.")
+            self.yapresult = ""
+            self.spacegraph = dg.SpaceIceGraph(self.graph,coord=self.reppositions)
+        else:
+            if self.double_network:
+                if (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0):
+                    pass
+                else:
+                    self.logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
+                    sys.exit(1)
+            self.spacegraph = dg.SpaceIceGraph(self.graph,coord=self.reppositions)
+            draw = dg.YaplotDraw(self.reppositions, self.cell, data=self.spacegraph)
+            self.yapresult  = dg.depolarize(self.spacegraph, self.cell, draw=draw)
         self.logger.info("Stage4: end.")
 
     def stage5(self):

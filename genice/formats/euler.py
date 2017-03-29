@@ -35,4 +35,5 @@ class Formatter(GenIce):
                                                                                 euler[0],
                                                                                 euler[1],
                                                                                 euler[2])
+        s = "\n".join(self.doc) + "\n" + s
         print(s,end="")

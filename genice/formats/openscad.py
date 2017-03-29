@@ -167,4 +167,5 @@ class Formatter(GenIce):
             o.defvar("Rbond", rbond),
             ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
         s = o.encode(*ops)
+        s = '//' + "\n//".join(self.doc) + "\n" + s
         print(s,end="")

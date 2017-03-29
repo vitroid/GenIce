@@ -3,8 +3,7 @@ from genice.formats.baseclass import GenIce
 
 class Formatter(GenIce):
     """
-    Gro file format
-    defined in http://manual.gromacs.org/current/online/gro.html
+    Hydrogen bond network in @NGPH format.
     """
     def run(self, options):
         water_type    = options.water[0]
@@ -21,4 +20,5 @@ class Formatter(GenIce):
         for i,j,k in self.graph.edges_iter(data=True):
             s += "{0} {1}\n".format(i,j)
         s += "-1 -1\n"
+        s = "\n".join(self.doc) + "\n" + s
         print(s,end="")
