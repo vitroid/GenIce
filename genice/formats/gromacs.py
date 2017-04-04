@@ -1,4 +1,5 @@
 from genice.formats.baseclass import GenIce
+from genice import rigid
 
 
 class Formatter(GenIce):
@@ -10,10 +11,13 @@ class Formatter(GenIce):
         water_type    = options.water[0]
         guests        = options.guests
         self.stage1()   #replicate the unit cell
-        self.stage2()   #prepare random graph
-        self.stage3()   #Make an ice graph
-        self.stage4()   #Depolarize
-        self.stage5()   #Orientation
+        res = self.stage2()   #prepare random graph
+        if not res:
+            self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
+        else:
+            self.stage3()   #Make an ice graph
+            self.stage4()   #Depolarize
+            self.stage5()   #Orientation
         self.stage6(water_type)  #Water atoms
         self.stage7(guests)      #Guest atoms
         self.logger.info("Total number of atoms: {0}".format(len(self.atoms)))

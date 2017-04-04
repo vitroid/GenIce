@@ -32,7 +32,8 @@ def load_numbers(v):
         return np.fromstring(v, sep=" ")
     elif type(v) is list:
         return np.array(v)
-    
+    else:
+        return v
 
 def orientations(coord, graph, cell):
     """
@@ -321,7 +322,10 @@ class GenIce():
         self.graph = replicate_graph(self.graph, self.waters, self.rep, shuffle=not self.ordered)
         #test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
+        if not self.test2:
+            self.logger.info("Test2 failed.")
         self.logger.info("Stage2: end.")
+        return self.test2
 
     def stage3(self):
         """
