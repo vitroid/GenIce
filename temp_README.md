@@ -49,18 +49,20 @@ condition.  Note that the generated structure is not optimal according
 to the potential energy.
 ## Output formats
 
-Format |Application | extension | water | solute | HB | remarks
+Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
-g      |[Gromacs](http://www.gromacs.org)     | .gro      | Atomic positions | Atomic positions | none|
-m      |MDView      | .mdv      | Atomic positions | Atomic positions | auto|
-e      |Euler angles| .nx3a     | Rigid rotor | none | none|
-q      |Quaternions | .nx4a     | Rigid rotor | none |none|
-d      |Digraph     | .ngph     | none | none | o |
-y      |[Yaplot](https://github.com/vitroid/Yaplot)      | .yap      | o | o |none |
-o      |[OpenSCAD](http://www.openscad.org)    | .scad     | Center of mass | none | o |
-c      |CenterOfMass| .ar3a     | Center of mass | none | none |
-p      |Python module | .py     | Center of mass | none | none | Under development.
-
+`g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
+`m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
+`e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
+`q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
+`d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
+`graph`  |Graph       | `.ngph`     | none | none | o | Experimental.
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | o | o |none |
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
+`c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
+`r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
+`p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 
 ## Ice structures
 
