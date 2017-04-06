@@ -36,6 +36,10 @@ def Color(x):
     return "@ {0}\n".format(int(x))
 
 
+def SetPalette(x,R,G,B):
+    return "@ {0} {1} {2} {3}\n".format(int(x),R,G,B)
+
+
 def Size(x):
     return "r {0}\n".format(float(x))
 
