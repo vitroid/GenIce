@@ -21,5 +21,6 @@ sites = np.array([[0, 0,oz],
                   [-omx,0,omz+oz],
                   ]) # nm, OHHMM
 
+atoms = ["O","H","H",".","."]
 labels = ["OW","HW1","HW2","MW1","MW2"]
 name = "SOL"

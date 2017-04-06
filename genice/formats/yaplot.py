@@ -28,7 +28,10 @@ class Formatter(GenIce):
             else:
                 self.logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
                 s += yp.Color(5)
+            s += yp.Layer(1)
             s += yp.Circle(pos)
+            s += yp.Layer(2)
+            s += yp.Text(pos, "{0}".format(i))
         s += yp.Color(2)
         for i,j in self.graph.edges_iter(data=False):
             s1 =self.reppositions[i]
@@ -36,6 +39,7 @@ class Formatter(GenIce):
             d = s2-s1
             d -= np.floor( d + 0.5 )
             s2 = s1 + d
+            s += yp.Layer(3)
             s += yp.Line(np.dot(s1,self.cell),np.dot(s2,self.cell))
 
         if not self.test2:
@@ -52,6 +56,7 @@ class Formatter(GenIce):
         self.logger.info("Total number of atoms: {0}".format(len(self.atoms)))
         network = s
         s = self.yapresult
+        s += yp.Layer(4)
         H = []
         O  = ""
         for atom in self.atoms:
@@ -59,7 +64,7 @@ class Formatter(GenIce):
             if resno == 0:
                 if O is not "":
                     s += yp.Color(3)
-                    s += yp.Size(0.02)
+                    s += yp.Size(0.03)
                     s += yp.Circle(O)
                     if len(H):
                         s += yp.Line(O,H[0])

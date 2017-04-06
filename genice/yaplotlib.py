@@ -11,6 +11,10 @@ def Line(v0,v1):
     return "l " + plaintext(v0) + plaintext(v1) + "\n"
 
 
+def Text(v,txt):
+    return "t " + plaintext(v) + " " + txt + "\n"
+
+
 def Circle(v0):
     return "c " + plaintext(v0) + "\n"
 

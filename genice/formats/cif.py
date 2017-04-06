@@ -2,6 +2,10 @@ from genice.formats.baseclass import GenIce
 from math import acos, pi
 import numpy as np
 
+def nearly_zero(x):
+    return np.dot(x,x) < 1e-10
+
+
 class Formatter(GenIce):
     """
     Crude Cif file format
@@ -43,7 +47,10 @@ class Formatter(GenIce):
         s += "_cell_angle_beta              {0}\n".format(beta)
         s += "_cell_angle_gamma             {0}\n".format(gamma)
         s += "\n"
-        s += "_symmetry_cell_setting        'triclinic'"  #for now it is always triclinic
+        if nearly_zero(alpha-90) and nearly_zero(beta-90) and nearly_zero(gamma-90):
+            s += "_symmetry_cell_setting        'orthorhombic'"
+        else:
+            s += "_symmetry_cell_setting        'triclinic'"  #for now it is always triclinic
         s += """
 loop_
 _atom_site_label
