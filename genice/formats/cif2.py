@@ -8,7 +8,7 @@ def nearly_zero(x):
 
 class Formatter(GenIce):
     """
-    Crude CIF file format
+    Crude Cif file format
     """
     def run(self, options):
         water_type    = options.water[0]
@@ -56,16 +56,16 @@ class Formatter(GenIce):
         s += """
 loop_
 _atom_site_label
-_atom_site_type_symbol
 _atom_site_fract_x
 _atom_site_fract_y
 _atom_site_fract_z
+_atom_site_type_symbol
 """
         celli = np.linalg.inv(self.cell)
         for i in range(len(self.atoms)):
             molorder, resname, atomname, position = self.atoms[i]
             position = np.dot(position, celli)
             label = atomname+"{0}".format(i)
-            s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(atomname,position[0],position[1],position[2],label)
+            s += "{4:>6}{1:10.4f}{2:10.4f}{3:10.4f}{0:>6}\n".format(atomname,position[0],position[1],position[2],label)
         s += "\n"
         print(s,end="")

@@ -5,7 +5,7 @@ import itertools as it
 import sys
 
 import numpy as np
-from collections import Iterable
+from collections import Iterable, defaultdict
 
 from genice.importer import safe_import
 from genice import digraph   as dg
@@ -416,7 +416,41 @@ class GenIce():
                     self.logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
                     self.atoms += arrange_atoms(cpos, self.cell, cmat, gmol.sites, gmol.labels, gmol.name)
         self.logger.info("Stage7: end.")
-                    
+
+
+    def stage7B(self, guests):
+        """
+        arrange guest atoms
+        put them in separate lists
+        """
+        self.logger.info("Stage7B: Atomic positions of the guest.")
+        self.guestAtoms = defaultdict(list)
+        self.nGuestAtoms = defaultdict(int)
+        if self.cagepos is not None:
+            cagetypes = set(self.cagetype)
+            self.logger.info("Cage types: {0}".format(cagetypes))
+        if guests is not None and self.cagepos is not None:
+            #Make the cage type to guest type correspondence
+            guest_in_cagetype = dict()
+            for arg in guests:
+                key, value = arg[0].split("=")
+                guest_in_cagetype[key] = value
+            #replicate the cagetype array
+            cagetype = np.array([self.cagetype[i%len(self.cagetype)] for i in range(self.cagepos.shape[0])])
+            for ctype in cagetypes:
+                #filter the cagepos
+                cpos = self.cagepos[cagetype == ctype]
+                #guest molecules are not rotated.
+                cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
+                #If the guest molecule type is given,
+                if ctype in guest_in_cagetype:
+                    gname = guest_in_cagetype[ctype]
+                    gmol = safe_import("molecule", gname)
+                    self.logger.info("{0} is in the cage type '{1}'".format(guest_in_cagetype[ctype], ctype))
+                    self.guestAtoms[gname] += arrange_atoms(cpos, self.cell, cmat, gmol.sites, gmol.labels, gmol.name)
+                    self.nGuestAtoms[gname] += len(cpos)
+        self.logger.info("Stage7B: end.")
+                            
         
     def prepare_random_graph(self):
         if self.pairs is None:
