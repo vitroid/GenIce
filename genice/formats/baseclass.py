@@ -76,7 +76,7 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
 
 
 
-def replicate_graph(graph, positions, rep, shuffle=True):
+def replicate_graph(graph, positions, rep):
     repgraph = dg.IceGraph()
     nmol = positions.shape[0]
     for i,j in graph.edges_iter(data=False):
@@ -90,10 +90,13 @@ def replicate_graph(graph, positions, rep, shuffle=True):
                     zi = (z + delta[2] + rep[2]) % rep[2]
                     newi = i+nmol*(xi+rep[0]*(yi+rep[1]*zi))
                     newj = j+nmol*(x +rep[0]*(y +rep[1]*z ))
-                    if not shuffle or 0 == random.randint(0,1):         #shuffle the bond directions
-                        repgraph.add_edge(newi,newj)
+                    if graph[i][j]['fixed']: ##fixed pair
+                        repgraph.add_edge(newi,newj,fixed=True)
                     else:
-                        repgraph.add_edge(newj,newi)
+                        if 0 == random.randint(0,1):         #shuffle the bond directions
+                            repgraph.add_edge(newi,newj,fixed=False)
+                        else:
+                            repgraph.add_edge(newj,newi,fixed=False)
     return repgraph
 
 
@@ -204,6 +207,9 @@ class GenIce():
         self.rep     = options.rep
         self.density = options.dens[0]
         self.nodep   = options.nodep
+        #Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
         #never access options from later on
         self.logger.info("Ice type: {0}".format(lattice_type))
         lat = safe_import("lattice", lattice_type)
@@ -216,20 +222,33 @@ class GenIce():
         self.doc.append("Command line: {0}".format(" ".join(sys.argv)))
         for line in self.doc:
             self.logger.info("!!! {0}".format(line))
-        #prepare water positions
+        #================================================================
+        # waters: positions of water molecules
+        #
         self.waters = load_numbers(lat.waters)
         self.logger.debug("Waters: {0}".format(len(self.waters)))
         self.waters = self.waters.reshape((self.waters.size//3,3))
-        #prepare cell transformation matrix
+
+        #================================================================
+        # cell: cell dimension
+        # celltype: symmetry of the cell
+        #   see parse_cell for syntax.
+        #
         self.cell = parse_cell(lat.cell, lat.celltype)
-        #express molecular positions in the coordinate relative to the cell
+        
+        #================================================================
+        # coord: "relative" or "absolute"
+        #   Inside genice, molecular positions are always treated as "relative"
+        #
         if lat.coord == "absolute":
             self.waters = np.dot(self.waters,np.linalg.inv(self.cell),)
             self.waters = np.array(self.waters)
-        #Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-        #Prearranged network topology information (if available)
+
+        #================================================================
+        # pairs: specify the pairs of molecules that are connected.
+        #   Bond orientation will be shuffled later
+        #   unless it is "fixed".
+        #
         self.pairs = None
         try:
             if type(lat.pairs) is str:
@@ -246,7 +265,12 @@ class GenIce():
                 #    self.pairs.append(pair)
         except AttributeError:
             self.logger.info("Graph is not defined.")
-        #Bond length threshold
+
+        #================================================================
+        # bondlen: specify the bond length threshold.
+        #   This is used when "pairs" are not specified.
+        #   It is applied to the original positions of molecules (before density setting).
+        #
         self.bondlen = None
         try:
             self.bondlen = lat.bondlen
@@ -277,12 +301,22 @@ class GenIce():
         if self.bondlen is not None:
             self.bondlen   *= ratio
         self.logger.info("Bond length (scaled): {0}".format(self.bondlen))
+
+        #================================================================
+        # double_network: True or False
+        #   This is a special option for ices VI and VII that have
+        #   interpenetrating double network.
+        #   GenIce's fast depolarization algorithm fails in some case.
         #
         try:
             self.double_network = lat.double_network
         except AttributeError:
             self.double_network = False
-        #prepare cages
+
+        #================================================================
+        # cages: positions of the centers of cages
+        #   In fractional coordinate.
+        #
         try:
             cagepos, self.cagetype = parse_cages(lat.cages)
             self.cagepos = replicate(cagepos,self.rep)
@@ -290,10 +324,27 @@ class GenIce():
             self.cagepos = None
             self.cagetype = None
         self.nodep = options.nodep
+
+        #================================================================
+        # fixed: specify the bonds whose directions are fixed.
+        #   you can specify them in pairs at a time.
+        #   You can also leave it undefined.
+        #
         try:
-            self.ordered = lat.ordered
+            if type(lat.fixed) is str:
+                lines = lat.fixed.split("\n")
+                self.fixed = []
+                for line in lines:
+                    columns = line.split()
+                    if len(columns) == 2:
+                        i,j = [int(x) for x in columns]
+                        self.fixed.append((i,j))  #Is a tuple
+            elif type(lat.fixed) is list:
+                self.fixed = []
+                for pair in lat.fixed:
+                    self.fixed.append(tuple(pair[:2])) #Must be a tuple
         except AttributeError:
-            self.ordered = False
+            self.fixed = []
 
 
     def stage1(self):
@@ -303,12 +354,7 @@ class GenIce():
         self.logger.info("Stage1: Replication.")
         self.reppositions = replicate(self.waters, self.rep)
         #This must be done before the replication of the cell.
-        if self.ordered:
-            self.graph = dg.IceGraph()
-            self.graph.register_pairs(self.pairs)
-            self.logger.info("Hydrogen-ordered ice; no shuffling of the network.")
-        else:
-            self.graph = self.prepare_random_graph()
+        self.graph = self.prepare_random_graph(self.fixed)
         #scale the cell
         for d in range(3):
             self.cell[:,d] *= self.rep[d]
@@ -319,7 +365,7 @@ class GenIce():
         make a random graph and replicate.
         """
         self.logger.info("Stage2: Graph preparation.")
-        self.graph = replicate_graph(self.graph, self.waters, self.rep, shuffle=not self.ordered)
+        self.graph = replicate_graph(self.graph, self.waters, self.rep)
         #test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
@@ -452,7 +498,7 @@ class GenIce():
         self.logger.info("Stage7B: end.")
                             
         
-    def prepare_random_graph(self):
+    def prepare_random_graph(self, fixed):
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
             self.logger.info("  Start estimating the bonds according to the pair distances.")
@@ -460,6 +506,7 @@ class GenIce():
             #make before replicating them.
             grid = pl.determine_grid(self.cell, self.bondlen)
             self.pairs = [v for v in pl.pairlist_fine(self.waters, self.bondlen, self.cell, grid, distance=False)]
+            #Check using a simpler algorithm.
             if self.logger.level <= logging.DEBUG:
                 pairs2 = [v for v in pl.pairlist_crude(self.waters, self.bondlen, self.cell, distance=False)]
                 self.logger.debug("pairs: {0}".format(len(self.pairs)))
@@ -471,15 +518,19 @@ class GenIce():
                     i,j = pair
                     assert (i,j) in self.pairs or (j,i) in self.pairs
 
-        shuffled_pairs = []
+        graph = dg.IceGraph()
+        for i,j in fixed:
+            graph.add_edge(i,j,fixed=True)
+        #Fixed pairs are default.
         for pair in self.pairs:
             i,j = pair
-            if random.randint(0,1) == 0:
-                i,j = j,i
-            shuffled_pairs.append((i,j))
-            
-        graph = dg.IceGraph()
-        graph.register_pairs(shuffled_pairs)
+            if graph.has_edge(i,j) or graph.has_edge(j,i):
+                pass
+            else:
+                if random.randint(0,1) == 0:
+                    graph.add_edge(i,j,fixed=False)
+                else:
+                    graph.add_edge(j,i,fixed=False)
         return graph
 
     def test_undirected_graph(self, graph):
