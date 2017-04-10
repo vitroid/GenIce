@@ -13,3 +13,13 @@ Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
 
+
+*.yap
+
+*.scad
+
+*.ngph
+
+*.zip
+
+*.cif
