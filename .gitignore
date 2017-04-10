@@ -23,3 +23,7 @@ Utilities/*.yap
 *.zip
 
 *.cif
+
+*.gro
+
+*.ar3r

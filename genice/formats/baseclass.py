@@ -276,7 +276,8 @@ class GenIce():
             self.bondlen = lat.bondlen
             self.logger.info("Bond length: {0}".format(self.bondlen))
         except AttributeError:
-            self.logger.info("Bond length is not defined.")
+            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell)
+            self.logger.info("Bond length (assumed): {0}".format(self.bondlen))
         #Set density
         mass = 18  #water
         NB   = 6.022e23

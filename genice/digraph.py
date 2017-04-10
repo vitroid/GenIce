@@ -181,14 +181,16 @@ class IceGraph(networkx.DiGraph):
             nodes = self.predecessors(d)
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
-            self.invert_edge(node,d)
-            defects.append(node)
+            if not self[node][d]['fixed']:
+                self.invert_edge(node,d)
+                defects.append(node)
         if self.out_degree(d) > 2:
             nodes = self.successors(d)
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
-            self.invert_edge(d,node)
-            defects.append(node)
+            if not self[d][node]['fixed']:
+                self.invert_edge(d,node)
+                defects.append(node)
 
             
     def defects(self):
