@@ -41,7 +41,7 @@ def shortest_path(G, start, ends):
                 return list(flatten(path))[::-1] + [v1]
             path = (v1, path)
             for v2 in G[v1]:
-                if v2 not in visited:
+                if v2 not in visited and not G[v1][v2]['fixed']:
                     heapq.heappush(q, (cost + 1, v2, path))
 
 
@@ -109,11 +109,11 @@ class IceGraph(networkx.DiGraph):
     #def __init__(data=None):
     #    super(IceGraph, self).__init__(data)
 
-    def register_pairs(self,pairs):
-        self.clear()
-        for pair in pairs:
-            x,y = pair[:2]
-            self.add_edge(x,y)
+#    def register_pairs(self,pairs):
+#        self.clear()
+#        for pair in pairs:
+#            x,y = pair[:2]
+#            self.add_edge(x,y)
 
     
     def invert_edge(self,from_,to_):
@@ -122,8 +122,9 @@ class IceGraph(networkx.DiGraph):
         """
         if not self.has_edge(from_, to_):
             logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
+        assert not self[from_][to_]['fixed']
         self.remove_edge(from_,to_)
-        self.add_edge(to_,from_)
+        self.add_edge(to_,from_,fixed=False)
 
         
     def invert_path(self, path):
@@ -180,16 +181,16 @@ class IceGraph(networkx.DiGraph):
             nodes = self.predecessors(d)
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
-            self.remove_edge(node,d)
-            self.add_edge(d,node)
-            defects.append(node)
+            if not self[node][d]['fixed']:
+                self.invert_edge(node,d)
+                defects.append(node)
         if self.out_degree(d) > 2:
             nodes = self.successors(d)
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
-            self.remove_edge(d,node)
-            self.add_edge(node,d)
-            defects.append(node)
+            if not self[d][node]['fixed']:
+                self.invert_edge(d,node)
+                defects.append(node)
 
             
     def defects(self):
@@ -296,8 +297,10 @@ class SpaceIceGraph(IceGraph):
         if not self.has_edge(from_, to_):
             logging.getLogger().error("No edge ({0},{1}).".format(from_,to_))
         v = self.get_edge_data(from_,to_)["vector"]
+        fixed = self.get_edge_data(from_,to_)["fixed"]
+        assert not fixed
         self.remove_edge(from_,to_)
-        self.add_edge(to_,from_,vector=-v)
+        self.add_edge(to_,from_,vector=-v, fixed=False)
 
 
         
