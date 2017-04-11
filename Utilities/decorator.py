@@ -63,6 +63,8 @@ def tune_angles(sixvecs, pivot):
     for i in range(len(sixvecs)):
         vec = sixvecs[i]
         cosine = np.dot(sixvecs[0],vec)
+        if cosine > 1.0:
+            cosine = 1.0
         angle = acos(cosine)
         sine   = np.cross(sixvecs[0], vec)
         if np.dot(sine, pivot) < 0:
