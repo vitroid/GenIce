@@ -355,6 +355,7 @@ class GenIce():
         self.logger.info("Stage1: Replication.")
         self.reppositions = replicate(self.waters, self.rep)
         #This must be done before the replication of the cell.
+        self.logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
         self.graph = self.prepare_random_graph(self.fixed)
         #scale the cell
         for d in range(3):
@@ -367,6 +368,16 @@ class GenIce():
         """
         self.logger.info("Stage2: Graph preparation.")
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        nrandom = 0
+        nfixed = 0
+        for i,j,data in self.graph.edges_iter(data=True):
+            if self.graph[i][j]['fixed']: ##fixed pair
+                nfixed += 1
+            else:
+                nrandom += 1
+        self.logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
+        self.logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
+        self.logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed+nrandom, len(self.reppositions)*2))
         #test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
