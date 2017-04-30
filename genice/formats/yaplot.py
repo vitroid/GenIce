@@ -14,24 +14,28 @@ def run(lattice, water_type="TIP3P", guests=[]):
     lattice.stage1()   #replicate the unit cell
     lattice.stage2()   #prepare random graph
 
-    #Failed to build the undirected graph obeying the ice rule.
     logger.info("Output HBN in Yaplot format.")
 
     undir = lattice.graph.to_undirected()
 
     s = ""
-    s += yp.Size(0.06)
     for i in lattice.graph.nodes_iter():
         pos = np.dot( lattice.reppositions[i], lattice.cell )
-        if 4 == len(undir.neighbors(i)):
+        if i in lattice.dopants:
+            s += yp.Color(6)
+        elif 4 == len(undir.neighbors(i)):
             s += yp.Color(3)
         else:
             logger.debug("Z({1})={0}".format(undir.neighbors(i),i))
             s += yp.Color(5)
         s += yp.Layer(1)
+        s += yp.Size(0.06)
         s += yp.Circle(pos)
         s += yp.Layer(2)
-        s += yp.Text(pos, "{0}".format(i))
+        if i in lattice.dopants:
+            s += yp.Text(pos, "{0} ({1})".format(i, lattice.dopants[i]))
+        else:
+            s += yp.Text(pos, "{0}".format(i))
     s += yp.Color(2)
     for i,j in lattice.graph.edges_iter(data=False):
         s1 =lattice.reppositions[i]
@@ -40,9 +44,11 @@ def run(lattice, water_type="TIP3P", guests=[]):
         d -= np.floor( d + 0.5 )
         s2 = s1 + d
         s += yp.Layer(3)
-        s += yp.Line(np.dot(s1,lattice.cell),np.dot(s2,lattice.cell))
+        s += yp.Size(0.03)
+        s += yp.Arrow(np.dot(s1,lattice.cell),np.dot(s2,lattice.cell))
 
     if not lattice.test2:
+        # Failed to build the undirected graph obeying the ice rule.
         s = '#' + "\n#".join(lattice.doc) + "\n" + s
         print(s)
         return
@@ -57,6 +63,7 @@ def run(lattice, water_type="TIP3P", guests=[]):
     network = s
     s = lattice.yapresult
     s += yp.Layer(4)
+    s += yp.ArrowType(1)
     H = []
     O  = ""
     for atom in lattice.atoms:

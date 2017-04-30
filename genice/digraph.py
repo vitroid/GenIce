@@ -106,8 +106,11 @@ class YaplotDraw(networkx.DiGraph):
 
 
 class IceGraph(networkx.DiGraph):
-    #def __init__(data=None):
-    #    super(IceGraph, self).__init__(data)
+    def __init__(self, data=None):
+        super(IceGraph, self).__init__(data)
+        #set of nodes that ignore the ice rule.
+        #is added automatically in cationize/anionize
+        self.ignores = set()  
 
 #    def register_pairs(self,pairs):
 #        self.clear()
@@ -115,6 +118,36 @@ class IceGraph(networkx.DiGraph):
 #            x,y = pair[:2]
 #            self.add_edge(x,y)
 
+    def cationize(self, which):
+        invert = set()
+        fix    = set()
+        for i,j,data in self.edges_iter(data=True):
+            if j==which:
+                invert.add((i,j))
+                fix.add((j,i))
+            elif i==which:
+                fix.add((i,j))
+        for i,j in invert:
+            self.invert_edge(i,j)
+        for i,j in fix:
+            self[i][j]['fixed'] = True
+        self.ignores.add(which)
+
+    def anionize(self, which):
+        invert = set()
+        fix    = set()
+        for i,j,data in self.edges_iter(data=True):
+            if i==which:
+                invert.add((i,j))
+                fix.add((j,i))
+            elif j==which:
+                fix.add((i,j))
+        for i,j in invert:
+            self.invert_edge(i,j)
+        for i,j in fix:
+            self[i][j]['fixed'] = True
+        self.ignores.add(which)
+        
     
     def invert_edge(self,from_,to_):
         """
@@ -174,6 +207,10 @@ class IceGraph(networkx.DiGraph):
 
     def purgedefects(self, defects):
         d = defects[0]
+        logging.getLogger().debug(self.ignores)
+        if d in self.ignores:
+            defects.pop(0)
+            return
         if self.in_degree(d) == 2 and self.out_degree(d) == 2:
             defects.pop(0)
             return
@@ -196,6 +233,8 @@ class IceGraph(networkx.DiGraph):
     def defects(self):
         """
         Reply the list of defective vertices.
+
+        It also counts the "ignore_ice_rules" sites.
         """
         defects = []
         for i in range(self.number_of_nodes()):
@@ -239,9 +278,7 @@ class IceGraph(networkx.DiGraph):
             if len(defects) <= target:
                 logger.info("Defects remaining: {0}".format(len(defects)))
                 target //= 2
-        if len(self.defects()) != 0:
-            logger.error("Some water molecules do not obey the ice rule.")
-            sys.exit(1)
+        assert set(self.defects()) == self.ignores, "Some water molecules do not obey the ice rule."
 
 
                 
@@ -262,10 +299,11 @@ class SpaceIceGraph(IceGraph):
     XAXIS=1
     YAXIS=2
     ZAXIS=3
-    def __init__(self, data=None, coord=None, pbc=True):
+    def __init__(self, data=None, coord=None, pbc=True, ignores=set()):
         super(SpaceIceGraph, self).__init__(data)
         if coord is not None:
             self.add_vectors(coord, pbc)
+        self.ignores = ignores
             
     def add_vectors(self, coord, pbc=True):
         """
