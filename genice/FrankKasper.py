@@ -12,7 +12,7 @@ import numpy as np
 
 #genice libs
 from genice import pairlist as pl
-from genice.formats.baseclass import flatten
+from genice.lattice import flatten
 
 def shortest_distance(atoms, cell):
     logger = logging.getLogger()

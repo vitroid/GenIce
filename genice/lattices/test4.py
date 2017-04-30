@@ -38,7 +38,7 @@ cell = """
 """
 
 from genice import FrankKasper
-from genice.formats.baseclass import parse_cages, parse_cell
+from genice.lattice import parse_cages, parse_cell
 cagepos, cagetype = parse_cages(cages)
 cell9             = parse_cell(cell, celltype)
 waters = [w for w in FrankKasper.toWater(cagepos, cell9)]

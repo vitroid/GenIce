@@ -6,7 +6,9 @@ import sys
 import argparse  as ap
 import logging
 from genice.importer import safe_import
-
+from genice import lattice
+import random
+import numpy as np
 
 def getoptions():
     parser = ap.ArgumentParser(description='')
@@ -70,13 +72,25 @@ def main():
     logger.debug("Debug mode.")
     logger.debug(options.Type)
 
+    water_type   = options.water[0]
+    guests       = options.guests
+    lattice_type = options.Type[0]
+    file_format  = options.format[0]
+    seed         = options.seed[0]
+    rep          = options.rep
+    density      = options.dens[0]
+    depolarize   = not options.nodep
+    del options  #Dispose for safety.
+    #Set random seeds
+    random.seed(seed)
+    np.random.seed(seed)
     
+    logger.debug("Lattice: {0}".format(lattice_type))
+    lat = lattice.Lattice(lattice_type, density=density, rep=rep, depolarize=depolarize)
     #Main part of the program is contained in th Formatter object. (See formats/)
-    logger.debug("Format: {0}".format(options.format[0]))
-    formatter = safe_import("format", options.format[0])
-    f = formatter.Formatter(options)
-    f.run(options)
-    
+    logger.debug("Format: {0}".format(file_format))
+    formatter = safe_import("format", file_format)
+    formatter.run(lat, water_type=water_type, guests=guests)
     
 if __name__ == "__main__":
     main()

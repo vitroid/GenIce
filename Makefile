@@ -30,7 +30,10 @@ test:
 	./genice.x 16 --rep 1 1 1 --format p > trash/16.py
 	./genice.x 17 --rep 1 1 1 --format q > trash/17.nx4a
 	./genice.x 1c --rep 1 1 1 --format r > trash/1c.ar3r
-	./genice.x 1h --rep 1 1 1 --format y > trash/1h.yap
+	./genice.x CS1 --guest 12=g12 --rep 1 1 1 --format cif > trash/CS1.cif
+	./genice.x CS2 --guest 12=g12 --rep 1 1 1 --format cif2 > trash/CS2.cif
+	./genice.x HS1 --guest 12=g12 --rep 1 1 1 --format xyz > trash/HS1.xyz
+	./genice.x TS1 --guest 12=g12 --rep 1 1 1 --format graph > trash/TS1.ngph
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist

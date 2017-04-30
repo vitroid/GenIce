@@ -1,30 +1,17 @@
+import sys
 import logging
 import random
-import math
 import itertools as it
-import sys
-
-import numpy as np
+import logging
+import math
 from collections import Iterable, defaultdict
 
-from genice.importer import safe_import
-from genice import digraph   as dg
-from genice import pairlist as pl
+import numpy as np
 
-def shortest_distance(coord, cell, pairs=None):
-    dmin = 1e99
-    if pairs is None:
-        iter = it.combinations(coord,2)
-    else:
-        iter = [(coord[i],coord[j]) for i,j in pairs]
-    for c1,c2 in iter:
-        d = c1-c2
-        d -= np.floor(d + 0.5)
-        r = np.dot(d,cell)
-        rr = np.dot(r,r)
-        if rr < dmin:
-            dmin = rr
-    return dmin**0.5
+from genice.importer import safe_import
+from genice import pairlist as pl
+from genice import digraph   as dg
+
 
 
 def load_numbers(v):
@@ -34,6 +21,7 @@ def load_numbers(v):
         return np.array(v)
     else:
         return v
+
 
 def orientations(coord, graph, cell):
     """
@@ -76,6 +64,35 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name):
 
 
 
+def shortest_distance(coord, cell, pairs=None):
+    dmin = 1e99
+    if pairs is None:
+        iter = it.combinations(coord,2)
+    else:
+        iter = [(coord[i],coord[j]) for i,j in pairs]
+    for c1,c2 in iter:
+        d = c1-c2
+        d -= np.floor(d + 0.5)
+        r = np.dot(d,cell)
+        rr = np.dot(r,r)
+        if rr < dmin:
+            dmin = rr
+    return dmin**0.5
+
+
+
+def flatten(item):
+    """Yield items from any nested iterable; see REF."""
+    if type(item) is str:
+        yield item
+    elif isinstance(item, Iterable):
+        for x in item:
+            yield from flatten(x)
+    else:
+        yield item
+
+
+
 def replicate_graph(graph, positions, rep):
     repgraph = dg.IceGraph()
     nmol = positions.shape[0]
@@ -101,17 +118,6 @@ def replicate_graph(graph, positions, rep):
 
 
 
-def flatten(item):
-    """Yield items from any nested iterable; see REF."""
-    if type(item) is str:
-        yield item
-    elif isinstance(item, Iterable):
-        for x in item:
-            yield from flatten(x)
-    else:
-        yield item
-    
-
 def replicate(positions, rep):
     repx = positions.copy()
     for m in range(1,rep[0]):
@@ -126,7 +132,7 @@ def replicate(positions, rep):
         v = np.array([0,0,m])
         repz = np.concatenate((repz,repy+v))
     return repz / rep
-    
+
 
 
 def parse_cages(cages):
@@ -192,26 +198,12 @@ def parse_cell(cell, celltype):
 
 
 
-
-
-class GenIce():
-    def __init__(self, options):
-        """
-        setup with options
-        load the lattice module
-        """
+class Lattice():
+    def __init__(self, lattice_type=None, density=0, rep=(1,1,1), depolarize=True):
         self.logger = logging.getLogger()
-        #pick required data here
-        lattice_type = options.Type[0]
-        seed         = options.seed[0]
-        self.rep     = options.rep
-        self.density = options.dens[0]
-        self.nodep   = options.nodep
-        #Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-        #never access options from later on
-        self.logger.info("Ice type: {0}".format(lattice_type))
+        self.lattice_type = lattice_type
+        self.rep = rep
+        self.depolarize = depolarize
         lat = safe_import("lattice", lattice_type)
         #Show the document of the module
         try:
@@ -284,7 +276,7 @@ class GenIce():
         nmol = self.waters.shape[0]        #nmol in a unit cell
         volume = np.linalg.det(self.cell)  #volume of a unit cell in nm**3
         density0 = mass * nmol / (NB*volume*1e-21)
-        if self.density <= 0:
+        if density <= 0:
             try:
                 self.density = lat.density
             except AttributeError:
@@ -293,6 +285,8 @@ class GenIce():
                 self.logger.info("Closest pair distance: {0} (should be around 0.276 nm)".format(dmin))
                 self.density = density0 / (0.276/dmin)**3
                 #self.density = density0
+        else:
+            self.density = density
         self.logger.info("Density: {0}".format(self.density))
         self.logger.info("Density0: {0}".format(density0))
 
@@ -324,7 +318,6 @@ class GenIce():
         except AttributeError:
             self.cagepos = None
             self.cagetype = None
-        self.nodep = options.nodep
 
         #================================================================
         # fixed: specify the bonds whose directions are fixed.
@@ -346,7 +339,6 @@ class GenIce():
                     self.fixed.append(tuple(pair[:2])) #Must be a tuple
         except AttributeError:
             self.fixed = []
-
 
     def stage1(self):
         """
@@ -399,7 +391,7 @@ class GenIce():
         depolarize.
         """
         self.logger.info("Stage4: depolarization.")
-        if self.nodep:
+        if not self.depolarize:
             self.logger.info("Skip depolarization by request.")
             self.yapresult = ""
             self.spacegraph = dg.SpaceIceGraph(self.graph,coord=self.reppositions)
@@ -544,6 +536,7 @@ class GenIce():
                 else:
                     graph.add_edge(j,i,fixed=False)
         return graph
+
 
     def test_undirected_graph(self, graph):
         #Test
