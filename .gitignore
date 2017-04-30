@@ -30,10 +30,4 @@ Utilities/*.yap
 
 *.ar3r
 
-formats
-
-lattices
-
-molecules
-
 benchmark\.txt
