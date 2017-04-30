@@ -24,6 +24,10 @@ def getoptions():
                         help='Specify water model. (tip3p, tip4p, etc.)')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
                         help='Specify guest in the cage. (D=empty, T=co2, etc.)')
+    parser.add_argument('--anion', '-a', nargs = 1,           dest='anions', metavar="3=Cl", action="append", 
+                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
+    parser.add_argument('--cation', '-c', nargs = 1,           dest='cations', metavar="3=Na", action="append", 
+                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
     parser.add_argument('--nodep', action='store_true', dest='nodep',
                         help='No depolarization.')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
@@ -80,13 +84,26 @@ def main():
     rep          = options.rep
     density      = options.dens[0]
     depolarize   = not options.nodep
+    anions = dict()
+    if options.anions is not None:
+        logger.info(options.anions)
+        for v in options.anions:
+            key, value = v[0].split("=")
+            anions[int(key)] = value
+    cations = dict()
+    if options.cations is not None:
+        for v in options.cations:
+            key, value = v[0].split("=")
+            cations[int(key)] = value
+
     del options  #Dispose for safety.
     #Set random seeds
     random.seed(seed)
     np.random.seed(seed)
     
     logger.debug("Lattice: {0}".format(lattice_type))
-    lat = lattice.Lattice(lattice_type, density=density, rep=rep, depolarize=depolarize)
+    lat = lattice.Lattice(lattice_type, density=density, rep=rep, depolarize=depolarize,
+                          cations=cations, anions=anions)
     #Main part of the program is contained in th Formatter object. (See formats/)
     logger.debug("Format: {0}".format(file_format))
     formatter = safe_import("format", file_format)

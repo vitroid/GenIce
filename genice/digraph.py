@@ -278,7 +278,7 @@ class IceGraph(networkx.DiGraph):
             if len(defects) <= target:
                 logger.info("Defects remaining: {0}".format(len(defects)))
                 target //= 2
-        assert set(self.defects()) == self.ignores, "Some water molecules do not obey the ice rule."
+        assert set(self.defects()) == self.ignores, "Some water molecules do not obey the ice rule. {0}".format(self.ignores)
 
 
                 

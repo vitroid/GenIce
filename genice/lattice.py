@@ -223,11 +223,14 @@ def parse_cell(cell, celltype):
 
 
 class Lattice():
-    def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True):
+    def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True,
+                 cations=dict(), anions=dict()):
         self.logger = logging.getLogger()
         self.lattice_type = lattice_type
         self.rep = rep
         self.depolarize = depolarize
+        self.cations = cations
+        self.anions  = anions
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -396,6 +399,18 @@ class Lattice():
         """
         self.logger.info("Stage2: Graph preparation.")
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        #Dope ions by options.
+        if len(self.anions) > 0:
+            self.logger.info("  Anionize: {0}.".format(self.anions))
+            for anion,name in self.anions.items():
+                self.graph.anionize(anion)
+                self.dopants[anion] = name
+        if len(self.cations) > 0:
+            self.logger.info("  Cationize: {0}.".format(self.cations))
+            for cation,name in self.cations.items():
+                self.graph.cationize(cation)
+                self.dopants[cation] = name
+        #Count bonds
         nrandom = 0
         nfixed = 0
         for i, j, data in self.graph.edges_iter(data=True):
@@ -413,6 +428,7 @@ class Lattice():
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
             self.logger.info("Test2 failed.")
+
         self.logger.info("Stage2: end.")
         return self.test2
 
@@ -472,7 +488,7 @@ class Lattice():
 
     def stage6(self, water_type):
         """
-        arrange water atoms
+        arrange water atoms and replacements
         """
         self.logger.info("Stage6: Atomic positions of water.")
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
