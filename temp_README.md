@@ -29,9 +29,9 @@ Install with pip3.
         genice --water tip4p --rep 3 3 3  4 > ice4.gro
 
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
-.gro format:
+.gro format: (60% of small cages are filled with co2 and 40% are methane)
 
-        genice -g 12=co2 -g 14=co2 --water tip4p CS1 > cs1.gro
+        genice -g 12=co2*0.6+me*0.4 -g 14=co2 --water tip4p CS1 > cs1.gro
 
 * To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
 THF (united atom with a dummy site) in the large cage in GROMACS

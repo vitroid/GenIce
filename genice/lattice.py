@@ -261,7 +261,7 @@ class Lattice():
         #
         if lat.coord == "absolute":
             self.waters = np.dot(self.waters, np.linalg.inv(self.cell), )
-            self.waters = np.array(self.waters)
+            self.waters = np.array([w - np.floor(w) for w in self.waters])
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
@@ -576,35 +576,6 @@ class Lattice():
                     cmat = [np.identity(3) for i in cages]
                     self.atoms += arrange_atoms(cpos, self.repcell,
                                                 cmat, gmol.sites, gmol.labels, gmol.name)
-                    
-                    
-                        
-                ## #
-                ## #Arrange molecules
-                ## # Make the cage type to guest type correspondence
-                ## guest_in_cagetype = dict()
-                ## for arg in guests:
-                ##     key, value = arg[0].split("=")
-                ##     guest_in_cagetype[key] = value
-                ## # replicate the cagetype array
-                ## cagetype = np.array([self.cagetype[i % len(self.cagetype)]
-                ##                      for i in range(repcagepos.shape[0])])
-                ## for ctype in cagetypes:
-                ##     # filter the cagepos
-                ##     cpos = repcagepos[cagetype == ctype]
-                ##     # guest molecules are not rotated.
-                ##     cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
-                ##     # If the guest molecule type is given,
-                ##     if ctype in guest_in_cagetype:
-                ##         gname = guest_in_cagetype[ctype]
-                ##         # Always check before dynamic import
-                ##         # assert audit_name(gname), "Dubious guest name: {0}".format(gname)
-                ##         # gmol = importlib.import_module("genice.molecules."+gname)
-                ##         gmol = safe_import("molecule", gname)
-                ##         self.logger.info("{0} is in the cage type '{1}'".format(
-                ##             guest_in_cagetype[ctype], ctype))
-                ##         self.atoms += arrange_atoms(cpos, self.repcell,
-                ##                                     cmat, gmol.sites, gmol.labels, gmol.name)
         self.logger.info("Stage7: end.")
 
     ## def stage7B(self, guests):
