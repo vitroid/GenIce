@@ -20,7 +20,7 @@ def run(lattice, water_type="TIP3P", guests=[]):
 
     s = ""
     for i in lattice.graph.nodes_iter():
-        pos = np.dot( lattice.reppositions[i], lattice.cell )
+        pos = np.dot( lattice.reppositions[i], lattice.repcell )
         if i in lattice.dopants:
             s += yp.Color(6)
         elif 4 == len(undir.neighbors(i)):
@@ -45,7 +45,7 @@ def run(lattice, water_type="TIP3P", guests=[]):
         s2 = s1 + d
         s += yp.Layer(3)
         s += yp.Size(0.03)
-        s += yp.Arrow(np.dot(s1,lattice.cell),np.dot(s2,lattice.cell))
+        s += yp.Arrow(np.dot(s1,lattice.repcell),np.dot(s2,lattice.repcell))
 
     if not lattice.test2:
         # Failed to build the undirected graph obeying the ice rule.

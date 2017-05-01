@@ -524,71 +524,125 @@ class Lattice():
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
             repcagepos = replicate_positions(self.cagepos, self.rep)
-            cagetypes = set(self.cagetype)
-            self.logger.info("Cage types: {0}".format(cagetypes))
-        if guests is not None and repcagepos is not None:
-            # Make the cage type to guest type correspondence
-            guest_in_cagetype = dict()
-            for arg in guests:
-                key, value = arg[0].split("=")
-                guest_in_cagetype[key] = value
-            # replicate the cagetype array
-            cagetype = np.array([self.cagetype[i % len(self.cagetype)]
-                                 for i in range(repcagepos.shape[0])])
-            for ctype in cagetypes:
-                # filter the cagepos
-                cpos = repcagepos[cagetype == ctype]
-                # guest molecules are not rotated.
-                cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
-                # If the guest molecule type is given,
-                if ctype in guest_in_cagetype:
-                    gname = guest_in_cagetype[ctype]
-                    # Always check before dynamic import
-                    # assert audit_name(gname), "Dubious guest name: {0}".format(gname)
-                    # gmol = importlib.import_module("genice.molecules."+gname)
-                    gmol = safe_import("molecule", gname)
-                    self.logger.info("{0} is in the cage type '{1}'".format(
-                        guest_in_cagetype[ctype], ctype))
+            repcagetype = [self.cagetype[i % len(self.cagetype)]
+                                    for i in range(repcagepos.shape[0])]
+            cagetypes = defaultdict(set)
+            for i, typ in enumerate(repcagetype):
+                cagetypes[typ].add(i)
+            self.logger.info("  Cage types: {0}".format(list(cagetypes)))
+            for typ, cages in cagetypes.items():
+                self.logger.info("  Cage type {0}: {1}".format(typ, cages))
+            if guests is not None:
+                molecules = defaultdict(list)
+                # parse the -g option
+                for arg in guests:
+                    cagetype, spec = arg[0].split("=")
+                    assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(cagetype)
+                    resident = dict()
+                    rooms = list(cagetypes[cagetype])
+                    for room in rooms:
+                        resident[room] = None
+                    self.logger.info("  Guests in cage type {0}:".format(cagetype))
+                    #spec contains a formula consisting of "+" and "*"
+                    contents = spec.split("+")
+                    vacant = len(rooms)
+                    for content in contents:
+                        if "*" in content:
+                            molec, frac = content.split("*")
+                            frac = float(frac)
+                        else:
+                            molec = content
+                            frac = 1.0
+                        nmolec = int(frac*len(rooms)+0.5)
+                        vacant -= nmolec
+                        assert vacant >=0, "Too many guests."
+                        remain = nmolec
+                        movedin = []
+                        while remain > 0:
+                            r = random.randint(0, len(rooms)-1)
+                            room = rooms[r]
+                            if resident[room] is None:
+                                resident[room] = molec
+                                molecules[molec].append(room)
+                                movedin.append(room)
+                                remain -= 1
+                        self.logger.info("    {0} * {1} @ {2}".format(molec,nmolec,movedin))
+                # Now ge got the address book of the molecules.
+                self.logger.info("  Summary:")
+                for molec, cages in molecules.items():
+                    self.logger.info("    {0} @ {1}".format(molec,cages))
+                    gmol = safe_import("molecule", molec)
+                    cpos = [repcagepos[i] for i in cages]
+                    cmat = [np.identity(3) for i in cages]
                     self.atoms += arrange_atoms(cpos, self.repcell,
                                                 cmat, gmol.sites, gmol.labels, gmol.name)
+                    
+                    
+                        
+                ## #
+                ## #Arrange molecules
+                ## # Make the cage type to guest type correspondence
+                ## guest_in_cagetype = dict()
+                ## for arg in guests:
+                ##     key, value = arg[0].split("=")
+                ##     guest_in_cagetype[key] = value
+                ## # replicate the cagetype array
+                ## cagetype = np.array([self.cagetype[i % len(self.cagetype)]
+                ##                      for i in range(repcagepos.shape[0])])
+                ## for ctype in cagetypes:
+                ##     # filter the cagepos
+                ##     cpos = repcagepos[cagetype == ctype]
+                ##     # guest molecules are not rotated.
+                ##     cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
+                ##     # If the guest molecule type is given,
+                ##     if ctype in guest_in_cagetype:
+                ##         gname = guest_in_cagetype[ctype]
+                ##         # Always check before dynamic import
+                ##         # assert audit_name(gname), "Dubious guest name: {0}".format(gname)
+                ##         # gmol = importlib.import_module("genice.molecules."+gname)
+                ##         gmol = safe_import("molecule", gname)
+                ##         self.logger.info("{0} is in the cage type '{1}'".format(
+                ##             guest_in_cagetype[ctype], ctype))
+                ##         self.atoms += arrange_atoms(cpos, self.repcell,
+                ##                                     cmat, gmol.sites, gmol.labels, gmol.name)
         self.logger.info("Stage7: end.")
 
-    def stage7B(self, guests):
-        """
-        arrange guest atoms
-        put them in separate lists
-        """
-        self.logger.info("Stage7B: Atomic positions of the guest.")
-        self.guestAtoms = defaultdict(list)
-        self.nGuestAtoms = defaultdict(int)
-        if self.cagepos is not None:
-            repcagepos = replicate_positions(self.cagepos, self.rep)
-            cagetypes = set(self.cagetype)
-            self.logger.info("Cage types: {0}".format(cagetypes))
-        if guests is not None and repcagepos is not None:
-            # Make the cage type to guest type correspondence
-            guest_in_cagetype = dict()
-            for arg in guests:
-                key, value = arg[0].split("=")
-                guest_in_cagetype[key] = value
-            # replicate the cagetype array
-            cagetype = np.array([self.cagetype[i % len(self.cagetype)]
-                                 for i in range(repcagepos.shape[0])])
-            for ctype in cagetypes:
-                # filter the cagepos
-                cpos = repcagepos[cagetype == ctype]
-                # guest molecules are not rotated.
-                cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
-                # If the guest molecule type is given,
-                if ctype in guest_in_cagetype:
-                    gname = guest_in_cagetype[ctype]
-                    gmol = safe_import("molecule", gname)
-                    self.logger.info("{0} is in the cage type '{1}'".format(
-                        guest_in_cagetype[ctype], ctype))
-                    self.guestAtoms[gname] += arrange_atoms(
-                        cpos, self.repcell, cmat, gmol.sites, gmol.labels, gmol.name)
-                    self.nGuestAtoms[gname] += len(cpos)
-        self.logger.info("Stage7B: end.")
+    ## def stage7B(self, guests):
+    ##     """
+    ##     arrange guest atoms
+    ##     put them in separate lists
+    ##     """
+    ##     self.logger.info("Stage7B: Atomic positions of the guest.")
+    ##     self.guestAtoms = defaultdict(list)
+    ##     self.nGuestAtoms = defaultdict(int)
+    ##     if self.cagepos is not None:
+    ##         repcagepos = replicate_positions(self.cagepos, self.rep)
+    ##         cagetypes = set(self.cagetype)
+    ##         self.logger.info("Cage types: {0}".format(cagetypes))
+    ##         if guests is not None:
+    ##             # Make the cage type to guest type correspondence
+    ##             guest_in_cagetype = dict()
+    ##             for arg in guests:
+    ##                 key, value = arg[0].split("=")
+    ##                 guest_in_cagetype[key] = value
+    ##             # replicate the cagetype array
+    ##             cagetype = np.array([self.cagetype[i % len(self.cagetype)]
+    ##                                  for i in range(repcagepos.shape[0])])
+    ##             for ctype in cagetypes:
+    ##                 # filter the cagepos
+    ##                 cpos = repcagepos[cagetype == ctype]
+    ##                 # guest molecules are not rotated.
+    ##                 cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
+    ##                 # If the guest molecule type is given,
+    ##                 if ctype in guest_in_cagetype:
+    ##                     gname = guest_in_cagetype[ctype]
+    ##                     gmol = safe_import("molecule", gname)
+    ##                     self.logger.info("{0} is in the cage type '{1}'".format(
+    ##                         guest_in_cagetype[ctype], ctype))
+    ##                     self.guestAtoms[gname] += arrange_atoms(
+    ##                         cpos, self.repcell, cmat, gmol.sites, gmol.labels, gmol.name)
+    ##                     self.nGuestAtoms[gname] += len(cpos)
+    ##     self.logger.info("Stage7B: end.")
 
     def prepare_random_graph(self, fixed):
         if self.pairs is None:
