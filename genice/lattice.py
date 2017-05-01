@@ -570,6 +570,7 @@ class Lattice():
                 # Now ge got the address book of the molecules.
                 self.logger.info("  Summary:")
                 for molec, cages in molecules.items():
+                    cages.sort()
                     self.logger.info("    {0} @ {1}".format(molec,cages))
                     gmol = safe_import("molecule", molec)
                     cpos = [repcagepos[i] for i in cages]
