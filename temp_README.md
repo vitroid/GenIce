@@ -1,5 +1,5 @@
 # GenIce
-Generate proton-disordered ice structures for GROMACS.
+A Swiss army knife to generate proton-disordered ice structures.
 
 ## Requirements
 

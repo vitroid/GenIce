@@ -341,12 +341,10 @@ class Lattice():
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #
-        try:
-            cagepos, self.cagetype = parse_cages(lat.cages)
-            self.cagepos = replicate_positions(cagepos, self.rep)
-        except AttributeError:
-            self.cagepos = None
-            self.cagetype = None
+        self.cagepos = None
+        self.cagetype = None
+        if "cages" in lat.__dict__:
+            self.cagepos, self.cagetype = parse_cages(lat.cages)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
@@ -368,10 +366,10 @@ class Lattice():
                     self.fixed.append(tuple(pair[:2]))  # Must be a tuple
         except AttributeError:
             self.fixed = []
-        if "post1process" in lat.__dict__:
-            self.post1process = lat.post1process
+        if "dopeIonsToUnitCell" in lat.__dict__:
+            self.dopeIonsToUnitCell = lat.dopeIonsToUnitCell
         else:
-            self.post1process = None
+            self.dopeIonsToUnitCell = None
         self.dopants = set()
 
     def stage1(self):
@@ -385,12 +383,9 @@ class Lattice():
             len(self.reppositions)))
         self.graph = self.prepare_random_graph(self.fixed)
         # scale the cell
+        self.repcell = np.zeros_like(self.cell)
         for d in range(3):
-            self.cell[:, d] *= self.rep[d]
-        if self.post1process is not None:
-            self.post1process(self)
-        # Replicate the dopants in the
-        self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
+            self.repcell[:, d] = self.cell[:, d] * self.rep[d]
         self.logger.info("Stage1: end.")
 
     def stage2(self):
@@ -398,18 +393,24 @@ class Lattice():
         make a random graph and replicate.
         """
         self.logger.info("Stage2: Graph preparation.")
+        # Some edges are directed when ions are doped.
+        if self.dopeIonsToUnitCell is not None:
+            self.dopeIonsToUnitCell(self)
+        # Replicate the dopants in the unit cell
+        self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
+        # Replicate the graph
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
         #Dope ions by options.
         if len(self.anions) > 0:
             self.logger.info("  Anionize: {0}.".format(self.anions))
-            for anion,name in self.anions.items():
-                self.graph.anionize(anion)
-                self.dopants[anion] = name
+            for site,name in self.anions.items():
+                self.graph.anionize(site)
+                self.dopants[site] = name
         if len(self.cations) > 0:
             self.logger.info("  Cationize: {0}.".format(self.cations))
-            for cation,name in self.cations.items():
-                self.graph.cationize(cation)
-                self.dopants[cation] = name
+            for site,name in self.cations.items():
+                self.graph.cationize(site)
+                self.dopants[site] = name
         #Count bonds
         nrandom = 0
         nfixed = 0
@@ -463,9 +464,9 @@ class Lattice():
                                                coord=self.reppositions,
                                                ignores=self.graph.ignores)
             draw = dg.YaplotDraw(
-                self.reppositions, self.cell, data=self.spacegraph)
+                self.reppositions, self.repcell, data=self.spacegraph)
             self.yapresult = dg.depolarize(
-                self.spacegraph, self.cell, draw=draw)
+                self.spacegraph, self.repcell, draw=draw)
         self.logger.info("Stage4: end.")
 
     def stage5(self):
@@ -475,11 +476,11 @@ class Lattice():
         self.logger.info("Stage5: Orientation.")
         # Add small noises to the molecular positions
         self.reppositions += np.dot(np.random.random(self.reppositions.shape)
-                                    * 0.01 - 0.005, np.linalg.inv(self.cell))
+                                    * 0.01 - 0.005, np.linalg.inv(self.repcell))
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
-            self.reppositions, self.spacegraph, self.cell)
+            self.reppositions, self.spacegraph, self.repcell)
 
         # Activate it.
         # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
@@ -495,7 +496,7 @@ class Lattice():
         # water = importlib.import_module("genice.molecules."+water_type)
         water = safe_import("molecule", water_type)
         self.atoms = arrange_atoms( self.reppositions,
-                                    self.cell,
+                                    self.repcell,
                                     self.rotmatrices,
                                     water.sites,
                                     water.labels,
@@ -509,7 +510,7 @@ class Lattice():
             pos = [self.reppositions[i] for i in sorted(labels)]
             rot = [self.rotmatrices[i] for i in sorted(labels)]
             self.atoms += arrange_atoms( pos,
-                                         self.cell,
+                                         self.repcell,
                                          rot,
                                          [[0., 0., 0.],],
                                          [name],
@@ -522,9 +523,10 @@ class Lattice():
         """
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
+            repcagepos = replicate_positions(self.cagepos, self.rep)
             cagetypes = set(self.cagetype)
             self.logger.info("Cage types: {0}".format(cagetypes))
-        if guests is not None and self.cagepos is not None:
+        if guests is not None and repcagepos is not None:
             # Make the cage type to guest type correspondence
             guest_in_cagetype = dict()
             for arg in guests:
@@ -532,10 +534,10 @@ class Lattice():
                 guest_in_cagetype[key] = value
             # replicate the cagetype array
             cagetype = np.array([self.cagetype[i % len(self.cagetype)]
-                                 for i in range(self.cagepos.shape[0])])
+                                 for i in range(repcagepos.shape[0])])
             for ctype in cagetypes:
                 # filter the cagepos
-                cpos = self.cagepos[cagetype == ctype]
+                cpos = repcagepos[cagetype == ctype]
                 # guest molecules are not rotated.
                 cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
                 # If the guest molecule type is given,
@@ -547,7 +549,7 @@ class Lattice():
                     gmol = safe_import("molecule", gname)
                     self.logger.info("{0} is in the cage type '{1}'".format(
                         guest_in_cagetype[ctype], ctype))
-                    self.atoms += arrange_atoms(cpos, self.cell,
+                    self.atoms += arrange_atoms(cpos, self.repcell,
                                                 cmat, gmol.sites, gmol.labels, gmol.name)
         self.logger.info("Stage7: end.")
 
@@ -560,9 +562,10 @@ class Lattice():
         self.guestAtoms = defaultdict(list)
         self.nGuestAtoms = defaultdict(int)
         if self.cagepos is not None:
+            repcagepos = replicate_positions(self.cagepos, self.rep)
             cagetypes = set(self.cagetype)
             self.logger.info("Cage types: {0}".format(cagetypes))
-        if guests is not None and self.cagepos is not None:
+        if guests is not None and repcagepos is not None:
             # Make the cage type to guest type correspondence
             guest_in_cagetype = dict()
             for arg in guests:
@@ -570,10 +573,10 @@ class Lattice():
                 guest_in_cagetype[key] = value
             # replicate the cagetype array
             cagetype = np.array([self.cagetype[i % len(self.cagetype)]
-                                 for i in range(self.cagepos.shape[0])])
+                                 for i in range(repcagepos.shape[0])])
             for ctype in cagetypes:
                 # filter the cagepos
-                cpos = self.cagepos[cagetype == ctype]
+                cpos = repcagepos[cagetype == ctype]
                 # guest molecules are not rotated.
                 cmat = np.array([np.identity(3) for i in range(cpos.shape[0])])
                 # If the guest molecule type is given,
@@ -583,7 +586,7 @@ class Lattice():
                     self.logger.info("{0} is in the cage type '{1}'".format(
                         guest_in_cagetype[ctype], ctype))
                     self.guestAtoms[gname] += arrange_atoms(
-                        cpos, self.cell, cmat, gmol.sites, gmol.labels, gmol.name)
+                        cpos, self.repcell, cmat, gmol.sites, gmol.labels, gmol.name)
                     self.nGuestAtoms[gname] += len(cpos)
         self.logger.info("Stage7B: end.")
 
@@ -640,6 +643,25 @@ class Lattice():
                 graph.number_of_edges(), len(self.reppositions)))
             return False
         return True
+
+    def dopants_info(self):
+        """
+        Just shows the environments of the dopants
+        """
+        if self.cagetype is not None:
+            for site,name in self.dopants.items():
+                self.logger.info("  Dopant {0} at water site {1} of the unit cell.".format(name,site))
+                org = self.waters[site]
+                for i,postyp in enumerate(zip(self.cagepos, self.cagetype)):
+                    pos,typ = postyp
+                    #Displacement (relative)
+                    d = pos - org
+                    d -= np.floor(d + 0.5)
+                    #Displacement (absolute)
+                    a = np.dot(d, self.cell)
+                    sqdistance = np.dot(a,a)
+                    if sqdistance < 0.55**2:
+                        self.logger.info("    Adjacent to the cage #{0} (type: {1})".format(i,typ))
 
     def __del__(self):
         self.logger.info("Completed.")
