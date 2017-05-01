@@ -224,13 +224,14 @@ def parse_cell(cell, celltype):
 
 class Lattice():
     def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True,
-                 cations=dict(), anions=dict()):
+                 cations=dict(), anions=dict(), spot_guests=dict()):
         self.logger = logging.getLogger()
         self.lattice_type = lattice_type
         self.rep = rep
         self.depolarize = depolarize
         self.cations = cations
         self.anions  = anions
+        self.spot_guests = spot_guests
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -534,12 +535,17 @@ class Lattice():
                 self.logger.info("  Cage type {0}: {1}".format(typ, cages))
             if guests is not None:
                 molecules = defaultdict(list)
+                # process the -G option
+                filled_cages = set()
+                for cage, molec in self.spot_guests.items():
+                    molecules[molec].append(cage)
+                    filled_cages.add(cage)
                 # parse the -g option
                 for arg in guests:
                     cagetype, spec = arg[0].split("=")
                     assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(cagetype)
                     resident = dict()
-                    rooms = list(cagetypes[cagetype])
+                    rooms = list(cagetypes[cagetype] - filled_cages)
                     for room in rooms:
                         resident[room] = None
                     self.logger.info("  Guests in cage type {0}:".format(cagetype))
