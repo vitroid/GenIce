@@ -222,6 +222,34 @@ def parse_cell(cell, celltype):
         sys.exit(1)
 
 
+def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
+    """
+    Just shows the environments of the dopants
+    """
+    dnei = defaultdict(set)
+    for site,name in dopants.items():
+        org = waters[site]
+        for i,pos in enumerate(cagepos):
+            #Displacement (relative)
+            d = pos - org
+            d -= np.floor(d + 0.5)
+            #Displacement (absolute)
+            a = np.dot(d, cell)
+            sqdistance = np.dot(a,a)
+            if sqdistance < 0.55**2:
+                dnei[site].add(i)
+    return dnei
+
+
+def butyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    logger = logging.getLogger()
+    logger.info("  Put butyl {0}".format(molname))
+    return []  
+    
+
 class Lattice():
     def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True,
                  cations=dict(), anions=dict(), spot_guests=dict()):
@@ -372,6 +400,9 @@ class Lattice():
         else:
             self.dopeIonsToUnitCell = None
         self.dopants = set()
+        #groups for the semi-guest
+        self.groups_placer = dict()
+        self.groups_placer["Bu-"] = butyl #is a function
 
     def stage1(self):
         """
@@ -396,7 +427,7 @@ class Lattice():
         self.logger.info("Stage2: Graph preparation.")
         # Some edges are directed when ions are doped.
         if self.dopeIonsToUnitCell is not None:
-            self.dopeIonsToUnitCell(self)
+            self.dopeIonsToUnitCell(self)  # may be defined in the plugin
         # Replicate the dopants in the unit cell
         self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
         # Replicate the graph
@@ -503,19 +534,6 @@ class Lattice():
                                     water.labels,
                                     water.name,
                                     ignores=set(self.dopants))
-        # Simply assume the dopants are monatomic
-        atomset = defaultdict(set)
-        for label, name in self.dopants.items():
-            atomset[name].add(label)
-        for name,labels in atomset.items():
-            pos = [self.reppositions[i] for i in sorted(labels)]
-            rot = [self.rotmatrices[i] for i in sorted(labels)]
-            self.atoms += arrange_atoms( pos,
-                                         self.repcell,
-                                         rot,
-                                         [[0., 0., 0.],],
-                                         [name],
-                                         name)
         self.logger.info("Stage6: end.")
 
     def stage7(self, guests):
@@ -533,13 +551,22 @@ class Lattice():
             self.logger.info("  Cage types: {0}".format(list(cagetypes)))
             for typ, cages in cagetypes.items():
                 self.logger.info("  Cage type {0}: {1}".format(typ, cages))
-            if guests is not None:
-                molecules = defaultdict(list)
+            #show the cages around the dopants.
+            dopants_neighbors = neighbor_cages_of_dopants(self.dopants, self.reppositions, repcagepos, self.repcell)
+            for dopant, cages in dopants_neighbors.items():
+                self.logger.info("  cages adjacent to dopant {0}: {1}".format(dopant,cages))
+            groups = defaultdict(dict)
+            if len(self.spot_guests)>0:
                 # process the -G option
                 filled_cages = set()
-                for cage, molec in self.spot_guests.items():
-                    molecules[molec].append(cage)
+                for cage, group_to in self.spot_guests.items():
+                    group, root = group_to.split(":")
+                    root = int(root)
+                    groups[root][cage] = group
                     filled_cages.add(cage)
+                    self.logger.info("  Group {0} of dopant {1} in cage {2}".format(group,root,cage))
+            molecules = defaultdict(list)
+            if guests is not None:
                 # parse the -g option
                 for arg in guests:
                     cagetype, spec = arg[0].split("=")
@@ -573,16 +600,50 @@ class Lattice():
                                 movedin.append(room)
                                 remain -= 1
                         self.logger.info("    {0} * {1} @ {2}".format(molec,nmolec,movedin))
-                # Now ge got the address book of the molecules.
-                self.logger.info("  Summary:")
-                for molec, cages in molecules.items():
-                    cages.sort()
-                    self.logger.info("    {0} @ {1}".format(molec,cages))
-                    gmol = safe_import("molecule", molec)
-                    cpos = [repcagepos[i] for i in cages]
-                    cmat = [np.identity(3) for i in cages]
-                    self.atoms += arrange_atoms(cpos, self.repcell,
+            # Now ge got the address book of the molecules.
+            #self.logger.info("  Summary:")
+            #semi-guests
+            for root, cages in groups.items():
+                assert root in self.dopants
+                name = self.dopants[root]
+                molname = "G{0}".format(root)
+                pos = self.reppositions[root]
+                rot = self.rotmatrices[root]
+                self.atoms += arrange_atoms( [pos],
+                                             self.repcell,
+                                             [rot],
+                                             [[0., 0., 0.],],
+                                             [name],
+                                             molname)
+                del self.dopants[root] # consumed.
+                for cage in cages:
+                    assert group in self.groups_placer
+                    assert cage in dopants_neighbors[root]
+                    cpos = repcagepos[cage]
+                    self.atoms += self.groups_placer[group](cpos,
+                                                            self.reppositions[root],
+                                                            self.repcell,
+                                                            molname)
+            #molecular guests
+            for molec, cages in molecules.items():
+                gmol = safe_import("molecule", molec)
+                cpos = [repcagepos[i] for i in cages]
+                cmat = [np.identity(3) for i in cages]
+                self.atoms += arrange_atoms(cpos, self.repcell,
                                                 cmat, gmol.sites, gmol.labels, gmol.name)
+        # Simply assume the dopants are monatomic
+        atomset = defaultdict(set)
+        for label, name in self.dopants.items():
+            atomset[name].add(label)
+        for name,labels in atomset.items():
+            pos = [self.reppositions[i] for i in sorted(labels)]
+            rot = [self.rotmatrices[i] for i in sorted(labels)]
+            self.atoms += arrange_atoms( pos,
+                                         self.repcell,
+                                         rot,
+                                         [[0., 0., 0.],],
+                                         [name],
+                                         name)
         self.logger.info("Stage7: end.")
 
     ## def stage7B(self, guests):
@@ -675,25 +736,6 @@ class Lattice():
                 graph.number_of_edges(), len(self.reppositions)))
             return False
         return True
-
-    def dopants_info(self):
-        """
-        Just shows the environments of the dopants
-        """
-        if self.cagetype is not None:
-            for site,name in self.dopants.items():
-                self.logger.info("  Dopant {0} at water site {1} of the unit cell.".format(name,site))
-                org = self.waters[site]
-                for i,postyp in enumerate(zip(self.cagepos, self.cagetype)):
-                    pos,typ = postyp
-                    #Displacement (relative)
-                    d = pos - org
-                    d -= np.floor(d + 0.5)
-                    #Displacement (absolute)
-                    a = np.dot(d, self.cell)
-                    sqdistance = np.dot(a,a)
-                    if sqdistance < 0.55**2:
-                        self.logger.info("    Adjacent to the cage #{0} (type: {1})".format(i,typ))
 
     def __del__(self):
         self.logger.info("Completed.")
