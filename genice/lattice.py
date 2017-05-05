@@ -3,7 +3,7 @@ import logging
 import random
 import itertools as it
 import logging
-import math
+from math import sin,cos,pi
 from collections import Iterable, defaultdict
 
 import numpy as np
@@ -197,10 +197,10 @@ def parse_cell(cell, celltype):
             cell = np.fromstring(cell, sep=" ")
         elif type(cell) is list:
             cell = np.array(cell)
-        beta = cell[3] * math.pi / 180.
-        cell = np.array(((cell[0] * 1.0, cell[1] * 0.0, cell[2] * math.cos(beta)),
+        beta = cell[3] * pi / 180.
+        cell = np.array(((cell[0] * 1.0, cell[1] * 0.0, cell[2] * cos(beta)),
                          (cell[0] * 0.0, cell[1] * 1.0, cell[2] * 0.0),
-                         (cell[0] * 0.0, cell[1] * 0.0, cell[2] * math.sin(beta))))
+                         (cell[0] * 0.0, cell[1] * 0.0, cell[2] * sin(beta))))
         # all the vector calculations are done in transposed manner.
         return cell.transpose()
     elif celltype == "triclinic":
@@ -260,11 +260,11 @@ def butyl(cpos, root, cell, molname):
     #v3 = np.cross(v1,v2)
     origin = np.dot(root, cell)
     CC = 0.154
-    c=1/3.
+    c=cos(109.5/2*pi/180)
     s=(1.0 - c**2)**0.5
     atoms = []
-    for i in range(4):
-        x = CC*s
+    for i in range(1,5):
+        x = CC*s*i
         y = (i%2)*CC*c
         atompos = x*v1 + y*v2 + origin
         atoms.append([i, molname, 'C{0}'.format(i+1), atompos])
