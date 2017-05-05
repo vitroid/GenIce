@@ -241,13 +241,34 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
+
 def butyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
     logger = logging.getLogger()
-    logger.info("  Put butyl {0}".format(molname))
-    return []  
+    logger.info("  Put butyl at {0}".format(molname))
+    v1 = cpos - root
+    v1 -= np.floor(v1 + 0.5)
+    v1 = np.dot(v1, cell)
+    v1 /= np.linalg.norm(v1)
+    v2 = np.random.random(3)
+    v12 = np.dot(v1,v2)
+    v2 -= v1*v12
+    v2 /= np.linalg.norm(v2)
+    logger.debug("  {0} {1} {2}".format(np.dot(v1,v1), np.dot(v2,v2), np.dot(v1,v2)))
+    #v3 = np.cross(v1,v2)
+    origin = np.dot(root, cell)
+    CC = 0.154
+    c=1/3.
+    s=(1.0 - c**2)**0.5
+    atoms = []
+    for i in range(4):
+        x = CC*s
+        y = (i%2)*CC*c
+        atompos = x*v1 + y*v2 + origin
+        atoms.append([i, molname, 'C{0}'.format(i+1), atompos])
+    return atoms
     
 
 class Lattice():
@@ -609,12 +630,7 @@ class Lattice():
                 molname = "G{0}".format(root)
                 pos = self.reppositions[root]
                 rot = self.rotmatrices[root]
-                self.atoms += arrange_atoms( [pos],
-                                             self.repcell,
-                                             [rot],
-                                             [[0., 0., 0.],],
-                                             [name],
-                                             molname)
+                self.atoms.append([0, molname, name, pos])
                 del self.dopants[root] # consumed.
                 for cage in cages:
                     assert group in self.groups_placer
