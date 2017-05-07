@@ -94,6 +94,37 @@ def flatten(item):
         yield item
 
 
+def replicate_groups(groups, waters, cagepos, rep):
+    """
+    This is not that easy.
+    """
+    # logger = logging.getLogger()
+    newgroups = defaultdict(dict)
+    for root, cages in groups.items():
+        w = waters[root]
+        for cage, group in cages.items():
+            g = cagepos[cage]
+            # logger.info(("w",root, w))
+            # logger.info(("g",cage, g))
+            delta = g - w
+            delta -= np.floor(delta + 0.5)
+            gcell = np.floor(w + delta)
+            # g -= gcell
+            # logger.info(gcell)
+            for x in range(rep[0]):
+                for y in range(rep[1]):
+                    for z in range(rep[2]):
+                        r = np.array((x,y,z))
+                        newroot = root + len(waters) * (x + rep[0] * (y + rep[1] * z))
+                        cr = (r + gcell) % rep
+                        newcage = cage + len(cagepos) * (cr[0] + rep[0] * (cr[1] + rep[1] * cr[2]))
+                        newcage = int(newcage)
+                        newgroups[newroot][newcage] = group
+                        # logger.info(("wr",newroot, (r+w)/rep))
+                        # logger.info(("gr",newcage, (cr+g)/rep))
+    return newgroups
+    
+
 def replicate_labeldict(labels, nmol, rep):
     newlabels = dict()
     for j in labels:
@@ -180,6 +211,7 @@ def parse_cages(cages):
             cagepos.append(c[:3])
             c = c[3:]
         cagepos = np.array(cagepos)
+    cagepos[:] -= np.floor(cagepos[:])
     return cagepos, cagetype
 
 
@@ -226,6 +258,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     """
     Just shows the environments of the dopants
     """
+    #logger = logging.getLogger()
     dnei = defaultdict(set)
     for site,name in dopants.items():
         org = waters[site]
@@ -238,6 +271,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
             sqdistance = np.dot(a,a)
             if sqdistance < 0.55**2:
                 dnei[site].add(i)
+                #logger.info((i,cagepos[i]))
     return dnei
 
 
@@ -255,7 +289,7 @@ def butyl(cpos, root, cell, molname):
     v2 = np.random.random(3)
     v12 = np.dot(v1,v2)
     v2 -= v1*v12
-    v2 /= np.linalg.norm(v2)
+    v2 /= np.linalg.norm(v2)  # a random unit vector perpendicular to v1
     logger.debug("  {0} {1} {2}".format(np.dot(v1,v1), np.dot(v2,v2), np.dot(v1,v2)))
     #v3 = np.cross(v1,v2)
     origin = np.dot(root, cell)
@@ -311,7 +345,7 @@ class Lattice():
         #
         if lat.coord == "absolute":
             self.waters = np.dot(self.waters, np.linalg.inv(self.cell), )
-            self.waters = np.array([w - np.floor(w) for w in self.waters])
+        self.waters = np.array([w - np.floor(w) for w in self.waters])
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
@@ -421,9 +455,15 @@ class Lattice():
         else:
             self.dopeIonsToUnitCell = None
         self.dopants = set()
-        #groups for the semi-guest
+
+        # filled cages
+        self.filled_cages = set()
+        # groups info
+        self.groups = defaultdict(dict)
+        
+        # groups for the semi-guest
         self.groups_placer = dict()
-        self.groups_placer["Bu-"] = butyl #is a function
+        self.groups_placer["Bu-"] = butyl # is a function
 
     def stage1(self):
         """
@@ -451,6 +491,11 @@ class Lattice():
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
         # Replicate the dopants in the unit cell
         self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
+        self.groups  = replicate_groups(self.groups, self.waters, self.cagepos, self.rep)
+        # self.groups_info(self.groups)
+        for root, cages in self.groups.items():
+            self.filled_cages |= set(cages)
+        #self.logger.info(("filled",self.filled_cages))
         # Replicate the graph
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
         #Dope ions by options.
@@ -573,19 +618,13 @@ class Lattice():
             for typ, cages in cagetypes.items():
                 self.logger.info("  Cage type {0}: {1}".format(typ, cages))
             #show the cages around the dopants.
-            dopants_neighbors = neighbor_cages_of_dopants(self.dopants, self.reppositions, repcagepos, self.repcell)
-            for dopant, cages in dopants_neighbors.items():
-                self.logger.info("  cages adjacent to dopant {0}: {1}".format(dopant,cages))
-            groups = defaultdict(dict)
+            dopants_neighbors = self.dopants_info(self.dopants, self.reppositions, repcagepos, self.repcell)
+            # self.logger.info(dopants_neighbors)
             if len(self.spot_guests)>0:
                 # process the -G option
-                filled_cages = set()
                 for cage, group_to in self.spot_guests.items():
                     group, root = group_to.split(":")
-                    root = int(root)
-                    groups[root][cage] = group
-                    filled_cages.add(cage)
-                    self.logger.info("  Group {0} of dopant {1} in cage {2}".format(group,root,cage))
+                    self.add_group(cage, group, int(root))
             molecules = defaultdict(list)
             if guests is not None:
                 # parse the -g option
@@ -593,7 +632,7 @@ class Lattice():
                     cagetype, spec = arg[0].split("=")
                     assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(cagetype)
                     resident = dict()
-                    rooms = list(cagetypes[cagetype] - filled_cages)
+                    rooms = list(cagetypes[cagetype] - self.filled_cages)
                     for room in rooms:
                         resident[room] = None
                     self.logger.info("  Guests in cage type {0}:".format(cagetype))
@@ -624,7 +663,7 @@ class Lattice():
             # Now ge got the address book of the molecules.
             #self.logger.info("  Summary:")
             #semi-guests
-            for root, cages in groups.items():
+            for root, cages in self.groups.items():
                 assert root in self.dopants
                 name = self.dopants[root]
                 molname = "G{0}".format(root)
@@ -632,7 +671,7 @@ class Lattice():
                 rot = self.rotmatrices[root]
                 self.atoms.append([0, molname, name, pos])
                 del self.dopants[root] # consumed.
-                for cage in cages:
+                for cage, group in cages.items():
                     assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
                     cpos = repcagepos[cage]
@@ -753,5 +792,31 @@ class Lattice():
             return False
         return True
 
+
+    def dopants_info(self, dopants=None, waters=None, cagepos=None, cell=None):
+        if dopants is None:
+            dopants=self.dopants
+        if waters is None:
+            waters=self.waters
+        if cagepos is None:
+            cagepos=self.cagepos
+        if cell is None:
+            cell=self.cell
+        dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
+        for dopant, cages in dopants_neighbors.items():
+            self.logger.info("    cages adjacent to dopant {0}: {1}".format(dopant,cages))
+        return dopants_neighbors
+
+
+    def groups_info(self, groups):
+        for root, cages in groups.items():
+            for cage, group in cages.items():
+                self.logger.info("    Group {0} of dopant {1} in cage {2}".format(group,root,cage))
+                
+    def add_group(self, cage, group, root):
+        self.groups[root][cage] = group
+        self.filled_cages.add(cage)
+        self.logger.info("    Group {0} of dopant {1} in cage {2}".format(group,root,cage))
+        
     def __del__(self):
         self.logger.info("Completed.")

@@ -69,11 +69,11 @@ def main():
                             format="%(asctime)s %(levelname)s %(message)s")
     elif options.quiet:
         logging.basicConfig(level=logging.WARN,
-                            format="%(asctime)s %(levelname)s %(message)s")
+                            format="%(levelname)s %(message)s")
     else:
         #normal
         logging.basicConfig(level=logging.INFO,
-                            format="%(asctime)s %(levelname)s %(message)s")
+                            format="%(levelname)s %(message)s")
     logger = logging.getLogger()
     logger.debug("Debug mode.")
     logger.debug(options.Type)
