@@ -10,10 +10,13 @@ def run(lattice, water_type="TIP3P", guests=[]):
     """
     logger = logging.getLogger()
     lattice.stage1()   #replicate the unit cell
-    lattice.stage2()   #prepare random graph
-    lattice.stage3()   #Make an ice graph
-    lattice.stage4()   #Depolarize
-    lattice.stage5()   #Orientation
+    res = lattice.stage2()   #prepare random graph
+    if not res:
+        lattice.rotmatrices = [rigid.rand_rotation_matrix() for pos in lattice.reppositions]
+    else:
+        lattice.stage3()   #Make an ice graph
+        lattice.stage4()   #Depolarize
+        lattice.stage5()   #Orientation
     lattice.stage6(water_type)  #Water atoms
     lattice.stage7(guests)      #Guest atoms
     logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))

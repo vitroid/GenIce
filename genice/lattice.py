@@ -719,6 +719,7 @@ class Lattice():
             # make bonded pairs according to the pair distance.
             # make before replicating them.
             grid = pl.determine_grid(self.cell, self.bondlen)
+            assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
             self.pairs = [v for v in pl.pairlist_fine(
                 self.waters, self.bondlen, self.cell, grid, distance=False)]
             # Check using a simpler algorithm.

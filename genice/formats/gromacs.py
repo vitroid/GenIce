@@ -11,7 +11,7 @@ def run(lattice, water_type="TIP3P", guests=[]):
     lattice.stage1()   #replicate the unit cell
     res = lattice.stage2()   #prepare random graph
     if not res:
-        self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
+        lattice.rotmatrices = [rigid.rand_rotation_matrix() for pos in lattice.reppositions]
     else:
         lattice.stage3()   #Make an ice graph
         lattice.stage4()   #Depolarize
