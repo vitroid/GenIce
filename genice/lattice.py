@@ -481,7 +481,7 @@ class Lattice():
         # scale the cell
         self.repcell = np.zeros_like(self.cell)
         for d in range(3):
-            self.repcell[:, d] = self.cell[:, d] * self.rep[d]
+            self.repcell[d, :] = self.cell[d, :] * self.rep[d]
         self.logger.info("Stage1: end.")
 
     def stage2(self):
