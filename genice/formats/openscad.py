@@ -128,8 +128,8 @@ def run(lattice, water_type="TIP3P", guests=[]):
     lattice.stage2()   #prepare random graph
 
     scale=50
-    roxy=0.07/3
-    rbond=0.06/3
+    roxy=0.07
+    rbond=0.06
     logger.info("Output water molecules in OpenSCAD format revised.")
     rep = np.array(lattice.rep)
     trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])

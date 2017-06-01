@@ -14,20 +14,22 @@ Utilities/*.yap
 \.yapviewstack
 
 
-*.yap
+/*.yap
 
-*.scad
+/*.scad
 
-*.ngph
+/*.ngph
 
-*.zip
+/*.zip
 
-*.cif
+/*.cif
 
-*.ar3r
+/*.ar3r
 
-*.gro
+/*.gro
 
-*.ar3r
+/*.ar3r
 
 benchmark\.txt
+
+sort_tmp/*
