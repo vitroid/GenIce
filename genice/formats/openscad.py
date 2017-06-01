@@ -132,8 +132,8 @@ def run(lattice, water_type="TIP3P", guests=[]):
     rbond=0.06/3
     logger.info("Output water molecules in OpenSCAD format revised.")
     rep = np.array(lattice.rep)
-    trimbox    = lattice.cell *np.array([(rep[i]-2)/rep[i] for i in range(3)])
-    trimoffset = (lattice.cell[0]+lattice.cell[1]+lattice.cell[2])/rep
+    trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])
+    trimoffset = lattice.cell[0]+lattice.cell[1]+lattice.cell[2]
 
     margin = 0.2 # expansion relative to the cell size
     lower = (1.0 - margin) / rep
@@ -149,12 +149,12 @@ def run(lattice, water_type="TIP3P", guests=[]):
         s2 = s1 + d
         if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,lattice.cell), np.dot(s2,lattice.cell)))
+            bonds.append( (np.dot(s1,lattice.repcell), np.dot(s2,lattice.repcell)))
 
     nodes = []
     for s1 in lattice.reppositions:
         if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, lattice.cell) )
+            nodes.append( np.dot(s1, lattice.repcell) )
 
     o = OpenScad()
     objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]

@@ -22,12 +22,12 @@ def run(lattice, water_type="TIP3P", guests=[]):
     s += '"""\n'
     s += "bondlen={0}\n".format(lattice.bondlen)
     s += "coord='relative'\n"
-    if lattice.cell[1,0] == 0 and lattice.cell[2,0] == 0 and lattice.cell[2,1] == 0:
+    if lattice.repcell[1,0] == 0 and lattice.repcell[2,0] == 0 and lattice.repcell[2,1] == 0:
         s += "celltype='rect'\n"
-        s += "cell='{0} {1} {2}'\n".format(lattice.cell[0,0],lattice.cell[1,1],lattice.cell[2,2])
+        s += "cell='{0} {1} {2}'\n".format(lattice.repcell[0,0],lattice.repcell[1,1],lattice.repcell[2,2])
     else:
         s += "celltype='triclinic'\n"
-        s += "cell='{0} {1} {2} {3} {4} {5} {6} {7} {8}'\n".format(*lattice.cell[0],*lattice.cell[1], *lattice.cell[2])
+        s += "cell='{0} {1} {2} {3} {4} {5} {6} {7} {8}'\n".format(*lattice.repcell[0],*lattice.repcell[1], *lattice.repcell[2])
     s += "density={0}\n".format(lattice.density)
     s += "waters=\"\"\"\n"
     for i in range(len(lattice.reppositions)):

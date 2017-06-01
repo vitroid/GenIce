@@ -34,19 +34,19 @@ def run(lattice, water_type="TIP3P", guests=[]):
             s += "{0:5d}{1:5s}{2:>5s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(9999,resname, atomname, 9999,position[0],position[1],position[2])
         else:
             s += "{0:5d}{1:5s}{2:>5s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(molorder,resname, atomname, i+1,position[0],position[1],position[2])
-    if lattice.cell[1,0] == 0 and lattice.cell[2,0] == 0 and lattice.cell[2,1] == 0:
-        s += "    {0} {1} {2}\n".format(lattice.cell[0,0],lattice.cell[1,1],lattice.cell[2,2])
+    if lattice.repcell[1,0] == 0 and lattice.repcell[2,0] == 0 and lattice.repcell[2,1] == 0:
+        s += "    {0} {1} {2}\n".format(lattice.repcell[0,0],lattice.repcell[1,1],lattice.repcell[2,2])
     else:
-        assert lattice.cell[0,1] == 0 and lattice.cell[0,2] == 0 and lattice.cell[1,2] == 0
-        s += "    {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(lattice.cell[0,0],
-                                                                    lattice.cell[1,1],
-                                                                    lattice.cell[2,2],
-                                                                    lattice.cell[0,1],
-                                                                    lattice.cell[0,2],
-                                                                    lattice.cell[1,0],
-                                                                    lattice.cell[1,2],
-                                                                    lattice.cell[2,0],
-                                                                    lattice.cell[2,1],
+        assert lattice.repcell[0,1] == 0 and lattice.repcell[0,2] == 0 and lattice.repcell[1,2] == 0
+        s += "    {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(lattice.repcell[0,0],
+                                                                    lattice.repcell[1,1],
+                                                                    lattice.repcell[2,2],
+                                                                    lattice.repcell[0,1],
+                                                                    lattice.repcell[0,2],
+                                                                    lattice.repcell[1,0],
+                                                                    lattice.repcell[1,2],
+                                                                    lattice.repcell[2,0],
+                                                                    lattice.repcell[2,1],
                                                                     )
     s += '#' + "\n#".join(lattice.doc) + "\n"
     print(s,end="")
