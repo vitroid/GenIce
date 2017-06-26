@@ -80,7 +80,25 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
 `eo.py`
 
 ```
-here is the code.
+import numpy as np
+#United-atom THF model with a dummy site
+LOC = 0.1436 # nm
+LCC = 0.1472 # nm
+
+Y = (LOC**2 - (LCC/2)**2)**0.5
+
+sites = np.array([[ 0.,    0., 0. ],
+                  [-LCC/2, Y,  0. ],
+                  [+LCC/2, Y,  0. ],])
+
+mass = np.array([16,14,14])
+# center of mass
+CoM = np.dot(mass, sites) / np.sum(mass)
+sites -= CoM
+
+atoms = ["O","C","C"]
+labels = ["Oe","Ce","Ce"]
+name = "EO"
 ```
 
 Write the code in eo.py and put it in the user module folder at either
@@ -187,7 +205,7 @@ CH/FI|CH  |ice|FK |Zeo|
 -----|----|---|---|---|
 sI   |CS1 |-  |A15|MEP|
 sII  |CS2 |16 |C15|MTN|
-sIII |TS1 |-  |σ  |-  |
+sIII |TS1 |-  |sigma|-  |
 sIV  |HS1 |-  |Z  |-  |
 sV   |HS2 |-  |*  |-  |
 sVII |CS4 |-  |*  |SOD|
