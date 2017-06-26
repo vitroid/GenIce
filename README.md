@@ -106,10 +106,9 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
         
     The list of cages will be output as follows:
 
-   ```
-INFO   Cage types: ['12', '16']
-INFO   Cage type 12: {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183}
-INFO   Cage type 16: {136, 137, 138, 139, 140, 141, 142, 143, 16, 17, 18, 19, 20, 21, 22, 23, 160, 161, 162, 163, 164, 165, 166, 167, 40, 41, 42, 43, 44, 45, 46, 47, 184, 185, 186, 187, 188, 189, 190, 191, 64, 65, 66, 67, 68, 69, 70, 71, 88, 89, 90, 91, 92, 93, 94, 95, 112, 113, 114, 115, 116, 117, 118, 119}
+        INFO   Cage types: ['12', '16']
+        INFO   Cage type 12: {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183}
+        INFO   Cage type 16: {136, 137, 138, 139, 140, 141, 142, 143, 16, 17, 18, 19, 20, 21, 22, 23, 160, 161, 162, 163, 164, 165, 166, 167, 40, 41, 42, 43, 44, 45, 46, 47, 184, 185, 186, 187, 188, 189, 190, 191, 64, 65, 66, 67, 68, 69, 70, 71, 88, 89, 90, 91, 92, 93, 94, 95, 112, 113, 114, 115, 116, 117, 118, 119}
 ```
     This indicates that there are two types of cages named `12` and `16`.  Fill the `16` cages with THF and put a methane molecule in the `0`th cage of type `12` as follows:
     
@@ -119,9 +118,25 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
 
 `eo.py`
 
-```
-here is the code.
-```
+    import numpy as np
+    # United-atom EO model with a dummy site
+    LOC = 0.1436 # nm
+    LCC = 0.1472 # nm
+    
+    Y = (LOC**2 - (LCC/2)**2)**0.5
+    
+    sites = np.array([[ 0.,    0., 0. ],
+                      [-LCC/2, Y,  0. ],
+                      [+LCC/2, Y,  0. ],])
+
+    mass = np.array([16,14,14])
+    # center of mass
+    CoM = np.dot(mass, sites) / np.sum(mass)
+    sites -= CoM
+    
+    atoms = ["O","C","C"]
+    labels = ["Oe","Ce","Ce"]
+    name = "EO"
 
 Write the code in eo.py and put it in the user module folder at either
 
@@ -154,15 +169,13 @@ Let us assume that the id of the water molecule to be replaced by nitrogen of th
 
 Then you will see the following info.
 
-```
-INFO   Hints:
-INFO     Cage types: ['12', '14', '15']
-INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
-```
+    INFO   Hints:
+    INFO     Cage types: ['12', '14', '15']
+    INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
+    INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
+    INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
+    INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
+    INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
 
 It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
 
@@ -227,7 +240,7 @@ CH/FI|CH  |ice|FK |Zeo|
 -----|----|---|---|---|
 sI   |CS1 |-  |A15|MEP|
 sII  |CS2 |16 |C15|MTN|
-sIII |TS1 |-  |σ  |-  |
+sIII |TS1 |-  |sigma|-  |
 sIV  |HS1 |-  |Z  |-  |
 sV   |HS2 |-  |*  |-  |
 sVII |CS4 |-  |*  |SOD|
