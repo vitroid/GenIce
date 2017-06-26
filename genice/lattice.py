@@ -614,19 +614,21 @@ class Lattice():
         """
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
+            self.logger.info("  Hints:")
             repcagepos = replicate_positions(self.cagepos, self.rep)
             repcagetype = [self.cagetype[i % len(self.cagetype)]
                            for i in range(repcagepos.shape[0])]
             cagetypes = defaultdict(set)
             for i, typ in enumerate(repcagetype):
                 cagetypes[typ].add(i)
-            self.logger.info("  Cage types: {0}".format(list(cagetypes)))
+            # INFO for cage types
+            self.logger.info("    Cage types: {0}".format(list(cagetypes)))
             for typ, cages in cagetypes.items():
-                self.logger.info("  Cage type {0}: {1}".format(typ, cages))
-            # show the cages around the dopants.
+                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
+            # the cages around the dopants.
             dopants_neighbors = self.dopants_info(
                 self.dopants, self.reppositions, repcagepos, self.repcell)
-            # self.logger.info(dopants_neighbors)
+            # put the (one-off) groups
             if len(self.spot_groups) > 0:
                 # process the -H option
                 for cage, group_to in self.spot_groups.items():
@@ -674,14 +676,12 @@ class Lattice():
                         #self.logger.info(
                         #    "    {0} * {1} @ {2}".format(molec, nmolec, movedin))
             # Now ge got the address book of the molecules.
-            self.logger.info("  Summary of guest placements:")
-            for cagetype, cageid in cagetypes.items():
-                self.logger.info("    Guests in cage type {0}:".format(cagetype))
-                for molec, cages in molecules.items():
-                    cages = set(cages)
-                    cages &= cageid
-                    if len(cages):
-                        self.logger.info("      {0} * {1} @ {2}".format(molec, len(cages), cages))
+            if len(molecules):
+                self.logger.info("  Summary of guest placements:")
+                self.guests_info(cagetypes, molecules)
+            if len(self.spot_groups) > 0:
+                self.logger.info("  Summary of groups:")
+                self.groups_info(self.groups)
             # semi-guests
             for root, cages in self.groups.items():
                 assert root in self.dopants
@@ -791,7 +791,7 @@ class Lattice():
             dopants, waters, cagepos, cell)
         for dopant, cages in dopants_neighbors.items():
             self.logger.info(
-                "    cages adjacent to dopant {0}: {1}".format(dopant, cages))
+                "    Cages adjacent to dopant {0}: {1}".format(dopant, cages))
         return dopants_neighbors
 
     def groups_info(self, groups):
@@ -800,11 +800,18 @@ class Lattice():
                 self.logger.info(
                     "    Group {0} of dopant {1} in cage {2}".format(group, root, cage))
 
+    def guests_info(self, cagetypes, molecules):
+        for cagetype, cageid in cagetypes.items():
+            self.logger.info("    Guests in cage type {0}:".format(cagetype))
+            for molec, cages in molecules.items():
+                cages = set(cages)
+                cages &= cageid
+                if len(cages):
+                    self.logger.info("      {0} * {1} @ {2}".format(molec, len(cages), cages))
+        
     def add_group(self, cage, group, root):
         self.groups[root][cage] = group
         self.filled_cages.add(cage)
-        self.logger.info(
-            "    Group {0} of dopant {1} in cage {2}".format(group, root, cage))
 
     def __del__(self):
         self.logger.info("Completed.")
