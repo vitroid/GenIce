@@ -310,14 +310,15 @@ def butyl(cpos, root, cell, molname):
 
 class Lattice():
     def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True,
-                 cations=dict(), anions=dict(), spot_guests=dict()):
-        self.logger = logging.getLogger()
+                 cations=dict(), anions=dict(), spot_guests=dict(), spot_groups=dict()):
+        self.logger      = logging.getLogger()
         self.lattice_type = lattice_type
-        self.rep = rep
-        self.depolarize = depolarize
-        self.cations = cations
-        self.anions = anions
+        self.rep         = rep
+        self.depolarize  = depolarize
+        self.cations     = cations
+        self.anions      = anions
         self.spot_guests = spot_guests
+        self.spot_groups = spot_groups
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -626,14 +627,19 @@ class Lattice():
             dopants_neighbors = self.dopants_info(
                 self.dopants, self.reppositions, repcagepos, self.repcell)
             # self.logger.info(dopants_neighbors)
-            if len(self.spot_guests) > 0:
-                # process the -G option
-                for cage, group_to in self.spot_guests.items():
+            if len(self.spot_groups) > 0:
+                # process the -H option
+                for cage, group_to in self.spot_groups.items():
                     group, root = group_to.split(":")
                     self.add_group(cage, group, int(root))
             molecules = defaultdict(list)
+            if len(self.spot_guests) > 0:
+                # process the -G option
+                for cage, molec in self.spot_guests.items():
+                    molecules[molec].append(cage)
+                    self.filled_cages.add(cage)
             if guests is not None:
-                # parse the -g option
+                # process the -g option
                 for arg in guests:
                     cagetype, spec = arg[0].split("=")
                     assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(
@@ -642,8 +648,6 @@ class Lattice():
                     rooms = list(cagetypes[cagetype] - self.filled_cages)
                     for room in rooms:
                         resident[room] = None
-                    self.logger.info(
-                        "  Guests in cage type {0}:".format(cagetype))
                     # spec contains a formula consisting of "+" and "*"
                     contents = spec.split("+")
                     vacant = len(rooms)
@@ -667,10 +671,17 @@ class Lattice():
                                 molecules[molec].append(room)
                                 movedin.append(room)
                                 remain -= 1
-                        self.logger.info(
-                            "    {0} * {1} @ {2}".format(molec, nmolec, movedin))
+                        #self.logger.info(
+                        #    "    {0} * {1} @ {2}".format(molec, nmolec, movedin))
             # Now ge got the address book of the molecules.
-            #self.logger.info("  Summary:")
+            self.logger.info("  Summary of guest placements:")
+            for cagetype, cageid in cagetypes.items():
+                self.logger.info("    Guests in cage type {0}:".format(cagetype))
+                for molec, cages in molecules.items():
+                    cages = set(cages)
+                    cages &= cageid
+                    if len(cages):
+                        self.logger.info("      {0} * {1} @ {2}".format(molec, len(cages), cages))
             # semi-guests
             for root, cages in self.groups.items():
                 assert root in self.dopants
@@ -680,6 +691,7 @@ class Lattice():
                 rot = self.rotmatrices[root]
                 self.atoms.append([0, molname, name, pos])
                 del self.dopants[root]  # consumed.
+                self.logger.debug((root,cages,name,molname,pos,rot))
                 for cage, group in cages.items():
                     assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]

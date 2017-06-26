@@ -30,9 +30,12 @@ test:
 	./genice.x 16 --rep 1 1 2 --format p > trash/16.py                         ;diff ref_v0.10.3/16.py  trash/16.py
 	./genice.x 17 --rep 1 1 2 --format q > trash/17.nx4a                       ;diff ref_v0.10.3/17.nx4a trash/17.nx4a
 	./genice.x 1c --rep 1 1 2 --format r > trash/1c.ar3r                       ;diff ref_v0.10.3/1c.ar3r trash/1c.ar3r
-	./genice.x CS1 --guest 12=g12 --rep 1 1 2 --format cif > trash/CS1.cif     ;diff ref_v0.10.3/CS1.cif trash/CS1.cif
-	./genice.x CS2 --guest 12=g12 --rep 1 1 2 --format cif2 > trash/CS2.cif    ;Utilities/cifdiff.sh ref_v0.10.3/CS2.cif trash/CS2.cif
-	./genice.x HS1 --guest 12=g12 --rep 1 1 2 --format xyz > trash/HS1.xyz     ;diff ref_v0.10.3/HS1.xyz trash/HS1.xyz
+#test for clathrates
+	./genice.x CS1 --guest 14=g14*0.5 -G 0=me --rep 1 1 2 --format cif > trash/CS1.cif     ;diff ref_v0.10.4/CS1.cif trash/CS1.cif
+#test for doped clathrate
+	./genice.x CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 > trash/CS2.cif    ;Utilities/cifdiff.sh ref_v0.10.4/CS2.cif trash/CS2.cif
+#test for spot semiclathrate (TBAB)
+	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_v0.10.4/HS1.xyz trash/HS1.xyz
 	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format graph > trash/TS1.ngph  ;diff ref_v0.10.3/TS1.ngph trash/TS1.ngph
 distclean:
 	-rm *.scad *.yap @*

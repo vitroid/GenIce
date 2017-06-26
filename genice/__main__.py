@@ -26,6 +26,8 @@ def getoptions():
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
     parser.add_argument('--Guest', '-G', nargs = 1,           dest='spot_guests', metavar="13=me", action="append", 
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
+    parser.add_argument('--Group', '-H', nargs = 1,           dest='groups', metavar="13=bu-:0", action="append", 
+                        help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion', '-a', nargs = 1,           dest='anions', metavar="3=Cl", action="append", 
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation', '-c', nargs = 1,           dest='cations', metavar="3=Na", action="append", 
@@ -102,6 +104,11 @@ def main():
         for v in options.spot_guests:
             key, value = v[0].split("=")
             spot_guests[int(key)] = value
+    groups = dict()
+    if options.groups is not None:
+        for v in options.groups:
+            key, value = v[0].split("=")
+            groups[int(key)] = value
 
     del options  # Dispose for safety.
     # Set random seeds
@@ -110,7 +117,7 @@ def main():
     
     logger.debug("Lattice: {0}".format(lattice_type))
     lat = lattice.Lattice(lattice_type, density=density, rep=rep, depolarize=depolarize,
-                          cations=cations, anions=anions, spot_guests=spot_guests)
+                          cations=cations, anions=anions, spot_guests=spot_guests, spot_groups=groups)
     # Main part of the program is contained in th Formatter object. (See formats/)
     logger.debug("Format: {0}".format(file_format))
     formatter = safe_import("format", file_format)
