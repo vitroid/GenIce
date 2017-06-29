@@ -1,6 +1,6 @@
 """
 
-[12] Koza, M M et al. “Ice XII in Its Second Regime of Metastability.” Physical Review Letters 84.18 (2000): 4112–4115.
+[12] Koza, M M et al. "Ice XII in Its Second Regime of Metastability." Physical Review Letters 84.18 (2000): 4112-4115.
 """
 
 bondlen = 3      #bond threshold	 
