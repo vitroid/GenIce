@@ -4,7 +4,7 @@ Data sources
 [Ice 17] del Rosso, Leonardo, Milva Celli, and Lorenzo Ulivi. “Ice XVII as a Novel Material for Hydrogen Storage.” Challenges 8.1 (2017): 3.
 """
 
-density = 1.2     #default density
+density = 0.88     #default density
 
 bondlen = 1.2
 celltype = "rect"

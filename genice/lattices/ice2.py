@@ -1,3 +1,7 @@
+"""
+[C1] D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0.
+"""
+
 #density = 1.2     #default density
 
 
