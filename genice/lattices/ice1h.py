@@ -1,3 +1,4 @@
+# coding: utf-8
 density = 0.92     #default density
 
 bondlen = 3        #bond threshold	 

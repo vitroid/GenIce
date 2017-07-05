@@ -1,3 +1,4 @@
+# coding: utf-8
 # Keep this file as simple as possible for compatibility
 density = 0.92     #default density
 

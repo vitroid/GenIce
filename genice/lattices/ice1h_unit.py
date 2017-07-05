@@ -1,3 +1,4 @@
+# coding: utf-8
 #This is not useful for generating the graph
 
 density = 0.92     #default density

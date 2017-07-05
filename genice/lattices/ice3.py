@@ -1,3 +1,4 @@
+# coding: utf-8
 density = 1.2     #default density
 
 

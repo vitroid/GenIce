@@ -1,3 +1,4 @@
+# coding: utf-8
 import numpy as np
 
 sites = np.array([[0,0,-6.50980307353661025e-03],

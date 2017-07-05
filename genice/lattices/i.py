@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Hypothetical ice "i".
 

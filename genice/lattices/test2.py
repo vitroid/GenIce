@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Test for parsing cages (string type)
 

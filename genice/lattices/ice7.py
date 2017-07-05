@@ -1,3 +1,4 @@
+# coding: utf-8
 density = 1.6     #default density
 
 celltype = "rect"

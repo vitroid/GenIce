@@ -1,3 +1,4 @@
+# coding: utf-8
 import numpy as np
 
 lx =   0.732813006922696

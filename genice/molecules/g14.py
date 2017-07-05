@@ -1,3 +1,4 @@
+# coding: utf-8
 import numpy as np
 
 #placeholder for 14-hedral cage

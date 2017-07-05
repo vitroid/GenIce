@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 A hydrogen-disordered counterpart of ice II.
 

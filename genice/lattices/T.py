@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 [T] A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem, 2011, DOI:10.1021/ic102178d.
 """

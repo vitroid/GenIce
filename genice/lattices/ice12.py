@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Data sources
 [12] C. Lobban, J. L. Finney, W. F. Kuhs, Nature, 1998, DOI:10.1038/34622.

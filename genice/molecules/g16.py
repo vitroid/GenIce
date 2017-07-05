@@ -1,3 +1,4 @@
+# coding: utf-8
 import numpy as np
 
 #placeholder for 16-hedral cage

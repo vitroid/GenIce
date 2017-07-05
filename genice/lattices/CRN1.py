@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 A continuous random network of Sillium.
 

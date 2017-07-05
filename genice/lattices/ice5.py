@@ -1,3 +1,4 @@
+# coding: utf-8
 celltype = "triclinic"
 cell = """
 9.19977812589 0 0

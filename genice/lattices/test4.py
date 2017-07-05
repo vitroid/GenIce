@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 Test for generating water positions from cage positions
 """

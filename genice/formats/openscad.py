@@ -1,3 +1,4 @@
+# coding: utf-8
 #Minimal implementation for genice.
 #openjscad-like postmodifier style
 import logging

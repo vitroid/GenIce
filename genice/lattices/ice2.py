@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 [C1] D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0.
 """
