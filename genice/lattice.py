@@ -318,7 +318,7 @@ class Lattice():
                  anions=dict(),
                  spot_guests=dict(),
                  spot_groups=dict(),
-                 formatter=formatter.Formatter()):
+                 ):
         self.logger      = logging.getLogger()
         self.lattice_type = lattice_type
         self.rep         = rep
@@ -327,7 +327,6 @@ class Lattice():
         self.anions      = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
-        self.formatter   = formatter
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -479,47 +478,47 @@ class Lattice():
         self.groups_placer["Bu-"] = butyl  # is a function
 
 
-    def run(self, water_type, guests):
-        if 0 in self.formatter.hooks:
-            self.formatter.hooks[0](self)
-        if max(0,*self.formatter.hooks.keys()) < 1:
+    def run(self, water_type, guests, formatter):
+        if 0 in formatter.hooks:
+            formatter.hooks[0](self)
+        if max(0,*formatter.hooks.keys()) < 1:
             return
         self.stage1()
-        if 1 in self.formatter.hooks:
-            self.formatter.hooks[1](self)
-        if max(0,*self.formatter.hooks.keys()) < 2:
+        if 1 in formatter.hooks:
+            formatter.hooks[1](self)
+        if max(0,*formatter.hooks.keys()) < 2:
             return
         res = self.stage2()
-        if 2 in self.formatter.hooks:
-            self.formatter.hooks[2](self)
-        if max(0,*self.formatter.hooks.keys()) < 3:
+        if 2 in formatter.hooks:
+            formatter.hooks[2](self)
+        if max(0,*formatter.hooks.keys()) < 3:
             return
         if not res:
             self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
         else:
             self.stage3()
-            if 3 in self.formatter.hooks:
-                self.formatter.hooks[3](self)
-            if max(0,*self.formatter.hooks.keys()) < 4:
+            if 3 in formatter.hooks:
+                formatter.hooks[3](self)
+            if max(0,*formatter.hooks.keys()) < 4:
                 return
             self.stage4()
-            if 4 in self.formatter.hooks:
-                self.formatter.hooks[4](self)
-            if max(0,*self.formatter.hooks.keys()) < 5:
+            if 4 in formatter.hooks:
+                formatter.hooks[4](self)
+            if max(0,*formatter.hooks.keys()) < 5:
                 return
             self.stage5()
-            if 5 in self.formatter.hooks:
-                self.formatter.hooks[5](self)
-        if max(0,*self.formatter.hooks.keys()) < 6:
+            if 5 in formatter.hooks:
+                formatter.hooks[5](self)
+        if max(0,*formatter.hooks.keys()) < 6:
             return
         self.stage6(water_type)
-        if 6 in self.formatter.hooks:
-            self.formatter.hooks[6](self)
-        if max(0,*self.formatter.hooks.keys()) < 7:
+        if 6 in formatter.hooks:
+            formatter.hooks[6](self)
+        if max(0,*formatter.hooks.keys()) < 7:
             return
         self.stage7(guests)
-        if 7 in self.formatter.hooks:
-            self.formatter.hooks[7](self)
+        if 7 in formatter.hooks:
+            formatter.hooks[7](self)
 
         
     def stage1(self):
