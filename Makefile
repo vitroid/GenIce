@@ -26,10 +26,10 @@ test:
 	./genice.x 5  --rep 2 2 3 --format e > trash/5.nx3a                        ;diff ref_v0.10.4/5.nx3a trash/5.nx3a
 	./genice.x 6  --rep 2 2 4 --format g > trash/6.gro                         ;diff ref_v0.10.4/6.gro  trash/6.gro
 	./genice.x 7  --rep 2 2 4 --format m > trash/7.mdv                         ;diff ref_v0.10.3/7.mdv  trash/7.mdv
-	./genice.x 12 --rep 2 2 3 --format o > trash/12.scad                       ;diff ref_v0.10.3/12.scad trash/12.scad
+	./genice.x 12 --rep 2 2 3 --format o > trash/12.scad                       ;diff ref_v0.10.6/12.scad trash/12.scad
 	./genice.x 16 --rep 1 1 2 --format p > trash/16.py                         ;diff ref_v0.10.3/16.py  trash/16.py
-	./genice.x 17 --rep 1 1 2 --format q > trash/17.nx4a                       ;diff ref_v0.10.3/17.nx4a trash/17.nx4a
-	./genice.x 1c --rep 1 1 2 --format r > trash/1c.ar3r                       ;diff ref_v0.10.3/1c.ar3r trash/1c.ar3r
+	./genice.x 17 --rep 1 1 2 --format q > trash/17.nx4a                       ;diff ref_v0.10.6/17.nx4a trash/17.nx4a
+	./genice.x 1c --rep 1 1 2 --format r > trash/1c.ar3r                       ;diff ref_v0.10.6/1c.ar3r trash/1c.ar3r
 #test for clathrates
 	./genice.x CS1 --guest 14=g14*0.5 -G 0=me --rep 1 1 2 --format cif > trash/CS1.cif     ;diff ref_v0.10.4/CS1.cif trash/CS1.cif
 #test for doped clathrate

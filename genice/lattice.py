@@ -11,7 +11,7 @@ import numpy as np
 from genice.importer import safe_import
 from genice import pairlist as pl
 from genice import digraph as dg
-
+from genice import formatter
 
 def load_numbers(v):
     if type(v) is str:
@@ -309,8 +309,16 @@ def butyl(cpos, root, cell, molname):
 
 
 class Lattice():
-    def __init__(self, lattice_type=None, density=0, rep=(1, 1, 1), depolarize=True,
-                 cations=dict(), anions=dict(), spot_guests=dict(), spot_groups=dict()):
+    def __init__(self,
+                 lattice_type=None,
+                 density=0,
+                 rep=(1, 1, 1),
+                 depolarize=True,
+                 cations=dict(),
+                 anions=dict(),
+                 spot_guests=dict(),
+                 spot_groups=dict(),
+                 formatter=formatter.Formatter()):
         self.logger      = logging.getLogger()
         self.lattice_type = lattice_type
         self.rep         = rep
@@ -319,6 +327,7 @@ class Lattice():
         self.anions      = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+        self.formatter   = formatter
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -469,6 +478,50 @@ class Lattice():
         self.groups_placer = dict()
         self.groups_placer["Bu-"] = butyl  # is a function
 
+
+    def run(self, water_type, guests):
+        if 0 in self.formatter.hooks:
+            self.formatter.hooks[0](self)
+        if max(0,*self.formatter.hooks.keys()) < 1:
+            return
+        self.stage1()
+        if 1 in self.formatter.hooks:
+            self.formatter.hooks[1](self)
+        if max(0,*self.formatter.hooks.keys()) < 2:
+            return
+        res = self.stage2()
+        if 2 in self.formatter.hooks:
+            self.formatter.hooks[2](self)
+        if max(0,*self.formatter.hooks.keys()) < 3:
+            return
+        if not res:
+            self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
+        else:
+            self.stage3()
+            if 3 in self.formatter.hooks:
+                self.formatter.hooks[3](self)
+            if max(0,*self.formatter.hooks.keys()) < 4:
+                return
+            self.stage4()
+            if 4 in self.formatter.hooks:
+                self.formatter.hooks[4](self)
+            if max(0,*self.formatter.hooks.keys()) < 5:
+                return
+            self.stage5()
+            if 5 in self.formatter.hooks:
+                self.formatter.hooks[5](self)
+        if max(0,*self.formatter.hooks.keys()) < 6:
+            return
+        self.stage6(water_type)
+        if 6 in self.formatter.hooks:
+            self.formatter.hooks[6](self)
+        if max(0,*self.formatter.hooks.keys()) < 7:
+            return
+        self.stage7(guests)
+        if 7 in self.formatter.hooks:
+            self.formatter.hooks[7](self)
+
+        
     def stage1(self):
         """
         replicate water molecules to make a repeated cell

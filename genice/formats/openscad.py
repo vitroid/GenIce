@@ -60,9 +60,6 @@ class OpenScad():
         return OpenScad("intersection(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //intersection\n")
 
     #aliases for backward compat
-    def union(self, *values):
-        return self.add(*values)
-    
     def difference(self, *values):
         return self.subtract(*values)
     
@@ -113,58 +110,62 @@ def test():
 
 
 
+from genice import formatter
 
-
-def run(lattice, water_type="TIP3P", guests=[]):
+class Formatter(formatter.Formatter):
     """
     cell is in nm
 
     openscad2 comes up with OO style
     """
-    logger = logging.getLogger()
-    for d in range(3):
-        lattice.rep[d] += 2  #Extend the size,then cut off later.
+    def __init__(self):
+        self.hooks[0] = self.hook0
+        self.hooks[2] = self.hook2
 
-    lattice.stage1()   #replicate the unit cell
-    lattice.stage2()   #prepare random graph
+    def hook0(self, lattice):
+        for d in range(3):
+            lattice.rep[d] += 2  #Extend the size,then cut off later.
 
-    scale=50
-    roxy=0.07
-    rbond=0.06
-    logger.info("Output water molecules in OpenSCAD format revised.")
-    rep = np.array(lattice.rep)
-    trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])
-    trimoffset = lattice.cell[0]+lattice.cell[1]+lattice.cell[2]
+    def hook2(self, lattice):
+        logger = logging.getLogger()
+        
+        scale=50
+        roxy=0.07
+        rbond=0.06
+        logger.info("Output water molecules in OpenSCAD format revised.")
+        rep = np.array(lattice.rep)
+        trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])
+        trimoffset = lattice.cell[0]+lattice.cell[1]+lattice.cell[2]
 
-    margin = 0.2 # expansion relative to the cell size
-    lower = (1.0 - margin) / rep
-    upper = (rep - 1.0 + margin) / rep
+        margin = 0.2 # expansion relative to the cell size
+        lower = (1.0 - margin) / rep
+        upper = (rep - 1.0 + margin) / rep
 
-    bonds = []
-    for i,j in lattice.graph.edges_iter(data=False):
-        s1 =lattice.reppositions[i]
-        s2 =lattice.reppositions[j]
-        d = s2-s1
-        d -= np.floor( d + 0.5 )
-        logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
-        s2 = s1 + d
-        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-            (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,lattice.repcell), np.dot(s2,lattice.repcell)))
+        bonds = []
+        for i,j in lattice.graph.edges_iter(data=False):
+            s1 =lattice.reppositions[i]
+            s2 =lattice.reppositions[j]
+            d = s2-s1
+            d -= np.floor( d + 0.5 )
+            logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
+            s2 = s1 + d
+            if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
+                (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+                bonds.append( (np.dot(s1,lattice.repcell), np.dot(s2,lattice.repcell)))
 
-    nodes = []
-    for s1 in lattice.reppositions:
-        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, lattice.repcell) )
+        nodes = []
+        for s1 in lattice.reppositions:
+            if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+                nodes.append( np.dot(s1, lattice.repcell) )
 
-    o = OpenScad()
-    objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
-    #operations
-    ops = [bondfunc,
-        o.defvar("$fn", 20),
-        o.defvar("Roxy", roxy),
-        o.defvar("Rbond", rbond),
-        ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
-    s = o.encode(*ops)
-    s = '//' + "\n//".join(lattice.doc) + "\n" + s
-    print(s,end="")
+        o = OpenScad()
+        objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
+        #operations
+        ops = [bondfunc,
+            o.defvar("$fn", 20),
+            o.defvar("Roxy", roxy),
+            o.defvar("Rbond", rbond),
+            ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
+        s = o.encode(*ops)
+        s = '//' + "\n//".join(lattice.doc) + "\n" + s
+        print(s,end="")

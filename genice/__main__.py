@@ -116,13 +116,20 @@ def main():
     np.random.seed(seed)
     
     logger.debug("Lattice: {0}".format(lattice_type))
-    lat = lattice.Lattice(lattice_type, density=density, rep=rep, depolarize=depolarize,
-                          cations=cations, anions=anions, spot_guests=spot_guests, spot_groups=groups)
     # Main part of the program is contained in th Formatter object. (See formats/)
     logger.debug("Format: {0}".format(file_format))
     formatter = safe_import("format", file_format)
+    lat = lattice.Lattice(lattice_type,
+                          density=density,
+                          rep=rep,
+                          depolarize=depolarize,
+                          cations=cations,
+                          anions=anions,
+                          spot_guests=spot_guests,
+                          spot_groups=groups,
+                          formatter=formatter.Formatter())
     # These arguments should also be in lattice, not in run()
-    formatter.run(lat, water_type=water_type, guests=guests)
+    lat.run(water_type=water_type, guests=guests)
     
 if __name__ == "__main__":
     main()
