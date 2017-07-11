@@ -1,30 +1,25 @@
 # coding: utf-8
-import logging
+"""
+MDView file format
+"""
 
 import numpy as np
 
-from genice import rigid
-from genice import formatter
 
-class Formatter(formatter.Formatter):
-    """
-    MDView file format
-    """
-    def __init__(self):
-        self.hooks[7] = self.hook7
+def hook7(lattice):
+    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
+    lattice.logger.info("Output in MDView format.")
+    s = ""
+    #if celltype == "rect":
+    #    s += "-length '({0}, {1}, {2})'\n".format(repcell[0,0]*10,repcell[1,1]*10,repcell[2,2]*10)
+    s += "-center 0 0 0\n"
+    s += "-fold\n"
+    s += "{0}\n".format(len(lattice.atoms))
+    for i in range(len(lattice.atoms)):
+        molorder, resname, atomname, position = lattice.atoms[i]
+        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
+    s = '#' + "\n#".join(lattice.doc) + "\n" + s
+    print(s,end="")
 
-    def hook7(self, lattice):
-        logger = logging.getLogger()
-        logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
-        logger.info("Output in MDView format.")
-        s = ""
-        #if celltype == "rect":
-        #    s += "-length '({0}, {1}, {2})'\n".format(repcell[0,0]*10,repcell[1,1]*10,repcell[2,2]*10)
-        s += "-center 0 0 0\n"
-        s += "-fold\n"
-        s += "{0}\n".format(len(lattice.atoms))
-        for i in range(len(lattice.atoms)):
-            molorder, resname, atomname, position = lattice.atoms[i]
-            s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
-        s = '#' + "\n#".join(lattice.doc) + "\n" + s
-        print(s,end="")
+
+hooks = {7:hook7}

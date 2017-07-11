@@ -129,10 +129,10 @@ def main():
                           spot_groups=groups,
                           )
     # These arguments should also be in lattice, not in run()
-    lat.run(water_type=water_type,
-            guests=guests,
-            formatter=formatter.Formatter()
-            )
+    lat.format(water_type=water_type,
+                guests=guests,
+                formatter=formatter
+                )
     
 if __name__ == "__main__":
     main()

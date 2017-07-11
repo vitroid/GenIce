@@ -11,7 +11,6 @@ import numpy as np
 from genice.importer import safe_import
 from genice import pairlist as pl
 from genice import digraph as dg
-from genice import formatter
 
 def load_numbers(v):
     if type(v) is str:
@@ -478,7 +477,7 @@ class Lattice():
         self.groups_placer["Bu-"] = butyl  # is a function
 
 
-    def run(self, water_type, guests, formatter):
+    def format(self, water_type, guests, formatter):
         if 0 in formatter.hooks:
             formatter.hooks[0](self)
         if max(0,*formatter.hooks.keys()) < 1:
