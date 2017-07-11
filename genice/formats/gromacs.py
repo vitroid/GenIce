@@ -15,7 +15,7 @@ def hook7(lattice):
     s += "{0}\n".format(len(lattice.atoms))
     molorder = 0
     for i in range(len(lattice.atoms)):
-        resno, resname, atomname, position = lattice.atoms[i]
+        resno, resname, atomname, position, order = lattice.atoms[i]
         if resno == 0:
             molorder += 1
         if len(lattice.atoms) > 99999:

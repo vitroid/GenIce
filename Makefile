@@ -36,7 +36,7 @@ test:
 	./genice.x CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 > trash/CS2.cif    ;Utilities/cifdiff.sh ref_v0.10.4/CS2.cif trash/CS2.cif
 #test for spot semiclathrate (TBAB)
 	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_v0.10.4/HS1.xyz trash/HS1.xyz
-	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format graph > trash/TS1.ngph  ;diff ref_v0.10.3/TS1.ngph trash/TS1.ngph
+	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > trash/TS1.yap  ;diff ref_v0.10.6/TS1.yap trash/TS1.yap
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist

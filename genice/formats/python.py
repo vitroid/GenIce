@@ -23,8 +23,7 @@ def hook7(lattice):
         s += "cell='{0} {1} {2} {3} {4} {5} {6} {7} {8}'\n".format(*lattice.repcell[0],*lattice.repcell[1], *lattice.repcell[2])
     s += "density={0}\n".format(lattice.density)
     s += "waters=\"\"\"\n"
-    for i in range(len(lattice.reppositions)):
-        position = lattice.reppositions[i]
+    for i, position in enumerate(lattice.reppositions):
         s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(position[0],position[1],position[2])
     s += "\"\"\"\n\n"
     print(s,end="")

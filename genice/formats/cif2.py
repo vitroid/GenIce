@@ -54,7 +54,7 @@ _atom_site_type_symbol
 """
     celli = np.linalg.inv(lattice.repcell)
     for i in range(len(lattice.atoms)):
-        molorder, resname, atomname, position = lattice.atoms[i]
+        molorder, resname, atomname, position, order = lattice.atoms[i]
         position = np.dot(position, celli)
         label = atomname+"{0}".format(i)
         s += "{4:>6}{1:10.4f}{2:10.4f}{3:10.4f}{0:>6}\n".format(atomname,position[0],position[1],position[2],label)

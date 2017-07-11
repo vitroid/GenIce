@@ -56,13 +56,13 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name, ignores=set()):
     atoms = []
     if len(intra) == 0:
         return atoms
-    for molec in range(len(coord)):
-        if molec in ignores:
+    for order, pos in enumerate(coord):
+        if order in ignores:
             continue
-        abscom = np.dot(coord[molec], cell)  # relative to absolute
-        rotated = np.dot(intra, rotmatrices[molec])
+        abscom = np.dot(pos, cell)  # relative to absolute
+        rotated = np.dot(intra, rotmatrices[order])
         for i in range(len(labels)):
-            atoms.append([i, name, labels[i], rotated[i, :] + abscom])
+            atoms.append([i, name, labels[i], rotated[i, :] + abscom, order])
     return atoms
 
 
@@ -303,7 +303,7 @@ def butyl(cpos, root, cell, molname):
         x = CC * s * (i + 1)
         y = ((i + 1) % 2) * CC * c
         atompos = x * v1 + y * v2 + origin
-        atoms.append([i, molname, atom, atompos])
+        atoms.append([i, molname, atom, atompos, 0])
     return atoms
 
 
@@ -740,7 +740,7 @@ class Lattice():
                 molname = "G{0}".format(root)
                 pos = self.reppositions[root]
                 rot = self.rotmatrices[root]
-                self.atoms.append([0, molname, name, pos])
+                self.atoms.append([0, molname, name, pos, 0])
                 del self.dopants[root]  # consumed.
                 self.logger.debug((root,cages,name,molname,pos,rot))
                 for cage, group in cages.items():
