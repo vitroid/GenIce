@@ -37,6 +37,7 @@ test:
 #test for spot semiclathrate (TBAB)
 	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_v0.10.4/HS1.xyz trash/HS1.xyz
 	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > trash/TS1.yap  ;diff ref_v0.10.6/TS1.yap trash/TS1.yap
+	./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_v0.10.6/T.pov trash/T.pov
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist
