@@ -24,14 +24,21 @@
 */
 global_settings { max_trace_level 100 } 
 
-light_source { <0,0,0> 1 } //center
-
+#declare RO = 0.05;
+#declare RMe = 0.05;
+#declare RH = 0.03;
+#declare ROH = 0.02;
+#declare RHB = 0.015;
+light_source { <-RO,-RO,-RO> 0.25 } //center
+light_source { <-RO,+RO,+RO> 0.25 } //center
+light_source { <+RO,+RO,-RO> 0.25 } //center
+light_source { <+RO,-RO,+RO> 0.25 } //center
 
 #declare enable_focus=0;
 #declare draw_detail = 0;
 #declare draw_media=1;
 #declare enable_radiosity=1;
-#declare enable_focus=1;
+#declare enable_focus=0;
 
 
 #if (enable_radiosity=1)
@@ -43,6 +50,7 @@ global_settings {
 camera {
   location <0, 3, 0>
     look_at <0,0,0>
+    sky z
     right x
 #if (enable_focus=1)
     focal_point < 0,0,0>
@@ -83,32 +91,22 @@ ior 1.1  //water
   }
   finish {FA}
 }
-
-//#declare TEXH = TEXO;
-#declare TEXMe = TEXO;
-//#declare TEXOH = TEXO;
+#declare TEXMe = texture {
+  pigment {
+    rgb <0,1,0.05>
+  }
+  finish {FA}
+}
 
 
 #declare TEXHB = texture {
 pigment { rgb <0.9,1,0.2> transmit 0 }
 finish {FA}
-/* for clear finish    ambient 0
-    diffuse 1
-    specular 1
-    roughness 0.02
-    }*/
 }
 
 #declare MATHB = material {
 texture { TEXHB }
 interior { INTHB }
-/*
-texture {
-  pigment { rgbt 1 }
-
-  finish {F_Glass1}
-  }*/
-//interior {I_Glass1}
 }
   
 #declare MATOH = material {
@@ -118,54 +116,15 @@ texture { TEXOH }
 #declare MATO = material {
 texture { TEXO }
 }
+
 #declare MATH = material {
 texture { TEXH }
 }
 
-#declare MATMe = MATO;
+#declare MATMe = material {
+texture { TEXMe }
+}
 
-
-//background { rgb <0.01,0.01,0.01> }
-
-
-#declare RO = 0.05;
-#declare RMe = 0.05;
-#declare RH = 0.03;
-#declare ROH = 0.02;
-#declare RHB = 0.015;
-
-
-/*
- sphere // transparent sphere containing media
- { 0,1.5 pigment { rgbt 1 } hollow
-   interior
-   { media
-     { emission 1
-       density
-       { spherical density_map
-         { [0 rgb 0]
-	     //[0.3 rgb <0,0,1>]
-           [0.6 rgb <0.5,1,1>]
-           [1 rgb 1]
-         }
-       }
-     }
-  }
- }
-*/
- // Scattering media box:
-/*
- box
- { <-3, -3, -3>, <3, 3, 3>
-   pigment { rgbt 1 } hollow
-   interior
-   { media
-     { scattering { 1, 0.07 extinction 0.01 }
-       samples 30
-     }
-   }
- }
-*/
 
 
 #if (draw_media=1)
