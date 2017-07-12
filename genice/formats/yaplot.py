@@ -27,12 +27,12 @@ def hook6(lattice):
             else:
                 waters[order]["H1"] = position
     s = lattice.yapresult
-    s += yp.Layer(4)
     s += yp.Color(3)
     for order, water in waters.items():
         O = water["O"]        
         H0 = water["H0"]        
         H1 = water["H1"]        
+        s += yp.Layer(4)
         s += yp.Color(3)
         s += yp.Size(0.03)
         s += yp.Circle(O)
@@ -42,6 +42,7 @@ def hook6(lattice):
         s += yp.Circle(H0)
         s += yp.Circle(H1)
         s += yp.Color(2)
+        s += yp.Layer(1)
         s += yp.Text(O, "{0}".format(order))
     s += yp.Layer(3)
     s += yp.Color(4)
@@ -89,8 +90,4 @@ def hook7(lattice):
     print(s)
     
 
-def hook5(lat):
-    for label, name in lat.dopants.items():
-        lat.logger.info((label,name))
-    
-hooks = {7:hook7, 6:hook6, 5:hook5}
+hooks = {7:hook7, 6:hook6}

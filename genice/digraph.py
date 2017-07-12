@@ -376,6 +376,9 @@ def find_apsis(coord, cell, distance, vertex, axis):
 
 def estimate_edge_length(spaceicegraph, cell, vertex):
     logger = logging.getLogger()
+    # In case an anion is selected by bad fortune.
+    if len(spaceicegraph.edge[vertex]) == 0:
+        return 0
     for nei in spaceicegraph.edge[vertex]:
         logger.debug("Nei of {0}: {1}".format(vertex, nei))
         break
@@ -394,9 +397,12 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
     """
     logger = logging.getLogger()
 
-    while True:
+    distance = 0
+    while distance == 0:
         vertex = random.randint(0,spaceicegraph.number_of_nodes()-1)
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
+    while True:
+        vertex = random.randint(0,spaceicegraph.number_of_nodes()-1)
         apsis = find_apsis(spaceicegraph.coord, cell, distance*1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis,])

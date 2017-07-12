@@ -97,33 +97,36 @@ def replicate_groups(groups, waters, cagepos, rep):
     """
     This is not that easy.
     """
-    # logger = logging.getLogger()
+    logger = logging.getLogger()
+    # Storage for replicated groups
     newgroups = defaultdict(dict)
     for root, cages in groups.items():
-        w = waters[root]
-        for cage, group in cages.items():
-            g = cagepos[cage]
-            # logger.info(("w",root, w))
-            # logger.info(("g",cage, g))
-            delta = g - w
+        # Position of root (water) (fractional)
+        root_pos = waters[root]
+        for cage, group_name in cages.items():
+            # Position of the cage (fractional)
+            cage_pos = cagepos[cage]
+            # Relative position of the cage
+            delta = cage_pos - root_pos
             delta -= np.floor(delta + 0.5)
-            gcell = np.floor(w + delta)
-            # g -= gcell
-            # logger.info(gcell)
+            # (Image) cell that the cage resides
+            gcell = np.floor(root_pos + delta)
             for x in range(rep[0]):
                 for y in range(rep[1]):
                     for z in range(rep[2]):
                         r = np.array((x, y, z))
+                        # label of the root (water) in the replica
                         newroot = root + len(waters) * \
                             (x + rep[0] * (y + rep[1] * z))
+                        # replicated cell in which the cage resides.
+                        # modulo by positive number is always positive.
                         cr = (r + gcell) % rep
                         newcage = cage + \
                             len(cagepos) * (cr[0] + rep[0]
                                             * (cr[1] + rep[1] * cr[2]))
                         newcage = int(newcage)
-                        newgroups[newroot][newcage] = group
-                        # logger.info(("wr",newroot, (r+w)/rep))
-                        # logger.info(("gr",newcage, (cr+g)/rep))
+                        newgroups[newroot][newcage] = group_name
+                        # logger.info(("root",newroot,"newcage", newcage))
     return newgroups
 
 
