@@ -43,7 +43,7 @@ def hook6(lattice):
     s = '#include "default.inc"\n'
     s += "union {\n"
     for order, water in waters.items():
-        O = water["O"]        
+        O = water["O"]
         H0 = water["H0"]        
         H1 = water["H1"]        
         s += Atom("O",O)
@@ -52,17 +52,18 @@ def hook6(lattice):
         s += Bond("OH",O,H0)
         s += Bond("OH",O,H1)
     for i,j in lattice.graph.edges_iter(data=False):
-        O = waters[j]["O"]
-        H0 = waters[i]["H0"]
-        H1 = waters[i]["H1"]
-        d0 = H0 - O
-        d1 = H1 - O
-        rr0 = np.dot(d0,d0)
-        rr1 = np.dot(d1,d1)
-        if rr0 < rr1 and rr0 < 0.245**2:
-            s += Bond("HB",H0,O)
-        if rr1 < rr0 and rr1 < 0.245**2:
-            s += Bond("HB",H1,O)
+        if i in waters and j in waters:  # edge may connect to the dopant
+            O = waters[j]["O"]
+            H0 = waters[i]["H0"]
+            H1 = waters[i]["H1"]
+            d0 = H0 - O
+            d1 = H1 - O
+            rr0 = np.dot(d0,d0)
+            rr1 = np.dot(d1,d1)
+            if rr0 < rr1 and rr0 < 0.245**2:
+                s += Bond("HB",H0,O)
+            if rr1 < rr0 and rr1 < 0.245**2:
+                s += Bond("HB",H1,O)
     print(s, end="")
     nwateratoms = len(lattice.atoms)
 

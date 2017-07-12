@@ -39,7 +39,7 @@ test:
 	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > trash/TS1.yap  ;diff ref_v0.10.6/TS1.yap trash/TS1.yap
 	./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_v0.10.6/T.pov trash/T.pov
 %.png: %.pov
-	povray +I$< +D9 +W1000 +H1000 +FN +O$@ 
+	povray +I$< +W1000 +H1000 +D +FN +O$@ 
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist

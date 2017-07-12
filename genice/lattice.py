@@ -740,8 +740,8 @@ class Lattice():
                 molname = "G{0}".format(root)
                 pos = self.reppositions[root]
                 rot = self.rotmatrices[root]
-                self.atoms.append([0, molname, name, pos, 0])
-                del self.dopants[root]  # consumed.
+                self.atoms.append([0, molname, name, np.dot(pos, self.repcell), 0])
+                del self.dopants[root]  # processed.
                 self.logger.debug((root,cages,name,molname,pos,rot))
                 for cage, group in cages.items():
                     assert group in self.groups_placer
@@ -758,7 +758,7 @@ class Lattice():
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
                                             cmat, gmol.sites, gmol.labels, gmol.name)
-        # Simply assume the dopants are monatomic
+        # Assume the dopant is monatomic and replaces one water molecule
         atomset = defaultdict(set)
         for label, name in self.dopants.items():
             atomset[name].add(label)

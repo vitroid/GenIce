@@ -48,17 +48,18 @@ def hook6(lattice):
     s += yp.ArrowType(1)
     s += yp.Size(0.03)
     for i,j in lattice.graph.edges_iter(data=False):
-        O = waters[j]["O"]
-        H0 = waters[i]["H0"]
-        H1 = waters[i]["H1"]
-        d0 = H0 - O
-        d1 = H1 - O
-        rr0 = np.dot(d0,d0)
-        rr1 = np.dot(d1,d1)
-        if rr0 < rr1 and rr0 < 0.245**2:
-            s += yp.Arrow(H0,O)
-        if rr1 < rr0 and rr1 < 0.245**2:
-            s += yp.Arrow(H1,O)
+        if i in waters and j in waters:  # edge may connect to the dopant
+            O = waters[j]["O"]
+            H0 = waters[i]["H0"]
+            H1 = waters[i]["H1"]
+            d0 = H0 - O
+            d1 = H1 - O
+            rr0 = np.dot(d0,d0)
+            rr1 = np.dot(d1,d1)
+            if rr0 < rr1 and rr0 < 0.245**2:
+                s += yp.Arrow(H0,O)
+            if rr1 < rr0 and rr1 < 0.245**2:
+                s += yp.Arrow(H1,O)
     print(s, end="")
     nwateratoms = len(lattice.atoms)
 
@@ -68,6 +69,7 @@ def hook7(lattice):
     lattice.logger.info("Output water molecules in Yaplot format.")
     lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
     gatoms = lattice.atoms[nwateratoms:]
+    palettes = dict()
     s = ""
     s += yp.Layer(4)
     s += yp.ArrowType(1)
@@ -75,11 +77,20 @@ def hook7(lattice):
     O  = ""
     for atom in gatoms:
         resno, resname, atomname, position, order = atom
-        s += yp.Color(4)
+        if atomname in palettes:
+            pal = palettes[atomname]
+        else:
+            pal = 4 + len(palettes)
+            palettes[atomname] = pal
+        s += yp.Color(pal)
         s += yp.Size(0.04)
         s += yp.Circle(position)
     s = '#' + "\n#".join(lattice.doc) + "\n" + s
     print(s)
     
 
-hooks = {7:hook7, 6:hook6}
+def hook5(lat):
+    for label, name in lat.dopants.items():
+        lat.logger.info((label,name))
+    
+hooks = {7:hook7, 6:hook6, 5:hook5}

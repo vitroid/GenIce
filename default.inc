@@ -26,6 +26,14 @@ global_settings { max_trace_level 100 }
 
 #declare RO = 0.05;
 #declare RMe = 0.05;
+#declare RNc = 0.05;
+#declare RC = 0.05;
+#declare RBr = 0.05;
+#declare RMa = 0.05;
+#declare RMb = 0.05;
+#declare RMc = 0.05;
+#declare RMd = 0.05;
+
 #declare RH = 0.03;
 #declare ROH = 0.02;
 #declare RHB = 0.015;
@@ -97,6 +105,30 @@ ior 1.1  //water
   }
   finish {FA}
 }
+#declare TEXNc = texture {
+  pigment {
+    rgb <0,1,0.5>
+  }
+  finish {FA}
+}
+#declare TEXC = texture {
+  pigment {
+    rgb <0.2,0.2,0.2>
+  }
+  finish {FA}
+}
+#declare TEXBr = texture {
+  pigment {
+    rgb <1,1,0>
+  }
+  finish {FA}
+}
+#declare TEXMa = texture {
+  pigment {
+    rgb <1,0,1>
+  }
+  finish {FA}
+}
 
 
 #declare TEXHB = texture {
@@ -124,6 +156,21 @@ texture { TEXH }
 #declare MATMe = material {
 texture { TEXMe }
 }
+#declare MATNc = material {
+texture { TEXNc }
+}
+#declare MATC = material {
+texture { TEXC }
+}
+#declare MATBr = material {
+texture { TEXBr }
+}
+#declare MATMa = material {
+texture { TEXMa }
+}
+#declare MATMb=MATMa;
+#declare MATMc=MATMa;
+#declare MATMd=MATMa;
 
 
 
