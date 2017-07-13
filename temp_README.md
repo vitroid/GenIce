@@ -160,12 +160,14 @@ Name |Application | extension | water | solute | HB | remarks
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
 `graph`  |Graph       | `.ngph`     | none | none | o | Experimental.
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | o | o |none |
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
 `o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
 `cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
+`xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
 
 ## Ice structures
 <!-- rreferences removed. -->
@@ -185,12 +187,14 @@ C0, C0-II  | Filled ice C0 (Alias of 17).
 C1     | Filled ice C1 (Alias of 2).
 C2     | Filled ice C2 (Alias of 1c).
 sTprime | Filled ice "sT'"
-CS1, CS2, CS4, TS1, HS1, HS2, HS3, sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates
+CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature.
+sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature.
 RHO    | Hypothetical ice at negative pressure ice "sIII".
 FAU    | Hypothetical ice at negative pressure ice "sIV".
-CRN1,CRN2, CRN3 | 4-coordinated continuous random network
+CRN1, CRN2, CRN3 | 4-coordinated continuous random network
 Struct01 .. Struct84 | Space Fullerenes
 A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names.
+T      | Space fullerene type T, II+IVa.
 
 Ice names with double quotations are not experimentally verified.
 
