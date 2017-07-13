@@ -11,6 +11,12 @@ from genice import rigid
 from genice import yaplotlib as yp
 
 
+def hook4(lattice):
+    lattice.logger.info("Hook4: Output depolarization process in Yaplot format.")
+    print(lattice.yapresult, end="")
+    lattice.logger.info("Hook4: end.")
+
+
 def hook6(lattice):
     global nwateratoms
     lattice.logger.info("Hook6: Output water molecules in Yaplot format.")
@@ -26,7 +32,7 @@ def hook6(lattice):
                 waters[order]["H0"] = position
             else:
                 waters[order]["H1"] = position
-    s = lattice.yapresult
+    s = ""
     s += yp.Color(3)
     for order, water in waters.items():
         O = water["O"]        
@@ -92,4 +98,4 @@ def hook7(lattice):
     lattice.logger.info("Hook7: end.")
     
 
-hooks = {7:hook7, 6:hook6}
+hooks = {7:hook7, 6:hook6, 4:hook4}

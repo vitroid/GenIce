@@ -11,6 +11,7 @@ import numpy as np
 from genice.importer import safe_import
 from genice import pairlist as pl
 from genice import digraph as dg
+from genice import rigid
 
 def load_numbers(v):
     if type(v) is str:

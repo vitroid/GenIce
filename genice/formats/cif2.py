@@ -46,6 +46,10 @@ def hook7(lattice):
         s += "_symmetry_space_group_name_H-M   'P 1 '\n"
     s += """
 loop_
+  _symmetry_equiv_pos_as_xyz
+X,Y,Z
+
+loop_
 _atom_site_label
 _atom_site_fract_x
 _atom_site_fract_y
