@@ -715,21 +715,21 @@ union {
  sphere { <1.623, 2.170, 2.472> ,RH material { MATH }  } 
  cylinder { <1.545, 2.222, 2.480> ,<1.502, 2.214, 2.394> ,ROH material { MATOH }  } 
  cylinder { <1.545, 2.222, 2.480> ,<1.623, 2.170, 2.472> ,ROH material { MATOH }  } 
- sphere { <2.218, 2.476, 2.052> ,RO material { MATO }  } 
- sphere { <2.306, 2.483, 2.026> ,RH material { MATH }  } 
- sphere { <2.211, 2.387, 2.094> ,RH material { MATH }  } 
- cylinder { <2.218, 2.476, 2.052> ,<2.306, 2.483, 2.026> ,ROH material { MATOH }  } 
- cylinder { <2.218, 2.476, 2.052> ,<2.211, 2.387, 2.094> ,ROH material { MATOH }  } 
+ sphere { <2.226, 2.477, 2.054> ,RO material { MATO }  } 
+ sphere { <2.174, 2.469, 1.976> ,RH material { MATH }  } 
+ sphere { <2.216, 2.391, 2.099> ,RH material { MATH }  } 
+ cylinder { <2.226, 2.477, 2.054> ,<2.174, 2.469, 1.976> ,ROH material { MATOH }  } 
+ cylinder { <2.226, 2.477, 2.054> ,<2.216, 2.391, 2.099> ,ROH material { MATOH }  } 
  sphere { <2.193, 2.194, 2.187> ,RO material { MATO }  } 
  sphere { <2.137, 2.140, 2.138> ,RH material { MATH }  } 
  sphere { <2.148, 2.202, 2.276> ,RH material { MATH }  } 
  cylinder { <2.193, 2.194, 2.187> ,<2.137, 2.140, 2.138> ,ROH material { MATOH }  } 
  cylinder { <2.193, 2.194, 2.187> ,<2.148, 2.202, 2.276> ,ROH material { MATOH }  } 
- sphere { <2.046, 2.438, 1.801> ,RO material { MATO }  } 
- sphere { <2.104, 2.449, 1.875> ,RH material { MATH }  } 
- sphere { <2.102, 2.450, 1.724> ,RH material { MATH }  } 
- cylinder { <2.046, 2.438, 1.801> ,<2.104, 2.449, 1.875> ,ROH material { MATOH }  } 
- cylinder { <2.046, 2.438, 1.801> ,<2.102, 2.450, 1.724> ,ROH material { MATOH }  } 
+ sphere { <2.054, 2.435, 1.805> ,RO material { MATO }  } 
+ sphere { <2.100, 2.449, 1.725> ,RH material { MATH }  } 
+ sphere { <1.977, 2.496, 1.800> ,RH material { MATH }  } 
+ cylinder { <2.054, 2.435, 1.805> ,<2.100, 2.449, 1.725> ,ROH material { MATOH }  } 
+ cylinder { <2.054, 2.435, 1.805> ,<1.977, 2.496, 1.800> ,ROH material { MATOH }  } 
  sphere { <1.798, 2.049, 2.442> ,RO material { MATO }  } 
  sphere { <1.804, 1.975, 2.504> ,RH material { MATH }  } 
  sphere { <1.878, 2.098, 2.455> ,RH material { MATH }  } 
@@ -745,11 +745,11 @@ union {
  sphere { <1.496, 2.455, 1.724> ,RH material { MATH }  } 
  cylinder { <1.543, 2.444, 1.806> ,<1.618, 2.504, 1.799> ,ROH material { MATOH }  } 
  cylinder { <1.543, 2.444, 1.806> ,<1.496, 2.455, 1.724> ,ROH material { MATOH }  } 
- sphere { <1.790, 2.636, 1.794> ,RO material { MATO }  } 
- sphere { <1.870, 2.576, 1.796> ,RH material { MATH }  } 
- sphere { <1.792, 2.681, 1.874> ,RH material { MATH }  } 
- cylinder { <1.790, 2.636, 1.794> ,<1.870, 2.576, 1.796> ,ROH material { MATOH }  } 
- cylinder { <1.790, 2.636, 1.794> ,<1.792, 2.681, 1.874> ,ROH material { MATOH }  } 
+ sphere { <1.795, 2.629, 1.799> ,RO material { MATO }  } 
+ sphere { <1.795, 2.686, 1.722> ,RH material { MATH }  } 
+ sphere { <1.796, 2.689, 1.873> ,RH material { MATH }  } 
+ cylinder { <1.795, 2.629, 1.799> ,<1.795, 2.686, 1.722> ,ROH material { MATOH }  } 
+ cylinder { <1.795, 2.629, 1.799> ,<1.796, 2.689, 1.873> ,ROH material { MATOH }  } 
  sphere { <1.411, 2.190, 2.193> ,RO material { MATO }  } 
  sphere { <1.398, 2.275, 2.150> ,RH material { MATH }  } 
  sphere { <1.323, 2.152, 2.199> ,RH material { MATH }  } 
@@ -765,31 +765,31 @@ union {
  sphere { <3.108, 2.102, 1.876> ,RH material { MATH }  } 
  cylinder { <3.080, 2.051, 1.798> ,<3.136, 1.976, 1.798> ,ROH material { MATOH }  } 
  cylinder { <3.080, 2.051, 1.798> ,<3.108, 2.102, 1.876> ,ROH material { MATOH }  } 
- sphere { <2.778, 2.054, 1.797> ,RO material { MATO }  } 
- sphere { <2.747, 2.105, 1.880> ,RH material { MATH }  } 
- sphere { <2.866, 2.055, 1.801> ,RH material { MATH }  } 
- cylinder { <2.778, 2.054, 1.797> ,<2.747, 2.105, 1.880> ,ROH material { MATOH }  } 
- cylinder { <2.778, 2.054, 1.797> ,<2.866, 2.055, 1.801> ,ROH material { MATOH }  } 
- sphere { <2.487, 2.510, 1.631> ,RO material { MATO }  } 
- sphere { <2.531, 2.576, 1.605> ,RH material { MATH }  } 
- sphere { <2.540, 2.425, 1.596> ,RH material { MATH }  } 
- cylinder { <2.487, 2.510, 1.631> ,<2.531, 2.576, 1.605> ,ROH material { MATOH }  } 
- cylinder { <2.487, 2.510, 1.631> ,<2.540, 2.425, 1.596> ,ROH material { MATOH }  } 
+ sphere { <2.777, 2.063, 1.801> ,RO material { MATO }  } 
+ sphere { <2.742, 1.976, 1.800> ,RH material { MATH }  } 
+ sphere { <2.874, 2.050, 1.802> ,RH material { MATH }  } 
+ cylinder { <2.777, 2.063, 1.801> ,<2.742, 1.976, 1.800> ,ROH material { MATOH }  } 
+ cylinder { <2.777, 2.063, 1.801> ,<2.874, 2.050, 1.802> ,ROH material { MATOH }  } 
+ sphere { <2.489, 2.514, 1.624> ,RO material { MATO }  } 
+ sphere { <2.539, 2.434, 1.595> ,RH material { MATH }  } 
+ sphere { <2.493, 2.511, 1.717> ,RH material { MATH }  } 
+ cylinder { <2.489, 2.514, 1.624> ,<2.539, 2.434, 1.595> ,ROH material { MATOH }  } 
+ cylinder { <2.489, 2.514, 1.624> ,<2.493, 2.511, 1.717> ,ROH material { MATOH }  } 
  sphere { <2.670, 2.228, 1.510> ,RO material { MATO }  } 
  sphere { <2.701, 2.176, 1.595> ,RH material { MATH }  } 
  sphere { <2.613, 2.176, 1.472> ,RH material { MATH }  } 
  cylinder { <2.670, 2.228, 1.510> ,<2.701, 2.176, 1.595> ,ROH material { MATOH }  } 
  cylinder { <2.670, 2.228, 1.510> ,<2.613, 2.176, 1.472> ,ROH material { MATOH }  } 
- sphere { <2.498, 2.504, 1.969> ,RO material { MATO }  } 
- sphere { <2.497, 2.507, 1.863> ,RH material { MATH }  } 
- sphere { <2.541, 2.573, 1.992> ,RH material { MATH }  } 
- cylinder { <2.498, 2.504, 1.969> ,<2.497, 2.507, 1.863> ,ROH material { MATOH }  } 
- cylinder { <2.498, 2.504, 1.969> ,<2.541, 2.573, 1.992> ,ROH material { MATOH }  } 
- sphere { <2.661, 2.223, 2.083> ,RO material { MATO }  } 
- sphere { <2.613, 2.309, 2.048> ,RH material { MATH }  } 
- sphere { <2.730, 2.251, 2.125> ,RH material { MATH }  } 
- cylinder { <2.661, 2.223, 2.083> ,<2.613, 2.309, 2.048> ,ROH material { MATOH }  } 
- cylinder { <2.661, 2.223, 2.083> ,<2.730, 2.251, 2.125> ,ROH material { MATOH }  } 
+ sphere { <2.502, 2.513, 1.961> ,RO material { MATO }  } 
+ sphere { <2.551, 2.430, 1.996> ,RH material { MATH }  } 
+ sphere { <2.419, 2.503, 1.987> ,RH material { MATH }  } 
+ cylinder { <2.502, 2.513, 1.961> ,<2.551, 2.430, 1.996> ,ROH material { MATOH }  } 
+ cylinder { <2.502, 2.513, 1.961> ,<2.419, 2.503, 1.987> ,ROH material { MATOH }  } 
+ sphere { <2.656, 2.231, 2.086> ,RO material { MATO }  } 
+ sphere { <2.692, 2.179, 2.001> ,RH material { MATH }  } 
+ sphere { <2.725, 2.256, 2.127> ,RH material { MATH }  } 
+ cylinder { <2.656, 2.231, 2.086> ,<2.692, 2.179, 2.001> ,ROH material { MATOH }  } 
+ cylinder { <2.656, 2.231, 2.086> ,<2.725, 2.256, 2.127> ,ROH material { MATOH }  } 
  sphere { <3.161, 2.749, 2.026> ,RO material { MATO }  } 
  sphere { <3.218, 2.674, 1.998> ,RH material { MATH }  } 
  sphere { <3.217, 2.802, 2.078> ,RH material { MATH }  } 
@@ -810,11 +810,11 @@ union {
  sphere { <3.100, 2.979, 1.798> ,RH material { MATH }  } 
  cylinder { <3.074, 2.886, 1.792> ,<3.107, 2.846, 1.871> ,ROH material { MATOH }  } 
  cylinder { <3.074, 2.886, 1.792> ,<3.100, 2.979, 1.798> ,ROH material { MATOH }  } 
- sphere { <2.636, 2.721, 2.050> ,RO material { MATO }  } 
- sphere { <2.668, 2.771, 1.973> ,RH material { MATH }  } 
- sphere { <2.594, 2.787, 2.105> ,RH material { MATH }  } 
- cylinder { <2.636, 2.721, 2.050> ,<2.668, 2.771, 1.973> ,ROH material { MATOH }  } 
- cylinder { <2.636, 2.721, 2.050> ,<2.594, 2.787, 2.105> ,ROH material { MATOH }  } 
+ sphere { <2.636, 2.729, 2.055> ,RO material { MATO }  } 
+ sphere { <2.592, 2.657, 2.024> ,RH material { MATH }  } 
+ sphere { <2.670, 2.776, 1.972> ,RH material { MATH }  } 
+ cylinder { <2.636, 2.729, 2.055> ,<2.592, 2.657, 2.024> ,ROH material { MATOH }  } 
+ cylinder { <2.636, 2.729, 2.055> ,<2.670, 2.776, 1.972> ,ROH material { MATOH }  } 
  sphere { <2.886, 2.311, 2.225> ,RO material { MATO }  } 
  sphere { <2.885, 2.402, 2.217> ,RH material { MATH }  } 
  sphere { <2.968, 2.282, 2.176> ,RH material { MATH }  } 
@@ -830,41 +830,41 @@ union {
  sphere { <3.216, 2.302, 2.022> ,RH material { MATH }  } 
  cylinder { <3.162, 2.218, 2.053> ,<3.218, 2.171, 2.099> ,ROH material { MATOH }  } 
  cylinder { <3.162, 2.218, 2.053> ,<3.216, 2.302, 2.022> ,ROH material { MATOH }  } 
- sphere { <2.636, 2.727, 1.546> ,RO material { MATO }  } 
- sphere { <2.714, 2.696, 1.498> ,RH material { MATH }  } 
- sphere { <2.595, 2.788, 1.487> ,RH material { MATH }  } 
- cylinder { <2.636, 2.727, 1.546> ,<2.714, 2.696, 1.498> ,ROH material { MATOH }  } 
- cylinder { <2.636, 2.727, 1.546> ,<2.595, 2.788, 1.487> ,ROH material { MATOH }  } 
- sphere { <3.166, 2.758, 1.569> ,RO material { MATO }  } 
- sphere { <3.222, 2.680, 1.601> ,RH material { MATH }  } 
- sphere { <3.138, 2.799, 1.645> ,RH material { MATH }  } 
- cylinder { <3.166, 2.758, 1.569> ,<3.222, 2.680, 1.601> ,ROH material { MATOH }  } 
- cylinder { <3.166, 2.758, 1.569> ,<3.138, 2.799, 1.645> ,ROH material { MATOH }  } 
- sphere { <2.878, 2.622, 1.407> ,RO material { MATO }  } 
- sphere { <2.962, 2.655, 1.455> ,RH material { MATH }  } 
- sphere { <2.888, 2.534, 1.403> ,RH material { MATH }  } 
- cylinder { <2.878, 2.622, 1.407> ,<2.962, 2.655, 1.455> ,ROH material { MATOH }  } 
- cylinder { <2.878, 2.622, 1.407> ,<2.888, 2.534, 1.403> ,ROH material { MATOH }  } 
+ sphere { <2.644, 2.730, 1.542> ,RO material { MATO }  } 
+ sphere { <2.588, 2.788, 1.487> ,RH material { MATH }  } 
+ sphere { <2.587, 2.659, 1.567> ,RH material { MATH }  } 
+ cylinder { <2.644, 2.730, 1.542> ,<2.588, 2.788, 1.487> ,ROH material { MATOH }  } 
+ cylinder { <2.644, 2.730, 1.542> ,<2.587, 2.659, 1.567> ,ROH material { MATOH }  } 
+ sphere { <3.174, 2.756, 1.574> ,RO material { MATO }  } 
+ sphere { <3.087, 2.715, 1.525> ,RH material { MATH }  } 
+ sphere { <3.145, 2.795, 1.640> ,RH material { MATH }  } 
+ cylinder { <3.174, 2.756, 1.574> ,<3.087, 2.715, 1.525> ,ROH material { MATOH }  } 
+ cylinder { <3.174, 2.756, 1.574> ,<3.145, 2.795, 1.640> ,ROH material { MATOH }  } 
+ sphere { <2.888, 2.623, 1.407> ,RO material { MATO }  } 
+ sphere { <2.808, 2.649, 1.449> ,RH material { MATH }  } 
+ sphere { <2.883, 2.526, 1.403> ,RH material { MATH }  } 
+ cylinder { <2.888, 2.623, 1.407> ,<2.808, 2.649, 1.449> ,ROH material { MATOH }  } 
+ cylinder { <2.888, 2.623, 1.407> ,<2.883, 2.526, 1.403> ,ROH material { MATOH }  } 
  sphere { <2.891, 2.314, 1.377> ,RO material { MATO }  } 
  sphere { <2.824, 2.285, 1.421> ,RH material { MATH }  } 
  sphere { <2.975, 2.282, 1.432> ,RH material { MATH }  } 
  cylinder { <2.891, 2.314, 1.377> ,<2.824, 2.285, 1.421> ,ROH material { MATOH }  } 
  cylinder { <2.891, 2.314, 1.377> ,<2.975, 2.282, 1.432> ,ROH material { MATOH }  } 
- sphere { <3.166, 2.219, 1.550> ,RO material { MATO }  } 
- sphere { <3.221, 2.163, 1.499> ,RH material { MATH }  } 
- sphere { <3.141, 2.165, 1.628> ,RH material { MATH }  } 
- cylinder { <3.166, 2.219, 1.550> ,<3.221, 2.163, 1.499> ,ROH material { MATOH }  } 
- cylinder { <3.166, 2.219, 1.550> ,<3.141, 2.165, 1.628> ,ROH material { MATOH }  } 
- sphere { <3.338, 2.523, 1.663> ,RO material { MATO }  } 
- sphere { <3.289, 2.434, 1.631> ,RH material { MATH }  } 
- sphere { <3.411, 2.523, 1.623> ,RH material { MATH }  } 
- cylinder { <3.338, 2.523, 1.663> ,<3.289, 2.434, 1.631> ,ROH material { MATOH }  } 
- cylinder { <3.338, 2.523, 1.663> ,<3.411, 2.523, 1.623> ,ROH material { MATOH }  } 
- sphere { <2.640, 1.795, 1.801> ,RO material { MATO }  } 
- sphere { <2.683, 1.877, 1.800> ,RH material { MATH }  } 
- sphere { <2.579, 1.798, 1.723> ,RH material { MATH }  } 
- cylinder { <2.640, 1.795, 1.801> ,<2.683, 1.877, 1.800> ,ROH material { MATOH }  } 
- cylinder { <2.640, 1.795, 1.801> ,<2.579, 1.798, 1.723> ,ROH material { MATOH }  } 
+ sphere { <3.166, 2.211, 1.545> ,RO material { MATO }  } 
+ sphere { <3.214, 2.296, 1.579> ,RH material { MATH }  } 
+ sphere { <3.144, 2.167, 1.618> ,RH material { MATH }  } 
+ cylinder { <3.166, 2.211, 1.545> ,<3.214, 2.296, 1.579> ,ROH material { MATOH }  } 
+ cylinder { <3.166, 2.211, 1.545> ,<3.144, 2.167, 1.618> ,ROH material { MATOH }  } 
+ sphere { <3.338, 2.513, 1.663> ,RO material { MATO }  } 
+ sphere { <3.286, 2.592, 1.633> ,RH material { MATH }  } 
+ sphere { <3.418, 2.519, 1.617> ,RH material { MATH }  } 
+ cylinder { <3.338, 2.513, 1.663> ,<3.286, 2.592, 1.633> ,ROH material { MATOH }  } 
+ cylinder { <3.338, 2.513, 1.663> ,<3.418, 2.519, 1.617> ,ROH material { MATOH }  } 
+ sphere { <2.640, 1.805, 1.801> ,RO material { MATO }  } 
+ sphere { <2.681, 1.723, 1.800> ,RH material { MATH }  } 
+ sphere { <2.579, 1.803, 1.723> ,RH material { MATH }  } 
+ cylinder { <2.640, 1.805, 1.801> ,<2.681, 1.723, 1.800> ,ROH material { MATOH }  } 
+ cylinder { <2.640, 1.805, 1.801> ,<2.579, 1.803, 1.723> ,ROH material { MATOH }  } 
  sphere { <2.477, 2.043, 2.226> ,RO material { MATO }  } 
  sphere { <2.535, 2.099, 2.183> ,RH material { MATH }  } 
  sphere { <2.388, 2.087, 2.216> ,RH material { MATH }  } 
@@ -1040,16 +1040,16 @@ union {
  sphere { <2.233, 0.075, 2.825> ,RH material { MATH }  } 
  cylinder { <2.252, -0.006, 2.785> ,<2.198, -0.005, 2.702> ,ROH material { MATOH }  } 
  cylinder { <2.252, -0.006, 2.785> ,<2.233, 0.075, 2.825> ,ROH material { MATOH }  } 
- sphere { <2.498, 2.922, 2.228> ,RO material { MATO }  } 
- sphere { <2.550, 2.932, 2.307> ,RH material { MATH }  } 
- sphere { <2.503, 3.007, 2.184> ,RH material { MATH }  } 
- cylinder { <2.498, 2.922, 2.228> ,<2.550, 2.932, 2.307> ,ROH material { MATOH }  } 
- cylinder { <2.498, 2.922, 2.228> ,<2.503, 3.007, 2.184> ,ROH material { MATOH }  } 
- sphere { <2.487, 3.197, 2.053> ,RO material { MATO }  } 
- sphere { <2.535, 3.183, 1.973> ,RH material { MATH }  } 
- sphere { <2.544, 3.255, 2.106> ,RH material { MATH }  } 
- cylinder { <2.487, 3.197, 2.053> ,<2.535, 3.183, 1.973> ,ROH material { MATOH }  } 
- cylinder { <2.487, 3.197, 2.053> ,<2.544, 3.255, 2.106> ,ROH material { MATOH }  } 
+ sphere { <2.496, 2.931, 2.228> ,RO material { MATO }  } 
+ sphere { <2.538, 2.870, 2.173> ,RH material { MATH }  } 
+ sphere { <2.548, 2.928, 2.312> ,RH material { MATH }  } 
+ cylinder { <2.496, 2.931, 2.228> ,<2.538, 2.870, 2.173> ,ROH material { MATOH }  } 
+ cylinder { <2.496, 2.931, 2.228> ,<2.548, 2.928, 2.312> ,ROH material { MATOH }  } 
+ sphere { <2.490, 3.201, 2.045> ,RO material { MATO }  } 
+ sphere { <2.490, 3.116, 2.097> ,RH material { MATH }  } 
+ sphere { <2.540, 3.259, 2.095> ,RH material { MATH }  } 
+ cylinder { <2.490, 3.201, 2.045> ,<2.490, 3.116, 2.097> ,ROH material { MATOH }  } 
+ cylinder { <2.490, 3.201, 2.045> ,<2.540, 3.259, 2.095> ,ROH material { MATOH }  } 
  sphere { <2.668, 2.925, 2.503> ,RO material { MATO }  } 
  sphere { <2.733, 2.857, 2.502> ,RH material { MATH }  } 
  sphere { <2.610, 2.903, 2.577> ,RH material { MATH }  } 
@@ -1090,21 +1090,21 @@ union {
  sphere { <2.897, 2.662, 2.532> ,RH material { MATH }  } 
  cylinder { <2.885, 2.737, 2.473> ,<2.886, 2.698, 2.386> ,ROH material { MATOH }  } 
  cylinder { <2.885, 2.737, 2.473> ,<2.897, 2.662, 2.532> ,ROH material { MATOH }  } 
- sphere { <2.625, 3.150, 1.801> ,RO material { MATO }  } 
- sphere { <2.661, 3.061, 1.801> ,RH material { MATH }  } 
- sphere { <2.702, 3.206, 1.801> ,RH material { MATH }  } 
- cylinder { <2.625, 3.150, 1.801> ,<2.661, 3.061, 1.801> ,ROH material { MATOH }  } 
- cylinder { <2.625, 3.150, 1.801> ,<2.702, 3.206, 1.801> ,ROH material { MATOH }  } 
+ sphere { <2.632, 3.153, 1.796> ,RO material { MATO }  } 
+ sphere { <2.588, 3.166, 1.879> ,RH material { MATH }  } 
+ sphere { <2.666, 3.063, 1.801> ,RH material { MATH }  } 
+ cylinder { <2.632, 3.153, 1.796> ,<2.588, 3.166, 1.879> ,ROH material { MATOH }  } 
+ cylinder { <2.632, 3.153, 1.796> ,<2.666, 3.063, 1.801> ,ROH material { MATOH }  } 
  sphere { <3.145, 3.167, 1.800> ,RO material { MATO }  } 
  sphere { <3.061, 3.216, 1.792> ,RH material { MATH }  } 
  sphere { <3.188, 3.180, 1.717> ,RH material { MATH }  } 
  cylinder { <3.145, 3.167, 1.800> ,<3.061, 3.216, 1.792> ,ROH material { MATOH }  } 
  cylinder { <3.145, 3.167, 1.800> ,<3.188, 3.180, 1.717> ,ROH material { MATOH }  } 
- sphere { <2.863, 3.312, 1.802> ,RO material { MATO }  } 
- sphere { <2.861, 3.370, 1.877> ,RH material { MATH }  } 
- sphere { <2.863, 3.370, 1.726> ,RH material { MATH }  } 
- cylinder { <2.863, 3.312, 1.802> ,<2.861, 3.370, 1.877> ,ROH material { MATOH }  } 
- cylinder { <2.863, 3.312, 1.802> ,<2.863, 3.370, 1.726> ,ROH material { MATOH }  } 
+ sphere { <2.868, 3.319, 1.797> ,RO material { MATO }  } 
+ sphere { <2.791, 3.263, 1.798> ,RH material { MATH }  } 
+ sphere { <2.864, 3.365, 1.882> ,RH material { MATH }  } 
+ cylinder { <2.868, 3.319, 1.797> ,<2.791, 3.263, 1.798> ,ROH material { MATOH }  } 
+ cylinder { <2.868, 3.319, 1.797> ,<2.864, 3.365, 1.882> ,ROH material { MATOH }  } 
  sphere { <3.345, 2.048, 2.214> ,RO material { MATO }  } 
  sphere { <3.365, 1.962, 2.185> ,RH material { MATH }  } 
  sphere { <3.303, 2.035, 2.303> ,RH material { MATH }  } 
@@ -1230,11 +1230,11 @@ union {
  sphere { <2.035, 3.397, 3.235> ,RH material { MATH }  } 
  cylinder { <2.063, 3.311, 3.194> ,<1.985, 3.262, 3.187> ,ROH material { MATOH }  } 
  cylinder { <2.063, 3.311, 3.194> ,<2.035, 3.397, 3.235> ,ROH material { MATOH }  } 
- sphere { <0.255, 2.763, 0.925> ,RO material { MATO }  } 
- sphere { <0.176, 2.731, 0.974> ,RH material { MATH }  } 
- sphere { <0.308, 2.804, 0.990> ,RH material { MATH }  } 
- cylinder { <0.255, 2.763, 0.925> ,<0.176, 2.731, 0.974> ,ROH material { MATOH }  } 
- cylinder { <0.255, 2.763, 0.925> ,<0.308, 2.804, 0.990> ,ROH material { MATOH }  } 
+ sphere { <0.251, 2.758, 0.932> ,RO material { MATO }  } 
+ sphere { <0.230, 2.814, 0.861> ,RH material { MATH }  } 
+ sphere { <0.310, 2.812, 0.989> ,RH material { MATH }  } 
+ cylinder { <0.251, 2.758, 0.932> ,<0.230, 2.814, 0.861> ,ROH material { MATOH }  } 
+ cylinder { <0.251, 2.758, 0.932> ,<0.310, 2.812, 0.989> ,ROH material { MATOH }  } 
  sphere { <0.396, 2.509, 0.818> ,RO material { MATO }  } 
  sphere { <0.345, 2.430, 0.853> ,RH material { MATH }  } 
  sphere { <0.352, 2.581, 0.852> ,RH material { MATH }  } 
@@ -1280,26 +1280,26 @@ union {
  sphere { <3.347, 2.779, 0.503> ,RH material { MATH }  } 
  cylinder { <3.313, 2.728, 0.416> ,<3.271, 2.661, 0.445> ,ROH material { MATOH }  } 
  cylinder { <3.313, 2.728, 0.416> ,<3.347, 2.779, 0.503> ,ROH material { MATOH }  } 
- sphere { <0.163, 2.901, 0.699> ,RO material { MATO }  } 
- sphere { <0.198, 2.863, 0.778> ,RH material { MATH }  } 
- sphere { <0.198, 2.991, 0.697> ,RH material { MATH }  } 
- cylinder { <0.163, 2.901, 0.699> ,<0.198, 2.863, 0.778> ,ROH material { MATOH }  } 
- cylinder { <0.163, 2.901, 0.699> ,<0.198, 2.991, 0.697> ,ROH material { MATOH }  } 
- sphere { <3.427, 2.904, 0.700> ,RO material { MATO }  } 
- sphere { <3.530, 2.903, 0.702> ,RH material { MATH }  } 
- sphere { <3.402, 2.859, 0.771> ,RH material { MATH }  } 
- cylinder { <3.427, 2.904, 0.700> ,<3.530, 2.903, 0.702> ,ROH material { MATOH }  } 
- cylinder { <3.427, 2.904, 0.700> ,<3.402, 2.859, 0.771> ,ROH material { MATOH }  } 
- sphere { <-0.001, 2.659, 1.070> ,RO material { MATO }  } 
- sphere { <-0.001, 2.557, 1.076> ,RH material { MATH }  } 
- sphere { <-0.001, 2.687, 1.155> ,RH material { MATH }  } 
- cylinder { <-0.001, 2.659, 1.070> ,<-0.001, 2.557, 1.076> ,ROH material { MATOH }  } 
- cylinder { <-0.001, 2.659, 1.070> ,<-0.001, 2.687, 1.155> ,ROH material { MATOH }  } 
- sphere { <-0.003, 2.312, 1.078> ,RO material { MATO }  } 
- sphere { <-0.077, 2.283, 1.028> ,RH material { MATH }  } 
- sphere { <0.075, 2.283, 1.027> ,RH material { MATH }  } 
- cylinder { <-0.003, 2.312, 1.078> ,<-0.077, 2.283, 1.028> ,ROH material { MATOH }  } 
- cylinder { <-0.003, 2.312, 1.078> ,<0.075, 2.283, 1.027> ,ROH material { MATOH }  } 
+ sphere { <0.171, 2.899, 0.704> ,RO material { MATO }  } 
+ sphere { <0.069, 2.901, 0.704> ,RH material { MATH }  } 
+ sphere { <0.196, 2.984, 0.694> ,RH material { MATH }  } 
+ cylinder { <0.171, 2.899, 0.704> ,<0.069, 2.901, 0.704> ,ROH material { MATOH }  } 
+ cylinder { <0.171, 2.899, 0.704> ,<0.196, 2.984, 0.694> ,ROH material { MATOH }  } 
+ sphere { <3.435, 2.899, 0.699> ,RO material { MATO }  } 
+ sphere { <3.400, 2.859, 0.778> ,RH material { MATH }  } 
+ sphere { <3.399, 2.988, 0.700> ,RH material { MATH }  } 
+ cylinder { <3.435, 2.899, 0.699> ,<3.400, 2.859, 0.778> ,ROH material { MATOH }  } 
+ cylinder { <3.435, 2.899, 0.699> ,<3.399, 2.988, 0.700> ,ROH material { MATOH }  } 
+ sphere { <-0.005, 2.651, 1.073> ,RO material { MATO }  } 
+ sphere { <0.074, 2.685, 1.029> ,RH material { MATH }  } 
+ sphere { <-0.004, 2.689, 1.159> ,RH material { MATH }  } 
+ cylinder { <-0.005, 2.651, 1.073> ,<0.074, 2.685, 1.029> ,ROH material { MATOH }  } 
+ cylinder { <-0.005, 2.651, 1.073> ,<-0.004, 2.689, 1.159> ,ROH material { MATOH }  } 
+ sphere { <-0.006, 2.304, 1.075> ,RO material { MATO }  } 
+ sphere { <-0.005, 2.410, 1.075> ,RH material { MATH }  } 
+ sphere { <0.064, 2.282, 1.033> ,RH material { MATH }  } 
+ cylinder { <-0.006, 2.304, 1.075> ,<-0.005, 2.410, 1.075> ,ROH material { MATOH }  } 
+ cylinder { <-0.006, 2.304, 1.075> ,<0.064, 2.282, 1.033> ,ROH material { MATOH }  } 
  sphere { <3.339, 2.757, 0.925> ,RO material { MATO }  } 
  sphere { <3.288, 2.801, 0.990> ,RH material { MATH }  } 
  sphere { <3.419, 2.726, 0.974> ,RH material { MATH }  } 
@@ -1310,21 +1310,21 @@ union {
  sphere { <3.192, 2.508, 0.726> ,RH material { MATH }  } 
  cylinder { <3.197, 2.502, 0.822> ,<3.241, 2.582, 0.849> ,ROH material { MATOH }  } 
  cylinder { <3.197, 2.502, 0.822> ,<3.192, 2.508, 0.726> ,ROH material { MATOH }  } 
- sphere { <3.376, 2.227, 0.942> ,RO material { MATO }  } 
- sphere { <3.398, 2.181, 0.877> ,RH material { MATH }  } 
- sphere { <3.323, 2.310, 0.900> ,RH material { MATH }  } 
- cylinder { <3.376, 2.227, 0.942> ,<3.398, 2.181, 0.877> ,ROH material { MATOH }  } 
- cylinder { <3.376, 2.227, 0.942> ,<3.323, 2.310, 0.900> ,ROH material { MATOH }  } 
+ sphere { <3.373, 2.223, 0.936> ,RO material { MATO }  } 
+ sphere { <3.439, 2.251, 0.977> ,RH material { MATH }  } 
+ sphere { <3.322, 2.310, 0.901> ,RH material { MATH }  } 
+ cylinder { <3.373, 2.223, 0.936> ,<3.439, 2.251, 0.977> ,ROH material { MATOH }  } 
+ cylinder { <3.373, 2.223, 0.936> ,<3.322, 2.310, 0.901> ,ROH material { MATOH }  } 
  sphere { <3.174, 2.508, 0.510> ,RO material { MATO }  } 
  sphere { <3.091, 2.493, 0.483> ,RH material { MATH }  } 
  sphere { <3.223, 2.420, 0.493> ,RH material { MATH }  } 
  cylinder { <3.174, 2.508, 0.510> ,<3.091, 2.493, 0.483> ,ROH material { MATOH }  } 
  cylinder { <3.174, 2.508, 0.510> ,<3.223, 2.420, 0.493> ,ROH material { MATOH }  } 
- sphere { <3.456, 2.066, 0.737> ,RO material { MATO }  } 
- sphere { <3.418, 1.975, 0.738> ,RH material { MATH }  } 
- sphere { <3.548, 2.054, 0.736> ,RH material { MATH }  } 
- cylinder { <3.456, 2.066, 0.737> ,<3.418, 1.975, 0.738> ,ROH material { MATOH }  } 
- cylinder { <3.456, 2.066, 0.737> ,<3.548, 2.054, 0.736> ,ROH material { MATOH }  } 
+ sphere { <3.455, 2.057, 0.733> ,RO material { MATO }  } 
+ sphere { <3.430, 2.117, 0.804> ,RH material { MATH }  } 
+ sphere { <3.551, 2.058, 0.735> ,RH material { MATH }  } 
+ cylinder { <3.455, 2.057, 0.733> ,<3.430, 2.117, 0.804> ,ROH material { MATOH }  } 
+ cylinder { <3.455, 2.057, 0.733> ,<3.551, 2.058, 0.735> ,ROH material { MATOH }  } 
  sphere { <3.335, 2.229, 0.458> ,RO material { MATO }  } 
  sphere { <3.370, 2.181, 0.537> ,RH material { MATH }  } 
  sphere { <3.410, 2.251, 0.408> ,RH material { MATH }  } 
@@ -1335,16 +1335,16 @@ union {
  sphere { <0.305, 3.219, 0.733> ,RH material { MATH }  } 
  cylinder { <0.250, 3.175, 0.673> ,<0.296, 3.185, 0.586> ,ROH material { MATOH }  } 
  cylinder { <0.250, 3.175, 0.673> ,<0.305, 3.219, 0.733> ,ROH material { MATOH }  } 
- sphere { <-0.003, 3.355, 0.640> ,RO material { MATO }  } 
- sphere { <-0.078, 3.297, 0.652> ,RH material { MATH }  } 
- sphere { <0.073, 3.299, 0.650> ,RH material { MATH }  } 
- cylinder { <-0.003, 3.355, 0.640> ,<-0.078, 3.297, 0.652> ,ROH material { MATOH }  } 
- cylinder { <-0.003, 3.355, 0.640> ,<0.073, 3.299, 0.650> ,ROH material { MATOH }  } 
- sphere { <3.340, 3.176, 0.683> ,RO material { MATO }  } 
- sphere { <3.368, 3.090, 0.689> ,RH material { MATH }  } 
- sphere { <3.297, 3.183, 0.593> ,RH material { MATH }  } 
- cylinder { <3.340, 3.176, 0.683> ,<3.368, 3.090, 0.689> ,ROH material { MATOH }  } 
- cylinder { <3.340, 3.176, 0.683> ,<3.297, 3.183, 0.593> ,ROH material { MATOH }  } 
+ sphere { <-0.008, 3.348, 0.637> ,RO material { MATO }  } 
+ sphere { <-0.002, 3.422, 0.699> ,RH material { MATH }  } 
+ sphere { <0.072, 3.300, 0.650> ,RH material { MATH }  } 
+ cylinder { <-0.008, 3.348, 0.637> ,<-0.002, 3.422, 0.699> ,ROH material { MATOH }  } 
+ cylinder { <-0.008, 3.348, 0.637> ,<0.072, 3.300, 0.650> ,ROH material { MATOH }  } 
+ sphere { <3.337, 3.169, 0.684> ,RO material { MATO }  } 
+ sphere { <3.416, 3.222, 0.675> ,RH material { MATH }  } 
+ sphere { <3.293, 3.176, 0.599> ,RH material { MATH }  } 
+ cylinder { <3.337, 3.169, 0.684> ,<3.416, 3.222, 0.675> ,ROH material { MATOH }  } 
+ cylinder { <3.337, 3.169, 0.684> ,<3.293, 3.176, 0.599> ,ROH material { MATOH }  } 
  sphere { <0.397, 3.207, 0.403> ,RO material { MATO }  } 
  sphere { <0.344, 3.259, 0.347> ,RH material { MATH }  } 
  sphere { <0.404, 3.120, 0.357> ,RH material { MATH }  } 
@@ -1430,11 +1430,11 @@ union {
  sphere { <3.111, 0.502, 1.104> ,RH material { MATH }  } 
  cylinder { <3.090, 0.413, 1.096> ,<2.991, 0.410, 1.095> ,ROH material { MATOH }  } 
  cylinder { <3.090, 0.413, 1.096> ,<3.111, 0.502, 1.104> ,ROH material { MATOH }  } 
- sphere { <2.868, 0.133, 1.538> ,RO material { MATO }  } 
- sphere { <2.862, 0.183, 1.624> ,RH material { MATH }  } 
- sphere { <2.799, 0.165, 1.487> ,RH material { MATH }  } 
- cylinder { <2.868, 0.133, 1.538> ,<2.862, 0.183, 1.624> ,ROH material { MATOH }  } 
- cylinder { <2.868, 0.133, 1.538> ,<2.799, 0.165, 1.487> ,ROH material { MATOH }  } 
+ sphere { <2.868, 0.141, 1.543> ,RO material { MATO }  } 
+ sphere { <2.865, 0.046, 1.543> ,RH material { MATH }  } 
+ sphere { <2.796, 0.168, 1.485> ,RH material { MATH }  } 
+ cylinder { <2.868, 0.141, 1.543> ,<2.865, 0.046, 1.543> ,ROH material { MATOH }  } 
+ cylinder { <2.868, 0.141, 1.543> ,<2.796, 0.168, 1.485> ,ROH material { MATOH }  } 
  sphere { <3.146, 0.255, 1.371> ,RO material { MATO }  } 
  sphere { <3.120, 0.299, 1.295> ,RH material { MATH }  } 
  sphere { <3.061, 0.225, 1.413> ,RH material { MATH }  } 
@@ -1445,11 +1445,11 @@ union {
  sphere { <3.112, 3.098, 1.101> ,RH material { MATH }  } 
  cylinder { <3.087, 3.183, 1.087> ,<3.105, 3.230, 1.175> ,ROH material { MATOH }  } 
  cylinder { <3.087, 3.183, 1.087> ,<3.112, 3.098, 1.101> ,ROH material { MATOH }  } 
- sphere { <2.867, 3.455, 1.549> ,RO material { MATO }  } 
- sphere { <2.799, 3.427, 1.486> ,RH material { MATH }  } 
- sphere { <2.865, 3.549, 1.545> ,RH material { MATH }  } 
- cylinder { <2.867, 3.455, 1.549> ,<2.799, 3.427, 1.486> ,ROH material { MATOH }  } 
- cylinder { <2.867, 3.455, 1.549> ,<2.865, 3.549, 1.545> ,ROH material { MATOH }  } 
+ sphere { <2.867, 3.463, 1.544> ,RO material { MATO }  } 
+ sphere { <2.861, 3.412, 1.627> ,RH material { MATH }  } 
+ sphere { <2.799, 3.428, 1.489> ,RH material { MATH }  } 
+ cylinder { <2.867, 3.463, 1.544> ,<2.861, 3.412, 1.627> ,ROH material { MATOH }  } 
+ cylinder { <2.867, 3.463, 1.544> ,<2.799, 3.428, 1.489> ,ROH material { MATOH }  } 
  sphere { <3.146, 3.341, 1.375> ,RO material { MATO }  } 
  sphere { <3.066, 3.376, 1.424> ,RH material { MATH }  } 
  sphere { <3.193, 3.414, 1.352> ,RH material { MATH }  } 
@@ -1465,21 +1465,21 @@ union {
  sphere { <3.253, 0.342, 0.339> ,RH material { MATH }  } 
  cylinder { <3.200, 0.396, 0.387> ,<3.246, 0.404, 0.477> ,ROH material { MATOH }  } 
  cylinder { <3.200, 0.396, 0.387> ,<3.253, 0.342, 0.339> ,ROH material { MATOH }  } 
- sphere { <-0.005, 0.008, 0.840> ,RO material { MATO }  } 
- sphere { <-0.004, -0.070, 0.779> ,RH material { MATH }  } 
- sphere { <0.076, 0.005, 0.883> ,RH material { MATH }  } 
- cylinder { <-0.005, 0.008, 0.840> ,<-0.004, -0.070, 0.779> ,ROH material { MATOH }  } 
- cylinder { <-0.005, 0.008, 0.840> ,<0.076, 0.005, 0.883> ,ROH material { MATOH }  } 
- sphere { <0.001, 0.257, 0.646> ,RO material { MATO }  } 
- sphere { <0.000, 0.179, 0.705> ,RH material { MATH }  } 
- sphere { <0.000, 0.221, 0.559> ,RH material { MATH }  } 
- cylinder { <0.001, 0.257, 0.646> ,<0.000, 0.179, 0.705> ,ROH material { MATOH }  } 
- cylinder { <0.001, 0.257, 0.646> ,<0.000, 0.221, 0.559> ,ROH material { MATOH }  } 
- sphere { <3.340, 0.430, 0.672> ,RO material { MATO }  } 
- sphere { <3.420, 0.374, 0.664> ,RH material { MATH }  } 
- sphere { <3.287, 0.384, 0.734> ,RH material { MATH }  } 
- cylinder { <3.340, 0.430, 0.672> ,<3.420, 0.374, 0.664> ,ROH material { MATOH }  } 
- cylinder { <3.340, 0.430, 0.672> ,<3.287, 0.384, 0.734> ,ROH material { MATOH }  } 
+ sphere { <-0.006, -0.001, 0.840> ,RO material { MATO }  } 
+ sphere { <-0.003, 0.077, 0.780> ,RH material { MATH }  } 
+ sphere { <0.077, 0.001, 0.884> ,RH material { MATH }  } 
+ cylinder { <-0.006, -0.001, 0.840> ,<-0.003, 0.077, 0.780> ,ROH material { MATOH }  } 
+ cylinder { <-0.006, -0.001, 0.840> ,<0.077, 0.001, 0.884> ,ROH material { MATOH }  } 
+ sphere { <0.005, 0.250, 0.649> ,RO material { MATO }  } 
+ sphere { <0.003, 0.216, 0.560> ,RH material { MATH }  } 
+ sphere { <-0.075, 0.303, 0.657> ,RH material { MATH }  } 
+ cylinder { <0.005, 0.250, 0.649> ,<0.003, 0.216, 0.560> ,ROH material { MATOH }  } 
+ cylinder { <0.005, 0.250, 0.649> ,<-0.075, 0.303, 0.657> ,ROH material { MATOH }  } 
+ sphere { <3.344, 0.421, 0.670> ,RO material { MATO }  } 
+ sphere { <3.287, 0.388, 0.741> ,RH material { MATH }  } 
+ sphere { <3.363, 0.511, 0.694> ,RH material { MATH }  } 
+ cylinder { <3.344, 0.421, 0.670> ,<3.287, 0.388, 0.741> ,ROH material { MATOH }  } 
+ cylinder { <3.344, 0.421, 0.670> ,<3.363, 0.511, 0.694> ,ROH material { MATOH }  } 
  sphere { <1.800, 3.074, 0.709> ,RO material { MATO }  } 
  sphere { <1.722, 3.108, 0.748> ,RH material { MATH }  } 
  sphere { <1.795, 3.101, 0.615> ,RH material { MATH }  } 
@@ -1535,11 +1535,11 @@ union {
  sphere { <1.600, 2.404, 1.096> ,RH material { MATH }  } 
  cylinder { <1.636, 2.495, 1.096> ,<1.602, 2.533, 1.018> ,ROH material { MATOH }  } 
  cylinder { <1.636, 2.495, 1.096> ,<1.600, 2.404, 1.096> ,ROH material { MATOH }  } 
- sphere { <1.512, 2.665, 1.378> ,RO material { MATO }  } 
- sphere { <1.589, 2.694, 1.422> ,RH material { MATH }  } 
- sphere { <1.545, 2.617, 1.300> ,RH material { MATH }  } 
- cylinder { <1.512, 2.665, 1.378> ,<1.589, 2.694, 1.422> ,ROH material { MATOH }  } 
- cylinder { <1.512, 2.665, 1.378> ,<1.545, 2.617, 1.300> ,ROH material { MATOH }  } 
+ sphere { <1.519, 2.670, 1.378> ,RO material { MATO }  } 
+ sphere { <1.552, 2.617, 1.295> ,RH material { MATH }  } 
+ sphere { <1.477, 2.611, 1.426> ,RH material { MATH }  } 
+ cylinder { <1.519, 2.670, 1.378> ,<1.552, 2.617, 1.295> ,ROH material { MATOH }  } 
+ cylinder { <1.519, 2.670, 1.378> ,<1.477, 2.611, 1.426> ,ROH material { MATOH }  } 
  sphere { <2.083, 2.659, 1.379> ,RO material { MATO }  } 
  sphere { <2.048, 2.612, 1.293> ,RH material { MATH }  } 
  sphere { <2.125, 2.729, 1.350> ,RH material { MATH }  } 
@@ -1550,11 +1550,11 @@ union {
  sphere { <1.996, 2.540, 1.023> ,RH material { MATH }  } 
  cylinder { <1.973, 2.499, 1.094> ,<1.869, 2.498, 1.092> ,ROH material { MATOH }  } 
  cylinder { <1.973, 2.499, 1.094> ,<1.996, 2.540, 1.023> ,ROH material { MATOH }  } 
- sphere { <1.790, 2.777, 1.535> ,RO material { MATO }  } 
- sphere { <1.790, 2.736, 1.612> ,RH material { MATH }  } 
- sphere { <1.875, 2.744, 1.487> ,RH material { MATH }  } 
- cylinder { <1.790, 2.777, 1.535> ,<1.790, 2.736, 1.612> ,ROH material { MATOH }  } 
- cylinder { <1.790, 2.777, 1.535> ,<1.875, 2.744, 1.487> ,ROH material { MATOH }  } 
+ sphere { <1.794, 2.777, 1.542> ,RO material { MATO }  } 
+ sphere { <1.720, 2.744, 1.494> ,RH material { MATH }  } 
+ sphere { <1.872, 2.743, 1.493> ,RH material { MATH }  } 
+ cylinder { <1.794, 2.777, 1.542> ,<1.720, 2.744, 1.494> ,ROH material { MATOH }  } 
+ cylinder { <1.794, 2.777, 1.542> ,<1.872, 2.743, 1.493> ,ROH material { MATOH }  } 
  sphere { <2.024, 3.171, 0.850> ,RO material { MATO }  } 
  sphere { <2.075, 3.226, 0.790> ,RH material { MATH }  } 
  sphere { <1.949, 3.142, 0.798> ,RH material { MATH }  } 
@@ -1595,11 +1595,11 @@ union {
  sphere { <2.097, 2.209, 1.212> ,RH material { MATH }  } 
  cylinder { <2.055, 2.214, 1.125> ,<2.029, 2.304, 1.116> ,ROH material { MATOH }  } 
  cylinder { <2.055, 2.214, 1.125> ,<2.097, 2.209, 1.212> ,ROH material { MATOH }  } 
- sphere { <1.373, 2.472, 1.549> ,RO material { MATO }  } 
- sphere { <1.419, 2.531, 1.495> ,RH material { MATH }  } 
- sphere { <1.383, 2.384, 1.504> ,RH material { MATH }  } 
- cylinder { <1.373, 2.472, 1.549> ,<1.419, 2.531, 1.495> ,ROH material { MATOH }  } 
- cylinder { <1.373, 2.472, 1.549> ,<1.383, 2.384, 1.504> ,ROH material { MATOH }  } 
+ sphere { <1.381, 2.475, 1.544> ,RO material { MATO }  } 
+ sphere { <1.292, 2.483, 1.570> ,RH material { MATH }  } 
+ sphere { <1.386, 2.386, 1.502> ,RH material { MATH }  } 
+ cylinder { <1.381, 2.475, 1.544> ,<1.292, 2.483, 1.570> ,ROH material { MATOH }  } 
+ cylinder { <1.381, 2.475, 1.544> ,<1.386, 2.386, 1.502> ,ROH material { MATOH }  } 
  sphere { <1.404, 2.195, 1.403> ,RO material { MATO }  } 
  sphere { <1.317, 2.148, 1.396> ,RH material { MATH }  } 
  sphere { <1.456, 2.140, 1.455> ,RH material { MATH }  } 
@@ -1800,21 +1800,21 @@ union {
  sphere { <3.283, 2.870, 1.458> ,RH material { MATH }  } 
  cylinder { <3.335, 2.926, 1.404> ,<3.418, 2.876, 1.389> ,ROH material { MATOH }  } 
  cylinder { <3.335, 2.926, 1.404> ,<3.283, 2.870, 1.458> ,ROH material { MATOH }  } 
- sphere { <3.342, 2.041, 1.387> ,RO material { MATO }  } 
- sphere { <3.420, 2.094, 1.378> ,RH material { MATH }  } 
- sphere { <3.298, 2.047, 1.301> ,RH material { MATH }  } 
- cylinder { <3.342, 2.041, 1.387> ,<3.420, 2.094, 1.378> ,ROH material { MATOH }  } 
- cylinder { <3.342, 2.041, 1.387> ,<3.298, 2.047, 1.301> ,ROH material { MATOH }  } 
+ sphere { <3.349, 2.042, 1.384> ,RO material { MATO }  } 
+ sphere { <3.296, 2.094, 1.439> ,RH material { MATH }  } 
+ sphere { <3.306, 2.045, 1.296> ,RH material { MATH }  } 
+ cylinder { <3.349, 2.042, 1.384> ,<3.296, 2.094, 1.439> ,ROH material { MATOH }  } 
+ cylinder { <3.349, 2.042, 1.384> ,<3.306, 2.045, 1.296> ,ROH material { MATOH }  } 
  sphere { <-0.008, 2.526, 1.524> ,RO material { MATO }  } 
  sphere { <-0.009, 2.436, 1.473> ,RH material { MATH }  } 
  sphere { <0.069, 2.528, 1.565> ,RH material { MATH }  } 
  cylinder { <-0.008, 2.526, 1.524> ,<-0.009, 2.436, 1.473> ,ROH material { MATOH }  } 
  cylinder { <-0.008, 2.526, 1.524> ,<0.069, 2.528, 1.565> ,ROH material { MATOH }  } 
- sphere { <-0.003, 2.215, 1.360> ,RO material { MATO }  } 
- sphere { <0.077, 2.162, 1.367> ,RH material { MATH }  } 
- sphere { <-0.004, 2.245, 1.270> ,RH material { MATH }  } 
- cylinder { <-0.003, 2.215, 1.360> ,<0.077, 2.162, 1.367> ,ROH material { MATOH }  } 
- cylinder { <-0.003, 2.215, 1.360> ,<-0.004, 2.245, 1.270> ,ROH material { MATOH }  } 
+ sphere { <0.006, 2.215, 1.360> ,RO material { MATO }  } 
+ sphere { <-0.075, 2.162, 1.368> ,RH material { MATH }  } 
+ sphere { <0.005, 2.246, 1.270> ,RH material { MATH }  } 
+ cylinder { <0.006, 2.215, 1.360> ,<-0.075, 2.162, 1.368> ,ROH material { MATOH }  } 
+ cylinder { <0.006, 2.215, 1.360> ,<0.005, 2.246, 1.270> ,ROH material { MATOH }  } 
  sphere { <-0.005, 2.777, 1.351> ,RO material { MATO }  } 
  sphere { <-0.003, 2.698, 1.405> ,RH material { MATH }  } 
  sphere { <0.078, 2.820, 1.368> ,RH material { MATH }  } 
@@ -1855,11 +1855,11 @@ union {
  sphere { <3.185, 1.968, 0.327> ,RH material { MATH }  } 
  cylinder { <3.195, 2.049, 0.273> ,<3.240, 2.109, 0.328> ,ROH material { MATOH }  } 
  cylinder { <3.195, 2.049, 0.273> ,<3.185, 1.968, 0.327> ,ROH material { MATOH }  } 
- sphere { <3.323, 1.808, 0.736> ,RO material { MATO }  } 
- sphere { <3.368, 1.721, 0.738> ,RH material { MATH }  } 
- sphere { <3.266, 1.806, 0.809> ,RH material { MATH }  } 
- cylinder { <3.323, 1.808, 0.736> ,<3.368, 1.721, 0.738> ,ROH material { MATOH }  } 
- cylinder { <3.323, 1.808, 0.736> ,<3.266, 1.806, 0.809> ,ROH material { MATOH }  } 
+ sphere { <3.323, 1.799, 0.736> ,RO material { MATO }  } 
+ sphere { <3.368, 1.886, 0.738> ,RH material { MATH }  } 
+ sphere { <3.266, 1.800, 0.810> ,RH material { MATH }  } 
+ cylinder { <3.323, 1.799, 0.736> ,<3.368, 1.886, 0.738> ,ROH material { MATOH }  } 
+ cylinder { <3.323, 1.799, 0.736> ,<3.266, 1.800, 0.810> ,ROH material { MATOH }  } 
  sphere { <3.172, 1.796, 0.451> ,RO material { MATO }  } 
  sphere { <3.219, 1.799, 0.540> ,RH material { MATH }  } 
  sphere { <3.085, 1.797, 0.471> ,RH material { MATH }  } 
@@ -2010,21 +2010,21 @@ union {
  sphere { <0.177, 0.872, 2.619> ,RH material { MATH }  } 
  cylinder { <0.261, 0.836, 2.665> ,<0.231, 0.793, 2.737> ,ROH material { MATOH }  } 
  cylinder { <0.261, 0.836, 2.665> ,<0.177, 0.872, 2.619> ,ROH material { MATOH }  } 
- sphere { <3.351, 0.651, -0.010> ,RO material { MATO }  } 
- sphere { <3.298, 0.658, 0.072> ,RH material { MATH }  } 
- sphere { <3.385, 0.563, -0.007> ,RH material { MATH }  } 
- cylinder { <3.351, 0.651, -0.010> ,<3.298, 0.658, 0.072> ,ROH material { MATOH }  } 
- cylinder { <3.351, 0.651, -0.010> ,<3.385, 0.563, -0.007> ,ROH material { MATOH }  } 
+ sphere { <3.343, 0.648, -0.005> ,RO material { MATO }  } 
+ sphere { <3.421, 0.707, -0.003> ,RH material { MATH }  } 
+ sphere { <3.379, 0.562, -0.003> ,RH material { MATH }  } 
+ cylinder { <3.343, 0.648, -0.005> ,<3.421, 0.707, -0.003> ,ROH material { MATOH }  } 
+ cylinder { <3.343, 0.648, -0.005> ,<3.379, 0.562, -0.003> ,ROH material { MATOH }  } 
  sphere { <3.167, 0.673, 3.341> ,RO material { MATO }  } 
  sphere { <3.212, 0.733, 3.287> ,RH material { MATH }  } 
  sphere { <3.224, 0.664, 3.421> ,RH material { MATH }  } 
  cylinder { <3.167, 0.673, 3.341> ,<3.212, 0.733, 3.287> ,ROH material { MATOH }  } 
  cylinder { <3.167, 0.673, 3.341> ,<3.224, 0.664, 3.421> ,ROH material { MATOH }  } 
- sphere { <0.004, 0.849, 0.004> ,RO material { MATO }  } 
- sphere { <-0.072, 0.790, 0.001> ,RH material { MATH }  } 
- sphere { <0.079, 0.791, 0.004> ,RH material { MATH }  } 
- cylinder { <0.004, 0.849, 0.004> ,<-0.072, 0.790, 0.001> ,ROH material { MATOH }  } 
- cylinder { <0.004, 0.849, 0.004> ,<0.079, 0.791, 0.004> ,ROH material { MATOH }  } 
+ sphere { <-0.000, 0.844, -0.001> ,RO material { MATO }  } 
+ sphere { <0.000, 0.886, 0.081> ,RH material { MATH }  } 
+ sphere { <0.078, 0.783, 0.002> ,RH material { MATH }  } 
+ cylinder { <-0.000, 0.844, -0.001> ,<0.000, 0.886, 0.081> ,ROH material { MATOH }  } 
+ cylinder { <-0.000, 0.844, -0.001> ,<0.078, 0.783, 0.002> ,ROH material { MATOH }  } 
  sphere { <0.247, 0.652, 0.009> ,RO material { MATO }  } 
  sphere { <0.300, 0.660, -0.071> ,RH material { MATH }  } 
  sphere { <0.214, 0.563, 0.007> ,RH material { MATH }  } 
@@ -2050,21 +2050,21 @@ union {
  sphere { <2.703, 0.378, 3.385> ,RH material { MATH }  } 
  cylinder { <2.734, 0.423, 3.306> ,<2.778, 0.501, 3.339> ,ROH material { MATOH }  } 
  cylinder { <2.734, 0.423, 3.306> ,<2.703, 0.378, 3.385> ,ROH material { MATOH }  } 
- sphere { <2.900, 0.709, 0.163> ,RO material { MATO }  } 
- sphere { <2.858, 0.774, 0.192> ,RH material { MATH }  } 
- sphere { <2.848, 0.624, 0.200> ,RH material { MATH }  } 
- cylinder { <2.900, 0.709, 0.163> ,<2.858, 0.774, 0.192> ,ROH material { MATOH }  } 
- cylinder { <2.900, 0.709, 0.163> ,<2.848, 0.624, 0.200> ,ROH material { MATOH }  } 
+ sphere { <2.892, 0.704, 0.163> ,RO material { MATO }  } 
+ sphere { <2.986, 0.700, 0.199> ,RH material { MATH }  } 
+ sphere { <2.857, 0.780, 0.197> ,RH material { MATH }  } 
+ cylinder { <2.892, 0.704, 0.163> ,<2.986, 0.700, 0.199> ,ROH material { MATOH }  } 
+ cylinder { <2.892, 0.704, 0.163> ,<2.857, 0.780, 0.197> ,ROH material { MATOH }  } 
  sphere { <2.891, 0.710, 3.427> ,RO material { MATO }  } 
  sphere { <2.976, 0.700, 3.403> ,RH material { MATH }  } 
  sphere { <2.893, 0.709, 3.529> ,RH material { MATH }  } 
  cylinder { <2.891, 0.710, 3.427> ,<2.976, 0.700, 3.403> ,ROH material { MATOH }  } 
  cylinder { <2.891, 0.710, 3.427> ,<2.893, 0.709, 3.529> ,ROH material { MATOH }  } 
- sphere { <2.734, 0.425, 0.277> ,RO material { MATO }  } 
- sphere { <2.662, 0.449, 0.333> ,RH material { MATH }  } 
- sphere { <2.791, 0.369, 0.333> ,RH material { MATH }  } 
- cylinder { <2.734, 0.425, 0.277> ,<2.662, 0.449, 0.333> ,ROH material { MATOH }  } 
- cylinder { <2.734, 0.425, 0.277> ,<2.791, 0.369, 0.333> ,ROH material { MATOH }  } 
+ sphere { <2.727, 0.421, 0.283> ,RO material { MATO }  } 
+ sphere { <2.778, 0.505, 0.249> ,RH material { MATH }  } 
+ sphere { <2.787, 0.373, 0.322> ,RH material { MATH }  } 
+ cylinder { <2.727, 0.421, 0.283> ,<2.778, 0.505, 0.249> ,ROH material { MATOH }  } 
+ cylinder { <2.727, 0.421, 0.283> ,<2.787, 0.373, 0.322> ,ROH material { MATOH }  } 
  sphere { <2.625, 0.256, -0.001> ,RO material { MATO }  } 
  sphere { <2.655, 0.304, 0.081> ,RH material { MATH }  } 
  sphere { <2.534, 0.264, 0.000> ,RH material { MATH }  } 
@@ -2115,21 +2115,21 @@ union {
  sphere { <2.285, 0.331, -0.071> ,RH material { MATH }  } 
  cylinder { <2.312, 0.284, 0.004> ,<2.258, 0.201, 0.001> ,ROH material { MATOH }  } 
  cylinder { <2.312, 0.284, 0.004> ,<2.285, 0.331, -0.071> ,ROH material { MATOH }  } 
- sphere { <2.056, 0.734, 0.135> ,RO material { MATO }  } 
- sphere { <1.971, 0.740, 0.184> ,RH material { MATH }  } 
- sphere { <2.108, 0.803, 0.169> ,RH material { MATH }  } 
- cylinder { <2.056, 0.734, 0.135> ,<1.971, 0.740, 0.184> ,ROH material { MATOH }  } 
- cylinder { <2.056, 0.734, 0.135> ,<2.108, 0.803, 0.169> ,ROH material { MATOH }  } 
- sphere { <2.227, 0.454, 0.253> ,RO material { MATO }  } 
- sphere { <2.249, 0.407, 0.178> ,RH material { MATH }  } 
- sphere { <2.178, 0.535, 0.218> ,RH material { MATH }  } 
- cylinder { <2.227, 0.454, 0.253> ,<2.249, 0.407, 0.178> ,ROH material { MATOH }  } 
- cylinder { <2.227, 0.454, 0.253> ,<2.178, 0.535, 0.218> ,ROH material { MATOH }  } 
- sphere { <2.510, 0.518, 0.417> ,RO material { MATO }  } 
- sphere { <2.496, 0.489, 0.500> ,RH material { MATH }  } 
- sphere { <2.423, 0.498, 0.367> ,RH material { MATH }  } 
- cylinder { <2.510, 0.518, 0.417> ,<2.496, 0.489, 0.500> ,ROH material { MATOH }  } 
- cylinder { <2.510, 0.518, 0.417> ,<2.423, 0.498, 0.367> ,ROH material { MATOH }  } 
+ sphere { <2.048, 0.740, 0.136> ,RO material { MATO }  } 
+ sphere { <2.098, 0.652, 0.167> ,RH material { MATH }  } 
+ sphere { <2.098, 0.804, 0.162> ,RH material { MATH }  } 
+ cylinder { <2.048, 0.740, 0.136> ,<2.098, 0.652, 0.167> ,ROH material { MATOH }  } 
+ cylinder { <2.048, 0.740, 0.136> ,<2.098, 0.804, 0.162> ,ROH material { MATOH }  } 
+ sphere { <2.220, 0.458, 0.248> ,RO material { MATO }  } 
+ sphere { <2.303, 0.475, 0.298> ,RH material { MATH }  } 
+ sphere { <2.245, 0.407, 0.175> ,RH material { MATH }  } 
+ cylinder { <2.220, 0.458, 0.248> ,<2.303, 0.475, 0.298> ,ROH material { MATOH }  } 
+ cylinder { <2.220, 0.458, 0.248> ,<2.245, 0.407, 0.175> ,ROH material { MATOH }  } 
+ sphere { <2.500, 0.519, 0.416> ,RO material { MATO }  } 
+ sphere { <2.579, 0.484, 0.379> ,RH material { MATH }  } 
+ sphere { <2.498, 0.484, 0.507> ,RH material { MATH }  } 
+ cylinder { <2.500, 0.519, 0.416> ,<2.579, 0.484, 0.379> ,ROH material { MATOH }  } 
+ cylinder { <2.500, 0.519, 0.416> ,<2.498, 0.484, 0.507> ,ROH material { MATOH }  } 
  sphere { <2.218, 0.939, 0.230> ,RO material { MATO }  } 
  sphere { <2.305, 0.904, 0.280> ,RH material { MATH }  } 
  sphere { <2.247, 0.978, 0.161> ,RH material { MATH }  } 
@@ -2145,11 +2145,11 @@ union {
  sphere { <2.806, 0.987, 0.307> ,RH material { MATH }  } 
  cylinder { <2.763, 0.923, 0.256> ,<2.730, 0.972, 0.177> ,ROH material { MATOH }  } 
  cylinder { <2.763, 0.923, 0.256> ,<2.806, 0.987, 0.307> ,ROH material { MATOH }  } 
- sphere { <3.184, 0.675, 0.258> ,RO material { MATO }  } 
- sphere { <3.188, 0.587, 0.298> ,RH material { MATH }  } 
- sphere { <3.093, 0.684, 0.230> ,RH material { MATH }  } 
- cylinder { <3.184, 0.675, 0.258> ,<3.188, 0.587, 0.298> ,ROH material { MATOH }  } 
- cylinder { <3.184, 0.675, 0.258> ,<3.093, 0.684, 0.230> ,ROH material { MATOH }  } 
+ sphere { <3.175, 0.676, 0.261> ,RO material { MATO }  } 
+ sphere { <3.228, 0.669, 0.179> ,RH material { MATH }  } 
+ sphere { <3.183, 0.591, 0.301> ,RH material { MATH }  } 
+ cylinder { <3.175, 0.676, 0.261> ,<3.228, 0.669, 0.179> ,ROH material { MATOH }  } 
+ cylinder { <3.175, 0.676, 0.261> ,<3.183, 0.591, 0.301> ,ROH material { MATOH }  } 
  sphere { <1.798, 0.516, 2.035> ,RO material { MATO }  } 
  sphere { <1.722, 0.492, 2.088> ,RH material { MATH }  } 
  sphere { <1.874, 0.489, 2.088> ,RH material { MATH }  } 
@@ -2305,26 +2305,26 @@ union {
  sphere { <2.611, 1.421, 2.121> ,RH material { MATH }  } 
  cylinder { <2.671, 1.370, 2.082> ,<2.618, 1.288, 2.049> ,ROH material { MATOH }  } 
  cylinder { <2.671, 1.370, 2.082> ,<2.611, 1.421, 2.121> ,ROH material { MATOH }  } 
- sphere { <2.777, 1.541, 1.796> ,RO material { MATO }  } 
- sphere { <2.736, 1.617, 1.797> ,RH material { MATH }  } 
- sphere { <2.743, 1.491, 1.881> ,RH material { MATH }  } 
- cylinder { <2.777, 1.541, 1.796> ,<2.736, 1.617, 1.797> ,ROH material { MATOH }  } 
- cylinder { <2.777, 1.541, 1.796> ,<2.743, 1.491, 1.881> ,ROH material { MATOH }  } 
- sphere { <3.075, 0.697, 1.799> ,RO material { MATO }  } 
- sphere { <3.106, 0.747, 1.723> ,RH material { MATH }  } 
- sphere { <3.106, 0.747, 1.874> ,RH material { MATH }  } 
- cylinder { <3.075, 0.697, 1.799> ,<3.106, 0.747, 1.723> ,ROH material { MATOH }  } 
- cylinder { <3.075, 0.697, 1.799> ,<3.106, 0.747, 1.874> ,ROH material { MATOH }  } 
+ sphere { <2.769, 1.546, 1.796> ,RO material { MATO }  } 
+ sphere { <2.860, 1.546, 1.799> ,RH material { MATH }  } 
+ sphere { <2.741, 1.495, 1.878> ,RH material { MATH }  } 
+ cylinder { <2.769, 1.546, 1.796> ,<2.860, 1.546, 1.799> ,ROH material { MATOH }  } 
+ cylinder { <2.769, 1.546, 1.796> ,<2.741, 1.495, 1.878> ,ROH material { MATOH }  } 
+ sphere { <3.076, 0.705, 1.804> ,RO material { MATO }  } 
+ sphere { <3.101, 0.614, 1.795> ,RH material { MATH }  } 
+ sphere { <3.108, 0.746, 1.723> ,RH material { MATH }  } 
+ cylinder { <3.076, 0.705, 1.804> ,<3.101, 0.614, 1.795> ,ROH material { MATOH }  } 
+ cylinder { <3.076, 0.705, 1.804> ,<3.108, 0.746, 1.723> ,ROH material { MATOH }  } 
  sphere { <2.736, 0.720, 1.791> ,RO material { MATO }  } 
  sphere { <2.835, 0.717, 1.796> ,RH material { MATH }  } 
  sphere { <2.710, 0.763, 1.867> ,RH material { MATH }  } 
  cylinder { <2.736, 0.720, 1.791> ,<2.835, 0.717, 1.796> ,ROH material { MATOH }  } 
  cylinder { <2.736, 0.720, 1.791> ,<2.710, 0.763, 1.867> ,ROH material { MATOH }  } 
- sphere { <3.160, 0.846, 2.025> ,RO material { MATO }  } 
- sphere { <3.215, 0.792, 2.077> ,RH material { MATH }  } 
- sphere { <3.218, 0.921, 1.997> ,RH material { MATH }  } 
- cylinder { <3.160, 0.846, 2.025> ,<3.215, 0.792, 2.077> ,ROH material { MATOH }  } 
- cylinder { <3.160, 0.846, 2.025> ,<3.218, 0.921, 1.997> ,ROH material { MATOH }  } 
+ sphere { <3.165, 0.854, 2.027> ,RO material { MATO }  } 
+ sphere { <3.138, 0.802, 1.953> ,RH material { MATH }  } 
+ sphere { <3.221, 0.794, 2.079> ,RH material { MATH }  } 
+ cylinder { <3.165, 0.854, 2.027> ,<3.138, 0.802, 1.953> ,ROH material { MATOH }  } 
+ cylinder { <3.165, 0.854, 2.027> ,<3.221, 0.794, 2.079> ,ROH material { MATOH }  } 
  sphere { <2.879, 0.973, 2.198> ,RO material { MATO }  } 
  sphere { <2.886, 1.061, 2.202> ,RH material { MATH }  } 
  sphere { <2.963, 0.942, 2.148> ,RH material { MATH }  } 
@@ -2335,21 +2335,21 @@ union {
  sphere { <2.593, 0.809, 2.103> ,RH material { MATH }  } 
  cylinder { <2.634, 0.869, 2.045> ,<2.712, 0.902, 2.094> ,ROH material { MATOH }  } 
  cylinder { <2.634, 0.869, 2.045> ,<2.593, 0.809, 2.103> ,ROH material { MATOH }  } 
- sphere { <3.092, 1.554, 1.806> ,RO material { MATO }  } 
- sphere { <2.996, 1.552, 1.806> ,RH material { MATH }  } 
- sphere { <3.117, 1.503, 1.729> ,RH material { MATH }  } 
- cylinder { <3.092, 1.554, 1.806> ,<2.996, 1.552, 1.806> ,ROH material { MATOH }  } 
- cylinder { <3.092, 1.554, 1.806> ,<3.117, 1.503, 1.729> ,ROH material { MATOH }  } 
- sphere { <3.341, 1.075, 1.935> ,RO material { MATO }  } 
- sphere { <3.292, 1.163, 1.968> ,RH material { MATH }  } 
- sphere { <3.416, 1.075, 1.976> ,RH material { MATH }  } 
- cylinder { <3.341, 1.075, 1.935> ,<3.292, 1.163, 1.968> ,ROH material { MATOH }  } 
- cylinder { <3.341, 1.075, 1.935> ,<3.416, 1.075, 1.976> ,ROH material { MATOH }  } 
- sphere { <3.181, 1.380, 2.053> ,RO material { MATO }  } 
- sphere { <3.096, 1.353, 2.100> ,RH material { MATH }  } 
- sphere { <3.153, 1.428, 1.982> ,RH material { MATH }  } 
- cylinder { <3.181, 1.380, 2.053> ,<3.096, 1.353, 2.100> ,ROH material { MATOH }  } 
- cylinder { <3.181, 1.380, 2.053> ,<3.153, 1.428, 1.982> ,ROH material { MATOH }  } 
+ sphere { <3.085, 1.557, 1.802> ,RO material { MATO }  } 
+ sphere { <3.112, 1.504, 1.877> ,RH material { MATH }  } 
+ sphere { <3.111, 1.505, 1.726> ,RH material { MATH }  } 
+ cylinder { <3.085, 1.557, 1.802> ,<3.112, 1.504, 1.877> ,ROH material { MATOH }  } 
+ cylinder { <3.085, 1.557, 1.802> ,<3.111, 1.505, 1.726> ,ROH material { MATOH }  } 
+ sphere { <3.341, 1.085, 1.935> ,RO material { MATO }  } 
+ sphere { <3.289, 1.008, 1.966> ,RH material { MATH }  } 
+ sphere { <3.421, 1.080, 1.983> ,RH material { MATH }  } 
+ cylinder { <3.341, 1.085, 1.935> ,<3.289, 1.008, 1.966> ,ROH material { MATOH }  } 
+ cylinder { <3.341, 1.085, 1.935> ,<3.421, 1.080, 1.983> ,ROH material { MATOH }  } 
+ sphere { <3.176, 1.387, 2.051> ,RO material { MATO }  } 
+ sphere { <3.220, 1.305, 2.022> ,RH material { MATH }  } 
+ sphere { <3.099, 1.358, 2.096> ,RH material { MATH }  } 
+ cylinder { <3.176, 1.387, 2.051> ,<3.220, 1.305, 2.022> ,ROH material { MATOH }  } 
+ cylinder { <3.176, 1.387, 2.051> ,<3.099, 1.358, 2.096> ,ROH material { MATOH }  } 
  sphere { <2.889, 1.280, 2.218> ,RO material { MATO }  } 
  sphere { <2.891, 1.315, 2.311> ,RH material { MATH }  } 
  sphere { <2.812, 1.314, 2.182> ,RH material { MATH }  } 
@@ -2445,21 +2445,21 @@ union {
  sphere { <3.092, 0.744, 2.470> ,RH material { MATH }  } 
  cylinder { <3.172, 0.694, 2.481> ,<3.213, 0.693, 2.394> ,ROH material { MATOH }  } 
  cylinder { <3.172, 0.694, 2.481> ,<3.092, 0.744, 2.470> ,ROH material { MATOH }  } 
- sphere { <3.141, 0.422, 1.802> ,RO material { MATO }  } 
- sphere { <3.196, 0.412, 1.719> ,RH material { MATH }  } 
- sphere { <3.119, 0.512, 1.804> ,RH material { MATH }  } 
- cylinder { <3.141, 0.422, 1.802> ,<3.196, 0.412, 1.719> ,ROH material { MATOH }  } 
- cylinder { <3.141, 0.422, 1.802> ,<3.119, 0.512, 1.804> ,ROH material { MATOH }  } 
+ sphere { <3.146, 0.430, 1.802> ,RO material { MATO }  } 
+ sphere { <3.060, 0.382, 1.794> ,RH material { MATH }  } 
+ sphere { <3.188, 0.417, 1.720> ,RH material { MATH }  } 
+ cylinder { <3.146, 0.430, 1.802> ,<3.060, 0.382, 1.794> ,ROH material { MATOH }  } 
+ cylinder { <3.146, 0.430, 1.802> ,<3.188, 0.417, 1.720> ,ROH material { MATOH }  } 
  sphere { <2.633, 0.443, 1.799> ,RO material { MATO }  } 
  sphere { <2.591, 0.429, 1.715> ,RH material { MATH }  } 
  sphere { <2.666, 0.533, 1.795> ,RH material { MATH }  } 
  cylinder { <2.633, 0.443, 1.799> ,<2.591, 0.429, 1.715> ,ROH material { MATOH }  } 
  cylinder { <2.633, 0.443, 1.799> ,<2.666, 0.533, 1.795> ,ROH material { MATOH }  } 
- sphere { <2.855, 0.276, 1.803> ,RO material { MATO }  } 
- sphere { <2.791, 0.336, 1.800> ,RH material { MATH }  } 
- sphere { <2.942, 0.330, 1.801> ,RH material { MATH }  } 
- cylinder { <2.855, 0.276, 1.803> ,<2.791, 0.336, 1.800> ,ROH material { MATOH }  } 
- cylinder { <2.855, 0.276, 1.803> ,<2.942, 0.330, 1.801> ,ROH material { MATOH }  } 
+ sphere { <2.861, 0.282, 1.808> ,RO material { MATO }  } 
+ sphere { <2.862, 0.235, 1.720> ,RH material { MATH }  } 
+ sphere { <2.786, 0.336, 1.804> ,RH material { MATH }  } 
+ cylinder { <2.861, 0.282, 1.808> ,<2.862, 0.235, 1.720> ,ROH material { MATOH }  } 
+ cylinder { <2.861, 0.282, 1.808> ,<2.786, 0.336, 1.804> ,ROH material { MATOH }  } 
  sphere { <3.343, 1.551, 2.222> ,RO material { MATO }  } 
  sphere { <3.289, 1.499, 2.163> ,RH material { MATH }  } 
  sphere { <3.368, 1.628, 2.171> ,RH material { MATH }  } 
@@ -2570,31 +2570,31 @@ union {
  sphere { <1.795, 0.476, 3.085> ,RH material { MATH }  } 
  cylinder { <1.798, 0.454, 3.174> ,<1.880, 0.399, 3.184> ,ROH material { MATOH }  } 
  cylinder { <1.798, 0.454, 3.174> ,<1.795, 0.476, 3.085> ,ROH material { MATOH }  } 
- sphere { <3.312, 0.868, 0.424> ,RO material { MATO }  } 
- sphere { <3.345, 0.817, 0.509> ,RH material { MATH }  } 
- sphere { <3.273, 0.808, 0.376> ,RH material { MATH }  } 
- cylinder { <3.312, 0.868, 0.424> ,<3.345, 0.817, 0.509> ,ROH material { MATOH }  } 
- cylinder { <3.312, 0.868, 0.424> ,<3.273, 0.808, 0.376> ,ROH material { MATOH }  } 
- sphere { <0.290, 0.866, 0.421> ,RO material { MATO }  } 
- sphere { <0.257, 0.821, 0.498> ,RH material { MATH }  } 
- sphere { <0.211, 0.898, 0.376> ,RH material { MATH }  } 
- cylinder { <0.290, 0.866, 0.421> ,<0.257, 0.821, 0.498> ,ROH material { MATOH }  } 
- cylinder { <0.290, 0.866, 0.421> ,<0.211, 0.898, 0.376> ,ROH material { MATOH }  } 
- sphere { <0.002, 0.988, 0.262> ,RO material { MATO }  } 
- sphere { <0.003, 0.946, 0.186> ,RH material { MATH }  } 
- sphere { <-0.082, 0.951, 0.311> ,RH material { MATH }  } 
- cylinder { <0.002, 0.988, 0.262> ,<0.003, 0.946, 0.186> ,ROH material { MATOH }  } 
- cylinder { <0.002, 0.988, 0.262> ,<-0.082, 0.951, 0.311> ,ROH material { MATOH }  } 
+ sphere { <3.317, 0.861, 0.428> ,RO material { MATO }  } 
+ sphere { <3.262, 0.934, 0.449> ,RH material { MATH }  } 
+ sphere { <3.262, 0.804, 0.371> ,RH material { MATH }  } 
+ cylinder { <3.317, 0.861, 0.428> ,<3.262, 0.934, 0.449> ,ROH material { MATOH }  } 
+ cylinder { <3.317, 0.861, 0.428> ,<3.262, 0.804, 0.371> ,ROH material { MATOH }  } 
+ sphere { <0.283, 0.864, 0.416> ,RO material { MATO }  } 
+ sphere { <0.325, 0.931, 0.444> ,RH material { MATH }  } 
+ sphere { <0.248, 0.815, 0.503> ,RH material { MATH }  } 
+ cylinder { <0.283, 0.864, 0.416> ,<0.325, 0.931, 0.444> ,ROH material { MATOH }  } 
+ cylinder { <0.283, 0.864, 0.416> ,<0.248, 0.815, 0.503> ,ROH material { MATOH }  } 
+ sphere { <-0.003, 0.987, 0.255> ,RO material { MATO }  } 
+ sphere { <0.073, 0.953, 0.302> ,RH material { MATH }  } 
+ sphere { <-0.078, 0.952, 0.303> ,RH material { MATH }  } 
+ cylinder { <-0.003, 0.987, 0.255> ,<0.073, 0.953, 0.302> ,ROH material { MATOH }  } 
+ cylinder { <-0.003, 0.987, 0.255> ,<-0.078, 0.952, 0.303> ,ROH material { MATOH }  } 
  sphere { <0.160, 0.702, 0.700> ,RO material { MATO }  } 
  sphere { <0.196, 0.612, 0.699> ,RH material { MATH }  } 
  sphere { <0.194, 0.741, 0.778> ,RH material { MATH }  } 
  cylinder { <0.160, 0.702, 0.700> ,<0.196, 0.612, 0.699> ,ROH material { MATOH }  } 
  cylinder { <0.160, 0.702, 0.700> ,<0.194, 0.741, 0.778> ,ROH material { MATOH }  } 
- sphere { <3.421, 0.708, 0.712> ,RO material { MATO }  } 
- sphere { <3.397, 0.623, 0.701> ,RH material { MATH }  } 
- sphere { <3.523, 0.706, 0.710> ,RH material { MATH }  } 
- cylinder { <3.421, 0.708, 0.712> ,<3.397, 0.623, 0.701> ,ROH material { MATOH }  } 
- cylinder { <3.421, 0.708, 0.712> ,<3.523, 0.706, 0.710> ,ROH material { MATOH }  } 
+ sphere { <3.422, 0.700, 0.717> ,RO material { MATO }  } 
+ sphere { <3.516, 0.701, 0.712> ,RH material { MATH }  } 
+ sphere { <3.393, 0.745, 0.635> ,RH material { MATH }  } 
+ cylinder { <3.422, 0.700, 0.717> ,<3.516, 0.701, 0.712> ,ROH material { MATOH }  } 
+ cylinder { <3.422, 0.700, 0.717> ,<3.393, 0.745, 0.635> ,ROH material { MATOH }  } 
  sphere { <0.007, 1.295, 0.284> ,RO material { MATO }  } 
  sphere { <0.004, 1.201, 0.277> ,RH material { MATH }  } 
  sphere { <-0.071, 1.318, 0.337> ,RH material { MATH }  } 
@@ -2625,21 +2625,21 @@ union {
  sphere { <3.324, 1.293, 0.900> ,RH material { MATH }  } 
  cylinder { <3.376, 1.381, 0.933> ,<3.440, 1.352, 0.976> ,ROH material { MATOH }  } 
  cylinder { <3.376, 1.381, 0.933> ,<3.324, 1.293, 0.900> ,ROH material { MATOH }  } 
- sphere { <3.185, 1.096, 0.515> ,RO material { MATO }  } 
- sphere { <3.219, 1.017, 0.482> ,RH material { MATH }  } 
- sphere { <3.092, 1.099, 0.482> ,RH material { MATH }  } 
- cylinder { <3.185, 1.096, 0.515> ,<3.219, 1.017, 0.482> ,ROH material { MATOH }  } 
- cylinder { <3.185, 1.096, 0.515> ,<3.092, 1.099, 0.482> ,ROH material { MATOH }  } 
- sphere { <3.353, 1.370, 0.460> ,RO material { MATO }  } 
- sphere { <3.298, 1.285, 0.475> ,RH material { MATH }  } 
- sphere { <3.302, 1.420, 0.406> ,RH material { MATH }  } 
- cylinder { <3.353, 1.370, 0.460> ,<3.298, 1.285, 0.475> ,ROH material { MATOH }  } 
- cylinder { <3.353, 1.370, 0.460> ,<3.302, 1.420, 0.406> ,ROH material { MATOH }  } 
- sphere { <3.462, 1.546, 0.742> ,RO material { MATO }  } 
- sphere { <3.429, 1.495, 0.654> ,RH material { MATH }  } 
- sphere { <3.438, 1.497, 0.805> ,RH material { MATH }  } 
- cylinder { <3.462, 1.546, 0.742> ,<3.429, 1.495, 0.654> ,ROH material { MATOH }  } 
- cylinder { <3.462, 1.546, 0.742> ,<3.438, 1.497, 0.805> ,ROH material { MATOH }  } 
+ sphere { <3.183, 1.086, 0.514> ,RO material { MATO }  } 
+ sphere { <3.098, 1.101, 0.486> ,RH material { MATH }  } 
+ sphere { <3.231, 1.173, 0.496> ,RH material { MATH }  } 
+ cylinder { <3.183, 1.086, 0.514> ,<3.098, 1.101, 0.486> ,ROH material { MATOH }  } 
+ cylinder { <3.183, 1.086, 0.514> ,<3.231, 1.173, 0.496> ,ROH material { MATOH }  } 
+ sphere { <3.347, 1.362, 0.456> ,RO material { MATO }  } 
+ sphere { <3.303, 1.417, 0.408> ,RH material { MATH }  } 
+ sphere { <3.379, 1.417, 0.539> ,RH material { MATH }  } 
+ cylinder { <3.347, 1.362, 0.456> ,<3.303, 1.417, 0.408> ,ROH material { MATOH }  } 
+ cylinder { <3.347, 1.362, 0.456> ,<3.379, 1.417, 0.539> ,ROH material { MATOH }  } 
+ sphere { <3.463, 1.538, 0.737> ,RO material { MATO }  } 
+ sphere { <3.430, 1.488, 0.804> ,RH material { MATH }  } 
+ sphere { <3.413, 1.625, 0.743> ,RH material { MATH }  } 
+ cylinder { <3.463, 1.538, 0.737> ,<3.430, 1.488, 0.804> ,ROH material { MATOH }  } 
+ cylinder { <3.463, 1.538, 0.737> ,<3.413, 1.625, 0.743> ,ROH material { MATOH }  } 
  sphere { <0.248, 0.838, 0.932> ,RO material { MATO }  } 
  sphere { <0.297, 0.916, 0.899> ,RH material { MATH }  } 
  sphere { <0.307, 0.796, 0.991> ,RH material { MATH }  } 
@@ -2665,11 +2665,11 @@ union {
  sphere { <0.055, 1.541, 0.739> ,RH material { MATH }  } 
  cylinder { <0.139, 1.544, 0.741> ,<0.170, 1.490, 0.654> ,ROH material { MATOH }  } 
  cylinder { <0.139, 1.544, 0.741> ,<0.055, 1.541, 0.739> ,ROH material { MATOH }  } 
- sphere { <0.430, 1.086, 0.511> ,RO material { MATO }  } 
- sphere { <0.371, 1.171, 0.493> ,RH material { MATH }  } 
- sphere { <0.382, 1.020, 0.483> ,RH material { MATH }  } 
- cylinder { <0.430, 1.086, 0.511> ,<0.371, 1.171, 0.493> ,ROH material { MATOH }  } 
- cylinder { <0.430, 1.086, 0.511> ,<0.382, 1.020, 0.483> ,ROH material { MATOH }  } 
+ sphere { <0.422, 1.081, 0.511> ,RO material { MATO }  } 
+ sphere { <0.505, 1.097, 0.484> ,RH material { MATH }  } 
+ sphere { <0.372, 1.169, 0.494> ,RH material { MATH }  } 
+ cylinder { <0.422, 1.081, 0.511> ,<0.505, 1.097, 0.484> ,ROH material { MATOH }  } 
+ cylinder { <0.422, 1.081, 0.511> ,<0.372, 1.169, 0.494> ,ROH material { MATOH }  } 
  sphere { <0.394, 0.385, 0.393> ,RO material { MATO }  } 
  sphere { <0.354, 0.399, 0.478> ,RH material { MATH }  } 
  sphere { <0.400, 0.473, 0.354> ,RH material { MATH }  } 
@@ -2930,21 +2930,21 @@ union {
  sphere { <2.177, 1.094, 0.592> ,RH material { MATH }  } 
  cylinder { <2.230, 1.095, 0.679> ,<2.256, 1.180, 0.689> ,ROH material { MATOH }  } 
  cylinder { <2.230, 1.095, 0.679> ,<2.177, 1.094, 0.592> ,ROH material { MATOH }  } 
- sphere { <1.795, 0.743, 0.270> ,RO material { MATO }  } 
- sphere { <1.797, 0.807, 0.331> ,RH material { MATH }  } 
- sphere { <1.796, 0.655, 0.324> ,RH material { MATH }  } 
- cylinder { <1.795, 0.743, 0.270> ,<1.797, 0.807, 0.331> ,ROH material { MATOH }  } 
- cylinder { <1.795, 0.743, 0.270> ,<1.796, 0.655, 0.324> ,ROH material { MATOH }  } 
+ sphere { <1.790, 0.746, 0.276> ,RO material { MATO }  } 
+ sphere { <1.871, 0.748, 0.232> ,RH material { MATH }  } 
+ sphere { <1.789, 0.659, 0.324> ,RH material { MATH }  } 
+ cylinder { <1.790, 0.746, 0.276> ,<1.871, 0.748, 0.232> ,ROH material { MATOH }  } 
+ cylinder { <1.790, 0.746, 0.276> ,<1.789, 0.659, 0.324> ,ROH material { MATOH }  } 
  sphere { <1.799, 0.467, 0.427> ,RO material { MATO }  } 
  sphere { <1.874, 0.409, 0.420> ,RH material { MATH }  } 
  sphere { <1.723, 0.409, 0.418> ,RH material { MATH }  } 
  cylinder { <1.799, 0.467, 0.427> ,<1.874, 0.409, 0.420> ,ROH material { MATOH }  } 
  cylinder { <1.799, 0.467, 0.427> ,<1.723, 0.409, 0.418> ,ROH material { MATOH }  } 
- sphere { <1.806, 0.956, 0.443> ,RO material { MATO }  } 
- sphere { <1.721, 1.002, 0.430> ,RH material { MATH }  } 
- sphere { <1.802, 0.925, 0.532> ,RH material { MATH }  } 
- cylinder { <1.806, 0.956, 0.443> ,<1.721, 1.002, 0.430> ,ROH material { MATOH }  } 
- cylinder { <1.806, 0.956, 0.443> ,<1.802, 0.925, 0.532> ,ROH material { MATOH }  } 
+ sphere { <1.801, 0.963, 0.445> ,RO material { MATO }  } 
+ sphere { <1.799, 0.889, 0.390> ,RH material { MATH }  } 
+ sphere { <1.801, 0.926, 0.537> ,RH material { MATH }  } 
+ cylinder { <1.801, 0.963, 0.445> ,<1.799, 0.889, 0.390> ,ROH material { MATOH }  } 
+ cylinder { <1.801, 0.963, 0.445> ,<1.801, 0.926, 0.537> ,ROH material { MATOH }  } 
  sphere { <2.046, 0.279, 0.401> ,RO material { MATO }  } 
  sphere { <2.101, 0.334, 0.351> ,RH material { MATH }  } 
  sphere { <2.091, 0.271, 0.489> ,RH material { MATH }  } 
@@ -3225,31 +3225,31 @@ union {
  sphere { <0.698, 2.284, 2.303> ,RH material { MATH }  } 
  cylinder { <0.710, 2.309, 2.220> ,<0.624, 2.280, 2.171> ,ROH material { MATOH }  } 
  cylinder { <0.710, 2.309, 2.220> ,<0.698, 2.284, 2.303> ,ROH material { MATOH }  } 
- sphere { <0.713, 2.615, 1.400> ,RO material { MATO }  } 
- sphere { <0.783, 2.648, 1.441> ,RH material { MATH }  } 
- sphere { <0.632, 2.655, 1.450> ,RH material { MATH }  } 
- cylinder { <0.713, 2.615, 1.400> ,<0.783, 2.648, 1.441> ,ROH material { MATOH }  } 
- cylinder { <0.713, 2.615, 1.400> ,<0.632, 2.655, 1.450> ,ROH material { MATOH }  } 
+ sphere { <0.717, 2.623, 1.402> ,RO material { MATO }  } 
+ sphere { <0.709, 2.534, 1.398> ,RH material { MATH }  } 
+ sphere { <0.634, 2.654, 1.451> ,RH material { MATH }  } 
+ cylinder { <0.717, 2.623, 1.402> ,<0.709, 2.534, 1.398> ,ROH material { MATOH }  } 
+ cylinder { <0.717, 2.623, 1.402> ,<0.634, 2.654, 1.451> ,ROH material { MATOH }  } 
  sphere { <0.429, 2.754, 1.569> ,RO material { MATO }  } 
  sphere { <0.454, 2.797, 1.645> ,RH material { MATH }  } 
  sphere { <0.372, 2.677, 1.601> ,RH material { MATH }  } 
  cylinder { <0.429, 2.754, 1.569> ,<0.454, 2.797, 1.645> ,ROH material { MATOH }  } 
  cylinder { <0.429, 2.754, 1.569> ,<0.372, 2.677, 1.601> ,ROH material { MATOH }  } 
- sphere { <0.953, 2.729, 1.542> ,RO material { MATO }  } 
- sphere { <1.009, 2.659, 1.565> ,RH material { MATH }  } 
- sphere { <1.009, 2.787, 1.485> ,RH material { MATH }  } 
- cylinder { <0.953, 2.729, 1.542> ,<1.009, 2.659, 1.565> ,ROH material { MATOH }  } 
- cylinder { <0.953, 2.729, 1.542> ,<1.009, 2.787, 1.485> ,ROH material { MATOH }  } 
- sphere { <0.709, 2.303, 1.381> ,RO material { MATO }  } 
- sphere { <0.710, 2.402, 1.384> ,RH material { MATH }  } 
- sphere { <0.700, 2.282, 1.292> ,RH material { MATH }  } 
- cylinder { <0.709, 2.303, 1.381> ,<0.710, 2.402, 1.384> ,ROH material { MATOH }  } 
- cylinder { <0.709, 2.303, 1.381> ,<0.700, 2.282, 1.292> ,ROH material { MATOH }  } 
- sphere { <0.423, 2.216, 1.544> ,RO material { MATO }  } 
- sphere { <0.507, 2.241, 1.498> ,RH material { MATH }  } 
- sphere { <0.450, 2.168, 1.618> ,RH material { MATH }  } 
- cylinder { <0.423, 2.216, 1.544> ,<0.507, 2.241, 1.498> ,ROH material { MATOH }  } 
- cylinder { <0.423, 2.216, 1.544> ,<0.450, 2.168, 1.618> ,ROH material { MATOH }  } 
+ sphere { <0.962, 2.727, 1.546> ,RO material { MATO }  } 
+ sphere { <1.002, 2.788, 1.487> ,RH material { MATH }  } 
+ sphere { <0.883, 2.695, 1.499> ,RH material { MATH }  } 
+ cylinder { <0.962, 2.727, 1.546> ,<1.002, 2.788, 1.487> ,ROH material { MATOH }  } 
+ cylinder { <0.962, 2.727, 1.546> ,<0.883, 2.695, 1.499> ,ROH material { MATOH }  } 
+ sphere { <0.714, 2.310, 1.379> ,RO material { MATO }  } 
+ sphere { <0.702, 2.283, 1.296> ,RH material { MATH }  } 
+ sphere { <0.628, 2.281, 1.428> ,RH material { MATH }  } 
+ cylinder { <0.714, 2.310, 1.379> ,<0.702, 2.283, 1.296> ,ROH material { MATOH }  } 
+ cylinder { <0.714, 2.310, 1.379> ,<0.628, 2.281, 1.428> ,ROH material { MATOH }  } 
+ sphere { <0.431, 2.221, 1.544> ,RO material { MATO }  } 
+ sphere { <0.453, 2.167, 1.623> ,RH material { MATH }  } 
+ sphere { <0.375, 2.166, 1.494> ,RH material { MATH }  } 
+ cylinder { <0.431, 2.221, 1.544> ,<0.453, 2.167, 1.623> ,ROH material { MATOH }  } 
+ cylinder { <0.431, 2.221, 1.544> ,<0.375, 2.166, 1.494> ,ROH material { MATOH }  } 
  sphere { <0.253, 2.522, 1.655> ,RO material { MATO }  } 
  sphere { <0.255, 2.520, 1.738> ,RH material { MATH }  } 
  sphere { <0.304, 2.433, 1.623> ,RH material { MATH }  } 
@@ -3265,11 +3265,11 @@ union {
  sphere { <0.984, 2.305, 1.550> ,RH material { MATH }  } 
  cylinder { <0.936, 2.217, 1.516> ,<0.868, 2.245, 1.474> ,ROH material { MATOH }  } 
  cylinder { <0.936, 2.217, 1.516> ,<0.984, 2.305, 1.550> ,ROH material { MATOH }  } 
- sphere { <1.091, 2.506, 1.626> ,RO material { MATO }  } 
- sphere { <1.176, 2.496, 1.601> ,RH material { MATH }  } 
- sphere { <1.094, 2.506, 1.728> ,RH material { MATH }  } 
- cylinder { <1.091, 2.506, 1.626> ,<1.176, 2.496, 1.601> ,ROH material { MATOH }  } 
- cylinder { <1.091, 2.506, 1.626> ,<1.094, 2.506, 1.728> ,ROH material { MATOH }  } 
+ sphere { <1.098, 2.502, 1.625> ,RO material { MATO }  } 
+ sphere { <1.055, 2.572, 1.602> ,RH material { MATH }  } 
+ sphere { <1.099, 2.504, 1.731> ,RH material { MATH }  } 
+ cylinder { <1.098, 2.502, 1.625> ,<1.055, 2.572, 1.602> ,ROH material { MATOH }  } 
+ cylinder { <1.098, 2.502, 1.625> ,<1.099, 2.504, 1.731> ,ROH material { MATOH }  } 
  sphere { <0.939, 2.227, 2.084> ,RO material { MATO }  } 
  sphere { <0.903, 2.176, 1.998> ,RH material { MATH }  } 
  sphere { <0.870, 2.251, 2.126> ,RH material { MATH }  } 
@@ -3870,11 +3870,11 @@ union {
  sphere { <0.305, 2.872, 1.462> ,RH material { MATH }  } 
  cylinder { <0.257, 2.924, 1.406> ,<0.306, 2.919, 1.318> ,ROH material { MATOH }  } 
  cylinder { <0.257, 2.924, 1.406> ,<0.305, 2.872, 1.462> ,ROH material { MATOH }  } 
- sphere { <0.248, 2.048, 1.373> ,RO material { MATO }  } 
- sphere { <0.305, 2.097, 1.431> ,RH material { MATH }  } 
- sphere { <0.225, 1.969, 1.423> ,RH material { MATH }  } 
- cylinder { <0.248, 2.048, 1.373> ,<0.305, 2.097, 1.431> ,ROH material { MATOH }  } 
- cylinder { <0.248, 2.048, 1.373> ,<0.225, 1.969, 1.423> ,ROH material { MATOH }  } 
+ sphere { <0.256, 2.048, 1.377> ,RO material { MATO }  } 
+ sphere { <0.176, 2.100, 1.370> ,RH material { MATH }  } 
+ sphere { <0.228, 1.968, 1.422> ,RH material { MATH }  } 
+ cylinder { <0.256, 2.048, 1.377> ,<0.176, 2.100, 1.370> ,ROH material { MATOH }  } 
+ cylinder { <0.256, 2.048, 1.377> ,<0.228, 1.968, 1.422> ,ROH material { MATOH }  } 
  sphere { <0.388, 2.057, 1.100> ,RO material { MATO }  } 
  sphere { <0.473, 2.107, 1.107> ,RH material { MATH }  } 
  sphere { <0.353, 2.058, 1.185> ,RH material { MATH }  } 
@@ -4375,16 +4375,16 @@ union {
  sphere { <0.588, 1.418, 1.100> ,RH material { MATH }  } 
  cylinder { <0.674, 1.367, 1.099> ,<0.733, 1.421, 1.058> ,ROH material { MATOH }  } 
  cylinder { <0.674, 1.367, 1.099> ,<0.588, 1.418, 1.100> ,ROH material { MATOH }  } 
- sphere { <0.872, 1.123, 0.713> ,RO material { MATO }  } 
- sphere { <0.810, 1.113, 0.777> ,RH material { MATH }  } 
- sphere { <0.819, 1.123, 0.626> ,RH material { MATH }  } 
- cylinder { <0.872, 1.123, 0.713> ,<0.810, 1.113, 0.777> ,ROH material { MATOH }  } 
- cylinder { <0.872, 1.123, 0.713> ,<0.819, 1.123, 0.626> ,ROH material { MATOH }  } 
- sphere { <0.702, 1.128, 0.428> ,RO material { MATO }  } 
- sphere { <0.734, 1.058, 0.371> ,RH material { MATH }  } 
- sphere { <0.611, 1.103, 0.447> ,RH material { MATH }  } 
- cylinder { <0.702, 1.128, 0.428> ,<0.734, 1.058, 0.371> ,ROH material { MATOH }  } 
- cylinder { <0.702, 1.128, 0.428> ,<0.611, 1.103, 0.447> ,ROH material { MATOH }  } 
+ sphere { <0.865, 1.127, 0.707> ,RO material { MATO }  } 
+ sphere { <0.932, 1.059, 0.707> ,RH material { MATH }  } 
+ sphere { <0.808, 1.105, 0.782> ,RH material { MATH }  } 
+ cylinder { <0.865, 1.127, 0.707> ,<0.932, 1.059, 0.707> ,ROH material { MATOH }  } 
+ cylinder { <0.865, 1.127, 0.707> ,<0.808, 1.105, 0.782> ,ROH material { MATOH }  } 
+ sphere { <0.693, 1.126, 0.423> ,RO material { MATO }  } 
+ sphere { <0.745, 1.125, 0.512> ,RH material { MATH }  } 
+ sphere { <0.736, 1.068, 0.372> ,RH material { MATH }  } 
+ cylinder { <0.693, 1.126, 0.423> ,<0.745, 1.125, 0.512> ,ROH material { MATOH }  } 
+ cylinder { <0.693, 1.126, 0.423> ,<0.736, 1.068, 0.372> ,ROH material { MATOH }  } 
  sphere { <0.675, 1.407, 0.253> ,RO material { MATO }  } 
  sphere { <0.678, 1.318, 0.301> ,RH material { MATH }  } 
  sphere { <0.725, 1.462, 0.303> ,RH material { MATH }  } 
@@ -4395,21 +4395,21 @@ union {
  sphere { <0.481, 1.508, 0.277> ,RH material { MATH }  } 
  cylinder { <0.401, 1.549, 0.294> ,<0.364, 1.571, 0.204> ,ROH material { MATOH }  } 
  cylinder { <0.401, 1.549, 0.294> ,<0.481, 1.508, 0.277> ,ROH material { MATOH }  } 
- sphere { <1.091, 0.933, 0.681> ,RO material { MATO }  } 
- sphere { <1.019, 0.992, 0.687> ,RH material { MATH }  } 
- sphere { <1.089, 0.901, 0.588> ,RH material { MATH }  } 
- cylinder { <1.091, 0.933, 0.681> ,<1.019, 0.992, 0.687> ,ROH material { MATOH }  } 
- cylinder { <1.091, 0.933, 0.681> ,<1.089, 0.901, 0.588> ,ROH material { MATOH }  } 
- sphere { <1.378, 1.106, 0.676> ,RO material { MATO }  } 
- sphere { <1.289, 1.055, 0.675> ,RH material { MATH }  } 
- sphere { <1.429, 1.062, 0.733> ,RH material { MATH }  } 
- cylinder { <1.378, 1.106, 0.676> ,<1.289, 1.055, 0.675> ,ROH material { MATOH }  } 
- cylinder { <1.378, 1.106, 0.676> ,<1.429, 1.062, 0.733> ,ROH material { MATOH }  } 
- sphere { <1.540, 1.100, 0.393> ,RO material { MATO }  } 
- sphere { <1.540, 1.186, 0.358> ,RH material { MATH }  } 
- sphere { <1.490, 1.107, 0.478> ,RH material { MATH }  } 
- cylinder { <1.540, 1.100, 0.393> ,<1.540, 1.186, 0.358> ,ROH material { MATOH }  } 
- cylinder { <1.540, 1.100, 0.393> ,<1.490, 1.107, 0.478> ,ROH material { MATOH }  } 
+ sphere { <1.082, 0.933, 0.681> ,RO material { MATO }  } 
+ sphere { <1.168, 0.984, 0.685> ,RH material { MATH }  } 
+ sphere { <1.080, 0.899, 0.596> ,RH material { MATH }  } 
+ cylinder { <1.082, 0.933, 0.681> ,<1.168, 0.984, 0.685> ,ROH material { MATOH }  } 
+ cylinder { <1.082, 0.933, 0.681> ,<1.080, 0.899, 0.596> ,ROH material { MATOH }  } 
+ sphere { <1.370, 1.103, 0.681> ,RO material { MATO }  } 
+ sphere { <1.422, 1.104, 0.593> ,RH material { MATH }  } 
+ sphere { <1.423, 1.059, 0.738> ,RH material { MATH }  } 
+ cylinder { <1.370, 1.103, 0.681> ,<1.422, 1.104, 0.593> ,ROH material { MATOH }  } 
+ cylinder { <1.370, 1.103, 0.681> ,<1.423, 1.059, 0.738> ,ROH material { MATOH }  } 
+ sphere { <1.531, 1.102, 0.398> ,RO material { MATO }  } 
+ sphere { <1.618, 1.065, 0.409> ,RH material { MATH }  } 
+ sphere { <1.547, 1.187, 0.354> ,RH material { MATH }  } 
+ cylinder { <1.531, 1.102, 0.398> ,<1.618, 1.065, 0.409> ,ROH material { MATOH }  } 
+ cylinder { <1.531, 1.102, 0.398> ,<1.547, 1.187, 0.354> ,ROH material { MATOH }  } 
  sphere { <1.558, 1.380, 0.258> ,RO material { MATO }  } 
  sphere { <1.503, 1.368, 0.176> ,RH material { MATH }  } 
  sphere { <1.506, 1.432, 0.313> ,RH material { MATH }  } 
@@ -4631,7 +4631,7 @@ union {
  cylinder { <3.115, 3.243, 0.406> ,<2.926, 3.345, 0.416> ,RHB material { MATHB }  } 
  cylinder { <3.179, 3.005, 0.296> ,<3.203, 3.197, 0.401> ,RHB material { MATHB }  } 
  cylinder { <3.214, 2.858, 0.304> ,<3.313, 2.728, 0.416> ,RHB material { MATHB }  } 
- cylinder { <3.297, 3.183, 0.593> ,<3.203, 3.197, 0.401> ,RHB material { MATHB }  } 
+ cylinder { <3.293, 3.176, 0.599> ,<3.203, 3.197, 0.401> ,RHB material { MATHB }  } 
  cylinder { <3.291, 2.941, 0.076> ,<3.169, 2.917, 0.250> ,RHB material { MATHB }  } 
  cylinder { <2.977, 2.896, 0.199> ,<3.169, 2.917, 0.250> ,RHB material { MATHB }  } 
  cylinder { <3.271, 2.661, 0.445> ,<3.174, 2.508, 0.510> ,RHB material { MATHB }  } 
@@ -4640,9 +4640,9 @@ union {
  cylinder { <2.892, -0.004, 0.178> ,<2.759, -0.009, 0.009> ,RHB material { MATHB }  } 
  cylinder { <0.074, 2.810, 0.002> ,<0.250, 2.956, 0.003> ,RHB material { MATHB }  } 
  cylinder { <3.146, 0.002, 0.171> ,<2.953, 0.002, 0.253> ,RHB material { MATHB }  } 
- cylinder { <0.002, 3.426, 0.448> ,<-0.003, 3.355, 0.640> ,RHB material { MATHB }  } 
+ cylinder { <0.002, 3.426, 0.448> ,<-0.008, 3.348, 0.637> ,RHB material { MATHB }  } 
  cylinder { <0.074, 3.434, 0.316> ,<0.226, 3.370, 0.227> ,RHB material { MATHB }  } 
- cylinder { <0.073, 3.299, 0.650> ,<0.250, 3.175, 0.673> ,RHB material { MATHB }  } 
+ cylinder { <0.072, 3.300, 0.650> ,<0.250, 3.175, 0.673> ,RHB material { MATHB }  } 
  cylinder { <0.071, 0.172, 0.315> ,<0.220, 0.218, 0.221> ,RHB material { MATHB }  } 
  cylinder { <3.186, 3.009, 3.300> ,<3.209, 3.196, 3.200> ,RHB material { MATHB }  } 
  cylinder { <3.220, 2.862, 3.289> ,<3.315, 2.738, 3.169> ,RHB material { MATHB }  } 
@@ -4662,7 +4662,8 @@ union {
  cylinder { <0.344, 3.259, 0.347> ,<0.226, 3.370, 0.227> ,RHB material { MATHB }  } 
  cylinder { <0.305, 3.219, 0.733> ,<0.420, 3.308, 0.865> ,RHB material { MATHB }  } 
  cylinder { <0.296, 3.185, 0.586> ,<0.397, 3.207, 0.403> ,RHB material { MATHB }  } 
- cylinder { <0.076, 0.005, 0.883> ,<0.257, -0.003, 0.980> ,RHB material { MATHB }  } 
+ cylinder { <0.077, 0.001, 0.884> ,<0.257, -0.003, 0.980> ,RHB material { MATHB }  } 
+ cylinder { <-0.003, 0.077, 0.780> ,<0.005, 0.250, 0.649> ,RHB material { MATHB }  } 
  cylinder { <0.315, 0.072, 0.166> ,<0.220, 0.218, 0.221> ,RHB material { MATHB }  } 
  cylinder { <0.197, 0.269, 0.148> ,<0.147, 0.366, -0.000> ,RHB material { MATHB }  } 
  cylinder { <0.276, 0.278, 0.276> ,<0.394, 0.385, 0.393> ,RHB material { MATHB }  } 
@@ -4688,37 +4689,35 @@ union {
  cylinder { <0.507, 0.689, 3.364> ,<0.700, 0.702, 3.420> ,RHB material { MATHB }  } 
  cylinder { <0.384, 0.737, 3.290> ,<0.288, 0.865, 3.171> ,RHB material { MATHB }  } 
  cylinder { <0.214, 0.563, 0.007> ,<0.147, 0.366, -0.000> ,RHB material { MATHB }  } 
- cylinder { <3.385, 0.563, -0.007> ,<3.466, 0.368, 0.002> ,RHB material { MATHB }  } 
- cylinder { <3.298, 0.658, 0.072> ,<3.184, 0.675, 0.258> ,RHB material { MATHB }  } 
+ cylinder { <3.379, 0.562, -0.003> ,<3.466, 0.368, 0.002> ,RHB material { MATHB }  } 
  cylinder { <0.400, 0.473, 0.354> ,<0.425, 0.674, 0.253> ,RHB material { MATHB }  } 
  cylinder { <0.354, 0.399, 0.478> ,<0.261, 0.428, 0.675> ,RHB material { MATHB }  } 
  cylinder { <0.593, 0.300, 0.420> ,<0.394, 0.385, 0.393> ,RHB material { MATHB }  } 
  cylinder { <0.670, 0.179, 0.373> ,<0.644, -0.002, 0.254> ,RHB material { MATHB }  } 
- cylinder { <0.379, 0.735, 0.307> ,<0.290, 0.866, 0.421> ,RHB material { MATHB }  } 
+ cylinder { <0.379, 0.735, 0.307> ,<0.283, 0.864, 0.416> ,RHB material { MATHB }  } 
  cylinder { <0.368, 0.665, 0.173> ,<0.247, 0.652, 0.009> ,RHB material { MATHB }  } 
- cylinder { <0.000, 0.221, 0.559> ,<-0.006, 0.145, 0.364> ,RHB material { MATHB }  } 
- cylinder { <0.079, 0.791, 0.004> ,<0.247, 0.652, 0.009> ,RHB material { MATHB }  } 
+ cylinder { <0.003, 0.216, 0.560> ,<-0.006, 0.145, 0.364> ,RHB material { MATHB }  } 
+ cylinder { <0.078, 0.783, 0.002> ,<0.247, 0.652, 0.009> ,RHB material { MATHB }  } 
  cylinder { <0.313, 0.383, 0.736> ,<0.420, 0.283, 0.869> ,RHB material { MATHB }  } 
- cylinder { <0.179, 0.373, 0.665> ,<0.001, 0.257, 0.646> ,RHB material { MATHB }  } 
+ cylinder { <0.179, 0.373, 0.665> ,<0.005, 0.250, 0.649> ,RHB material { MATHB }  } 
  cylinder { <0.449, 0.325, 0.934> ,<0.515, 0.422, 1.081> ,RHB material { MATHB }  } 
  cylinder { <0.703, -0.002, 0.175> ,<0.840, -0.004, -0.000> ,RHB material { MATHB }  } 
  cylinder { <0.558, -0.003, 0.218> ,<0.363, -0.007, 0.139> ,RHB material { MATHB }  } 
  cylinder { <0.881, 0.077, -0.002> ,<0.979, 0.249, -0.002> ,RHB material { MATHB }  } 
  cylinder { <0.814, 0.376, 0.324> ,<0.678, 0.258, 0.427> ,RHB material { MATHB }  } 
  cylinder { <3.253, 0.342, 0.339> ,<3.366, 0.230, 0.225> ,RHB material { MATHB }  } 
- cylinder { <3.246, 0.404, 0.477> ,<3.340, 0.430, 0.672> ,RHB material { MATHB }  } 
+ cylinder { <3.246, 0.404, 0.477> ,<3.344, 0.421, 0.670> ,RHB material { MATHB }  } 
  cylinder { <2.928, 0.175, 0.370> ,<2.953, 0.002, 0.253> ,RHB material { MATHB }  } 
  cylinder { <3.007, 0.297, 0.413> ,<3.200, 0.396, 0.387> ,RHB material { MATHB }  } 
- cylinder { <2.791, 0.369, 0.333> ,<2.921, 0.254, 0.422> ,RHB material { MATHB }  } 
- cylinder { <2.662, 0.449, 0.333> ,<2.510, 0.518, 0.417> ,RHB material { MATHB }  } 
+ cylinder { <2.787, 0.373, 0.322> ,<2.921, 0.254, 0.422> ,RHB material { MATHB }  } 
  cylinder { <2.897, 0.194, 0.613> ,<2.921, 0.254, 0.422> ,RHB material { MATHB }  } 
  cylinder { <2.968, 0.203, 0.747> ,<3.166, 0.286, 0.864> ,RHB material { MATHB }  } 
- cylinder { <3.093, 0.684, 0.230> ,<2.900, 0.709, 0.163> ,RHB material { MATHB }  } 
- cylinder { <3.188, 0.587, 0.298> ,<3.200, 0.396, 0.387> ,RHB material { MATHB }  } 
- cylinder { <3.287, 0.384, 0.734> ,<3.166, 0.286, 0.864> ,RHB material { MATHB }  } 
- cylinder { <2.848, 0.624, 0.200> ,<2.734, 0.425, 0.277> ,RHB material { MATHB }  } 
- cylinder { <2.858, 0.774, 0.192> ,<2.763, 0.923, 0.256> ,RHB material { MATHB }  } 
- cylinder { <3.273, 0.808, 0.376> ,<3.184, 0.675, 0.258> ,RHB material { MATHB }  } 
+ cylinder { <3.183, 0.591, 0.301> ,<3.200, 0.396, 0.387> ,RHB material { MATHB }  } 
+ cylinder { <3.363, 0.511, 0.694> ,<3.422, 0.700, 0.717> ,RHB material { MATHB }  } 
+ cylinder { <3.287, 0.388, 0.741> ,<3.166, 0.286, 0.864> ,RHB material { MATHB }  } 
+ cylinder { <2.857, 0.780, 0.197> ,<2.763, 0.923, 0.256> ,RHB material { MATHB }  } 
+ cylinder { <3.262, 0.804, 0.371> ,<3.175, 0.676, 0.261> ,RHB material { MATHB }  } 
+ cylinder { <3.262, 0.934, 0.449> ,<3.183, 1.086, 0.514> ,RHB material { MATHB }  } 
  cylinder { <2.902, 0.232, 3.088> ,<2.881, 0.175, 2.899> ,RHB material { MATHB }  } 
  cylinder { <2.857, 0.308, 3.211> ,<2.734, 0.423, 3.306> ,RHB material { MATHB }  } 
  cylinder { <2.717, 0.072, 0.009> ,<2.625, 0.256, -0.001> ,RHB material { MATHB }  } 
@@ -4862,7 +4861,8 @@ union {
  cylinder { <0.000, 2.397, 0.274> ,<0.008, 2.609, 0.263> ,RHB material { MATHB }  } 
  cylinder { <2.664, 3.143, 3.271> ,<2.511, 3.092, 3.176> ,RHB material { MATHB }  } 
  cylinder { <3.290, 0.077, 2.649> ,<3.167, 0.270, 2.734> ,RHB material { MATHB }  } 
- cylinder { <3.402, 2.859, 0.771> ,<3.339, 2.757, 0.925> ,RHB material { MATHB }  } 
+ cylinder { <3.399, 2.988, 0.700> ,<3.337, 3.169, 0.684> ,RHB material { MATHB }  } 
+ cylinder { <3.400, 2.859, 0.778> ,<3.339, 2.757, 0.925> ,RHB material { MATHB }  } 
  cylinder { <0.378, 2.571, 0.482> ,<0.286, 2.727, 0.427> ,RHB material { MATHB }  } 
  cylinder { <0.414, 2.499, 0.610> ,<0.396, 2.509, 0.818> ,RHB material { MATHB }  } 
  cylinder { <0.815, 3.214, 3.272> ,<0.674, 3.340, 3.180> ,RHB material { MATHB }  } 
@@ -4978,12 +4978,11 @@ union {
  cylinder { <2.572, 0.074, 2.678> ,<2.655, 0.251, 2.765> ,RHB material { MATHB }  } 
  cylinder { <2.443, -0.005, 2.684> ,<2.252, -0.006, 2.785> ,RHB material { MATHB }  } 
  cylinder { <2.534, 0.264, 0.000> ,<2.312, 0.284, 0.004> ,RHB material { MATHB }  } 
- cylinder { <2.655, 0.304, 0.081> ,<2.734, 0.425, 0.277> ,RHB material { MATHB }  } 
- cylinder { <2.423, 0.498, 0.367> ,<2.227, 0.454, 0.253> ,RHB material { MATHB }  } 
- cylinder { <2.496, 0.489, 0.500> ,<2.469, 0.423, 0.690> ,RHB material { MATHB }  } 
+ cylinder { <2.655, 0.304, 0.081> ,<2.727, 0.421, 0.283> ,RHB material { MATHB }  } 
+ cylinder { <2.498, 0.484, 0.507> ,<2.469, 0.423, 0.690> ,RHB material { MATHB }  } 
  cylinder { <2.692, 0.297, 2.683> ,<2.773, 0.394, 2.517> ,RHB material { MATHB }  } 
  cylinder { <2.728, 0.224, 2.810> ,<2.881, 0.175, 2.899> ,RHB material { MATHB }  } 
- cylinder { <3.224, 3.269, 0.809> ,<3.340, 3.176, 0.683> ,RHB material { MATHB }  } 
+ cylinder { <3.224, 3.269, 0.809> ,<3.337, 3.169, 0.684> ,RHB material { MATHB }  } 
  cylinder { <3.145, 3.272, 0.939> ,<3.087, 3.183, 1.087> ,RHB material { MATHB }  } 
  cylinder { <3.100, 0.370, 2.424> ,<3.148, 0.253, 2.229> ,RHB material { MATHB }  } 
  cylinder { <3.107, 0.502, 2.499> ,<3.172, 0.694, 2.481> ,RHB material { MATHB }  } 
@@ -5014,7 +5013,7 @@ union {
  cylinder { <2.468, 0.512, 2.852> ,<2.465, 0.705, 2.734> ,RHB material { MATHB }  } 
  cylinder { <2.533, 0.705, 2.666> ,<2.662, 0.678, 2.512> ,RHB material { MATHB }  } 
  cylinder { <2.487, 0.780, 2.789> ,<2.498, 0.927, 2.920> ,RHB material { MATHB }  } 
- cylinder { <2.303, 3.298, 2.046> ,<2.487, 3.197, 2.053> ,RHB material { MATHB }  } 
+ cylinder { <2.303, 3.298, 2.046> ,<2.490, 3.201, 2.045> ,RHB material { MATHB }  } 
  cylinder { <2.231, 0.176, 2.091> ,<2.240, -0.005, 2.208> ,RHB material { MATHB }  } 
  cylinder { <2.168, 0.314, 2.092> ,<2.048, 0.420, 2.211> ,RHB material { MATHB }  } 
  cylinder { <2.117, 0.195, 1.873> ,<2.222, 0.260, 2.039> ,RHB material { MATHB }  } 
@@ -5026,46 +5025,37 @@ union {
  cylinder { <2.417, 0.689, 2.254> ,<2.226, 0.699, 2.306> ,RHB material { MATHB }  } 
  cylinder { <2.593, 0.809, 2.103> ,<2.502, 0.680, 2.227> ,RHB material { MATHB }  } 
  cylinder { <2.712, 0.902, 2.094> ,<2.879, 0.973, 2.198> ,RHB material { MATHB }  } 
- cylinder { <2.859, 0.178, 1.975> ,<2.855, 0.276, 1.803> ,RHB material { MATHB }  } 
- cylinder { <3.264, 0.409, 1.982> ,<3.141, 0.422, 1.802> ,RHB material { MATHB }  } 
+ cylinder { <2.859, 0.178, 1.975> ,<2.861, 0.282, 1.808> ,RHB material { MATHB }  } 
+ cylinder { <3.264, 0.409, 1.982> ,<3.146, 0.430, 1.802> ,RHB material { MATHB }  } 
  cylinder { <3.338, 0.592, 2.148> ,<3.314, 0.401, 2.061> ,RHB material { MATHB }  } 
  cylinder { <3.287, 0.794, 2.607> ,<3.172, 0.694, 2.481> ,RHB material { MATHB }  } 
  cylinder { <3.298, 0.914, 2.699> ,<3.210, 1.084, 2.768> ,RHB material { MATHB }  } 
  cylinder { <2.886, 1.061, 2.202> ,<2.889, 1.280, 2.218> ,RHB material { MATHB }  } 
  cylinder { <2.913, 1.026, 2.606> ,<2.894, 0.867, 2.474> ,RHB material { MATHB }  } 
  cylinder { <2.922, 1.177, 2.614> ,<2.918, 1.362, 2.497> ,RHB material { MATHB }  } 
- cylinder { <3.218, 0.921, 1.997> ,<3.341, 1.075, 1.935> ,RHB material { MATHB }  } 
- cylinder { <3.215, 0.792, 2.077> ,<3.329, 0.679, 2.191> ,RHB material { MATHB }  } 
+ cylinder { <3.221, 0.794, 2.079> ,<3.329, 0.679, 2.191> ,RHB material { MATHB }  } 
  cylinder { <2.942, 3.428, 2.100> ,<3.137, 3.340, 2.215> ,RHB material { MATHB }  } 
  cylinder { <2.791, 3.439, 2.100> ,<2.660, 3.376, 2.217> ,RHB material { MATHB }  } 
- cylinder { <2.942, 0.330, 1.801> ,<3.141, 0.422, 1.802> ,RHB material { MATHB }  } 
- cylinder { <2.791, 0.336, 1.800> ,<2.633, 0.443, 1.799> ,RHB material { MATHB }  } 
- cylinder { <2.799, 0.165, 1.487> ,<2.665, 0.224, 1.372> ,RHB material { MATHB }  } 
- cylinder { <2.862, 0.183, 1.624> ,<2.855, 0.276, 1.803> ,RHB material { MATHB }  } 
- cylinder { <3.119, 0.512, 1.804> ,<3.075, 0.697, 1.799> ,RHB material { MATHB }  } 
- cylinder { <3.196, 0.412, 1.719> ,<3.307, 0.409, 1.544> ,RHB material { MATHB }  } 
- cylinder { <2.503, 3.007, 2.184> ,<2.487, 3.197, 2.053> ,RHB material { MATHB }  } 
- cylinder { <2.550, 2.932, 2.307> ,<2.668, 2.925, 2.503> ,RHB material { MATHB }  } 
- cylinder { <2.544, 3.255, 2.106> ,<2.660, 3.376, 2.217> ,RHB material { MATHB }  } 
- cylinder { <2.535, 3.183, 1.973> ,<2.625, 3.150, 1.801> ,RHB material { MATHB }  } 
+ cylinder { <2.786, 0.336, 1.804> ,<2.633, 0.443, 1.799> ,RHB material { MATHB }  } 
+ cylinder { <2.796, 0.168, 1.485> ,<2.665, 0.224, 1.372> ,RHB material { MATHB }  } 
+ cylinder { <3.188, 0.417, 1.720> ,<3.307, 0.409, 1.544> ,RHB material { MATHB }  } 
+ cylinder { <2.548, 2.928, 2.312> ,<2.668, 2.925, 2.503> ,RHB material { MATHB }  } 
+ cylinder { <2.540, 3.259, 2.095> ,<2.660, 3.376, 2.217> ,RHB material { MATHB }  } 
  cylinder { <1.971, 3.147, 2.172> ,<1.800, 3.091, 2.042> ,RHB material { MATHB }  } 
  cylinder { <2.100, 3.225, 2.172> ,<2.216, 3.341, 2.042> ,RHB material { MATHB }  } 
  cylinder { <2.126, 3.406, 1.869> ,<2.216, 3.341, 2.042> ,RHB material { MATHB }  } 
  cylinder { <1.997, 3.380, 1.794> ,<1.799, 3.263, 1.801> ,RHB material { MATHB }  } 
- cylinder { <2.702, 3.206, 1.801> ,<2.863, 3.312, 1.802> ,RHB material { MATHB }  } 
- cylinder { <2.661, 3.061, 1.801> ,<2.736, 2.878, 1.807> ,RHB material { MATHB }  } 
+ cylinder { <2.666, 3.063, 1.801> ,<2.736, 2.878, 1.807> ,RHB material { MATHB }  } 
  cylinder { <2.835, 2.880, 1.802> ,<3.074, 2.886, 1.792> ,RHB material { MATHB }  } 
- cylinder { <2.710, 2.835, 1.729> ,<2.636, 2.727, 1.546> ,RHB material { MATHB }  } 
- cylinder { <2.594, 2.787, 2.105> ,<2.498, 2.922, 2.228> ,RHB material { MATHB }  } 
- cylinder { <2.668, 2.771, 1.973> ,<2.736, 2.878, 1.807> ,RHB material { MATHB }  } 
+ cylinder { <2.710, 2.835, 1.729> ,<2.644, 2.730, 1.542> ,RHB material { MATHB }  } 
+ cylinder { <2.670, 2.776, 1.972> ,<2.736, 2.878, 1.807> ,RHB material { MATHB }  } 
  cylinder { <3.262, 3.182, 1.971> ,<3.145, 3.167, 1.800> ,RHB material { MATHB }  } 
  cylinder { <3.261, 3.238, 2.112> ,<3.137, 3.340, 2.215> ,RHB material { MATHB }  } 
- cylinder { <2.863, 3.370, 1.726> ,<2.867, 3.455, 1.549> ,RHB material { MATHB }  } 
- cylinder { <2.861, 3.370, 1.877> ,<2.854, 3.463, 2.051> ,RHB material { MATHB }  } 
+ cylinder { <2.864, 3.365, 1.882> ,<2.854, 3.463, 2.051> ,RHB material { MATHB }  } 
  cylinder { <3.188, 3.180, 1.717> ,<3.312, 3.193, 1.547> ,RHB material { MATHB }  } 
- cylinder { <3.061, 3.216, 1.792> ,<2.863, 3.312, 1.802> ,RHB material { MATHB }  } 
+ cylinder { <3.061, 3.216, 1.792> ,<2.868, 3.319, 1.797> ,RHB material { MATHB }  } 
  cylinder { <0.075, 3.289, 1.996> ,<0.281, 3.191, 2.057> ,RHB material { MATHB }  } 
- cylinder { <2.815, 2.652, 2.154> ,<2.636, 2.721, 2.050> ,RHB material { MATHB }  } 
+ cylinder { <2.815, 2.652, 2.154> ,<2.636, 2.729, 2.055> ,RHB material { MATHB }  } 
  cylinder { <3.217, 2.802, 2.078> ,<3.330, 2.913, 2.193> ,RHB material { MATHB }  } 
  cylinder { <3.218, 2.674, 1.998> ,<3.331, 2.512, 1.942> ,RHB material { MATHB }  } 
  cylinder { <-0.008, 0.185, 2.015> ,<0.002, 0.006, 2.135> ,RHB material { MATHB }  } 
@@ -5147,37 +5137,41 @@ union {
  cylinder { <1.317, 2.148, 1.396> ,<1.128, 2.053, 1.377> ,RHB material { MATHB }  } 
  cylinder { <1.323, 2.152, 2.199> ,<1.127, 2.056, 2.223> ,RHB material { MATHB }  } 
  cylinder { <1.398, 2.275, 2.150> ,<1.372, 2.469, 2.055> ,RHB material { MATHB }  } 
- cylinder { <1.496, 2.455, 1.724> ,<1.373, 2.472, 1.549> ,RHB material { MATHB }  } 
- cylinder { <1.618, 2.504, 1.799> ,<1.790, 2.636, 1.794> ,RHB material { MATHB }  } 
+ cylinder { <1.496, 2.455, 1.724> ,<1.381, 2.475, 1.544> ,RHB material { MATHB }  } 
+ cylinder { <1.618, 2.504, 1.799> ,<1.795, 2.629, 1.799> ,RHB material { MATHB }  } 
  cylinder { <1.417, 2.530, 2.108> ,<1.514, 2.659, 2.214> ,RHB material { MATHB }  } 
  cylinder { <1.427, 2.462, 1.973> ,<1.543, 2.444, 1.806> ,RHB material { MATHB }  } 
- cylinder { <1.383, 2.384, 1.504> ,<1.404, 2.195, 1.403> ,RHB material { MATHB }  } 
- cylinder { <1.973, 2.249, 1.802> ,<2.046, 2.438, 1.801> ,RHB material { MATHB }  } 
+ cylinder { <1.386, 2.386, 1.502> ,<1.404, 2.195, 1.403> ,RHB material { MATHB }  } 
+ cylinder { <1.292, 2.483, 1.570> ,<1.098, 2.502, 1.625> ,RHB material { MATHB }  } 
+ cylinder { <1.973, 2.249, 1.802> ,<2.054, 2.435, 1.805> ,RHB material { MATHB }  } 
  cylinder { <1.850, 2.161, 1.803> ,<1.667, 2.158, 1.798> ,RHB material { MATHB }  } 
- cylinder { <2.102, 2.450, 1.724> ,<2.212, 2.469, 1.543> ,RHB material { MATHB }  } 
+ cylinder { <1.977, 2.496, 1.800> ,<1.795, 2.629, 1.799> ,RHB material { MATHB }  } 
+ cylinder { <2.100, 2.449, 1.725> ,<2.212, 2.469, 1.543> ,RHB material { MATHB }  } 
  cylinder { <1.993, 2.069, 1.644> ,<1.940, 2.154, 1.803> ,RHB material { MATHB }  } 
  cylinder { <2.068, 1.947, 1.595> ,<2.153, 1.800, 1.655> ,RHB material { MATHB }  } 
  cylinder { <2.141, 2.140, 1.453> ,<2.022, 2.022, 1.563> ,RHB material { MATHB }  } 
  cylinder { <2.200, 2.279, 1.444> ,<2.212, 2.469, 1.543> ,RHB material { MATHB }  } 
  cylinder { <2.068, 1.948, 1.998> ,<2.160, 1.805, 1.932> ,RHB material { MATHB }  } 
  cylinder { <1.991, 2.070, 1.953> ,<1.940, 2.154, 1.803> ,RHB material { MATHB }  } 
- cylinder { <2.211, 2.387, 2.094> ,<2.193, 2.194, 2.187> ,RHB material { MATHB }  } 
- cylinder { <1.792, 2.681, 1.874> ,<1.798, 2.785, 2.051> ,RHB material { MATHB }  } 
- cylinder { <2.304, 2.493, 1.564> ,<2.487, 2.510, 1.631> ,RHB material { MATHB }  } 
+ cylinder { <2.216, 2.391, 2.099> ,<2.193, 2.194, 2.187> ,RHB material { MATHB }  } 
+ cylinder { <2.174, 2.469, 1.976> ,<2.054, 2.435, 1.805> ,RHB material { MATHB }  } 
+ cylinder { <1.796, 2.689, 1.873> ,<1.798, 2.785, 2.051> ,RHB material { MATHB }  } 
+ cylinder { <1.795, 2.686, 1.722> ,<1.794, 2.777, 1.542> ,RHB material { MATHB }  } 
+ cylinder { <2.304, 2.493, 1.564> ,<2.489, 2.514, 1.624> ,RHB material { MATHB }  } 
  cylinder { <2.182, 2.539, 1.487> ,<2.083, 2.659, 1.379> ,RHB material { MATHB }  } 
  cylinder { <1.878, 2.098, 2.455> ,<2.054, 2.219, 2.465> ,RHB material { MATHB }  } 
  cylinder { <1.804, 1.975, 2.504> ,<1.801, 1.799, 2.633> ,RHB material { MATHB }  } 
  cylinder { <2.450, 1.869, 2.097> ,<2.477, 2.043, 2.226> ,RHB material { MATHB }  } 
- cylinder { <2.498, 1.796, 1.973> ,<2.640, 1.795, 1.801> ,RHB material { MATHB }  } 
+ cylinder { <2.498, 1.796, 1.973> ,<2.640, 1.805, 1.801> ,RHB material { MATHB }  } 
  cylinder { <2.148, 2.202, 2.276> ,<2.054, 2.219, 2.465> ,RHB material { MATHB }  } 
  cylinder { <2.137, 2.140, 2.138> ,<2.018, 2.024, 2.031> ,RHB material { MATHB }  } 
  cylinder { <2.033, 2.306, 2.491> ,<1.962, 2.487, 2.506> ,RHB material { MATHB }  } 
  cylinder { <2.110, 2.185, 2.539> ,<2.221, 2.074, 2.669> ,RHB material { MATHB }  } 
  cylinder { <2.248, 2.118, 2.734> ,<2.303, 2.216, 2.888> ,RHB material { MATHB }  } 
  cylinder { <2.309, 2.044, 2.617> ,<2.511, 1.975, 2.499> ,RHB material { MATHB }  } 
- cylinder { <2.541, 2.573, 1.992> ,<2.636, 2.721, 2.050> ,RHB material { MATHB }  } 
+ cylinder { <2.419, 2.503, 1.987> ,<2.226, 2.477, 2.054> ,RHB material { MATHB }  } 
  cylinder { <2.388, 2.087, 2.216> ,<2.193, 2.194, 2.187> ,RHB material { MATHB }  } 
- cylinder { <2.535, 2.099, 2.183> ,<2.661, 2.223, 2.083> ,RHB material { MATHB }  } 
+ cylinder { <2.535, 2.099, 2.183> ,<2.656, 2.231, 2.086> ,RHB material { MATHB }  } 
  cylinder { <1.976, 1.424, 2.473> ,<1.802, 1.550, 2.441> ,RHB material { MATHB }  } 
  cylinder { <2.097, 1.378, 2.395> ,<2.192, 1.403, 2.196> ,RHB material { MATHB }  } 
  cylinder { <1.875, 1.798, 2.691> ,<2.053, 1.791, 2.775> ,RHB material { MATHB }  } 
@@ -5197,8 +5191,7 @@ union {
  cylinder { <1.473, 2.729, 2.242> ,<1.382, 2.893, 2.309> ,RHB material { MATHB }  } 
  cylinder { <2.452, 1.877, 1.498> ,<2.479, 2.055, 1.378> ,RHB material { MATHB }  } 
  cylinder { <2.450, 1.726, 1.500> ,<2.469, 1.550, 1.380> ,RHB material { MATHB }  } 
- cylinder { <2.579, 1.798, 1.723> ,<2.441, 1.802, 1.557> ,RHB material { MATHB }  } 
- cylinder { <2.683, 1.877, 1.800> ,<2.778, 2.054, 1.797> ,RHB material { MATHB }  } 
+ cylinder { <2.579, 1.803, 1.723> ,<2.441, 1.802, 1.557> ,RHB material { MATHB }  } 
  cylinder { <2.530, 1.493, 1.422> ,<2.667, 1.373, 1.506> ,RHB material { MATHB }  } 
  cylinder { <2.382, 1.505, 1.390> ,<2.191, 1.416, 1.412> ,RHB material { MATHB }  } 
  cylinder { <1.721, 1.964, 1.477> ,<1.577, 2.028, 1.563> ,RHB material { MATHB }  } 
@@ -5246,7 +5239,8 @@ union {
  cylinder { <1.239, 1.798, 1.581> ,<1.437, 1.803, 1.654> ,RHB material { MATHB }  } 
  cylinder { <1.600, 2.404, 1.096> ,<1.539, 2.219, 1.114> ,RHB material { MATHB }  } 
  cylinder { <1.602, 2.533, 1.018> ,<1.553, 2.631, 0.866> ,RHB material { MATHB }  } 
- cylinder { <1.094, 2.506, 1.728> ,<1.102, 2.510, 1.964> ,RHB material { MATHB }  } 
+ cylinder { <1.099, 2.504, 1.731> ,<1.102, 2.510, 1.964> ,RHB material { MATHB }  } 
+ cylinder { <1.055, 2.572, 1.602> ,<0.962, 2.727, 1.546> ,RHB material { MATHB }  } 
  cylinder { <2.537, 1.024, 1.598> ,<2.639, 0.875, 1.540> ,RHB material { MATHB }  } 
  cylinder { <2.494, 1.090, 1.727> ,<2.498, 1.093, 1.965> ,RHB material { MATHB }  } 
  cylinder { <2.034, 1.289, 1.104> ,<1.974, 1.104, 1.099> ,RHB material { MATHB }  } 
@@ -5289,17 +5283,18 @@ union {
  cylinder { <1.618, 3.259, 3.187> ,<1.801, 3.151, 3.173> ,RHB material { MATHB }  } 
  cylinder { <1.401, 0.002, 2.696> ,<1.522, 0.004, 2.517> ,RHB material { MATHB }  } 
  cylinder { <2.128, 2.737, 2.245> ,<2.212, 2.880, 2.308> ,RHB material { MATHB }  } 
- cylinder { <2.131, 2.608, 2.167> ,<2.218, 2.476, 2.052> ,RHB material { MATHB }  } 
+ cylinder { <2.131, 2.608, 2.167> ,<2.226, 2.477, 2.054> ,RHB material { MATHB }  } 
  cylinder { <1.798, 3.205, 1.877> ,<1.800, 3.091, 2.042> ,RHB material { MATHB }  } 
  cylinder { <1.801, 3.204, 1.725> ,<1.808, 3.088, 1.559> ,RHB material { MATHB }  } 
- cylinder { <1.806, 2.994, 1.554> ,<1.790, 2.777, 1.535> ,RHB material { MATHB }  } 
+ cylinder { <1.806, 2.994, 1.554> ,<1.794, 2.777, 1.542> ,RHB material { MATHB }  } 
  cylinder { <1.732, 3.116, 1.505> ,<1.553, 3.163, 1.378> ,RHB material { MATHB }  } 
  cylinder { <1.990, 2.531, 2.572> ,<2.049, 2.630, 2.730> ,RHB material { MATHB }  } 
  cylinder { <2.107, 2.592, 2.789> ,<2.221, 2.498, 2.914> ,RHB material { MATHB }  } 
  cylinder { <2.096, 2.712, 2.698> ,<2.190, 2.886, 2.625> ,RHB material { MATHB }  } 
  cylinder { <0.870, 2.251, 2.126> ,<0.710, 2.309, 2.220> ,RHB material { MATHB }  } 
- cylinder { <2.296, 2.894, 2.285> ,<2.498, 2.922, 2.228> ,RHB material { MATHB }  } 
+ cylinder { <2.296, 2.894, 2.285> ,<2.496, 2.931, 2.228> ,RHB material { MATHB }  } 
  cylinder { <2.163, 2.966, 2.283> ,<2.047, 3.173, 2.228> ,RHB material { MATHB }  } 
+ cylinder { <2.493, 2.511, 1.717> ,<2.502, 2.513, 1.961> ,RHB material { MATHB }  } 
  cylinder { <1.318, 2.176, 2.824> ,<1.372, 2.077, 2.676> ,RHB material { MATHB }  } 
  cylinder { <1.190, 2.214, 2.895> ,<0.979, 2.193, 2.893> ,RHB material { MATHB }  } 
  cylinder { <1.490, 1.880, 2.747> ,<1.372, 2.077, 2.676> ,RHB material { MATHB }  } 
@@ -5314,57 +5309,60 @@ union {
  cylinder { <2.099, 1.726, 3.111> ,<2.220, 1.554, 3.173> ,RHB material { MATHB }  } 
  cylinder { <2.509, 1.871, 2.498> ,<2.509, 1.636, 2.497> ,RHB material { MATHB }  } 
  cylinder { <2.500, 1.998, 2.415> ,<2.477, 2.043, 2.226> ,RHB material { MATHB }  } 
- cylinder { <2.866, 2.055, 1.801> ,<3.080, 2.051, 1.798> ,RHB material { MATHB }  } 
+ cylinder { <1.720, 2.744, 1.494> ,<1.519, 2.670, 1.378> ,RHB material { MATHB }  } 
+ cylinder { <1.477, 2.611, 1.426> ,<1.381, 2.475, 1.544> ,RHB material { MATHB }  } 
+ cylinder { <2.874, 2.050, 1.802> ,<3.080, 2.051, 1.798> ,RHB material { MATHB }  } 
  cylinder { <3.108, 2.102, 1.876> ,<3.162, 2.218, 2.053> ,RHB material { MATHB }  } 
  cylinder { <3.136, 1.976, 1.798> ,<3.263, 1.807, 1.801> ,RHB material { MATHB }  } 
  cylinder { <3.218, 2.171, 2.099> ,<3.345, 2.048, 2.214> ,RHB material { MATHB }  } 
- cylinder { <3.141, 2.165, 1.628> ,<3.080, 2.051, 1.798> ,RHB material { MATHB }  } 
- cylinder { <2.975, 2.282, 1.432> ,<3.166, 2.219, 1.550> ,RHB material { MATHB }  } 
+ cylinder { <3.144, 2.167, 1.618> ,<3.080, 2.051, 1.798> ,RHB material { MATHB }  } 
+ cylinder { <3.286, 2.592, 1.633> ,<3.174, 2.756, 1.574> ,RHB material { MATHB }  } 
+ cylinder { <2.975, 2.282, 1.432> ,<3.166, 2.211, 1.545> ,RHB material { MATHB }  } 
  cylinder { <2.824, 2.285, 1.421> ,<2.670, 2.228, 1.510> ,RHB material { MATHB }  } 
- cylinder { <3.298, 2.047, 1.301> ,<3.200, 2.055, 1.106> ,RHB material { MATHB }  } 
+ cylinder { <3.306, 2.045, 1.296> ,<3.200, 2.055, 1.106> ,RHB material { MATHB }  } 
+ cylinder { <3.296, 2.094, 1.439> ,<3.166, 2.211, 1.545> ,RHB material { MATHB }  } 
  cylinder { <2.968, 2.282, 2.176> ,<3.162, 2.218, 2.053> ,RHB material { MATHB }  } 
  cylinder { <2.885, 2.402, 2.217> ,<2.887, 2.620, 2.198> ,RHB material { MATHB }  } 
- cylinder { <3.343, 2.514, 1.849> ,<3.338, 2.523, 1.663> ,RHB material { MATHB }  } 
+ cylinder { <3.343, 2.514, 1.849> ,<3.338, 2.513, 1.663> ,RHB material { MATHB }  } 
  cylinder { <3.313, 1.803, 1.716> ,<3.435, 1.795, 1.521> ,RHB material { MATHB }  } 
- cylinder { <3.211, 1.731, 1.801> ,<3.092, 1.554, 1.806> ,RHB material { MATHB }  } 
- cylinder { <3.117, 1.503, 1.729> ,<3.172, 1.381, 1.555> ,RHB material { MATHB }  } 
- cylinder { <2.996, 1.552, 1.806> ,<2.777, 1.541, 1.796> ,RHB material { MATHB }  } 
- cylinder { <3.403, 1.873, 1.472> ,<3.342, 2.041, 1.387> ,RHB material { MATHB }  } 
+ cylinder { <3.211, 1.731, 1.801> ,<3.085, 1.557, 1.802> ,RHB material { MATHB }  } 
+ cylinder { <3.111, 1.505, 1.726> ,<3.172, 1.381, 1.555> ,RHB material { MATHB }  } 
+ cylinder { <3.403, 1.873, 1.472> ,<3.349, 2.042, 1.384> ,RHB material { MATHB }  } 
  cylinder { <3.402, 1.721, 1.472> ,<3.340, 1.559, 1.387> ,RHB material { MATHB }  } 
  cylinder { <3.391, 1.797, 1.995> ,<3.263, 1.807, 1.801> ,RHB material { MATHB }  } 
- cylinder { <2.730, 2.251, 2.125> ,<2.886, 2.311, 2.225> ,RHB material { MATHB }  } 
- cylinder { <2.613, 2.309, 2.048> ,<2.498, 2.504, 1.969> ,RHB material { MATHB }  } 
- cylinder { <2.595, 2.788, 1.487> ,<2.492, 2.913, 1.376> ,RHB material { MATHB }  } 
+ cylinder { <2.725, 2.256, 2.127> ,<2.886, 2.311, 2.225> ,RHB material { MATHB }  } 
+ cylinder { <2.587, 2.659, 1.567> ,<2.489, 2.514, 1.624> ,RHB material { MATHB }  } 
+ cylinder { <2.588, 2.788, 1.487> ,<2.492, 2.913, 1.376> ,RHB material { MATHB }  } 
  cylinder { <2.544, 2.923, 1.295> ,<2.668, 2.928, 1.095> ,RHB material { MATHB }  } 
  cylinder { <2.497, 2.998, 1.417> ,<2.496, 3.198, 1.534> ,RHB material { MATHB }  } 
- cylinder { <2.888, 2.534, 1.403> ,<2.891, 2.314, 1.377> ,RHB material { MATHB }  } 
+ cylinder { <2.883, 2.526, 1.403> ,<2.891, 2.314, 1.377> ,RHB material { MATHB }  } 
+ cylinder { <2.808, 2.649, 1.449> ,<2.644, 2.730, 1.542> ,RHB material { MATHB }  } 
  cylinder { <2.178, 2.120, 0.986> ,<2.055, 2.214, 1.125> ,RHB material { MATHB }  } 
  cylinder { <2.178, 1.998, 0.897> ,<2.062, 1.804, 0.828> ,RHB material { MATHB }  } 
  cylinder { <3.100, 2.979, 1.798> ,<3.145, 3.167, 1.800> ,RHB material { MATHB }  } 
  cylinder { <3.107, 2.846, 1.871> ,<3.161, 2.749, 2.026> ,RHB material { MATHB }  } 
- cylinder { <3.138, 2.799, 1.645> ,<3.074, 2.886, 1.792> ,RHB material { MATHB }  } 
- cylinder { <2.530, 3.187, 1.620> ,<2.625, 3.150, 1.801> ,RHB material { MATHB }  } 
+ cylinder { <3.145, 2.795, 1.640> ,<3.074, 2.886, 1.792> ,RHB material { MATHB }  } 
+ cylinder { <2.530, 3.187, 1.620> ,<2.632, 3.153, 1.796> ,RHB material { MATHB }  } 
  cylinder { <2.410, 3.244, 1.548> ,<2.215, 3.340, 1.548> ,RHB material { MATHB }  } 
  cylinder { <2.173, 3.367, 1.626> ,<2.082, 3.432, 1.793> ,RHB material { MATHB }  } 
- cylinder { <3.283, 2.870, 1.458> ,<3.166, 2.758, 1.569> ,RHB material { MATHB }  } 
+ cylinder { <3.283, 2.870, 1.458> ,<3.174, 2.756, 1.574> ,RHB material { MATHB }  } 
  cylinder { <3.258, 3.243, 1.492> ,<3.146, 3.341, 1.375> ,RHB material { MATHB }  } 
  cylinder { <3.320, 3.105, 1.501> ,<3.335, 2.926, 1.404> ,RHB material { MATHB }  } 
  cylinder { <0.001, 3.338, 1.725> ,<-0.001, 3.338, 1.965> ,RHB material { MATHB }  } 
  cylinder { <0.069, 2.528, 1.565> ,<0.253, 2.522, 1.655> ,RHB material { MATHB }  } 
  cylinder { <0.185, 2.520, 1.977> ,<-0.004, 2.517, 2.069> ,RHB material { MATHB }  } 
- cylinder { <2.889, 2.694, 1.208> ,<2.878, 2.622, 1.407> ,RHB material { MATHB }  } 
+ cylinder { <2.889, 2.694, 1.208> ,<2.888, 2.623, 1.407> ,RHB material { MATHB }  } 
  cylinder { <2.903, 2.659, 1.062> ,<2.923, 2.507, 0.931> ,RHB material { MATHB }  } 
  cylinder { <3.212, 2.900, 1.209> ,<3.335, 2.926, 1.404> ,RHB material { MATHB }  } 
  cylinder { <3.093, 2.848, 1.132> ,<2.891, 2.732, 1.118> ,RHB material { MATHB }  } 
  cylinder { <2.859, 2.173, 1.064> ,<2.728, 2.058, 0.967> ,RHB material { MATHB }  } 
  cylinder { <2.907, 2.247, 1.187> ,<2.891, 2.314, 1.377> ,RHB material { MATHB }  } 
- cylinder { <3.257, 2.106, 1.054> ,<3.376, 2.227, 0.942> ,RHB material { MATHB }  } 
+ cylinder { <3.257, 2.106, 1.054> ,<3.373, 2.223, 0.936> ,RHB material { MATHB }  } 
  cylinder { <3.114, 2.105, 1.106> ,<2.930, 2.228, 1.095> ,RHB material { MATHB }  } 
  cylinder { <2.773, 1.978, 0.935> ,<2.867, 1.798, 0.854> ,RHB material { MATHB }  } 
  cylinder { <2.695, 2.100, 0.889> ,<2.628, 2.190, 0.710> ,RHB material { MATHB }  } 
  cylinder { <3.007, 2.510, 0.895> ,<3.197, 2.502, 0.822> ,RHB material { MATHB }  } 
  cylinder { <2.921, 2.422, 0.983> ,<2.930, 2.228, 1.095> ,RHB material { MATHB }  } 
- cylinder { <2.736, 1.617, 1.797> ,<2.640, 1.795, 1.801> ,RHB material { MATHB }  } 
  cylinder { <2.611, 1.421, 2.121> ,<2.478, 1.546, 2.222> ,RHB material { MATHB }  } 
  cylinder { <2.618, 1.288, 2.049> ,<2.498, 1.093, 1.965> ,RHB material { MATHB }  } 
  cylinder { <1.996, 2.540, 1.023> ,<2.055, 2.627, 0.863> ,RHB material { MATHB }  } 
@@ -5418,10 +5416,9 @@ union {
  cylinder { <3.338, 1.724, -0.003> ,<3.337, 1.959, -0.003> ,RHB material { MATHB }  } 
  cylinder { <3.296, 1.603, 0.078> ,<3.201, 1.540, 0.282> ,RHB material { MATHB }  } 
  cylinder { <3.368, 1.628, 2.171> ,<3.426, 1.794, 2.083> ,RHB material { MATHB }  } 
- cylinder { <3.289, 1.499, 2.163> ,<3.181, 1.380, 2.053> ,RHB material { MATHB }  } 
+ cylinder { <3.289, 1.499, 2.163> ,<3.176, 1.387, 2.051> ,RHB material { MATHB }  } 
  cylinder { <2.812, 1.314, 2.182> ,<2.671, 1.370, 2.082> ,RHB material { MATHB }  } 
  cylinder { <2.891, 1.315, 2.311> ,<2.918, 1.362, 2.497> ,RHB material { MATHB }  } 
- cylinder { <3.153, 1.428, 1.982> ,<3.092, 1.554, 1.806> ,RHB material { MATHB }  } 
  cylinder { <2.175, 0.233, 1.626> ,<2.073, 0.170, 1.799> ,RHB material { MATHB }  } 
  cylinder { <2.226, 0.183, 1.492> ,<2.238, 0.004, 1.381> ,RHB material { MATHB }  } 
  cylinder { <1.874, 0.489, 2.088> ,<2.048, 0.420, 2.211> ,RHB material { MATHB }  } 
@@ -5431,7 +5428,7 @@ union {
  cylinder { <2.108, 0.330, 3.246> ,<2.223, 0.446, 3.347> ,RHB material { MATHB }  } 
  cylinder { <2.033, 0.198, 3.242> ,<1.974, 0.004, 3.325> ,RHB material { MATHB }  } 
  cylinder { <1.614, 0.076, 3.289> ,<1.540, 0.286, 3.204> ,RHB material { MATHB }  } 
- cylinder { <2.799, 3.427, 1.486> ,<2.666, 3.374, 1.366> ,RHB material { MATHB }  } 
+ cylinder { <2.799, 3.428, 1.489> ,<2.666, 3.374, 1.366> ,RHB material { MATHB }  } 
  cylinder { <0.308, 1.504, 2.171> ,<0.418, 1.377, 2.049> ,RHB material { MATHB }  } 
  cylinder { <0.171, 1.504, 2.235> ,<0.000, 1.380, 2.244> ,RHB material { MATHB }  } 
  cylinder { <0.387, 1.725, 1.801> ,<0.503, 1.552, 1.800> ,RHB material { MATHB }  } 
@@ -5457,14 +5454,16 @@ union {
  cylinder { <1.289, 3.126, 3.295> ,<1.098, 3.081, 3.178> ,RHB material { MATHB }  } 
  cylinder { <1.424, 3.193, 3.301> ,<1.540, 3.309, 3.194> ,RHB material { MATHB }  } 
  cylinder { <3.288, 2.801, 0.990> ,<3.173, 2.901, 1.122> ,RHB material { MATHB }  } 
- cylinder { <-0.001, 2.687, 1.155> ,<-0.005, 2.777, 1.351> ,RHB material { MATHB }  } 
+ cylinder { <-0.004, 2.689, 1.159> ,<-0.005, 2.777, 1.351> ,RHB material { MATHB }  } 
+ cylinder { <0.074, 2.685, 1.029> ,<0.251, 2.758, 0.932> ,RHB material { MATHB }  } 
  cylinder { <3.192, 2.508, 0.726> ,<3.174, 2.508, 0.510> ,RHB material { MATHB }  } 
  cylinder { <3.241, 2.582, 0.849> ,<3.339, 2.757, 0.925> ,RHB material { MATHB }  } 
- cylinder { <0.075, 2.283, 1.027> ,<0.225, 2.236, 0.936> ,RHB material { MATHB }  } 
+ cylinder { <0.064, 2.282, 1.033> ,<0.225, 2.236, 0.936> ,RHB material { MATHB }  } 
+ cylinder { <-0.005, 2.410, 1.075> ,<-0.005, 2.651, 1.073> ,RHB material { MATHB }  } 
  cylinder { <0.078, 2.820, 1.368> ,<0.257, 2.924, 1.406> ,RHB material { MATHB }  } 
  cylinder { <-0.003, 2.698, 1.405> ,<-0.008, 2.526, 1.524> ,RHB material { MATHB }  } 
- cylinder { <-0.004, 2.245, 1.270> ,<-0.003, 2.312, 1.078> ,RHB material { MATHB }  } 
- cylinder { <0.352, 2.581, 0.852> ,<0.255, 2.763, 0.925> ,RHB material { MATHB }  } 
+ cylinder { <0.005, 2.246, 1.270> ,<-0.006, 2.304, 1.075> ,RHB material { MATHB }  } 
+ cylinder { <0.352, 2.581, 0.852> ,<0.251, 2.758, 0.932> ,RHB material { MATHB }  } 
  cylinder { <0.345, 2.430, 0.853> ,<0.225, 2.236, 0.936> ,RHB material { MATHB }  } 
  cylinder { <0.280, 2.180, 0.993> ,<0.388, 2.057, 1.100> ,RHB material { MATHB }  } 
  cylinder { <0.195, 2.178, 0.868> ,<0.134, 2.055, 0.737> ,RHB material { MATHB }  } 
@@ -5472,10 +5471,11 @@ union {
  cylinder { <0.737, 2.493, 0.869> ,<0.862, 2.471, 0.712> ,RHB material { MATHB }  } 
  cylinder { <0.169, 2.104, 0.654> ,<0.248, 2.220, 0.458> ,RHB material { MATHB }  } 
  cylinder { <0.176, 1.978, 0.738> ,<0.276, 1.801, 0.736> ,RHB material { MATHB }  } 
- cylinder { <0.353, 2.058, 1.185> ,<0.248, 2.048, 1.373> ,RHB material { MATHB }  } 
+ cylinder { <0.353, 2.058, 1.185> ,<0.256, 2.048, 1.377> ,RHB material { MATHB }  } 
  cylinder { <0.473, 2.107, 1.107> ,<0.676, 2.221, 1.106> ,RHB material { MATHB }  } 
- cylinder { <0.308, 2.804, 0.990> ,<0.424, 2.895, 1.127> ,RHB material { MATHB }  } 
- cylinder { <0.198, 2.991, 0.697> ,<0.250, 3.175, 0.673> ,RHB material { MATHB }  } 
+ cylinder { <0.310, 2.812, 0.989> ,<0.424, 2.895, 1.127> ,RHB material { MATHB }  } 
+ cylinder { <0.230, 2.814, 0.861> ,<0.171, 2.899, 0.704> ,RHB material { MATHB }  } 
+ cylinder { <0.196, 2.984, 0.694> ,<0.250, 3.175, 0.673> ,RHB material { MATHB }  } 
  cylinder { <0.305, 2.872, 1.462> ,<0.429, 2.754, 1.569> ,RHB material { MATHB }  } 
  cylinder { <0.306, 2.919, 1.318> ,<0.424, 2.895, 1.127> ,RHB material { MATHB }  } 
  cylinder { <0.734, 2.168, 1.061> ,<0.862, 2.053, 0.959> ,RHB material { MATHB }  } 
@@ -5485,12 +5485,15 @@ union {
  cylinder { <0.450, 2.981, 1.116> ,<0.506, 3.173, 1.097> ,RHB material { MATHB }  } 
  cylinder { <0.510, 2.843, 1.125> ,<0.705, 2.734, 1.120> ,RHB material { MATHB }  } 
  cylinder { <0.696, 2.659, 1.063> ,<0.680, 2.504, 0.942> ,RHB material { MATHB }  } 
- cylinder { <0.707, 2.696, 1.210> ,<0.713, 2.615, 1.400> ,RHB material { MATHB }  } 
+ cylinder { <0.707, 2.696, 1.210> ,<0.717, 2.623, 1.402> ,RHB material { MATHB }  } 
  cylinder { <0.606, 3.182, 1.096> ,<0.815, 3.205, 1.086> ,RHB material { MATHB }  } 
  cylinder { <0.478, 3.218, 1.023> ,<0.420, 3.308, 0.865> ,RHB material { MATHB }  } 
- cylinder { <3.323, 2.310, 0.900> ,<3.197, 2.502, 0.822> ,RHB material { MATHB }  } 
- cylinder { <0.225, 1.969, 1.423> ,<0.171, 1.799, 1.522> ,RHB material { MATHB }  } 
- cylinder { <0.450, 2.168, 1.618> ,<0.503, 2.055, 1.801> ,RHB material { MATHB }  } 
+ cylinder { <3.322, 2.310, 0.901> ,<3.197, 2.502, 0.822> ,RHB material { MATHB }  } 
+ cylinder { <3.430, 2.117, 0.804> ,<3.373, 2.223, 0.936> ,RHB material { MATHB }  } 
+ cylinder { <0.228, 1.968, 1.422> ,<0.171, 1.799, 1.522> ,RHB material { MATHB }  } 
+ cylinder { <0.176, 2.100, 1.370> ,<0.006, 2.215, 1.360> ,RHB material { MATHB }  } 
+ cylinder { <0.375, 2.166, 1.494> ,<0.256, 2.048, 1.377> ,RHB material { MATHB }  } 
+ cylinder { <0.453, 2.167, 1.623> ,<0.503, 2.055, 1.801> ,RHB material { MATHB }  } 
  cylinder { <0.530, 1.801, 0.930> ,<0.723, 1.792, 0.858> ,RHB material { MATHB }  } 
  cylinder { <0.427, 1.881, 1.007> ,<0.388, 2.057, 1.100> ,RHB material { MATHB }  } 
  cylinder { <0.331, 1.800, 0.812> ,<0.439, 1.798, 0.963> ,RHB material { MATHB }  } 
@@ -5523,9 +5526,11 @@ union {
  cylinder { <3.185, 1.968, 0.327> ,<3.172, 1.796, 0.451> ,RHB material { MATHB }  } 
  cylinder { <3.240, 2.109, 0.328> ,<3.335, 2.229, 0.458> ,RHB material { MATHB }  } 
  cylinder { <3.085, 1.797, 0.471> ,<2.896, 1.800, 0.520> ,RHB material { MATHB }  } 
- cylinder { <3.219, 1.799, 0.540> ,<3.323, 1.808, 0.736> ,RHB material { MATHB }  } 
- cylinder { <3.266, 1.806, 0.809> ,<3.146, 1.801, 0.953> ,RHB material { MATHB }  } 
- cylinder { <3.438, 1.497, 0.805> ,<3.376, 1.381, 0.933> ,RHB material { MATHB }  } 
+ cylinder { <3.219, 1.799, 0.540> ,<3.323, 1.799, 0.736> ,RHB material { MATHB }  } 
+ cylinder { <3.266, 1.800, 0.810> ,<3.146, 1.801, 0.953> ,RHB material { MATHB }  } 
+ cylinder { <3.368, 1.886, 0.738> ,<3.455, 2.057, 0.733> ,RHB material { MATHB }  } 
+ cylinder { <3.413, 1.625, 0.743> ,<3.323, 1.799, 0.736> ,RHB material { MATHB }  } 
+ cylinder { <3.430, 1.488, 0.804> ,<3.376, 1.381, 0.933> ,RHB material { MATHB }  } 
  cylinder { <1.100, 3.117, 0.506> ,<1.125, 3.164, 0.693> ,RHB material { MATHB }  } 
  cylinder { <1.018, 3.118, 0.378> ,<0.864, 3.166, 0.288> ,RHB material { MATHB }  } 
  cylinder { <2.498, 0.471, 1.492> ,<2.495, 0.670, 1.381> ,RHB material { MATHB }  } 
@@ -5574,16 +5579,17 @@ union {
  cylinder { <3.334, 0.592, 1.439> ,<3.307, 0.409, 1.544> ,RHB material { MATHB }  } 
  cylinder { <3.287, 0.736, 1.448> ,<3.168, 0.840, 1.570> ,RHB material { MATHB }  } 
  cylinder { <0.006, 0.899, 1.404> ,<0.002, 1.077, 1.509> ,RHB material { MATHB }  } 
- cylinder { <3.368, 0.791, 0.863> ,<3.421, 0.708, 0.712> ,RHB material { MATHB }  } 
+ cylinder { <3.368, 0.791, 0.863> ,<3.422, 0.700, 0.717> ,RHB material { MATHB }  } 
  cylinder { <0.001, 0.254, 1.729> ,<-0.007, 0.264, 1.966> ,RHB material { MATHB }  } 
  cylinder { <0.001, 0.184, 1.595> ,<0.002, 0.002, 1.465> ,RHB material { MATHB }  } 
  cylinder { <0.699, 0.197, 0.615> ,<0.678, 0.258, 0.427> ,RHB material { MATHB }  } 
  cylinder { <0.489, 0.505, 1.096> ,<0.429, 0.693, 1.117> ,RHB material { MATHB }  } 
  cylinder { <0.497, 0.373, 1.170> ,<0.456, 0.261, 1.368> ,RHB material { MATHB }  } 
- cylinder { <0.003, 0.946, 0.186> ,<0.004, 0.849, 0.004> ,RHB material { MATHB }  } 
- cylinder { <3.092, 1.099, 0.482> ,<2.906, 1.119, 0.423> ,RHB material { MATHB }  } 
+ cylinder { <3.231, 1.173, 0.496> ,<3.347, 1.362, 0.456> ,RHB material { MATHB }  } 
+ cylinder { <3.098, 1.101, 0.486> ,<2.906, 1.119, 0.423> ,RHB material { MATHB }  } 
  cylinder { <0.194, 0.741, 0.778> ,<0.248, 0.838, 0.932> ,RHB material { MATHB }  } 
  cylinder { <0.196, 0.612, 0.699> ,<0.261, 0.428, 0.675> ,RHB material { MATHB }  } 
+ cylinder { <0.248, 0.815, 0.503> ,<0.160, 0.702, 0.700> ,RHB material { MATHB }  } 
  cylinder { <0.307, 0.796, 0.991> ,<0.429, 0.693, 1.117> ,RHB material { MATHB }  } 
  cylinder { <0.297, 0.916, 0.899> ,<0.401, 1.087, 0.824> ,RHB material { MATHB }  } 
  cylinder { <1.599, 3.215, 0.907> ,<1.659, 3.332, 1.076> ,RHB material { MATHB }  } 
@@ -5606,7 +5612,7 @@ union {
  cylinder { <1.504, 2.711, 0.898> ,<1.407, 2.889, 0.967> ,RHB material { MATHB }  } 
  cylinder { <1.116, 2.821, 0.810> ,<1.082, 2.662, 0.676> ,RHB material { MATHB }  } 
  cylinder { <1.127, 2.972, 0.817> ,<1.125, 3.164, 0.693> ,RHB material { MATHB }  } 
- cylinder { <1.415, 2.821, 1.309> ,<1.512, 2.665, 1.378> ,RHB material { MATHB }  } 
+ cylinder { <1.415, 2.821, 1.309> ,<1.519, 2.670, 1.378> ,RHB material { MATHB }  } 
  cylinder { <1.425, 2.972, 1.309> ,<1.553, 3.163, 1.378> ,RHB material { MATHB }  } 
  cylinder { <1.209, 3.217, 0.688> ,<1.397, 3.340, 0.680> ,RHB material { MATHB }  } 
  cylinder { <1.066, 3.217, 0.737> ,<0.930, 3.337, 0.833> ,RHB material { MATHB }  } 
@@ -5670,7 +5676,7 @@ union {
  cylinder { <2.823, 1.316, 1.421> ,<2.667, 1.373, 1.506> ,RHB material { MATHB }  } 
  cylinder { <2.177, 1.094, 0.592> ,<2.057, 1.103, 0.394> ,RHB material { MATHB }  } 
  cylinder { <2.256, 1.180, 0.689> ,<2.311, 1.376, 0.707> ,RHB material { MATHB }  } 
- cylinder { <1.975, 1.052, 0.409> ,<1.806, 0.956, 0.443> ,RHB material { MATHB }  } 
+ cylinder { <1.975, 1.052, 0.409> ,<1.801, 0.963, 0.445> ,RHB material { MATHB }  } 
  cylinder { <2.109, 1.047, 0.340> ,<2.218, 0.939, 0.230> ,RHB material { MATHB }  } 
  cylinder { <2.516, 0.899, 0.598> ,<2.504, 0.829, 0.399> ,RHB material { MATHB }  } 
  cylinder { <2.427, 0.986, 0.686> ,<2.230, 1.095, 0.679> ,RHB material { MATHB }  } 
@@ -5687,7 +5693,7 @@ union {
  cylinder { <2.890, 0.939, 1.318> ,<2.884, 0.861, 1.132> ,RHB material { MATHB }  } 
  cylinder { <2.811, 0.942, 1.448> ,<2.639, 0.875, 1.540> ,RHB material { MATHB }  } 
  cylinder { <2.091, 0.271, 0.489> ,<2.194, 0.253, 0.680> ,RHB material { MATHB }  } 
- cylinder { <2.101, 0.334, 0.351> ,<2.227, 0.454, 0.253> ,RHB material { MATHB }  } 
+ cylinder { <2.101, 0.334, 0.351> ,<2.220, 0.458, 0.248> ,RHB material { MATHB }  } 
  cylinder { <1.862, 0.254, 1.078> ,<1.665, 0.251, 1.079> ,RHB material { MATHB }  } 
  cylinder { <1.997, 0.377, 0.907> ,<1.944, 0.252, 1.076> ,RHB material { MATHB }  } 
  cylinder { <1.869, 0.491, 1.498> ,<2.044, 0.427, 1.379> ,RHB material { MATHB }  } 
@@ -5752,7 +5758,7 @@ union {
  cylinder { <2.814, 0.991, 3.288> ,<2.902, 1.114, 3.173> ,RHB material { MATHB }  } 
  cylinder { <2.690, 1.160, 0.003> ,<2.779, 1.345, 0.006> ,RHB material { MATHB }  } 
  cylinder { <0.006, 1.412, 0.077> ,<0.007, 1.295, 0.284> ,RHB material { MATHB }  } 
- cylinder { <0.004, 1.201, 0.277> ,<0.002, 0.988, 0.262> ,RHB material { MATHB }  } 
+ cylinder { <0.004, 1.201, 0.277> ,<-0.003, 0.987, 0.255> ,RHB material { MATHB }  } 
  cylinder { <0.606, 0.705, 0.195> ,<0.425, 0.674, 0.253> ,RHB material { MATHB }  } 
  cylinder { <0.734, 0.785, 0.197> ,<0.828, 0.935, 0.258> ,RHB material { MATHB }  } 
  cylinder { <0.860, 0.979, 0.179> ,<0.941, 1.072, 0.001> ,RHB material { MATHB }  } 
@@ -5766,23 +5772,20 @@ union {
  cylinder { <2.730, 0.972, 0.177> ,<2.651, 1.074, 0.004> ,RHB material { MATHB }  } 
  cylinder { <2.903, 1.205, 0.383> ,<2.919, 1.404, 0.264> ,RHB material { MATHB }  } 
  cylinder { <2.853, 1.129, 0.504> ,<2.731, 1.129, 0.704> ,RHB material { MATHB }  } 
- cylinder { <1.802, 0.925, 0.532> ,<1.806, 0.857, 0.724> ,RHB material { MATHB }  } 
- cylinder { <1.721, 1.002, 0.430> ,<1.540, 1.100, 0.393> ,RHB material { MATHB }  } 
- cylinder { <1.490, 1.107, 0.478> ,<1.378, 1.106, 0.676> ,RHB material { MATHB }  } 
- cylinder { <1.540, 1.186, 0.358> ,<1.558, 1.380, 0.258> ,RHB material { MATHB }  } 
+ cylinder { <1.801, 0.926, 0.537> ,<1.806, 0.857, 0.724> ,RHB material { MATHB }  } 
+ cylinder { <1.547, 1.187, 0.354> ,<1.558, 1.380, 0.258> ,RHB material { MATHB }  } 
  cylinder { <1.801, 0.758, 0.719> ,<1.797, 0.518, 0.704> ,RHB material { MATHB }  } 
  cylinder { <1.728, 0.882, 0.765> ,<1.542, 0.962, 0.859> ,RHB material { MATHB }  } 
  cylinder { <2.247, 0.978, 0.161> ,<2.312, 1.072, 0.005> ,RHB material { MATHB }  } 
  cylinder { <2.305, 0.904, 0.280> ,<2.504, 0.829, 0.399> ,RHB material { MATHB }  } 
- cylinder { <2.108, 0.803, 0.169> ,<2.218, 0.939, 0.230> ,RHB material { MATHB }  } 
- cylinder { <1.971, 0.740, 0.184> ,<1.795, 0.743, 0.270> ,RHB material { MATHB }  } 
+ cylinder { <2.098, 0.804, 0.162> ,<2.218, 0.939, 0.230> ,RHB material { MATHB }  } 
  cylinder { <2.114, 0.803, 3.427> ,<2.229, 0.933, 3.382> ,RHB material { MATHB }  } 
- cylinder { <2.249, 0.407, 0.178> ,<2.312, 0.284, 0.004> ,RHB material { MATHB }  } 
+ cylinder { <2.245, 0.407, 0.175> ,<2.312, 0.284, 0.004> ,RHB material { MATHB }  } 
  cylinder { <2.417, 1.072, 0.002> ,<2.651, 1.074, 0.004> ,RHB material { MATHB }  } 
  cylinder { <2.309, 0.903, 3.327> ,<2.500, 0.830, 3.200> ,RHB material { MATHB }  } 
  cylinder { <2.181, 0.983, 3.326> ,<2.064, 1.103, 3.197> ,RHB material { MATHB }  } 
  cylinder { <2.585, 0.855, 0.354> ,<2.763, 0.923, 0.256> ,RHB material { MATHB }  } 
- cylinder { <2.509, 0.733, 0.402> ,<2.510, 0.518, 0.417> ,RHB material { MATHB }  } 
+ cylinder { <2.509, 0.733, 0.402> ,<2.500, 0.519, 0.416> ,RHB material { MATHB }  } 
  cylinder { <2.580, 0.858, 3.244> ,<2.758, 0.936, 3.346> ,RHB material { MATHB }  } 
  cylinder { <2.507, 0.735, 3.195> ,<2.506, 0.514, 3.179> ,RHB material { MATHB }  } 
  cylinder { <2.502, 0.896, 3.010> ,<2.500, 0.830, 3.200> ,RHB material { MATHB }  } 
@@ -5795,9 +5798,8 @@ union {
  cylinder { <1.790, 0.656, 3.270> ,<1.798, 0.454, 3.174> ,RHB material { MATHB }  } 
  cylinder { <1.795, 0.476, 3.085> ,<1.798, 0.512, 2.897> ,RHB material { MATHB }  } 
  cylinder { <1.880, 0.399, 3.184> ,<2.055, 0.284, 3.191> ,RHB material { MATHB }  } 
- cylinder { <1.796, 0.655, 0.324> ,<1.799, 0.467, 0.427> ,RHB material { MATHB }  } 
- cylinder { <1.797, 0.807, 0.331> ,<1.806, 0.956, 0.443> ,RHB material { MATHB }  } 
- cylinder { <1.628, 0.739, 0.177> ,<1.795, 0.743, 0.270> ,RHB material { MATHB }  } 
+ cylinder { <1.789, 0.659, 0.324> ,<1.799, 0.467, 0.427> ,RHB material { MATHB }  } 
+ cylinder { <1.628, 0.739, 0.177> ,<1.790, 0.746, 0.276> ,RHB material { MATHB }  } 
  cylinder { <2.147, 0.787, 0.944> ,<2.055, 0.958, 0.869> ,RHB material { MATHB }  } 
  cylinder { <2.277, 0.710, 0.946> ,<2.468, 0.707, 0.868> ,RHB material { MATHB }  } 
  cylinder { <1.499, 0.510, 2.244> ,<1.371, 0.703, 2.308> ,RHB material { MATHB }  } 
@@ -5847,13 +5849,12 @@ union {
  cylinder { <1.320, 1.422, 2.822> ,<1.373, 1.506, 2.666> ,RHB material { MATHB }  } 
  cylinder { <1.191, 1.386, 2.894> ,<0.980, 1.404, 2.881> ,RHB material { MATHB }  } 
  cylinder { <2.710, 0.763, 1.867> ,<2.634, 0.869, 2.045> ,RHB material { MATHB }  } 
- cylinder { <2.835, 0.717, 1.796> ,<3.075, 0.697, 1.799> ,RHB material { MATHB }  } 
+ cylinder { <2.835, 0.717, 1.796> ,<3.076, 0.705, 1.804> ,RHB material { MATHB }  } 
  cylinder { <3.090, 1.354, 1.501> ,<2.896, 1.289, 1.378> ,RHB material { MATHB }  } 
  cylinder { <3.219, 1.432, 1.501> ,<3.340, 1.559, 1.387> ,RHB material { MATHB }  } 
- cylinder { <3.106, 0.747, 1.874> ,<3.160, 0.846, 2.025> ,RHB material { MATHB }  } 
- cylinder { <3.106, 0.747, 1.723> ,<3.168, 0.840, 1.570> ,RHB material { MATHB }  } 
+ cylinder { <3.108, 0.746, 1.723> ,<3.168, 0.840, 1.570> ,RHB material { MATHB }  } 
  cylinder { <3.215, 0.911, 1.596> ,<3.338, 1.080, 1.658> ,RHB material { MATHB }  } 
- cylinder { <3.338, 1.082, 1.741> ,<3.341, 1.075, 1.935> ,RHB material { MATHB }  } 
+ cylinder { <3.338, 1.082, 1.741> ,<3.341, 1.085, 1.935> ,RHB material { MATHB }  } 
  cylinder { <0.077, 1.078, 1.567> ,<0.257, 1.083, 1.656> ,RHB material { MATHB }  } 
  cylinder { <0.313, 1.006, 1.629> ,<0.430, 0.853, 1.571> ,RHB material { MATHB }  } 
  cylinder { <0.259, 1.083, 1.748> ,<0.262, 1.078, 1.936> ,RHB material { MATHB }  } 
@@ -5873,17 +5874,15 @@ union {
  cylinder { <1.619, 0.738, 3.418> ,<1.791, 0.744, 3.316> ,RHB material { MATHB }  } 
  cylinder { <1.493, 0.654, 3.428> ,<1.372, 0.463, 3.347> ,RHB material { MATHB }  } 
  cylinder { <3.244, 1.012, 0.852> ,<3.339, 0.834, 0.937> ,RHB material { MATHB }  } 
- cylinder { <3.197, 1.087, 0.729> ,<3.185, 1.096, 0.515> ,RHB material { MATHB }  } 
- cylinder { <3.302, 1.420, 0.406> ,<3.201, 1.540, 0.282> ,RHB material { MATHB }  } 
- cylinder { <0.382, 1.020, 0.483> ,<0.290, 0.866, 0.421> ,RHB material { MATHB }  } 
- cylinder { <0.371, 1.171, 0.493> ,<0.249, 1.365, 0.464> ,RHB material { MATHB }  } 
+ cylinder { <3.197, 1.087, 0.729> ,<3.183, 1.086, 0.514> ,RHB material { MATHB }  } 
+ cylinder { <3.303, 1.417, 0.408> ,<3.201, 1.540, 0.282> ,RHB material { MATHB }  } 
+ cylinder { <0.372, 1.169, 0.494> ,<0.249, 1.365, 0.464> ,RHB material { MATHB }  } 
  cylinder { <0.171, 1.341, 0.409> ,<0.007, 1.295, 0.284> ,RHB material { MATHB }  } 
  cylinder { <0.298, 1.423, 0.410> ,<0.401, 1.549, 0.294> ,RHB material { MATHB }  } 
- cylinder { <0.611, 1.103, 0.447> ,<0.430, 1.086, 0.511> ,RHB material { MATHB }  } 
- cylinder { <0.734, 1.058, 0.371> ,<0.828, 0.935, 0.258> ,RHB material { MATHB }  } 
+ cylinder { <0.736, 1.068, 0.372> ,<0.828, 0.935, 0.258> ,RHB material { MATHB }  } 
  cylinder { <0.074, 0.919, 1.025> ,<0.248, 0.838, 0.932> ,RHB material { MATHB }  } 
  cylinder { <-0.003, 0.913, 1.156> ,<0.010, 0.819, 1.353> ,RHB material { MATHB }  } 
- cylinder { <0.405, 1.091, 0.735> ,<0.430, 1.086, 0.511> ,RHB material { MATHB }  } 
+ cylinder { <0.405, 1.091, 0.735> ,<0.422, 1.081, 0.511> ,RHB material { MATHB }  } 
  cylinder { <-0.006, 1.188, 1.076> ,<-0.004, 0.952, 1.067> ,RHB material { MATHB }  } 
  cylinder { <0.061, 1.317, 1.035> ,<0.219, 1.367, 0.935> ,RHB material { MATHB }  } 
  cylinder { <0.277, 1.423, 0.992> ,<0.391, 1.531, 1.101> ,RHB material { MATHB }  } 
@@ -5907,28 +5906,25 @@ union {
  cylinder { <0.481, 1.508, 0.277> ,<0.675, 1.407, 0.253> ,RHB material { MATHB }  } 
  cylinder { <0.364, 1.571, 0.204> ,<0.264, 1.627, -0.002> ,RHB material { MATHB }  } 
  cylinder { <0.725, 1.462, 0.303> ,<0.845, 1.570, 0.425> ,RHB material { MATHB }  } 
- cylinder { <0.678, 1.318, 0.301> ,<0.702, 1.128, 0.428> ,RHB material { MATHB }  } 
- cylinder { <0.819, 1.123, 0.626> ,<0.702, 1.128, 0.428> ,RHB material { MATHB }  } 
- cylinder { <0.810, 1.113, 0.777> ,<0.674, 1.086, 0.927> ,RHB material { MATHB }  } 
+ cylinder { <0.678, 1.318, 0.301> ,<0.693, 1.126, 0.423> ,RHB material { MATHB }  } 
+ cylinder { <0.808, 1.105, 0.782> ,<0.674, 1.086, 0.927> ,RHB material { MATHB }  } 
  cylinder { <0.805, 1.638, 0.454> ,<0.709, 1.796, 0.517> ,RHB material { MATHB }  } 
  cylinder { <0.883, 1.522, 0.511> ,<0.973, 1.408, 0.707> ,RHB material { MATHB }  } 
  cylinder { <1.070, 1.398, 0.708> ,<1.282, 1.380, 0.705> ,RHB material { MATHB }  } 
- cylinder { <0.940, 1.320, 0.709> ,<0.872, 1.123, 0.713> ,RHB material { MATHB }  } 
- cylinder { <1.089, 0.901, 0.588> ,<1.088, 0.829, 0.394> ,RHB material { MATHB }  } 
- cylinder { <1.019, 0.992, 0.687> ,<0.872, 1.123, 0.713> ,RHB material { MATHB }  } 
+ cylinder { <0.940, 1.320, 0.709> ,<0.865, 1.127, 0.707> ,RHB material { MATHB }  } 
+ cylinder { <1.080, 0.899, 0.596> ,<1.088, 0.829, 0.394> ,RHB material { MATHB }  } 
  cylinder { <1.175, 0.497, 0.369> ,<1.370, 0.454, 0.259> ,RHB material { MATHB }  } 
  cylinder { <1.025, 0.488, 0.378> ,<0.873, 0.425, 0.283> ,RHB material { MATHB }  } 
  cylinder { <1.322, 0.709, 0.936> ,<1.125, 0.711, 0.869> ,RHB material { MATHB }  } 
  cylinder { <1.400, 0.709, 1.066> ,<1.383, 0.716, 1.284> ,RHB material { MATHB }  } 
  cylinder { <1.570, 1.008, 0.933> ,<1.631, 1.104, 1.085> ,RHB material { MATHB }  } 
  cylinder { <1.497, 0.881, 0.895> ,<1.409, 0.708, 0.968> ,RHB material { MATHB }  } 
- cylinder { <1.429, 1.062, 0.733> ,<1.542, 0.962, 0.859> ,RHB material { MATHB }  } 
- cylinder { <1.289, 1.055, 0.675> ,<1.091, 0.933, 0.681> ,RHB material { MATHB }  } 
+ cylinder { <1.423, 1.059, 0.738> ,<1.542, 0.962, 0.859> ,RHB material { MATHB }  } 
  cylinder { <1.598, 1.052, 1.169> ,<1.516, 0.938, 1.367> ,RHB material { MATHB }  } 
  cylinder { <1.605, 1.185, 1.098> ,<1.542, 1.369, 1.132> ,RHB material { MATHB }  } 
  cylinder { <1.300, 0.703, 1.310> ,<1.108, 0.675, 1.374> ,RHB material { MATHB }  } 
  cylinder { <1.433, 0.630, 1.313> ,<1.547, 0.430, 1.376> ,RHB material { MATHB }  } 
- cylinder { <1.113, 0.777, 0.807> ,<1.091, 0.933, 0.681> ,RHB material { MATHB }  } 
+ cylinder { <1.113, 0.777, 0.807> ,<1.082, 0.933, 0.681> ,RHB material { MATHB }  } 
  cylinder { <1.125, 0.626, 0.815> ,<1.130, 0.432, 0.705> ,RHB material { MATHB }  } 
  cylinder { <1.876, 0.484, 0.744> ,<2.019, 0.425, 0.837> ,RHB material { MATHB }  } 
  cylinder { <1.805, 0.495, 0.611> ,<1.799, 0.467, 0.427> ,RHB material { MATHB }  } 
@@ -5951,7 +5947,7 @@ union {
  cylinder { <1.497, 0.334, 0.348> ,<1.370, 0.454, 0.259> ,RHB material { MATHB }  } 
  cylinder { <1.347, 0.407, 0.186> ,<1.290, 0.293, 0.005> ,RHB material { MATHB }  } 
  cylinder { <1.422, 0.872, 0.194> ,<1.538, 0.738, 0.140> ,RHB material { MATHB }  } 
- cylinder { <1.420, 0.996, 0.282> ,<1.540, 1.100, 0.393> ,RHB material { MATHB }  } 
+ cylinder { <1.420, 0.996, 0.282> ,<1.531, 1.102, 0.398> ,RHB material { MATHB }  } 
  cylinder { <0.987, 0.693, 1.017> ,<1.125, 0.711, 0.869> ,RHB material { MATHB }  } 
  cylinder { <0.864, 0.738, 1.094> ,<0.704, 0.858, 1.125> ,RHB material { MATHB }  } 
  cylinder { <1.412, 0.235, 1.633> ,<1.520, 0.168, 1.790> ,RHB material { MATHB }  } 
@@ -5961,7 +5957,7 @@ union {
  cylinder { <1.095, 1.600, 1.188> ,<1.122, 1.542, 1.373> ,RHB material { MATHB }  } 
  cylinder { <1.015, 1.601, 1.059> ,<0.870, 1.545, 0.968> ,RHB material { MATHB }  } 
  cylinder { <1.317, 1.417, 0.782> ,<1.377, 1.507, 0.929> ,RHB material { MATHB }  } 
- cylinder { <1.318, 1.287, 0.703> ,<1.378, 1.106, 0.676> ,RHB material { MATHB }  } 
+ cylinder { <1.318, 1.287, 0.703> ,<1.370, 1.103, 0.681> ,RHB material { MATHB }  } 
  cylinder { <0.330, 0.352, 1.492> ,<0.456, 0.261, 1.368> ,RHB material { MATHB }  } 
  cylinder { <0.199, 0.354, 1.568> ,<0.003, 0.268, 1.631> ,RHB material { MATHB }  } 
  cylinder { <0.175, 0.715, 1.398> ,<0.010, 0.819, 1.353> ,RHB material { MATHB }  } 
@@ -6006,7 +6002,7 @@ union {
  cylinder { <0.930, 3.070, 1.800> ,<0.845, 2.881, 1.799> ,RHB material { MATHB }  } 
  cylinder { <1.009, 3.171, 1.720> ,<1.098, 3.209, 1.541> ,RHB material { MATHB }  } 
  cylinder { <0.881, 2.834, 1.874> ,<0.966, 2.733, 2.053> ,RHB material { MATHB }  } 
- cylinder { <0.880, 2.835, 1.723> ,<0.953, 2.729, 1.542> ,RHB material { MATHB }  } 
+ cylinder { <0.880, 2.835, 1.723> ,<0.962, 2.727, 1.546> ,RHB material { MATHB }  } 
  cylinder { <0.874, 0.198, 2.180> ,<0.739, 0.142, 2.052> ,RHB material { MATHB }  } 
  cylinder { <0.899, 0.271, 2.310> ,<0.817, 0.390, 2.504> ,RHB material { MATHB }  } 
  cylinder { <0.852, 0.478, 2.504> ,<0.929, 0.671, 2.507> ,RHB material { MATHB }  } 
@@ -6028,13 +6024,14 @@ union {
  cylinder { <0.708, 0.941, 2.280> ,<0.709, 0.862, 2.470> ,RHB material { MATHB }  } 
  cylinder { <0.805, 0.166, 1.482> ,<0.938, 0.223, 1.377> ,RHB material { MATHB }  } 
  cylinder { <0.410, 0.417, 1.719> ,<0.284, 0.406, 1.545> ,RHB material { MATHB }  } 
- cylinder { <0.984, 2.305, 1.550> ,<1.091, 2.506, 1.626> ,RHB material { MATHB }  } 
- cylinder { <0.868, 2.245, 1.474> ,<0.709, 2.303, 1.381> ,RHB material { MATHB }  } 
+ cylinder { <0.984, 2.305, 1.550> ,<1.098, 2.502, 1.625> ,RHB material { MATHB }  } 
+ cylinder { <0.868, 2.245, 1.474> ,<0.714, 2.310, 1.379> ,RHB material { MATHB }  } 
  cylinder { <1.011, 2.660, 2.025> ,<1.102, 2.510, 1.964> ,RHB material { MATHB }  } 
  cylinder { <0.491, 2.973, 1.797> ,<0.455, 3.166, 1.805> ,RHB material { MATHB }  } 
  cylinder { <0.612, 2.882, 1.796> ,<0.845, 2.881, 1.799> ,RHB material { MATHB }  } 
  cylinder { <0.698, 2.284, 2.303> ,<0.676, 2.224, 2.496> ,RHB material { MATHB }  } 
- cylinder { <1.009, 2.787, 1.485> ,<1.094, 2.924, 1.374> ,RHB material { MATHB }  } 
+ cylinder { <0.883, 2.695, 1.499> ,<0.717, 2.623, 1.402> ,RHB material { MATHB }  } 
+ cylinder { <1.002, 2.788, 1.487> ,<1.094, 2.924, 1.374> ,RHB material { MATHB }  } 
  cylinder { <1.105, 3.125, 1.488> ,<1.094, 2.924, 1.374> ,RHB material { MATHB }  } 
  cylinder { <1.183, 3.244, 1.541> ,<1.373, 3.341, 1.555> ,RHB material { MATHB }  } 
  cylinder { <0.991, 3.320, 1.423> ,<1.098, 3.209, 1.541> ,RHB material { MATHB }  } 
@@ -6042,7 +6039,9 @@ union {
  cylinder { <0.407, 3.304, 1.421> ,<0.292, 3.203, 1.542> ,RHB material { MATHB }  } 
  cylinder { <0.372, 2.677, 1.601> ,<0.253, 2.522, 1.655> ,RHB material { MATHB }  } 
  cylinder { <0.454, 2.797, 1.645> ,<0.508, 2.887, 1.795> ,RHB material { MATHB }  } 
- cylinder { <0.700, 2.282, 1.292> ,<0.676, 2.221, 1.106> ,RHB material { MATHB }  } 
+ cylinder { <0.709, 2.534, 1.398> ,<0.714, 2.310, 1.379> ,RHB material { MATHB }  } 
+ cylinder { <0.628, 2.281, 1.428> ,<0.431, 2.221, 1.544> ,RHB material { MATHB }  } 
+ cylinder { <0.702, 2.283, 1.296> ,<0.676, 2.221, 1.106> ,RHB material { MATHB }  } 
  cylinder { <0.931, 1.573, 2.591> ,<1.088, 1.622, 2.500> ,RHB material { MATHB }  } 
  cylinder { <0.894, 1.500, 2.718> ,<0.980, 1.404, 2.881> ,RHB material { MATHB }  } 
  cylinder { <0.948, 1.323, 2.886> ,<0.870, 1.125, 2.888> ,RHB material { MATHB }  } 

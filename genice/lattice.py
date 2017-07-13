@@ -603,9 +603,9 @@ class Lattice():
         """
         depolarize.
         """
-        self.logger.info("Stage4: depolarization.")
+        self.logger.info("Stage4: Depolarization.")
         if not self.depolarize:
-            self.logger.info("Skip depolarization by request.")
+            self.logger.info("  Skip depolarization by request.")
             self.yapresult = ""
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,

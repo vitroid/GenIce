@@ -27,8 +27,8 @@ def Bond(bondtype, pos1, pos2):
 
 def hook6(lattice):
     global nwateratoms
-    lattice.logger.info("Output water molecules in Povray format.")
-    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
+    lattice.logger.info("Hook6: Output water molecules in Povray format.")
+    lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
     # prepare the reverse dict
     waters = defaultdict(dict)
     for atom in lattice.atoms:
@@ -66,12 +66,13 @@ def hook6(lattice):
                 s += Bond("HB",H1,O)
     print(s, end="")
     nwateratoms = len(lattice.atoms)
+    lattice.logger.info("Hook6: end.")
 
 
 def hook7(lattice):
     global nwateratoms
-    lattice.logger.info("Output water molecules in Povray format.")
-    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
+    lattice.logger.info("Hook7: Output water molecules in Povray format.")
+    lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
     gatoms = lattice.atoms[nwateratoms:]
     s = ""
     H = []
@@ -82,6 +83,7 @@ def hook7(lattice):
     s = '//' + "\n//".join(lattice.doc) + "\n" + s
     s += "  translate " + Vector( -(lattice.repcell[0,:]+lattice.repcell[1,:]+lattice.repcell[2,:])/2 ) + "\n}\n"
     print(s)
+    lattice.logger.info("Hook7: end.")
     
 
 hooks = {7:hook7, 6:hook6}

@@ -13,8 +13,8 @@ from genice import yaplotlib as yp
 
 def hook6(lattice):
     global nwateratoms
-    lattice.logger.info("Output water molecules in Yaplot format.")
-    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
+    lattice.logger.info("Hook6: Output water molecules in Yaplot format.")
+    lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
     # prepare the reverse dict
     waters = defaultdict(dict)
     for atom in lattice.atoms:
@@ -57,18 +57,19 @@ def hook6(lattice):
             d1 = H1 - O
             rr0 = np.dot(d0,d0)
             rr1 = np.dot(d1,d1)
-            if rr0 < rr1 and rr0 < 0.245**2:
+            if rr0 < rr1 and rr0 < 0.27**2:
                 s += yp.Arrow(H0,O)
             if rr1 < rr0 and rr1 < 0.245**2:
                 s += yp.Arrow(H1,O)
     print(s, end="")
     nwateratoms = len(lattice.atoms)
+    lattice.logger.info("Hook6: end.")
 
 
 def hook7(lattice):
     global nwateratoms
-    lattice.logger.info("Output water molecules in Yaplot format.")
-    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
+    lattice.logger.info("Hook7: Output water molecules in Yaplot format.")
+    lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
     gatoms = lattice.atoms[nwateratoms:]
     palettes = dict()
     s = ""
@@ -88,6 +89,7 @@ def hook7(lattice):
         s += yp.Circle(position)
     s = '#' + "\n#".join(lattice.doc) + "\n" + s
     print(s)
+    lattice.logger.info("Hook7: end.")
     
 
 hooks = {7:hook7, 6:hook6}

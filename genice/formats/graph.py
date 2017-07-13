@@ -7,7 +7,7 @@ import numpy as np
 
 
 def hook2(lattice):
-    lattice.logger.info("Output the proximity network.")
+    lattice.logger.info("Hook2: Output the proximity network.")
 
     s = ""
     s += "@NGPH\n"
@@ -17,5 +17,6 @@ def hook2(lattice):
     s += "-1 -1\n"
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
+    lattice.logger.info("Hook2: end.")
 
 hooks = {2:hook2}

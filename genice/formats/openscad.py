@@ -116,14 +116,16 @@ def test():
 
 
 def hook0(lattice):
+    lattice.logger.info("Hook0: Preprocess.")
     for d in range(3):
         lattice.rep[d] += 2  #Extend the size,then cut off later.
+    lattice.logger.info("Hook0: end.")
 
 def hook2(lattice):
     scale=50
     roxy=0.07
     rbond=0.06
-    lattice.logger.info("Output water molecules in OpenSCAD format revised.")
+    lattice.logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
     rep = np.array(lattice.rep)
     trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])
     trimoffset = lattice.cell[0]+lattice.cell[1]+lattice.cell[2]
@@ -160,5 +162,6 @@ def hook2(lattice):
     s = o.encode(*ops)
     s = '//' + "\n//".join(lattice.doc) + "\n" + s
     print(s,end="")
+    lattice.logger.info("Hook2: end.")
 
 hooks = {0:hook0, 2:hook2}

@@ -7,7 +7,7 @@ import numpy as np
 from genice import rigid
 
 def hook5(lattice):
-    lattice.logger.info("Output water molecules as rigid rotors (Euler).")
+    lattice.logger.info("Hook5: Output water molecules as rigid rotors (Euler).")
     s = ""
     if lattice.repcell[1,0] == 0 and lattice.repcell[2,0] == 0 and lattice.repcell[2,1] == 0:
         s += "@BOX3\n"
@@ -29,5 +29,6 @@ def hook5(lattice):
                                                                             euler[2])
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
+    lattice.logger.info("Hook5: end.")
 
 hooks = {5:hook5}

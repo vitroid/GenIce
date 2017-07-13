@@ -7,7 +7,7 @@ import numpy as np
 
 
 def hook1(lattice):
-    lattice.logger.info("Output centers of mass of water molecules.")
+    lattice.logger.info("Hook1: Output centers of mass of water molecules.")
     s = ""
     if lattice.repcell[1,0] == 0 and lattice.repcell[2,0] == 0 and lattice.repcell[2,1] == 0:
         s += "@BOX3\n"
@@ -24,6 +24,7 @@ def hook1(lattice):
                                                 rpos[2])
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
+    lattice.logger.info("Hook1: end.")
 
 
 hooks = {1:hook1}

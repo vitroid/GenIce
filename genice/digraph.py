@@ -272,11 +272,11 @@ class IceGraph(networkx.DiGraph):
         target = 1<<24
         while len(defects) < target:
             target //= 2
-        logger.info("Defects remaining: {0}".format(len(defects)))
+        logger.info("  Defects remaining: {0}".format(len(defects)))
         while len(defects)>0:
             self.purgedefects(defects)
             if len(defects) <= target:
-                logger.info("Defects remaining: {0}".format(len(defects)))
+                logger.info("  Defects remaining: {0}".format(len(defects)))
                 target //= 2
         assert set(self.defects()) == self.ignores, "Some water molecules do not obey the ice rule. {0}".format(self.ignores)
 
@@ -446,24 +446,27 @@ def depolarize(spaceicegraph, cell, draw=None):
     while True:
         net_polar = spaceicegraph.net_polarization()
         logger.info("  Net polarization: {0}".format(net_polar))
-        if np.dot(net_polar, net_polar) < 0.1:
+        if np.dot(net_polar, net_polar) < 0.2**2:
+            break  # without problem
+        if -1 <= net_polar[0]  <= 1 and -1 <= net_polar[1]  <= 1 and -1 <= net_polar[2]  <= 1:
+            logger.info("  Gave up eliminating the polarization.")
             break
-        if net_polar[0] > 0.5:
+        if net_polar[0] > 1.0:
             logger.debug("Depolarize +X")
             axis = np.array([+1.0, 0.0, 0.0])
-        elif net_polar[0] < -0.5:
+        elif net_polar[0] < -1.0:
             logger.debug("Depolarize -X")
             axis = np.array([-1.0, 0.0, 0.0])
-        elif net_polar[1] > 0.5:
+        elif net_polar[1] > 1.0:
             logger.debug("Depolarize +Y")
             axis = np.array([0.0,+1.0, 0.0])
-        elif net_polar[1] < -0.5:
+        elif net_polar[1] < -1.0:
             logger.debug("Depolarize -Y")
             axis = np.array([0.0,-1.0, 0.0])
-        elif net_polar[2] > 0.5:
+        elif net_polar[2] > 1.0:
             logger.debug("Depolarize +Z")
             axis = np.array([0.0, 0.0,+1.0])
-        elif net_polar[2] < -0.5:
+        elif net_polar[2] < -1.0:
             logger.debug("Depolarize -Z")
             axis = np.array([0.0, 0.0,-1.0])
         cycle = traversing_cycle(spaceicegraph, cell, axis, draw)

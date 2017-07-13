@@ -12,8 +12,8 @@ def nearly_zero(x):
 
 
 def hook7(lattice):
-    lattice.logger.info("Total number of atoms: {0}".format(len(lattice.atoms)))
-    lattice.logger.info("Output in CIF format.")
+    lattice.logger.info("Hook7: Output in CIF format.")
+    lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
 
     a = lattice.repcell[0,:]
     b = lattice.repcell[1,:]
@@ -61,5 +61,6 @@ _atom_site_fract_z
         s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(atomname,position[0],position[1],position[2],label)
     s += "\n"
     print(s,end="")
+    lattice.logger.info("Hook7: end.")
 
 hooks = {7:hook7}

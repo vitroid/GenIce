@@ -7,7 +7,7 @@ import numpy as np
 
 
 def hook4(lattice):
-    lattice.logger.info("Output the hydrogen bond network.")
+    lattice.logger.info("Hook4: Output the hydrogen bond network.")
 
     s = ""
     s += "@NGPH\n"
@@ -17,5 +17,6 @@ def hook4(lattice):
     s += "-1 -1\n"
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
+    lattice.logger.info("Hook4: end.")
 
 hooks = {4:hook4}
