@@ -22,6 +22,8 @@ Install with pip3.
 
 %%usage%%
 
+Use `./genice.x` instead of `genice` if you want to use GenIce without installation. 
+
 ## Examples
 
 * To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
@@ -154,20 +156,21 @@ It is more convenient if the lattice of the semiclathrate hydrate contains molec
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
+`cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
+`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
+`towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
+`xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
 `graph`  |Graph       | `.ngph`     | none | none | o | Experimental.
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
-`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
-`cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
-`xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
 
 ## Ice structures
 <!-- rreferences removed. -->
@@ -225,6 +228,7 @@ symbol   | type
 ---------|-----
 `3site`, `tip3p`  | 3-site TIP3P (default)
 `4site`, `tip4p`  | 4-site TIP4P
+`ice`             | TIP4P/ice
 `5site`, `tip5p`  | 5-site TIP5P
 `6site`, `NvdE`   | 6-site NvdE
 
