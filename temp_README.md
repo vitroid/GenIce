@@ -107,6 +107,31 @@ Write the code in eo.py and put it in the user module folder at either
 
 *Note*: multiple occupancy is not implemented. If it is required, make a module of a virtual molecule that contains multiple molecules.
 
+## Aeroices
+
+The structure of aeroice[Matsui 2017] is built of polyhedra and polygonal prisms that are the nodes and edges of the super-network.  If the length of the prisms is extended, the structure becomes very sparse.
+
+The aeroice <i>n</i>xFAU is an extended structure derived from a zeolitic ice FAU by stretching the hexagonal prisms n-tuply.  The super-network of <i>n</i>xFAU is isomorphic to diamond (i.e., ice 1c) and therefore the <i>n</i>xFAU structure can be made from ice 1c using `Utilities/decorator.py` utility.
+
+First, prepare a unit cell of ice 1c in AR3R format (AR3R is a file format containing the cell dimensions and the fractional coordinates of the center of mass of the water molecules).
+
+    % genice 1c -r 1 1 1 --format r > 1c.ar3r
+    
+Then `decorator.py` reads it and regards it as the topology of the  super-network, and decorate (put water molecules appropriately) to make <i>n</i>xFAU. The command generates the lattice module for genice to make 4xFAU as an example.
+
+    % Utilities/decorator.py 4 < 1c.ar3r > 4xFAU.py
+
+Put `4xFAU.py` module in the user's lattice module folder at either
+
+* `~/.github/GenIce/lattices` Linux
+* `~/Library/Application Support/GenIce/lattices` MacOS
+
+and make 4xFAU structure by GenIce.
+
+    % genice 4xFAU > 4xFAU.gro
+
+Note that `decorator.py` is applicable only to ice 1c structure for now.  Other ice structures are somewhat distorted and therefore not suitable for decoration.
+
 ## Doping ions
 
 Small ions may replace the host molecules.  In that case, you can use `-a` and `-c` options to replace the specified water molecules with anions and cations.
@@ -179,25 +204,27 @@ Symbol | Description
 -------|------------
 1h, 1c | Most popular Ice I (hexagonal or cubic)|
 2|Proton-ordered ice II |
-2d     | Hypothetical Proton-disordered Ice II.
-3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.
-5      | Monoclinic ice V (testing).|
-16     | Negative-pressure ice XVI(16).
-17     | Negative-pressure ice XVII(17).
-0      | Hypothetical ice "0".
-i      | Hypothetical ice "i". = Zeolite BCT
-C0, C0-II  | Filled ice C0 (Alias of 17).
-C1     | Filled ice C1 (Alias of 2).
-C2     | Filled ice C2 (Alias of 1c).
-sTprime | Filled ice "sT'"
-CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature.
-sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature.
-RHO    | Hypothetical ice at negative pressure ice "sIII".
-FAU    | Hypothetical ice at negative pressure ice "sIV".
-CRN1, CRN2, CRN3 | 4-coordinated continuous random network
-Struct01 .. Struct84 | Space Fullerenes
-A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names.
-T      | Space fullerene type T, II+IVa.
+2d     | Hypothetical Proton-disordered Ice II.[Nakamura 2015]
+3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
+5      | Monoclinic ice V (testing).
+16     | Negative-pressure ice XVI(16).[Falenty 2014]
+17     | Negative-pressure ice XVII(17).[del Rosso 2016]
+0      | Hypothetical ice "0".[Russo 2014]
+i      | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
+C0, C0-II  | Filled ice C0 (Alias of 17).[Smirnov 2013]
+C1     | Filled ice C1 (Alias of 2).[Londono 1988]
+C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
+sTprime | Filled ice "sT'" [Smirnov 2013]
+CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999] 
+sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. Jeffrey 1984]
+RHO    | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
+FAU    | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
+CRN1, CRN2, CRN3 | 4-coordinated continuous random network [Mousseau 2005]
+Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
+A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
+T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
+2xFAU, 4xFAU, 8xFAU, 16xFAU, 32xFAU, 64xFAU | Aeroices.[Matsui 2017]
+iceT   | Partial plastic ice T [Hirata 2017].
 
 Ice names with double quotations are not experimentally verified.
 
@@ -242,3 +269,23 @@ symbol | type
 `g12`,`g14`,`g15`,`g16` | A monatomic dummy site
 `empty`  | Leave the cage empty.
 
+# References
+
+* L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394.
+* M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza, Acta Crystallogr. A 2010, 66, 602.
+* A. Falenty, T. C. Hansen, W. F. Kuhs, Nature 2014, 516, 231.
+* C. J. Fennell, J. D. Gezelter, J. Chem. Theory Comput. 2005, 1, 662.
+* M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published in Langmuir (2017).
+* Y. Huang, C. Zhu, L. Wang, X. Cao, Y. Su, X. Jiang, S. Meng, J. Zhao, X. C. Zeng, Science Advances 2016, 2, e1501010.
+* Y. Huang, C. Zhu, L. Wang, J. Zhao, X. C. Zeng, Chem. Phys. Lett. 2017, 671, 186.
+* G. A. Jeffrey, Inclusion Compounds 1984, 1, 135.
+* A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem 2011, 50, 1733.
+* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239.
+* D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141.
+* T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published (2017).
+* N. Mousseau, G. T. Barkema, Curr. Opin. Solid State Mater. Sci. 2001, 5, 497.
+* T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B 2015, 120, 1843.
+* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268.
+* J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733.
+* G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560.
+* W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao, Phys. Rev. Lett. 1993, 71, 3150.
