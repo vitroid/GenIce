@@ -142,8 +142,10 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
 
 Write the code in eo.py and put it in the user module folder at either
 
-* `~/.github/GenIce/molecules` Linux
-* `~/Library/Application Support/GenIce/molecules` MacOS
+| OS | folder path |
+|-------|-----------------------------|
+| Linux | `~/.github/GenIce/molecules` |
+| MacOS | `~/Library/Application Support/GenIce/molecules` |
 
 *Note*: multiple occupancy is not implemented. If it is required, make a module of a virtual molecule that contains multiple molecules.
 
@@ -163,8 +165,10 @@ Then `decorator.py` reads it and regards it as the topology of the  super-networ
 
 Put `4xFAU.py` module in the user's lattice module folder at either
 
-* `~/.github/GenIce/lattices` Linux
-* `~/Library/Application Support/GenIce/lattices` MacOS
+| OS | folder path |
+|-------|-----------------------------|
+| Linux | `~/.github/GenIce/lattices` |
+| MacOS | `~/Library/Application Support/GenIce/lattices` |
 
 and make 4xFAU structure by GenIce.
 

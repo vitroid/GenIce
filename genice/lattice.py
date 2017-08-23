@@ -275,7 +275,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
             #Displacement (absolute)
             a = np.dot(d, cell)
             sqdistance = np.dot(a, a)
-            if sqdistance < 0.55**2:
+            if sqdistance < 0.57**2:
                 dnei[site].add(i)
                 # logger.info((i,cagepos[i]))
     return dnei
