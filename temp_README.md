@@ -294,3 +294,10 @@ symbol | type
 * J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733.
 * G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560.
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao, Phys. Rev. Lett. 1993, 71, 3150.
+
+# How to cite it
+
+M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-DIsordered
+Ice Generator",  J. Comput. Chem. (2017) in
+press. http://dx.doi.org/10.1002/jcc.25077
+
