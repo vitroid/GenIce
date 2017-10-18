@@ -326,7 +326,8 @@ symbol | type
 * A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem 2011, 50, 1733.
 * V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239.
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141.
-* T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published (2017).
+* T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
+  J. Chem. Phys. 147, 091101 (2017). http://dx.doi.org/10.1063/1.4994757
 * N. Mousseau, G. T. Barkema, Curr. Opin. Solid State Mater. Sci. 2001, 5, 497.
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B 2015, 120, 1843.
 * C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268.
