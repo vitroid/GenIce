@@ -287,7 +287,7 @@ symbol | type
 * V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239.
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141.
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
-  J. Chem. Phys. 147, 091101 (2017). http://dx.doi.org/10.1063/1.4994757
+  J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
 * N. Mousseau, G. T. Barkema, Curr. Opin. Solid State Mater. Sci. 2001, 5, 497.
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B 2015, 120, 1843.
 * C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268.
@@ -299,5 +299,5 @@ symbol | type
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-DIsordered
 Ice Generator",  J. Comput. Chem. (2017) in
-press. http://dx.doi.org/10.1002/jcc.25077
+press. [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
 
