@@ -228,6 +228,7 @@ Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
 A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
 T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 2xFAU, 4xFAU, 8xFAU, 16xFAU, 32xFAU, 64xFAU | Aeroices.[Matsui 2017]
+iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 
 Ice names with double quotations are not experimentally verified.
@@ -275,25 +276,37 @@ symbol | type
 
 # References
 
-* L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394.
-* M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza, Acta Crystallogr. A 2010, 66, 602.
-* A. Falenty, T. C. Hansen, W. F. Kuhs, Nature 2014, 516, 231.
-* C. J. Fennell, J. D. Gezelter, J. Chem. Theory Comput. 2005, 1, 662.
-* M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published in Langmuir (2017).
-* Y. Huang, C. Zhu, L. Wang, X. Cao, Y. Su, X. Jiang, S. Meng, J. Zhao, X. C. Zeng, Science Advances 2016, 2, e1501010.
-* Y. Huang, C. Zhu, L. Wang, J. Zhao, X. C. Zeng, Chem. Phys. Lett. 2017, 671, 186.
-* G. A. Jeffrey, Inclusion Compounds 1984, 1, 135.
-* A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem 2011, 50, 1733.
-* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239.
-* D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141.
+* L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394. [DOI: 10.1038/ncomms13394](http://dx.doi.org/10.1038/ncomms13394)
+* M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza, Acta
+  Crystallogr. A 2010, 66, 602. [DOI: 10.1107/S0108767310022932](http://dx.doi.org/10.1107/S0108767310022932)
+* A. Falenty, T. C. Hansen, W. F. Kuhs, Nature 2014, 516, 231. [DOI: 10.1038/nature14014](http://dx.doi.org/10.1038/nature14014)
+* C. J. Fennell, J. D. Gezelter, J. Chem. Theory Comput. 2005,
+  1, 662. [DOI: 10.1021/ct050005s](http://dx.doi.org/10.1021/ct050005s)
+* M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published in
+  Langmuir (2017). [DOI: 10.1021/acs.langmuir.7b01764](http://dx.doi.org/10.1021/acs.langmuir.7b01764)
+* Y. Huang, C. Zhu, L. Wang, X. Cao, Y. Su, X. Jiang, S. Meng,
+  J. Zhao, X. C. Zeng, Science Advances 2016, 2, e1501010. [DOI: 10.1126/sciadv.1501010](http://dx.doi.org/10.1126/sciadv.1501010)
+* Y. Huang, C. Zhu, L. Wang, J. Zhao, X. C. Zeng,
+  Chem. Phys. Lett. 2017, 671, 186. [DOI: 10.1016/j.cplett.2017.01.035](http://dx.doi.org/10.1016/j.cplett.2017.01.035)
+* G. A. Jeffrey, In Inclusion Compounds; J. L. Atwood,
+J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5.
+* A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg
+  Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://dx.doi.org/10.1021/ic102178d)
+* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI: 10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
+* D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
-* N. Mousseau, G. T. Barkema, Curr. Opin. Solid State Mater. Sci. 2001, 5, 497.
-* T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B 2015, 120, 1843.
-* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268.
-* J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733.
-* G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560.
-* W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao, Phys. Rev. Lett. 1993, 71, 3150.
+* K. Mochizuki, K. Himoto, and M. Matsumoto,
+  Phys. Chem. Chem. Phys. 16, 16419–16425 (2014). [DOI: 10.1039/c4cp01616e](http://dx.doi.org/10.1039/c4cp01616e)
+* N. Mousseau, G. T. Barkema, Curr. Opin. Solid State
+  Mater. Sci. 2001, 5, 497. [DOI: 10.1016/S1359-0286(02)00005-0](https://doi.org/10.1016/S1359-0286%2802%2900005-0)
+* T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B
+  2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://dx.doi.org/10.1021/acs.jpcb.5b09544)
+* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
+* J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
+* G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
+* W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
+  Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://dx.doi.org/10.1103/PhysRevLett.71.3150)
 
 # How to cite it
 
