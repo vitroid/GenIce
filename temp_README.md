@@ -314,3 +314,6 @@ M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-DIsordered
 Ice Generator",  J. Comput. Chem. (2017) in
 press. [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
 
+# How to contribute
+
+GenIce is served at the GitHub (https://github.com/vitroid/GenIce) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome.
