@@ -9,7 +9,7 @@ A Swiss army knife to generate proton-disordered ice structures.
 
 Note: WinPython includes all of these requirements.
 ## Installation
-GenIce is registered to PyPI (Python Package Index). 
+GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
 Install with pip3.
 
     pip3 install genice
