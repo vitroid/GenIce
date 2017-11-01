@@ -154,6 +154,7 @@ def quat2euler(q):
     else:
         e[2] = p-s
         e[1] = p+s
+    e[1:3] %= (2*pi)
     return e
 
 
@@ -206,9 +207,6 @@ def test_rotation():
 
 def test():
     """Testing Docstring"""
-    pass
-
-if __name__=='__main__':
     q1 = np.array([0.5,0.5,0.5,0.5]);
     q2 = np.array([0.5,0.5,0.5,-0.5]);
     q21 = qadd(q2,qmul(q1,-1))
@@ -218,7 +216,8 @@ if __name__=='__main__':
     print(qadd(q3,q1))
     print(qadd(q1,q3))
     test_rotation()
-    q4 = np.array([0.0000, 0.9239,-0.3827, 0.0000])
+    #first molecule by genice 1h -r 1 1 1 --format q
+    q4 = np.array([0.0692,-0.2480,0.2911,-0.9214])
     e4 = quat2euler(q4)
     print(e4)
     qe4 = euler2quat(e4)
@@ -267,3 +266,8 @@ def rand_rotation_matrix(deflection=1.0, randnums=None):
     
     M = (np.outer(V, V) - np.eye(3)).dot(R)
     return M
+
+
+
+if __name__ == "__main__":
+    test()
