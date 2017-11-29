@@ -15,15 +15,15 @@ hy = L1*sin(theta/2)
 hz = L1*cos(theta/2)
 mz = L2
 
-sites = np.array([[0.0, 0.0, mz],
+sites = np.array([[0.0, 0.0, 0.0],
                   [0.0, hy,  hz],
                   [0.0,-hy,  hz],
-                  [0.0, 0.0, 0.0]])
-sites -= (sites[1]+sites[2]+sites[3]*16)/18
+                  [0.0, 0.0, mz]])
+sites -= (sites[1]+sites[2]+sites[0]*16)/18
 
                   
-atoms = [".","H","H","O"]
-labels = ["MW","HW1","HW2","OW"]
+atoms = ["O","H","H","."]
+labels = ["OW","HW1","HW2","MW"]
 name = "ICE"
 
 
