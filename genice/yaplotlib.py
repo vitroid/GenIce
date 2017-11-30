@@ -2,7 +2,7 @@
 def plaintext(a):
     s = ""
     for x in a:
-        s += "{0} ".format(x)
+        s += "{0:.4f} ".format(x)
     return s
 
 
