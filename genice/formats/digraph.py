@@ -12,7 +12,7 @@ def hook4(lattice):
     s = ""
     s += "@NGPH\n"
     s += "{0}\n".format(len(lattice.reppositions))
-    for i,j,k in lattice.graph.edges_iter(data=True):
+    for i,j,k in lattice.graph.edges(data=True):
         s += "{0} {1}\n".format(i,j)
     s += "-1 -1\n"
     s = "\n".join(lattice.doc) + "\n" + s

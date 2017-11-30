@@ -100,7 +100,7 @@ class YaplotDraw(networkx.DiGraph):
     def draw_all(self):
         s = yp.Color(3)
         s += self.draw_cell()
-        for i,j in self.edges_iter():
+        for i,j in self.edges():
             s += self.draw_edge(i,j)
         return s
 
@@ -121,7 +121,7 @@ class IceGraph(networkx.DiGraph):
     def cationize(self, which):
         invert = set()
         fix    = set()
-        for i,j,data in self.edges_iter(data=True):
+        for i,j,data in self.edges(data=True):
             if j==which:
                 invert.add((i,j))
                 fix.add((j,i))
@@ -136,7 +136,7 @@ class IceGraph(networkx.DiGraph):
     def anionize(self, which):
         invert = set()
         fix    = set()
-        for i,j,data in self.edges_iter(data=True):
+        for i,j,data in self.edges(data=True):
             if i==which:
                 invert.add((i,j))
                 fix.add((j,i))
@@ -200,7 +200,7 @@ class IceGraph(networkx.DiGraph):
         """
         undir = self.to_undirected()
         for node in range(undir.number_of_nodes()):
-            if len(undir.neighbors(node)) != 4:
+            if len(list(undir.neighbors(node))) != 4:
                 return False
         return True
 
@@ -215,14 +215,14 @@ class IceGraph(networkx.DiGraph):
             defects.pop(0)
             return
         if self.in_degree(d) > 2:
-            nodes = self.predecessors(d)
+            nodes = list(self.predecessors(d))
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
             if not self[node][d]['fixed']:
                 self.invert_edge(node,d)
                 defects.append(node)
         if self.out_degree(d) > 2:
-            nodes = self.successors(d)
+            nodes = list(self.successors(d))
             i = random.randint(0,len(nodes)-1)
             node = nodes[i]
             if not self[d][node]['fixed']:
@@ -310,7 +310,7 @@ class SpaceIceGraph(IceGraph):
         add vector attributes to each edge
         """
         self.coord = coord #Shall it be copied?
-        for i,j,k in self.edges_iter(data=True):
+        for i,j,k in self.edges(data=True):
             vec = coord[j] - coord[i]
             if pbc:
                 vec -= np.floor(vec + 0.5)
@@ -344,13 +344,13 @@ class SpaceIceGraph(IceGraph):
         
     def net_polarization(self):
         dipole = np.zeros(3)
-        for i,j,k in self.edges_iter(data=True):
+        for i,j,k in self.edges(data=True):
             dipole += k["vector"]
         return dipole
 
     def vector_check(self):
         logger = logging.getLogger()
-        for i,j,k in self.edges_iter(data=True):
+        for i,j,k in self.edges(data=True):
             if k is None:
                 logger.error("The edge ({0},{1}) has no vector.".format(i,j))
                 
@@ -377,9 +377,9 @@ def find_apsis(coord, cell, distance, vertex, axis):
 def estimate_edge_length(spaceicegraph, cell, vertex):
     logger = logging.getLogger()
     # In case an anion is selected by bad fortune.
-    if len(spaceicegraph.edge[vertex]) == 0:
+    if len(spaceicegraph.adj[vertex]) == 0:
         return 0
-    for nei in spaceicegraph.edge[vertex]:
+    for nei in spaceicegraph.adj[vertex]:
         logger.debug("Nei of {0}: {1}".format(vertex, nei))
         break
     delta = spaceicegraph.coord[vertex] - spaceicegraph.coord[nei]
