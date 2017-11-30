@@ -135,7 +135,7 @@ def hook2(lattice):
     upper = (rep - 1.0 + margin) / rep
 
     bonds = []
-    for i,j in lattice.graph.edges_iter(data=False):
+    for i,j in lattice.graph.edges(data=False):
         s1 =lattice.reppositions[i]
         s2 =lattice.reppositions[j]
         d = s2-s1

@@ -54,7 +54,7 @@ def hook6(lattice):
     s += yp.Color(4)
     s += yp.ArrowType(1)
     s += yp.Size(0.03)
-    for i,j in lattice.graph.edges_iter(data=False):
+    for i,j in lattice.graph.edges(data=False):
         if i in waters and j in waters:  # edge may connect to the dopant
             O = waters[j]["O"]
             H0 = waters[i]["H0"]

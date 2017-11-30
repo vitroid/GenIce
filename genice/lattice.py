@@ -33,7 +33,7 @@ def orientations(coord, graph, cell):
             # for dopants; do not rotate
             rotmat = np.identity(3)
         else:
-            nei = graph.neighbors(node)
+            nei = list(graph.neighbors(node))
             oh1 = coord[nei[0]] - coord[node]
             oh1 -= np.floor(oh1 + 0.5)
             oh1 = np.dot(oh1, cell)                # abs coord
@@ -156,7 +156,7 @@ def replicate_labels(labels, nmol, rep):
 def replicate_graph(graph, positions, rep):
     repgraph = dg.IceGraph()
     nmol = positions.shape[0]
-    for i, j in graph.edges_iter(data=False):
+    for i, j in graph.edges(data=False):
         # positions in the unreplicated cell
         vec = positions[j] - positions[i]
         delta = np.floor(vec + 0.5).astype(int)
@@ -211,7 +211,7 @@ def parse_cages(cages):
     else:
         # Assume it is a list of list
         # flatten
-        c = [x for x in flatten(cages)]
+        c = list(flatten(cages))
         while len(c):
             cagetype.append(c.pop(0))
             cagepos.append(c[:3])
@@ -573,7 +573,7 @@ class Lattice():
         # Count bonds
         nrandom = 0
         nfixed = 0
-        for i, j, data in self.graph.edges_iter(data=True):
+        for i, j, data in self.graph.edges(data=True):
             if self.graph[i][j]['fixed']:  # fixed pair
                 nfixed += 1
             else:
@@ -824,7 +824,7 @@ class Lattice():
             if node not in undir:
                 self.logger.debug("z=0 at {0}".format(node))
             else:
-                z = len(undir.neighbors(node))
+                z = len(list(undir.neighbors(node)))
                 if z != 4:
                     self.logger.debug("z={0} at {1}".format(z, node))
         if graph.number_of_edges() != len(self.reppositions) * 2:
