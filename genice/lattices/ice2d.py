@@ -1,6 +1,7 @@
 # coding: utf-8
 """
 A hydrogen-disordered counterpart of ice II.
+Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
 
 Data source: Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848.
 """

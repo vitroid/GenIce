@@ -4,7 +4,8 @@ A Swiss army knife to generate proton-disordered ice structures.
 ## Requirements
 
 * Python 3
-* NetworkX
+* NetworkX (Note: GenIce is not compatible with the newest
+  NetworkX 2.x series.  Please use 1.9 instead.)
 * numpy
 
 Note: WinPython includes all of these requirements.

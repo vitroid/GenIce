@@ -1,5 +1,8 @@
 # coding: utf-8
 # Keep this file as simple as possible for compatibility
+"""
+Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
+"""
 density = 0.92     #default density
 
 celltype = "rect"

@@ -1,5 +1,9 @@
 # coding: utf-8
 """
+Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
+
+Data source
+
 [C1] D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0.
 """
 
