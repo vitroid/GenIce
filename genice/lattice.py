@@ -13,6 +13,9 @@ from genice import pairlist as pl
 from genice import digraph as dg
 from genice import rigid
 
+#for alkyl groups (Experimental)
+from genice import alkyl
+
 def load_numbers(v):
     if type(v) is str:
         return np.fromstring(v, sep=" ")
@@ -281,9 +284,54 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
+
+# They should be separate plugins in the future.
 def butyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [], []], ["Md", [], []]])
+
+
+def propyl(cpos, root, cell, molname):
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [], []]])
+
+
+def ethyl(cpos, root, cell, molname):
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []]])
+
+
+def _2_2_dimethylpropyl(cpos, root, cell, molname):
+    """
+    2,2-dimethylpropyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [["Md", [], []]], [["Me", [], []]]], ["Mc", [], []]])
+
+
+def _2_3_dimethylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [["Mf", [], []]], []], ["Mc", [["Me", [], []]], []], ["Md", [], []]])
+
+
+def _3_methylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [["Me", [], []]], []], ["Md", [], []]])
+
+
+def _3_3_dimethylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [["Me", [], []]], [["Mf", [], []]]], ["Md", [], []]])
+
+
+def Alkyl(cpos, root, cell, molname, backbone):
+    """
+    put a normal-alkyl group rooted at root toward cpos.
     """
     logger = logging.getLogger()
     # logger.info("  Put butyl at {0}".format(molname))
@@ -302,13 +350,16 @@ def butyl(cpos, root, cell, molname):
     CC = 0.154
     c = cos(109.5 / 2 * pi / 180)
     s = (1.0 - c**2)**0.5
+    rawatoms = alkyl.alkyl(v1, v2, backbone)
+
     atoms = []
-    for i, atom in enumerate(["Ma", "Mb", "Mc", "Md"]):
-        x = CC * s * (i + 1)
-        y = ((i + 1) % 2) * CC * c
-        atompos = x * v1 + y * v2 + origin
-        atoms.append([i, molname, atom, atompos, 0])
+    for i, atom in enumerate(rawatoms):
+        atomname, pos = atom
+        atompos = pos*CC + origin
+        atoms.append([i, molname, atomname, atompos, 0])
     return atoms
+
+
 
 
 class Lattice():
@@ -477,8 +528,15 @@ class Lattice():
         self.groups = defaultdict(dict)
 
         # groups for the semi-guest
-        self.groups_placer = dict()
-        self.groups_placer["Bu-"] = butyl  # is a function
+        # experimental; there are many variation of semi-guest inclusion.
+        self.groups_placer = {"Bu-": butyl,
+                              "Butyl-": butyl,
+                              "Propyl-": propyl,
+                              "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
+                              "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
+                              "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
+                              "3-methylbutyl-": _3_methylbutyl,
+                              "Ethyl-": ethyl}
 
 
     def format(self, water_type, guests, formatter):
