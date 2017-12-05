@@ -351,8 +351,7 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
 # How to cite it
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-DIsordered
-Ice Generator",  J. Comput. Chem. (2017) in
-press. [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
+Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
 
 # How to contribute
 
