@@ -36,7 +36,7 @@ test:
 #test for doped clathrate
 	./genice.x CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 > trash/CS2.cif    ;Utilities/cifdiff.sh ref_$(REFV)/CS2.cif trash/CS2.cif
 #test for spot semiclathrate (TBAB)
-	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_$(REFV)/HS1.xyz trash/HS1.xyz
+	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=ethyl:3 -H 23=propyl:3 -H 13=butyl:3 -H 7=pentyl:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_$(REFV)/HS1.xyz trash/HS1.xyz
 	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > trash/TS1.yap  ;diff ref_$(REFV)/TS1.yap trash/TS1.yap
 	./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
 #test 5 is for prearranged semiclathrates
