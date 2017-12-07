@@ -7,7 +7,9 @@ from math import pi, sin, cos
 
 #a sample for general alkyl group with methyls
 # tree | branch: [root,branch1,branch2,branch3]
-# or             [root]
+# or             [root,branch1,branch2]
+# or             [root,branch1]
+# or             [leaf]
 # or             leaf
 # 3-methylbutyl : backbone=["Ma",["Mb",["Mc",["Md","Me"]]]]]
 #v1 and v2 must be given as a unit vector.
