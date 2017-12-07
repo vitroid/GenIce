@@ -1,3 +1,31 @@
+import logging
+import numpy as np
+
+from genice.cells import rel_wrap
+
+def Alkyl(cpos, root, cell, molname, backbone):
+    """
+    put a normal-alkyl group rooted at root toward cpos.
+    """
+    logger = logging.getLogger()
+    # logger.info("  Put butyl at {0}".format(molname))
+    v1abs = cell.rel2abs(rel_wrap(cpos - root))
+    v1 = v1abs / np.linalg.norm(v1abs)
+
+    origin = cell.rel2abs(root)
+    CC = 0.154
+    rawatoms = build(v1, v1abs*1.5/CC, backbone)
+
+    atoms = []
+    for i, atom in enumerate(rawatoms):
+        atomname, pos = atom
+        atompos = cell.abs_wrapf(pos*CC + origin)
+        atoms.append([i, molname, atomname, atompos, 0])
+    return atoms
+
+
+
+
 #!/usr/bin/env python3
 
 
@@ -13,7 +41,7 @@ from math import pi, sin, cos
 # or             leaf
 # 3-methylbutyl : backbone=["Ma",["Mb",["Mc",["Md","Me"]]]]]
 #v1 and v2 must be given as a unit vector.
-def alkyl(direction, destination, tree, dest=None):
+def build(direction, destination, tree, dest=None):
     """
     put a normal-alkyl group rooted at root toward cpos.
     """
@@ -66,7 +94,7 @@ def alkyl(direction, destination, tree, dest=None):
     atomname = tree[0]
     atoms = [(atomname, np.zeros(3))]
     for vec,topo in zip([v2,v4,v5], tree[1:]):
-        atoms += alkyl(vec, destination - v1, topo)
+        atoms += build(vec, destination - v1, topo)
     #untranslation
     atoms = [(atom[0], atom[1] + v1) for atom in atoms]
     
@@ -78,7 +106,7 @@ def test():
                             format="%(asctime)s %(levelname)s %(message)s")
     direction = np.array([1.0, 0.0, 0.0])    #must be a unit vector
     destination = np.array([10.0, 10.0, 0.0])  #All the branches direct to this point.
-    atoms = alkyl(direction, destination, tree=["Ma",["Mb", "Mf", ["Mc", "Me", ["Md", ["A", ["B", ["C", ["D"]]]]]]]])
+    atoms = build(direction, destination, tree=["Ma",["Mb", "Mf", ["Mc", "Me", ["Md", ["A", ["B", ["C", ["D"]]]]]]]])
     # in yaplot format
     print("t 0 0 0 +")
     print("t",destination[0], destination[1], destination[2], "@")

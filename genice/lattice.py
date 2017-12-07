@@ -14,8 +14,6 @@ from genice import digraph as dg
 from genice import rigid
 from genice.cells import rel_wrap, Cell
 
-#for alkyl groups (Experimental)
-from genice import alkyl
 
 def load_numbers(v):
     if type(v) is str:
@@ -236,76 +234,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
 
 
 
-# They should be separate plugins in the future.
-def butyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md"]]])
 
-
-def pentyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
-
-
-def propyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc"]])
-
-
-def ethyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, ["Ma", "Mb"])
-
-
-def _2_2_dimethylpropyl(cpos, root, cell, molname):
-    """
-    2,2-dimethylpropyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
-
-
-def _2_3_dimethylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
-
-
-def _3_methylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
-
-
-def _3_3_dimethylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
-
-
-def Alkyl(cpos, root, cell, molname, backbone):
-    """
-    put a normal-alkyl group rooted at root toward cpos.
-    """
-    logger = logging.getLogger()
-    # logger.info("  Put butyl at {0}".format(molname))
-    v1abs = cell.rel2abs(rel_wrap(cpos - root))
-    v1 = v1abs / np.linalg.norm(v1abs)
-
-    origin = cell.rel2abs(root)
-    CC = 0.154
-    rawatoms = alkyl.alkyl(v1, v1abs*1.5/CC, backbone)
-
-    atoms = []
-    for i, atom in enumerate(rawatoms):
-        atomname, pos = atom
-        atompos = cell.abs_wrapf(pos*CC + origin)
-        atoms.append([i, molname, atomname, atompos, 0])
-    return atoms
 
 
 
@@ -478,15 +407,6 @@ class Lattice():
 
         # groups for the semi-guest
         # experimental; there are many variation of semi-guest inclusion.
-        self.groups_placer = {"Bu-": butyl,
-                              "Butyl-": butyl,
-                              "Pentyl-": pentyl,
-                              "Propyl-": propyl,
-                              "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
-                              "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
-                              "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
-                              "3-methylbutyl-": _3_methylbutyl,
-                              "Ethyl-": ethyl}
 
 
     def format(self, water_type, guests, formatter):
@@ -661,6 +581,12 @@ class Lattice():
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
         # water = importlib.import_module("genice.molecules."+water_type)
         water = safe_import("molecule", water_type)
+        # Show the document of the module
+        #try:
+        #    for line in water.__doc__.splitlines():
+        #        self.logger.info("!!! {0}".format(line))
+        #except:
+        #    pass
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
                                    self.rotmatrices,
@@ -755,10 +681,16 @@ class Lattice():
                 del self.dopants[root]  # processed.
                 self.logger.debug((root,cages,name,molname,pos,rot))
                 for cage, group in cages.items():
-                    assert group in self.groups_placer
+                    # assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
                     cpos = repcagepos[cage]
-                    self.atoms += self.groups_placer[group](cpos,
+                    group_placer = safe_import("group", group)
+                    #try:
+                    #    for line in group_placer.__doc__.splitlines():
+                    #        self.logger.info("!!! {0}".format(line))
+                    #except:
+                    #    pass
+                    self.atoms += group_placer.arrange_atoms(cpos,
                                                             pos,
                                                             self.repcell,
                                                             molname)

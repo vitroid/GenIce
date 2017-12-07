@@ -14,13 +14,14 @@ pypi:
 	make README.rst
 	./setup.py check
 	./setup.py sdist bdist_wheel upload
-REFV=0.13
+REFV=0.14
 test:
 	-mkdir trash
 	./genice.x test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	./genice.x test2 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	./genice.x test3 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	./genice.x test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	./genice.x test5 --rep 2 2 3 > trash/test5.gro                             ;diff ref_$(REFV)/test5.gro trash/test5.gro
 	./genice.x 2d --rep 2 2 3 > trash/2d.gro                                   ;diff ref_$(REFV)/2d.gro trash/2d.gro
 	./genice.x 3  --rep 2 2 3 --format c > trash/3.ar3a                        ;diff ref_$(REFV)/3.ar3a trash/3.ar3a
 	./genice.x 4  --rep 2 2 3 --format d > trash/4.ngph                        ;diff ref_$(REFV)/4.ngph trash/4.ngph
