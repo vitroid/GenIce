@@ -290,43 +290,50 @@ def butyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [], []], ["Md", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md"]]])
+
+
+def pentyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
 
 
 def propyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc"]])
 
 
 def ethyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", "Mb"])
 
 
 def _2_2_dimethylpropyl(cpos, root, cell, molname):
     """
     2,2-dimethylpropyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [["Md", [], []]], [["Me", [], []]]], ["Mc", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
 
 
 def _2_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [["Mf", [], []]], []], ["Mc", [["Me", [], []]], []], ["Md", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
 
 
 def _3_methylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [["Me", [], []]], []], ["Md", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
 
 
 def _3_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, [["Ma", [], []], ["Mb", [], []], ["Mc", [["Me", [], []]], [["Mf", [], []]]], ["Md", [], []]])
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
 
 
 def Alkyl(cpos, root, cell, molname, backbone):
@@ -335,22 +342,14 @@ def Alkyl(cpos, root, cell, molname, backbone):
     """
     logger = logging.getLogger()
     # logger.info("  Put butyl at {0}".format(molname))
-    v1 = cpos - root
-    v1 -= np.floor(v1 + 0.5)
-    v1 = np.dot(v1, cell)
-    v1 /= np.linalg.norm(v1)
-    v2 = np.random.random(3)
-    v12 = np.dot(v1, v2)
-    v2 -= v1 * v12
-    v2 /= np.linalg.norm(v2)  # a random unit vector perpendicular to v1
-    logger.debug("  {0} {1} {2}".format(
-        np.dot(v1, v1), np.dot(v2, v2), np.dot(v1, v2)))
-    #v3 = np.cross(v1,v2)
+    v1abs = cpos - root
+    v1abs -= np.floor(v1abs + 0.5)
+    v1abs = np.dot(v1abs, cell)
+    v1 = v1abs / np.linalg.norm(v1abs)
+
     origin = np.dot(root, cell)
     CC = 0.154
-    c = cos(109.5 / 2 * pi / 180)
-    s = (1.0 - c**2)**0.5
-    rawatoms = alkyl.alkyl(v1, v2, backbone)
+    rawatoms = alkyl.alkyl(v1, v1abs*1.5/CC, backbone)
 
     atoms = []
     for i, atom in enumerate(rawatoms):
@@ -531,6 +530,7 @@ class Lattice():
         # experimental; there are many variation of semi-guest inclusion.
         self.groups_placer = {"Bu-": butyl,
                               "Butyl-": butyl,
+                              "Pentyl-": pentyl,
                               "Propyl-": propyl,
                               "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
                               "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
