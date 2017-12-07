@@ -73,6 +73,7 @@ def hook7(lattice):
     global nwateratoms
     lattice.logger.info("Hook7: Output water molecules in Povray format.")
     lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
+    cellmat = lattice.repcell.mat
     gatoms = lattice.atoms[nwateratoms:]
     s = ""
     H = []
@@ -81,7 +82,7 @@ def hook7(lattice):
         resno, resname, atomname, position, order = atom
         s += Atom(atomname,position)
     s = '//' + "\n//".join(lattice.doc) + "\n" + s
-    s += "  translate " + Vector( -(lattice.repcell[0,:]+lattice.repcell[1,:]+lattice.repcell[2,:])/2 ) + "\n}\n"
+    s += "  translate " + Vector( -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2 ) + "\n}\n"
     print(s)
     lattice.logger.info("Hook7: end.")
     

@@ -38,11 +38,12 @@ cell = """
 12.747893943706936 12.747893943706936 12.747893943706936
 """
 
-from genice import FrankKasper
-from genice.lattice import parse_cages, parse_cell
+from genice         import FrankKasper
+from genice.lattice import parse_cages
+from genice.cells   import Cell
 cagepos, cagetype = parse_cages(cages)
-cell9             = parse_cell(cell, celltype)
-waters = [w for w in FrankKasper.toWater(cagepos, cell9)]
+cell9             = Cell(cell, celltype)
+waters = [w for w in FrankKasper.toWater(cagepos, cell9.mat)]
 coord = "relative"
-density = FrankKasper.estimate_density(waters, cell9, 2.76)
+density = FrankKasper.estimate_density(waters, cell9.mat, 2.76)
 bondlen = 2.76*1.1

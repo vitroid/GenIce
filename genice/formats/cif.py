@@ -14,10 +14,11 @@ def nearly_zero(x):
 def hook7(lattice):
     lattice.logger.info("Hook7: Output in CIF format.")
     lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
+    cellmat = lattice.repcell.mat
 
-    a = lattice.repcell[0,:]
-    b = lattice.repcell[1,:]
-    c = lattice.repcell[2,:]
+    a = cellmat[0,:]
+    b = cellmat[1,:]
+    c = cellmat[2,:]
     aL= np.linalg.norm(a)
     bL= np.linalg.norm(b)
     cL= np.linalg.norm(c)
@@ -28,8 +29,6 @@ def hook7(lattice):
     beta  = acos(ca/(cL*aL)) * 180 / pi
     gamma = acos(ab/(aL*bL)) * 180 / pi
     s = ""
-    #if celltype == "rect":
-    #    s += "-length '({0}, {1}, {2})'\n".format(repcell[0,0]*10,repcell[1,1]*10,repcell[2,2]*10)
     s += "data_genice_{0}\n".format(lattice.lattice_type)
     s += '#' + "\n#".join(lattice.doc) + "\n"
     s += "_cell_length_a                {0}\n".format(aL*10)
@@ -57,10 +56,9 @@ _atom_site_fract_x
 _atom_site_fract_y
 _atom_site_fract_z
 """
-    celli = np.linalg.inv(lattice.repcell)
     for i in range(len(lattice.atoms)):
         molorder, resname, atomname, position, order = lattice.atoms[i]
-        position = np.dot(position, celli)
+        position = lattice.repcell.abs2rel(position)
         label = atomname+"{0}".format(i)
         s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(atomname,position[0],position[1],position[2],label)
     s += "\n"
