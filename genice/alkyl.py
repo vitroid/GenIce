@@ -60,16 +60,11 @@ def alkyl(direction, destination, tree, dest=None):
     logger.debug("  {0} 1".format(np.dot(v4, v4)))
     logger.debug("  {0} 1".format(np.dot(v5, v5)))
 
-    
     #assert False
     atomname = tree[0]
     atoms = [(atomname, np.zeros(3))]
-    if len(tree) > 1:
-        atoms += alkyl(v2, destination - v1, tree[1]) #branch 1
-    if len(tree) > 2:
-        atoms += alkyl(v4, destination - v1, tree[2]) #branch 2
-    if len(tree) > 3:
-        atoms += alkyl(v5, destination - v1, tree[3]) #branch 1
+    for vec,topo in zip([v2,v4,v5], tree[1:]):
+        atoms += alkyl(vec, destination - v1, topo)
     #untranslation
     atoms = [(atom[0], atom[1] + v1) for atom in atoms]
     
