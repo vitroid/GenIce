@@ -10,8 +10,6 @@ def hook7(lattice):
     lattice.logger.info("Hook7: Output in MDView format.")
     lattice.logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
     s = ""
-    #if celltype == "rect":
-    #    s += "-length '({0}, {1}, {2})'\n".format(repcell[0,0]*10,repcell[1,1]*10,repcell[2,2]*10)
     s += "-center 0 0 0\n"
     s += "-fold\n"
     s += "{0}\n".format(len(lattice.atoms))
