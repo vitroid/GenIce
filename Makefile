@@ -21,7 +21,6 @@ test:
 	./genice.x test2 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	./genice.x test3 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	./genice.x test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
-	./genice.x test5 --rep 2 2 3 > trash/test5.gro                             ;diff ref_$(REFV)/test5.gro trash/test5.gro
 	./genice.x 2d --rep 2 2 3 > trash/2d.gro                                   ;diff ref_$(REFV)/2d.gro trash/2d.gro
 	./genice.x 3  --rep 2 2 3 --format c > trash/3.ar3a                        ;diff ref_$(REFV)/3.ar3a trash/3.ar3a
 	./genice.x 4  --rep 2 2 3 --format d > trash/4.ngph                        ;diff ref_$(REFV)/4.ngph trash/4.ngph
@@ -39,7 +38,9 @@ test:
 #test for spot semiclathrate (TBAB)
 	./genice.x HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > trash/HS1.xyz; diff ref_$(REFV)/HS1.xyz trash/HS1.xyz
 	./genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > trash/TS1.yap  ;diff ref_$(REFV)/TS1.yap trash/TS1.yap
-	#./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
+	./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
+#test 5 is for prearranged semiclathrates
+	./genice.x test5 --rep 2 2 3 > trash/test5.gro                             ;diff ref_$(REFV)/test5.gro trash/test5.gro
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@ 
 distclean:
