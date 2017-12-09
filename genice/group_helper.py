@@ -19,7 +19,10 @@ def Alkyl(cpos, root, cell, molname, backbone):
     atoms = []
     for i, atom in enumerate(rawatoms):
         atomname, pos = atom
-        atompos = cell.abs_wrapf(pos*CC + origin)
+        # This must not be done for gromacs;
+        # same group must be in the same image cell
+        # atompos = cell.abs_wrapf(pos*CC + origin)
+        atompos = pos*CC + origin
         atoms.append([i, molname, atomname, atompos, 0])
     return atoms
 
