@@ -181,12 +181,6 @@ Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, 
 
 It is more convenient if the lattice of the semiclathrate hydrate contains molecular ions in the appropriate locations in advance.  Here we explain the way to make the special module for semclathrates.
 
-# Algorithm
-
-The algorithm to make a depolarized hydrogen-disordered ice is
-explained in our recent paper: M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
-Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
-
 ## Output formats
 
 Name |Application | extension | water | solute | HB | remarks
@@ -314,7 +308,9 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
   Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://dx.doi.org/10.1103/PhysRevLett.71.3150)
 
-# How to cite it
+# The algorithm and how to cite it.
+
+The algorithm to make a depolarized hydrogen-disordered ice is explained in our recent paper:
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
 Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
