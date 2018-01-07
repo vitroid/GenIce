@@ -126,9 +126,12 @@ def hook2(lattice):
     roxy=0.07
     rbond=0.06
     lattice.logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
+    cellmat = lattice.repcell.mat
     rep = np.array(lattice.rep)
-    trimbox    = lattice.cell *np.array([(rep[i]-2) for i in range(3)])
-    trimoffset = lattice.cell[0]+lattice.cell[1]+lattice.cell[2]
+    trimbox    = lattice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
+    trimoffset = lattice.cell.mat[0]+lattice.cell.mat[1]+lattice.cell.mat[2]
+    lattice.logger.info(lattice.repcell.mat)
+    lattice.logger.info(lattice.cell.mat)
 
     margin = 0.2 # expansion relative to the cell size
     lower = (1.0 - margin) / rep
@@ -144,12 +147,12 @@ def hook2(lattice):
         s2 = s1 + d
         if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
             (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,lattice.repcell), np.dot(s2,lattice.repcell)))
+            bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
 
     nodes = []
     for s1 in lattice.reppositions:
         if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, lattice.repcell) )
+            nodes.append( np.dot(s1, cellmat) )
 
     o = OpenScad()
     objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]

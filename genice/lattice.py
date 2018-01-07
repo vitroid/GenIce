@@ -12,6 +12,10 @@ from genice.importer import safe_import
 from genice import pairlist as pl
 from genice import digraph as dg
 from genice import rigid
+from genice.cells import rel_wrap, Cell
+
+#for alkyl groups (Experimental)
+from genice import alkyl
 
 def load_numbers(v):
     if type(v) is str:
@@ -34,15 +38,8 @@ def orientations(coord, graph, cell):
             rotmat = np.identity(3)
         else:
             nei = list(graph.neighbors(node))
-            oh1 = coord[nei[0]] - coord[node]
-            oh1 -= np.floor(oh1 + 0.5)
-            oh1 = np.dot(oh1, cell)                # abs coord
-            oh2 = coord[nei[1]] - coord[node]
-            oh2 -= np.floor(oh2 + 0.5)
-            oh2 = np.dot(oh2, cell)                # abs coord
-            # oh1 /= np.linalg.norm(oh1)
-            # oh2 /= np.linalg.norm(oh2)
-            # logger.debug("bond angle cos:{0}".format(np.dot(oh1, oh2)))
+            oh1 = cell.rel2abs(rel_wrap(coord[nei[0]] - coord[node]))                # abs coord
+            oh2 = cell.rel2abs(rel_wrap(coord[nei[1]] - coord[node]))                # abs coord
             y = oh2 - oh1
             y /= np.linalg.norm(y)
             z = (oh1 + oh2) / 2
@@ -60,7 +57,7 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name, ignores=set()):
     for order, pos in enumerate(coord):
         if order in ignores:
             continue
-        abscom = np.dot(pos, cell)  # relative to absolute
+        abscom = cell.rel2abs(pos)  # relative to absolute
         rotated = np.dot(intra, rotmatrices[order])
         for i in range(len(labels)):
             atoms.append([i, name, labels[i], rotated[i, :] + abscom, order])
@@ -74,9 +71,7 @@ def shortest_distance(coord, cell, pairs=None):
     else:
         iter = [(coord[i], coord[j]) for i, j in pairs]
     for c1, c2 in iter:
-        d = c1 - c2
-        d -= np.floor(d + 0.5)
-        r = np.dot(d, cell)
+        r = cell.rel2abs(rel_wrap(c1 - c2))
         rr = np.dot(r, r)
         if rr < dmin:
             dmin = rr
@@ -108,8 +103,7 @@ def replicate_groups(groups, waters, cagepos, rep):
             # Position of the cage (fractional)
             cage_pos = cagepos[cage]
             # Relative position of the cage
-            delta = cage_pos - root_pos
-            delta -= np.floor(delta + 0.5)
+            delta = rel_wrap(cage_pos - root_pos)
             # (Image) cell that the cage resides
             gcell = np.floor(root_pos + delta)
             for x in range(rep[0]):
@@ -221,43 +215,6 @@ def parse_cages(cages):
     return cagepos, cagetype
 
 
-def parse_cell(cell, celltype):
-    logger = logging.getLogger()
-    if celltype == "rect":
-        if type(cell) is str:
-            cell = np.fromstring(cell, sep=" ")
-        elif type(cell) is list:
-            cell = np.array(cell)
-        logger.debug("parse_cell 1: {0}".format(cell))
-        return np.diag(cell)
-    elif celltype == "monoclinic":
-        if type(cell) is str:
-            cell = np.fromstring(cell, sep=" ")
-        elif type(cell) is list:
-            cell = np.array(cell)
-        beta = cell[3] * pi / 180.
-        cell = np.array(((cell[0] * 1.0, cell[1] * 0.0, cell[2] * cos(beta)),
-                         (cell[0] * 0.0, cell[1] * 1.0, cell[2] * 0.0),
-                         (cell[0] * 0.0, cell[1] * 0.0, cell[2] * sin(beta))))
-        # all the vector calculations are done in transposed manner.
-        return cell.transpose()
-    elif celltype == "triclinic":
-        """
-        Put the vectors like following:
-        cell = "ax 0 0 bx by 0 cx cy cz"
-        when you define a unit cell in Lattice/
-
-        """
-        if type(cell) is str:
-            cell = np.fromstring(cell, sep=" ")
-            logger.debug(cell)
-        elif type(cell) is list:
-            cell = np.array(cell)
-        return np.reshape(cell, (3, 3))
-        # assert cell[0, 1] == 0 and cell[0, 2] == 0 and cell[1, 2] == 0
-    else:
-        logger.error("unknown cell type: {0}".format(celltype))
-        sys.exit(1)
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
@@ -270,10 +227,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
         org = waters[site]
         for i, pos in enumerate(cagepos):
             #Displacement (relative)
-            d = pos - org
-            d -= np.floor(d + 0.5)
-            #Displacement (absolute)
-            a = np.dot(d, cell)
+            a = cell.rel2abs(rel_wrap(pos - org))
             sqdistance = np.dot(a, a)
             if sqdistance < 0.57**2:
                 dnei[site].add(i)
@@ -281,34 +235,79 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
+
+# They should be separate plugins in the future.
 def butyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md"]]])
+
+
+def pentyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
+
+
+def propyl(cpos, root, cell, molname):
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc"]])
+
+
+def ethyl(cpos, root, cell, molname):
+    return Alkyl(cpos, root, cell, molname, ["Ma", "Mb"])
+
+
+def _2_2_dimethylpropyl(cpos, root, cell, molname):
+    """
+    2,2-dimethylpropyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
+
+
+def _2_3_dimethylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
+
+
+def _3_methylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
+
+
+def _3_3_dimethylbutyl(cpos, root, cell, molname):
+    """
+    put a butyl group rooted at root toward cpos.
+    """
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
+
+
+def Alkyl(cpos, root, cell, molname, backbone):
+    """
+    put a normal-alkyl group rooted at root toward cpos.
+    """
     logger = logging.getLogger()
     # logger.info("  Put butyl at {0}".format(molname))
-    v1 = cpos - root
-    v1 -= np.floor(v1 + 0.5)
-    v1 = np.dot(v1, cell)
-    v1 /= np.linalg.norm(v1)
-    v2 = np.random.random(3)
-    v12 = np.dot(v1, v2)
-    v2 -= v1 * v12
-    v2 /= np.linalg.norm(v2)  # a random unit vector perpendicular to v1
-    logger.debug("  {0} {1} {2}".format(
-        np.dot(v1, v1), np.dot(v2, v2), np.dot(v1, v2)))
-    #v3 = np.cross(v1,v2)
-    origin = np.dot(root, cell)
+    v1abs = cell.rel2abs(rel_wrap(cpos - root))
+    v1 = v1abs / np.linalg.norm(v1abs)
+
+    origin = cell.rel2abs(root)
     CC = 0.154
-    c = cos(109.5 / 2 * pi / 180)
-    s = (1.0 - c**2)**0.5
+    rawatoms = alkyl.alkyl(v1, v1abs*1.5/CC, backbone)
+
     atoms = []
-    for i, atom in enumerate(["Ma", "Mb", "Mc", "Md"]):
-        x = CC * s * (i + 1)
-        y = ((i + 1) % 2) * CC * c
-        atompos = x * v1 + y * v2 + origin
-        atoms.append([i, molname, atom, atompos, 0])
+    for i, atom in enumerate(rawatoms):
+        atomname, pos = atom
+        atompos = cell.abs_wrapf(pos*CC + origin)
+        atoms.append([i, molname, atomname, atompos, 0])
     return atoms
+
+
 
 
 class Lattice():
@@ -352,14 +351,15 @@ class Lattice():
         # celltype: symmetry of the cell
         #   see parse_cell for syntax.
         #
-        self.cell = parse_cell(lat.cell, lat.celltype)
+        self.cell = Cell(lat.cell, lat.celltype)
+        #self.cell = parse_cell(lat.cell, lat.celltype)
 
         # ================================================================
         # coord: "relative" or "absolute"
         #   Inside genice, molecular positions are always treated as "relative"
         #
         if lat.coord == "absolute":
-            self.waters = np.dot(self.waters, np.linalg.inv(self.cell), )
+            self.waters = self.cell.abs2rel(self.waters)
         self.waters = np.array([w - np.floor(w) for w in self.waters])
 
         # ================================================================
@@ -400,7 +400,7 @@ class Lattice():
         mass = 18  # water
         NB = 6.022e23
         nmol = self.waters.shape[0]        # nmol in a unit cell
-        volume = np.linalg.det(self.cell)  # volume of a unit cell in nm**3
+        volume = self.cell.volume()  # volume of a unit cell in nm**3
         density0 = mass * nmol / (NB * volume * 1e-21)
         if density <= 0:
             try:
@@ -420,7 +420,7 @@ class Lattice():
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density)**(1.0 / 3.0)
-        self.cell *= ratio
+        self.cell.scale(ratio)
         if self.bondlen is not None:
             self.bondlen *= ratio
         self.logger.info("Bond length (scaled): {0}".format(self.bondlen))
@@ -477,8 +477,16 @@ class Lattice():
         self.groups = defaultdict(dict)
 
         # groups for the semi-guest
-        self.groups_placer = dict()
-        self.groups_placer["Bu-"] = butyl  # is a function
+        # experimental; there are many variation of semi-guest inclusion.
+        self.groups_placer = {"Bu-": butyl,
+                              "Butyl-": butyl,
+                              "Pentyl-": pentyl,
+                              "Propyl-": propyl,
+                              "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
+                              "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
+                              "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
+                              "3-methylbutyl-": _3_methylbutyl,
+                              "Ethyl-": ethyl}
 
 
     def format(self, water_type, guests, formatter):
@@ -535,9 +543,8 @@ class Lattice():
             len(self.reppositions)))
         self.graph = self.prepare_random_graph(self.fixed)
         # scale the cell
-        self.repcell = np.zeros_like(self.cell)
-        for d in range(3):
-            self.repcell[d, :] = self.cell[d, :] * self.rep[d]
+        self.repcell = Cell(self.cell)
+        self.repcell.scale2(self.rep)
         self.logger.info("Stage1: end.")
 
     def stage2(self):
@@ -623,9 +630,9 @@ class Lattice():
                                                coord=self.reppositions,
                                                ignores=self.graph.ignores)
             draw = dg.YaplotDraw(
-                self.reppositions, self.repcell, data=self.spacegraph)
+                self.reppositions, self.repcell.mat, data=self.spacegraph)
             self.yapresult = dg.depolarize(
-                self.spacegraph, self.repcell, draw=draw)
+                self.spacegraph, self.repcell.mat, draw=draw)
         self.logger.info("Stage4: end.")
 
     def stage5(self):
@@ -634,8 +641,8 @@ class Lattice():
         """
         self.logger.info("Stage5: Orientation.")
         # Add small noises to the molecular positions
-        self.reppositions += np.dot(np.random.random(self.reppositions.shape)
-                                    * 0.01 - 0.005, np.linalg.inv(self.repcell))
+        self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)
+                                    * 0.01 - 0.005)
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
@@ -744,7 +751,7 @@ class Lattice():
                 molname = "G{0}".format(root)
                 pos = self.reppositions[root]
                 rot = self.rotmatrices[root]
-                self.atoms.append([0, molname, name, np.dot(pos, self.repcell), 0])
+                self.atoms.append([0, molname, name, self.repcell.rel2abs(pos), 0])
                 del self.dopants[root]  # processed.
                 self.logger.debug((root,cages,name,molname,pos,rot))
                 for cage, group in cages.items():
@@ -752,7 +759,7 @@ class Lattice():
                     assert cage in dopants_neighbors[root]
                     cpos = repcagepos[cage]
                     self.atoms += self.groups_placer[group](cpos,
-                                                            self.reppositions[root],
+                                                            pos,
                                                             self.repcell,
                                                             molname)
             # molecular guests
@@ -785,14 +792,14 @@ class Lattice():
                 "  Start estimating the bonds according to the pair distances.")
             # make bonded pairs according to the pair distance.
             # make before replicating them.
-            grid = pl.determine_grid(self.cell, self.bondlen)
+            grid = pl.determine_grid(self.cell.mat, self.bondlen)
             assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
             self.pairs = [v for v in pl.pairlist_fine(
-                self.waters, self.bondlen, self.cell, grid, distance=False)]
+                self.waters, self.bondlen, self.cell.mat, grid, distance=False)]
             # Check using a simpler algorithm.
             if self.logger.level <= logging.DEBUG:
                 pairs2 = [v for v in pl.pairlist_crude(
-                    self.waters, self.bondlen, self.cell, distance=False)]
+                    self.waters, self.bondlen, self.cell.mat, distance=False)]
                 self.logger.debug("pairs: {0}".format(len(self.pairs)))
                 self.logger.debug("pairs2: {0}".format(len(pairs2)))
                 for pair in self.pairs:

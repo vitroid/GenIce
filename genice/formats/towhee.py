@@ -9,6 +9,7 @@ from genice import rigid
 
 def hook7(lattice):
     lattice.logger.info("Hook7: Output in TowHee format.")
+    cellmat = lattice.repcell.mat
     s = ""
     for i,atom in enumerate(lattice.atoms):
         molorder, resname, atomname, position, order = atom
@@ -16,17 +17,17 @@ def hook7(lattice):
     print(s,end="")
     s = "  Cell Dimensions:"
     lattice.logger.info(s)
-    s = "    a: {0} {1} {2}".format(lattice.repcell[0,0]*10,
-                                       lattice.repcell[0,1]*10,
-                                       lattice.repcell[0,2]*10)
+    s = "    a: {0} {1} {2}".format(cellmat[0,0]*10,
+                                       cellmat[0,1]*10,
+                                       cellmat[0,2]*10)
     lattice.logger.info(s)    
-    s = "    b: {0} {1} {2}".format(lattice.repcell[1,0]*10,
-                                       lattice.repcell[1,1]*10,
-                                       lattice.repcell[1,2]*10)
+    s = "    b: {0} {1} {2}".format(cellmat[1,0]*10,
+                                       cellmat[1,1]*10,
+                                       cellmat[1,2]*10)
     lattice.logger.info(s)
-    s = "    c: {0} {1} {2}".format(lattice.repcell[2,0]*10,
-                                       lattice.repcell[2,1]*10,
-                                       lattice.repcell[2,2]*10)
+    s = "    c: {0} {1} {2}".format(cellmat[2,0]*10,
+                                       cellmat[2,1]*10,
+                                       cellmat[2,2]*10)
     lattice.logger.info(s)
     lattice.logger.info("Hook7: end.")
 
