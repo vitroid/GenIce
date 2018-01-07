@@ -1,4 +1,6 @@
 # GenIce
+https://github.com/vitroid/GenIce/blob/develop/logo/genice-v0.png?raw=true
+
 A Swiss army knife to generate proton-disordered ice structures.
 
 ## Requirements
