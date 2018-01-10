@@ -56,7 +56,7 @@ global_settings {
 #end
 
 camera {
-  location <0, 3, 0>
+  location <0, 10, 0>
     look_at <0,0,0>
     sky z
     right x
