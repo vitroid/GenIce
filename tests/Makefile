@@ -3,7 +3,7 @@ GENICE=$(BASE)/genice.x
 UTIL=$(BASE)/Utilities
 REFV=0.15
 
-all: test1.done test2.done test3.done test4.done test5.done test6.done test7.done test8.done test9.done test10.done test11.done test12.done test13.done test14.done test15.done test16.done test17.done
+all: test1.done test2.done test3.done test4.done test5.done test6.done test7.done test8.done test9.done test10.done test11.done test12.done test13.done test14.done test15.done test16.done test17.done test18.done test20.done # test19.done
 
 
 clean:
@@ -87,3 +87,7 @@ test19.done:
 	-mkdir trash
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
 	touch test19.done
+test20.done:
+	-mkdir trash
+	$(GENICE) 2D3 --rep 5 5 1 --format yaplot > trash/2D3.yap  ;diff ref_$(REFV)/2D3.yap trash/2D3.yap
+	touch test20.done

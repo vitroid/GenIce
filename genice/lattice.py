@@ -26,6 +26,25 @@ def load_numbers(v):
         return v
 
 
+def complement(v):
+    # assume missing vectors
+    assert len(v) > 1
+    if len(v) == 3:
+        return [-(v[0]+v[1]+v[2])]
+    elif len(v) == 2:
+        y = v[1] - v[0]
+        y /= np.linalg.norm(y)
+        z = v[1] + v[0]
+        z /= np.linalg.norm(z)
+        x = np.cross(y,z)
+        v2 = ( x*8.0**0.5 - z)/3.0
+        v3 = (-x*8.0**0.5 - z)/3.0
+        return v2,v3
+    return []
+        
+        
+        
+
 def orientations(coord, graph, cell):
     """
     Does not work when two OHs are colinear
@@ -37,15 +56,22 @@ def orientations(coord, graph, cell):
             # for dopants; do not rotate
             rotmat = np.identity(3)
         else:
-            nei = list(graph.neighbors(node))
-            oh1 = cell.rel2abs(rel_wrap(coord[nei[0]] - coord[node]))                # abs coord
-            oh2 = cell.rel2abs(rel_wrap(coord[nei[1]] - coord[node]))                # abs coord
-            y = oh2 - oh1
+            vsucc = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.successors(node)]
+            if len(vsucc) < 2: #TSL
+                vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
+                vsucc = [x / np.linalg.norm(x) for x in vsucc]
+                vpred = [x / np.linalg.norm(x) for x in vpred]
+                vcomp = complement(vpred+vsucc)
+                logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
+                vsucc = (vsucc+vcomp)[:2]
+            logger.debug("Node {0} vsucc {1}".format(node,vsucc))    
+            y = vsucc[1] - vsucc[0]
             y /= np.linalg.norm(y)
-            z = (oh1 + oh2) / 2
+            z = (vsucc[0] + vsucc[1]) / 2
             z /= np.linalg.norm(z)
             x = np.cross(y, z)
             rotmat = np.vstack([x, y, z])
+            
         rotmatrices.append(rotmat)
     return rotmatrices
 
@@ -504,22 +530,19 @@ class Lattice():
             formatter.hooks[2](self)
         if max(0,*formatter.hooks.keys()) < 3:
             return
-        if not res:
-            self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
-        else:
-            self.stage3()
-            if 3 in formatter.hooks:
-                formatter.hooks[3](self)
-            if max(0,*formatter.hooks.keys()) < 4:
-                return
-            self.stage4()
-            if 4 in formatter.hooks:
-                formatter.hooks[4](self)
-            if max(0,*formatter.hooks.keys()) < 5:
-                return
-            self.stage5()
-            if 5 in formatter.hooks:
-                formatter.hooks[5](self)
+        self.stage3()
+        if 3 in formatter.hooks:
+            formatter.hooks[3](self)
+        if max(0,*formatter.hooks.keys()) < 4:
+            return
+        self.stage4()
+        if 4 in formatter.hooks:
+            formatter.hooks[4](self)
+        if max(0,*formatter.hooks.keys()) < 5:
+            return
+        self.stage5()
+        if 5 in formatter.hooks:
+            formatter.hooks[5](self)
         if max(0,*formatter.hooks.keys()) < 6:
             return
         self.stage6(water_type)
