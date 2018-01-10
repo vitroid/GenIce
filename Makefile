@@ -4,7 +4,8 @@ all:
 	genice -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
 %.rst: %.md
 	md2rst $<
-
+test:
+	make -C tests all
 install:
 	make README.rst
 	./setup.py install
@@ -14,6 +15,7 @@ pypi:
 	make README.rst
 	./setup.py check
 	./setup.py sdist bdist_wheel upload
+<<<<<<< HEAD
 REFV=0.14
 test:
 	-mkdir trash
@@ -41,6 +43,8 @@ test:
 	./genice.x T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
 #test 5 is for prearranged semiclathrates
 	./genice.x test5 --rep 2 2 3 > trash/test5.gro                             ;diff ref_$(REFV)/test5.gro trash/test5.gro
+=======
+>>>>>>> develop
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@ 
 distclean:
