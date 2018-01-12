@@ -3,7 +3,9 @@ GENICE=$(BASE)/genice.x
 UTIL=$(BASE)/Utilities
 REFV=0.15
 
-all: test1.done test2.done test3.done test4.done test5.done test6.done test7.done test8.done test9.done test10.done test11.done test12.done test13.done test14.done test15.done test16.done test17.done
+all: test1.done test2.done test3.done test4.done test6.done test7.done test8.done test9.done test10.done test11.done test12.done test13.done test14.done test15.done test16.done test17.done test18.done
+#all: test19.done
+all: test20.done
 
 
 clean:
@@ -26,10 +28,11 @@ test4.done:
 	-mkdir trash
 	$(GENICE) test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test4.done
-test5.done:
-	-mkdir trash
-	$(GENICE) 2d --rep 2 2 3 > trash/2d.gro                                   ;diff ref_$(REFV)/2d.gro trash/2d.gro
-	touch test5.done
+# replaced by test20
+#test5.done:
+#	-mkdir trash
+#	$(GENICE) 2d --rep 2 2 3 > trash/2d.gro                                   ;diff ref_$(REFV)/2d.gro trash/2d.gro
+#	touch test5.done
 test6.done:
 	-mkdir trash
 	$(GENICE) 3  --rep 2 2 3 --format c > trash/3.ar3a                        ;diff ref_$(REFV)/3.ar3a trash/3.ar3a
@@ -87,3 +90,7 @@ test19.done:
 	-mkdir trash
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray > trash/T.pov  ;diff ref_$(REFV)/T.pov trash/T.pov
 	touch test19.done
+test20.done:
+	-mkdir trash
+	$(GENICE) 2d --rep 8 8 8 > trash/2d.gro                                   ;diff ref_$(REFV)/2d.gro trash/2d.gro
+	touch test20.done
