@@ -8,29 +8,25 @@ build/
 dist/
 GenIce.egg*
 *.rst
-trash/
 Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
 
 
 /*.yap
-
 /*.scad
-
 /*.ngph
-
 /*.zip
-
 /*.cif
-
 /*.ar3r
-
 /*.gro
-
 /*.ar3r
+/*.nx3a
 
 benchmark\.txt
 
-sort_tmp/*
 Prepare/
+tests/*.done
+tests/sort_tmp/*
+tests/trash/*
+
