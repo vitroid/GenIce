@@ -471,6 +471,8 @@ def depolarize(spaceicegraph, cell, draw=None):
                 if spaceicegraph.in_degree(dest) == 2:
                     break
             path = shortest_path(spaceicegraph, orig, [dest,])
+            if path is None:
+                continue
             logger.debug("  Dipole moment = {0}".format(spaceicegraph.dipole_moment(path)))
             new_net_polar = net_polar - spaceicegraph.dipole_moment(path)*2
             if np.linalg.norm(new_net_polar) < np.linalg.norm(net_polar):
