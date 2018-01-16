@@ -1,14 +1,14 @@
 BASE=..
 GENICE=$(BASE)/genice.x
-UTIL=$(BASE)/Utilities
 REFV=0.15semi
+UTIL=.
 
 all: test1.done test2.done test3.done test4.done test5.done
 all: test6.done test7.done test8.done test9.done test10.done
 all: test11.done test12.done test13.done test14.done test15.done
 all: test16.done test17.done test18.done
 #all: test19.done
-all: test20.done
+all: test20.done test21.done
 
 
 clean:
@@ -96,3 +96,7 @@ test20.done:
 	-mkdir trash
 	$(GENICE) 2d --rep 8 8 8 > trash/2dL.gro
 	touch test20.done
+test21.done:
+	-mkdir trash
+	$(GENICE) 1c --rep 8 8 8 --format _ring > trash/1c888.ringtest  ;diff ref_$(REFV)/1c888.ringtest trash/1c888.ringtest
+	touch test21.done

@@ -6,8 +6,8 @@ Hydrogen bond network in @NGPH format.
 import numpy as np
 
 
-def hook2(lattice):
-    lattice.logger.info("Hook2: Output the proximity network.")
+def hook4(lattice):
+    lattice.logger.info("Hook4: Output the ice network.")
 
     s = ""
     s += "@NGPH\n"
@@ -17,6 +17,6 @@ def hook2(lattice):
     s += "-1 -1\n"
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
-    lattice.logger.info("Hook2: end.")
+    lattice.logger.info("Hook4: end.")
 
-hooks = {2:hook2}
+hooks = {4:hook4}
