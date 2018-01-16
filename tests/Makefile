@@ -1,6 +1,6 @@
 BASE=..
 GENICE=$(BASE)/genice.x
-UTIL=$(BASE)/Utilities
+UTIL=.
 REFV=0.15
 
 all: test1.done test2.done test3.done test4.done test5.done
@@ -8,8 +8,8 @@ all: test6.done test7.done test8.done test9.done test10.done
 all: test11.done test12.done test13.done test14.done test15.done
 all: test16.done test17.done test18.done
 #all: test19.done
-all: test20.done
 all: test_tsl.done
+all: test20.done test21.done
 
 
 clean:
@@ -97,7 +97,3 @@ test20.done:
 	-mkdir trash
 	$(GENICE) 2d --rep 8 8 8 > trash/2dL.gro
 	touch test20.done
-test_tsl.done:
-	-mkdir trash
-	$(GENICE) 2D3 --rep 5 5 1 --format yaplot > trash/2D3.yap  ;diff ref_$(REFV)/2D3.yap trash/2D3.yap
-	touch test_tsl.done
