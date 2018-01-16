@@ -97,3 +97,11 @@ test20.done:
 	-mkdir trash
 	$(GENICE) 2d --rep 8 8 8 > trash/2dL.gro
 	touch test20.done
+test21.done:
+	-mkdir trash
+	$(GENICE) 1c --rep 8 8 8 --format _ring > trash/1c888.ringtest  ;diff ref_$(REFV)/1c888.ringtest trash/1c888.ringtest
+	touch test21.done
+test_tsl.done:
+	-mkdir trash
+	$(GENICE) 2D3 --rep 5 5 1 --format _ring > trash/2D3.ringtest  ;diff ref_$(REFV)/2D3.ringtest trash/2D3.ringtest
+	touch test_tsl.done
