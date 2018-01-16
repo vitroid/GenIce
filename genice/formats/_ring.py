@@ -111,14 +111,14 @@ def orientations(members, digraph):
 
 def hook4(lattice):
     lattice.logger.info("Hook4: Ring test.")
-    graph = nx.Graph(lattice.graph)
+    graph = nx.Graph(lattice.spacegraph) #undirected
     stat = dict()
     prob = defaultdict(int)
     for n in 3,4,5,6,7,8:
         prob[n] = probabilities(n)
         stat[n] = defaultdict(int)
     for ring in cr.rings_iter(graph, 8):
-        ori = orientations(ring, lattice.graph)
+        ori = orientations(ring, lattice.spacegraph)
         c   = encode(ori)
         n   = len(ring)
         stat[n][c] += 1

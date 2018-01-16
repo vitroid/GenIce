@@ -51,7 +51,7 @@ def hook6(lattice):
         s += Atom("H",H1)
         s += Bond("OH",O,H0)
         s += Bond("OH",O,H1)
-    for i,j in lattice.graph.edges(data=False):
+    for i,j in lattice.spacegraph.edges(data=False):
         if i in waters and j in waters:  # edge may connect to the dopant
             O = waters[j]["O"]
             H0 = waters[i]["H0"]
