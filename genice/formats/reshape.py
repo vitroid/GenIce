@@ -82,6 +82,10 @@ def hook1(lattice):
     assert np.dot(ijk[0],ijk[1]) == 0.0
     assert np.dot(ijk[1],ijk[2]) == 0.0
     assert np.dot(ijk[2],ijk[0]) == 0.0
+    lattice.logger.info("  Reshaping the unit cell.")
+    lattice.logger.info("    i:{0}".format(ijk[0]))
+    lattice.logger.info("    j:{0}".format(ijk[1]))
+    lattice.logger.info("    k:{0}".format(ijk[2]))
     newcell = np.dot(ijk, cellmat)
     # print(newcell)
     vol = abs(np.linalg.det(ijk))
@@ -122,7 +126,6 @@ def hook1(lattice):
     # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
     s += "density={0}\n".format(lattice.density)
     s += 'waters="""'+"\n"
-    print(s, end="")
     lattice.logger.info("  Total number of molecules: {0}".format(vol*len(lattice.reppositions)))
     
     ncell, ss = FindEmptyCell(cellmat, lattice.reppositions, ijk)
