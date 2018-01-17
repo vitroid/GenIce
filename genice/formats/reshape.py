@@ -14,39 +14,35 @@ def isZero(x):
 
 
 
-def OccupyCell(nv, cells, ijk):
-    if nv not in cells:
-        #print("kill:",nv)
-        cells.add(nv)
+def FlagEquivCells(nv, flags, ijk):
+    if nv not in flags:
         for d in it.product((-2,-1,0,1,2), repeat=3):
             vv = tuple(np.dot(d,ijk)+nv)
-            if d != (0,0,0):
-                #print("pin", vv, d)
-                #if vv in cells:
-                #    print("??", vv)
-                cells.add(vv)
+            flags.add(vv)
 
 
-def FindEmptyCell(cellmat, coord, ijk, labels=None):
+def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
     newcell = np.dot(ijk, cellmat)
+    newcelli = np.linalg.inv(newcell)
     L1 = np.linalg.norm(newcell[0])
     L2 = np.linalg.norm(newcell[1])
     L3 = np.linalg.norm(newcell[2])
     rL = np.array([L1,L2,L3])
     # print(rL)
     ncell = 0
-    cells = set()
+    flags = set()
     queue = [(0,0,0)]
     s = ""
     while len(queue) > 0:
         nv = queue.pop(0)
-        if nv not in cells:
+        if nv not in flags:
             ncell += 1
-            for i, xyz in enumerate(coord):
-                xxv = np.dot(xyz + nv, cellmat) # rel to abs coord
-                p0v = np.dot(xxv, newcell.T)    # inner products with axes vectors
-                # print(xxv,p0v,nv)
-                pv  = p0v / rL / rL             # position relative to the newcell
+            # Place atoms
+            for i, xyz in enumerate(relpositions):
+                # rel to abs
+                xxv = np.dot(xyz + nv, cellmat)
+                # inner products with axis vector of the newcell
+                pv = np.dot(xxv, newcelli)
                 # print(pv,rL)
                 pv -= np.floor(pv)
                 # print(nv)
@@ -55,10 +51,10 @@ def FindEmptyCell(cellmat, coord, ijk, labels=None):
                     label = labels[i]
                 s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(pv[0],pv[1],pv[2], label)
             #print("NV:",nv)
-            OccupyCell(nv, cells, ijk)
+            FlagEquivCells(nv, flags, ijk)
             for xi,yi,zi in it.product((-1,0,1), repeat=3):
                 nei = nv[0]+xi,nv[1]+yi,nv[2]+zi
-                if nei not in cells:
+                if nei not in flags:
                     #print("nei", nei)
                     queue.append(nei)
     return ncell, s
@@ -66,52 +62,46 @@ def FindEmptyCell(cellmat, coord, ijk, labels=None):
 
 
 
-# 2018-1-18 Still do not work with non-cubic cells.
-    
-
+# Reshaping matrix (Must be integers)
+# for now they are hardcoded.  It will be given as options for the plugin in the future.
 ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
 # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
+# ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
 # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
 # ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
 
 def hook1(lattice):
     lattice.logger.info("Hook1: Output as a python module.")
+    # Original cell matrix.
     cellmat = lattice.repcell.mat
-    assert cellmat[2,0] == 0.0
-    assert np.linalg.det(cellmat) > 0.0
-    assert np.dot(ijk[0],ijk[1]) == 0.0
-    assert np.dot(ijk[1],ijk[2]) == 0.0
-    assert np.dot(ijk[2],ijk[0]) == 0.0
     lattice.logger.info("  Reshaping the unit cell.")
     lattice.logger.info("    i:{0}".format(ijk[0]))
     lattice.logger.info("    j:{0}".format(ijk[1]))
     lattice.logger.info("    k:{0}".format(ijk[2]))
-    newcell = np.dot(ijk, cellmat)
-    # print(newcell)
+    # reshaped cell might not be rect.
+    newcell = np.dot(ijk, cellmat) 
+    # replication ratio.
     vol = abs(np.linalg.det(ijk))
     vol = floor(vol*8192+0.5)/8192
+    # Unit orthogonal vectors for the newcell.
     e1 = newcell[0].astype(float)
     e1 /= np.linalg.norm(e1)
     e3 = np.cross(newcell[0], newcell[1]).astype(float)
     e3 /= np.linalg.norm(e3)
     e2 = np.cross(e3,e1)
     R = np.array([e1,e2,e3])
-    #print(R)
     RI = np.linalg.inv(R)
-    #print(RI)
-    #Regularization
+    # Regularization
+    # Let x axis of the newcell be along e1
+    # and let y axis of the newcell be on the e1-e2 plane.
     regcell = np.dot(newcell, RI)
-    #print(regcell)
-    # print(np.dot(R,R))
-    #print(riv)
-    #print(np.dot(riv, RI))
-    #print(np.dot(rjv, RI))
-    #print(np.dot(rkv, RI))
+
     # header
     s = ""
     s += '"""\n'
     s += "\n".join(lattice.doc) + "\n"
     s += '"""\n'
+    
     s += "bondlen={0}\n".format(lattice.bondlen*10)
     s += "coord='relative'\n"
     if isZero(regcell[1,0]) and isZero(regcell[2,0]) and isZero(regcell[2,1]):
@@ -128,15 +118,14 @@ def hook1(lattice):
     s += 'waters="""'+"\n"
     lattice.logger.info("  Total number of molecules: {0}".format(vol*len(lattice.reppositions)))
     
-    ncell, ss = FindEmptyCell(cellmat, lattice.reppositions, ijk)
+    ncell, ss = FindEmptyCells(cellmat, ijk, lattice.reppositions)
     assert vol == ncell
 
-    #footer
     s += ss + '"""' + "\n\n"
 
     if lattice.cagepos is not None:
         s += 'cages="""'+"\n"
-        ncell, ss = FindEmptyCell(cellmat, lattice.repcagepos, ijk, labels=lattice.repcagetype)
+        ncell, ss = FindEmptyCells(cellmat, ijk, lattice.repcagepos, labels=lattice.repcagetype)
         s += ss + '"""'+"\n\n"
     
     print(s,end="")
