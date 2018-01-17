@@ -568,6 +568,22 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         self.repcell.scale2(self.rep)
+
+        if self.cagepos is not None:
+            self.logger.info("  Hints:")
+            self.repcagepos = replicate_positions(self.cagepos, self.rep)
+            nrepcages = self.repcagepos.shape[0]
+            self.repcagetype = [self.cagetype[i % len(self.cagetype)]
+                               for i in range(nrepcages)]
+            self.cagetypes = defaultdict(set)
+            for i, typ in enumerate(self.repcagetype):
+                self.cagetypes[typ].add(i)
+            # INFO for cage types
+            self.logger.info("    Cage types: {0}".format(list(self.cagetypes)))
+            for typ, cages in self.cagetypes.items():
+                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
+            # Up here move to stage 1.
+        
         self.logger.info("Stage1: end.")
 
     def stage2(self):
@@ -699,20 +715,9 @@ class Lattice():
         """
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
-            self.logger.info("  Hints:")
-            repcagepos = replicate_positions(self.cagepos, self.rep)
-            repcagetype = [self.cagetype[i % len(self.cagetype)]
-                           for i in range(repcagepos.shape[0])]
-            cagetypes = defaultdict(set)
-            for i, typ in enumerate(repcagetype):
-                cagetypes[typ].add(i)
-            # INFO for cage types
-            self.logger.info("    Cage types: {0}".format(list(cagetypes)))
-            for typ, cages in cagetypes.items():
-                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
             # the cages around the dopants.
             dopants_neighbors = self.dopants_info(
-                self.dopants, self.reppositions, repcagepos, self.repcell)
+                self.dopants, self.reppositions, self.repcagepos, self.repcell)
             # put the (one-off) groups
             if len(self.spot_groups) > 0:
                 # process the -H option
@@ -729,10 +734,10 @@ class Lattice():
                 # process the -g option
                 for arg in guests:
                     cagetype, spec = arg[0].split("=")
-                    assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(
+                    assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(
                         cagetype)
                     resident = dict()
-                    rooms = list(cagetypes[cagetype] - self.filled_cages)
+                    rooms = list(self.cagetypes[cagetype] - self.filled_cages)
                     for room in rooms:
                         resident[room] = None
                     # spec contains a formula consisting of "+" and "*"
@@ -763,7 +768,7 @@ class Lattice():
             # Now ge got the address book of the molecules.
             if len(molecules):
                 self.logger.info("  Summary of guest placements:")
-                self.guests_info(cagetypes, molecules)
+                self.guests_info(self.cagetypes, molecules)
             if len(self.spot_groups) > 0:
                 self.logger.info("  Summary of groups:")
                 self.groups_info(self.groups)
@@ -780,7 +785,7 @@ class Lattice():
                 for cage, group in cages.items():
                     assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
-                    cpos = repcagepos[cage]
+                    cpos = self.repcagepos[cage]
                     self.atoms += self.groups_placer[group](cpos,
                                                             pos,
                                                             self.repcell,
@@ -788,7 +793,7 @@ class Lattice():
             # molecular guests
             for molec, cages in molecules.items():
                 gmol = safe_import("molecule", molec)
-                cpos = [repcagepos[i] for i in cages]
+                cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
                                             cmat, gmol.sites, gmol.labels, gmol.name)

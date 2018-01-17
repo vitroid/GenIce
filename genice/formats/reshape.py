@@ -27,7 +27,7 @@ def OccupyCell(nv, cells, ijk):
                 cells.add(vv)
 
 
-def FindEmptyCell(cells, cellmat, coord, ijk):
+def FindEmptyCell(cellmat, coord, ijk, labels=None):
     newcell = np.dot(ijk, cellmat)
     L1 = np.linalg.norm(newcell[0])
     L2 = np.linalg.norm(newcell[1])
@@ -35,12 +35,14 @@ def FindEmptyCell(cells, cellmat, coord, ijk):
     rL = np.array([L1,L2,L3])
     # print(rL)
     ncell = 0
+    cells = set()
     queue = [(0,0,0)]
+    s = ""
     while len(queue) > 0:
         nv = queue.pop(0)
         if nv not in cells:
             ncell += 1
-            for xyz in coord:
+            for i, xyz in enumerate(coord):
                 xxv = np.dot(xyz + nv, cellmat) # rel to abs coord
                 p0v = np.dot(xxv, newcell.T)    # inner products with axes vectors
                 # print(xxv,p0v,nv)
@@ -48,7 +50,10 @@ def FindEmptyCell(cells, cellmat, coord, ijk):
                 # print(pv,rL)
                 pv -= np.floor(pv)
                 # print(nv)
-                print("{0:9.4f} {1:9.4f} {2:9.4f}".format(pv[0],pv[1],pv[2]))
+                label = ""
+                if labels is not None:
+                    label = labels[i]
+                s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(pv[0],pv[1],pv[2], label)
             #print("NV:",nv)
             OccupyCell(nv, cells, ijk)
             for xi,yi,zi in it.product((-1,0,1), repeat=3):
@@ -56,7 +61,7 @@ def FindEmptyCell(cells, cellmat, coord, ijk):
                 if nei not in cells:
                     #print("nei", nei)
                     queue.append(nei)
-    return ncell
+    return ncell, s
 
 
 
@@ -80,6 +85,7 @@ def hook1(lattice):
     newcell = np.dot(ijk, cellmat)
     # print(newcell)
     vol = abs(np.linalg.det(ijk))
+    vol = floor(vol*8192+0.5)/8192
     e1 = newcell[0].astype(float)
     e1 /= np.linalg.norm(e1)
     e3 = np.cross(newcell[0], newcell[1]).astype(float)
@@ -115,20 +121,21 @@ def hook1(lattice):
         s += "'\n"
     # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
     s += "density={0}\n".format(lattice.density)
-    s += "waters=\"\"\"\n"
+    s += 'waters="""'+"\n"
     print(s, end="")
     lattice.logger.info("  Total number of molecules: {0}".format(vol*len(lattice.reppositions)))
     
-    cells = set()
-    ncell = FindEmptyCell(cells, cellmat, lattice.reppositions, ijk)
-    # print(ncell)
-    # print("-----")
-    vol = floor(vol*8192+0.5)/8192
-    # print(vol, ncell)
+    ncell, ss = FindEmptyCell(cellmat, lattice.reppositions, ijk)
     assert vol == ncell
 
     #footer
-    s = "\"\"\"\n\n"
+    s += ss + '"""' + "\n\n"
+
+    if lattice.cagepos is not None:
+        s += 'cages="""'+"\n"
+        ncell, ss = FindEmptyCell(cellmat, lattice.repcagepos, ijk, labels=lattice.repcagetype)
+        s += ss + '"""'+"\n\n"
+    
     print(s,end="")
 
     lattice.logger.info("Hook1: end.")
