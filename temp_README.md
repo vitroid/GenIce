@@ -233,6 +233,7 @@ T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 2xFAU, 4xFAU, 8xFAU, 16xFAU, 32xFAU, 64xFAU | Aeroices.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
+prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
@@ -295,7 +296,8 @@ symbol | type
 J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5.
 * A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg
   Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://dx.doi.org/10.1021/ic102178d)
-* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI: 10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
+* K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://dx.doi.org/10.1038/35090532)
+* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
