@@ -711,7 +711,7 @@ class Lattice():
                 for cage, group in cages.items():
                     # assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
-                    cpos = repcagepos[cage]
+                    cpos = self.repcagepos[cage]
                     group_placer = safe_import("group", group)
                     #try:
                     #    for line in group_placer.__doc__.splitlines():
