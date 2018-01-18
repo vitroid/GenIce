@@ -10,6 +10,7 @@ all: test16.done test17.done test18.done
 #all: test19.done
 all: test_tsl.done
 all: test20.done test21.done
+all: test22.done test23.done
 
 
 clean:
@@ -105,3 +106,11 @@ test_tsl.done:
 	-mkdir trash
 	$(GENICE) 2D3 --rep 5 5 1 --format _ring > trash/2D3.ringtest  ;diff ref_$(REFV)/2D3.ringtest trash/2D3.ringtest
 	touch test_tsl.done
+test22.done:
+	-mkdir trash
+	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] > trash/1hreshape.py  ;diff ref_$(REFV)/1hreshape.py trash/1hreshape.py
+	touch test22.done
+test23.done:
+	-mkdir trash
+	$(GENICE) prism[7] --rep 1 1 1 --format _ring > trash/prism7.ringtest  ;diff ref_$(REFV)/prism7.ringtest trash/prism7.ringtest
+	touch test23.done
