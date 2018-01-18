@@ -24,6 +24,25 @@ def load_numbers(v):
         return v
 
 
+def complement(v):
+    # assume missing vectors
+    assert len(v) > 1
+    if len(v) == 3:
+        return [-(v[0]+v[1]+v[2])]
+    elif len(v) == 2:
+        y = v[1] - v[0]
+        y /= np.linalg.norm(y)
+        z = v[1] + v[0]
+        z /= np.linalg.norm(z)
+        x = np.cross(y,z)
+        v2 = ( x*8.0**0.5 - z)/3.0
+        v3 = (-x*8.0**0.5 - z)/3.0
+        return v2,v3
+    return []
+        
+        
+        
+
 def orientations(coord, graph, cell):
     """
     Does not work when two OHs are colinear
@@ -35,15 +54,22 @@ def orientations(coord, graph, cell):
             # for dopants; do not rotate
             rotmat = np.identity(3)
         else:
-            nei = list(graph.neighbors(node))
-            oh1 = cell.rel2abs(rel_wrap(coord[nei[0]] - coord[node]))                # abs coord
-            oh2 = cell.rel2abs(rel_wrap(coord[nei[1]] - coord[node]))                # abs coord
-            y = oh2 - oh1
+            vsucc = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.successors(node)]
+            if len(vsucc) < 2: #TSL
+                vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
+                vsucc = [x / np.linalg.norm(x) for x in vsucc]
+                vpred = [x / np.linalg.norm(x) for x in vpred]
+                vcomp = complement(vpred+vsucc)
+                logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
+                vsucc = (vsucc+vcomp)[:2]
+            logger.debug("Node {0} vsucc {1}".format(node,vsucc))    
+            y = vsucc[1] - vsucc[0]
             y /= np.linalg.norm(y)
-            z = (oh1 + oh2) / 2
+            z = (vsucc[0] + vsucc[1]) / 2
             z /= np.linalg.norm(z)
             x = np.cross(y, z)
             rotmat = np.vstack([x, y, z])
+            
         rotmatrices.append(rotmat)
     return rotmatrices
 
@@ -424,22 +450,19 @@ class Lattice():
             formatter.hooks[2](self)
         if max(0,*formatter.hooks.keys()) < 3:
             return
-        if not res:
-            self.rotmatrices = [rigid.rand_rotation_matrix() for pos in self.reppositions]
-        else:
-            self.stage3()
-            if 3 in formatter.hooks:
-                formatter.hooks[3](self)
-            if max(0,*formatter.hooks.keys()) < 4:
-                return
-            self.stage4()
-            if 4 in formatter.hooks:
-                formatter.hooks[4](self)
-            if max(0,*formatter.hooks.keys()) < 5:
-                return
-            self.stage5()
-            if 5 in formatter.hooks:
-                formatter.hooks[5](self)
+        self.stage3()
+        if 3 in formatter.hooks:
+            formatter.hooks[3](self)
+        if max(0,*formatter.hooks.keys()) < 4:
+            return
+        self.stage4()
+        if 4 in formatter.hooks:
+            formatter.hooks[4](self)
+        if max(0,*formatter.hooks.keys()) < 5:
+            return
+        self.stage5()
+        if 5 in formatter.hooks:
+            formatter.hooks[5](self)
         if max(0,*formatter.hooks.keys()) < 6:
             return
         self.stage6(water_type)
@@ -465,6 +488,22 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         self.repcell.scale2(self.rep)
+
+        if self.cagepos is not None:
+            self.logger.info("  Hints:")
+            self.repcagepos = replicate_positions(self.cagepos, self.rep)
+            nrepcages = self.repcagepos.shape[0]
+            self.repcagetype = [self.cagetype[i % len(self.cagetype)]
+                               for i in range(nrepcages)]
+            self.cagetypes = defaultdict(set)
+            for i, typ in enumerate(self.repcagetype):
+                self.cagetypes[typ].add(i)
+            # INFO for cage types
+            self.logger.info("    Cage types: {0}".format(list(self.cagetypes)))
+            for typ, cages in self.cagetypes.items():
+                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
+            # Up here move to stage 1.
+        
         self.logger.info("Stage1: end.")
 
     def stage2(self):
@@ -602,20 +641,9 @@ class Lattice():
         """
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
-            self.logger.info("  Hints:")
-            repcagepos = replicate_positions(self.cagepos, self.rep)
-            repcagetype = [self.cagetype[i % len(self.cagetype)]
-                           for i in range(repcagepos.shape[0])]
-            cagetypes = defaultdict(set)
-            for i, typ in enumerate(repcagetype):
-                cagetypes[typ].add(i)
-            # INFO for cage types
-            self.logger.info("    Cage types: {0}".format(list(cagetypes)))
-            for typ, cages in cagetypes.items():
-                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
             # the cages around the dopants.
             dopants_neighbors = self.dopants_info(
-                self.dopants, self.reppositions, repcagepos, self.repcell)
+                self.dopants, self.reppositions, self.repcagepos, self.repcell)
             # put the (one-off) groups
             if len(self.spot_groups) > 0:
                 # process the -H option
@@ -632,10 +660,10 @@ class Lattice():
                 # process the -g option
                 for arg in guests:
                     cagetype, spec = arg[0].split("=")
-                    assert cagetype in cagetypes, "Nonexistent cage type: {0}".format(
+                    assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(
                         cagetype)
                     resident = dict()
-                    rooms = list(cagetypes[cagetype] - self.filled_cages)
+                    rooms = list(self.cagetypes[cagetype] - self.filled_cages)
                     for room in rooms:
                         resident[room] = None
                     # spec contains a formula consisting of "+" and "*"
@@ -666,7 +694,7 @@ class Lattice():
             # Now ge got the address book of the molecules.
             if len(molecules):
                 self.logger.info("  Summary of guest placements:")
-                self.guests_info(cagetypes, molecules)
+                self.guests_info(self.cagetypes, molecules)
             if len(self.spot_groups) > 0:
                 self.logger.info("  Summary of groups:")
                 self.groups_info(self.groups)
@@ -697,7 +725,7 @@ class Lattice():
             # molecular guests
             for molec, cages in molecules.items():
                 gmol = safe_import("molecule", molec)
-                cpos = [repcagepos[i] for i in cages]
+                cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
                                             cmat, gmol.sites, gmol.labels, gmol.name)
