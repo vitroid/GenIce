@@ -6,8 +6,11 @@ re-make python module for GenIce
 import numpy as np
 import itertools as it
 from math import floor
+import re
 MAXCELL=11
 torr = 1e-8
+
+
 
 def isZero(x):
     return -torr < x < torr
@@ -136,5 +139,11 @@ def hook1(lattice):
 
     lattice.logger.info("Hook1: end.")
 
+
+def argparser(arg):
+    global ijk
+    assert re.match("^[-+0-9,]+$", arg) is not None, "Argument must be nine integers separated by commas."
+    ijk = np.array([int(x) for x in arg.split(",")]).reshape(3,3)
+        
 
 hooks = {1:hook1}
