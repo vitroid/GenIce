@@ -100,6 +100,10 @@ def hook1(lattice):
     s = ""
     s += '"""\n'
     s += "\n".join(lattice.doc) + "\n"
+    s += "Reshaping the unit cell.\n"
+    s += "  i:{0}\n".format(ijk[0])
+    s += "  j:{0}\n".format(ijk[1])
+    s += "  k:{0}\n".format(ijk[2])
     s += '"""\n'
     
     s += "bondlen={0}\n".format(lattice.bondlen*10)
