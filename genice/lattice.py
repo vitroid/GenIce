@@ -418,14 +418,14 @@ class Lattice():
         self.bondlen = None
         try:
             self.bondlen = lat.bondlen
-            self.logger.info("Bond length: {0}".format(self.bondlen))
+            self.logger.info("Bond length (specified): {0}".format(self.bondlen))
         except AttributeError:
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell)
             self.logger.info("Bond length (assumed): {0}".format(self.bondlen))
         # Set density
         mass = 18  # water
         NB = 6.022e23
-        nmol = self.waters.shape[0]        # nmol in a unit cell
+        nmol = self.waters.shape[0]  # nmol in a unit cell
         volume = self.cell.volume()  # volume of a unit cell in nm**3
         density0 = mass * nmol / (NB * volume * 1e-21)
         if density <= 0:
@@ -441,15 +441,15 @@ class Lattice():
                 # self.density = density0
         else:
             self.density = density
-        self.logger.info("Density: {0}".format(self.density))
-        self.logger.info("Density0: {0}".format(density0))
+        self.logger.info("Target Density: {0}".format(self.density))
+        self.logger.info("Original Density: {0}".format(density0))
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density)**(1.0 / 3.0)
         self.cell.scale(ratio)
         if self.bondlen is not None:
             self.bondlen *= ratio
-        self.logger.info("Bond length (scaled): {0}".format(self.bondlen))
+        self.logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
 
         # ================================================================
         # double_network: True or False
