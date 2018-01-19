@@ -242,7 +242,6 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Compare the probabilities of the ring phases with that of Pauling model.
 
 ## Ice structures
 <!-- rreferences removed. -->
