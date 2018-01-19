@@ -10,7 +10,7 @@ all: test16.done test17.done test18.done
 #all: test19.done
 all: test_tsl.done
 all: test20.done test21.done
-all: test22.done test23.done
+all: test22.done test23.done test24.done
 
 
 clean:
@@ -114,3 +114,7 @@ test23.done:
 	-mkdir trash
 	$(GENICE) prism[7] --rep 1 1 1 --format _ring > trash/prism7.ringtest  ;diff ref_$(REFV)/prism7.ringtest trash/prism7.ringtest
 	touch test23.done
+test24.done:
+	-mkdir trash
+	$(GENICE) 3 --rep 4 4 4 --format _ring > trash/3x444.ringtest  ;diff ref_$(REFV)/3x444.ringtest trash/3x444.ringtest
+	touch test24.done
