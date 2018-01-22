@@ -116,7 +116,7 @@ def hook4(lattice):
     for n in 3,4,5,6,7,8:
         prob[n] = probabilities(n)
         stat[n] = defaultdict(int)
-    for ring in cr.rings_iter(graph, 8):
+    for ring in cr.CountRings(graph).rings_iter(8):
         ori = orientations(ring, lattice.spacegraph)
         c   = encode(ori)
         n   = len(ring)
