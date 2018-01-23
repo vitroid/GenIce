@@ -1,6 +1,8 @@
 # coding: utf-8
 """
 Test suite: ring direction statistics
+
+Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964).
 """
 
 # A directed cycle is expressed as an array of True and False.
