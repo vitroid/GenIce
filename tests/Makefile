@@ -118,3 +118,10 @@ test24.done:
 	-mkdir trash
 	$(GENICE) 3 --rep 4 4 4 --format _ring > trash/3x444.ringtest  ;diff ref_$(REFV)/3x444.ringtest trash/3x444.ringtest
 	touch test24.done
+
+kg_%.done:
+	$(GENICE) 1c -s $* -f _KG -r 10 10 10  > $@
+test_kg.done:
+	i=1000; while [ $$i -lt 1100 ]; do echo kg_$$i.done; i=`expr $$i + 1`; done | xargs make -k 
+	touch $@
+
