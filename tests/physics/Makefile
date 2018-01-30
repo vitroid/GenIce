@@ -2,11 +2,11 @@ BASE=../..
 GENICE=$(BASE)/genice.x
 REFD=ref
 
-all: test_ring1.done test_ring2.done test_ring3.done test_kg1.done test_kg2.done test_kg3.done test_kg4.done test_kg5.done test_kg6.done test_kg7.done
+all: test_ring1.done test_ring2.done test_ring3.done test_kg1.done test_kg2.done test_kg3.done test_kg4.done test_kg5.done test_kg6.done test_kg7.done test_kg8.done test_kg9.done
 	echo Done.
 
 clean:
-	-rm *.done *.log *~
+	-rm *.done *.log *~ */*~
 	-rm -rf trash/
 
 
@@ -42,6 +42,30 @@ kg6_%.log:
 	$(GENICE) 1h -s $* -f _KG -r 7 8 6  > $@
 kg7_%.log:
 	$(GENICE) 1h -s $* -f _KG -r 7 8 6 --nodep  > $@
+
+# A test for Kirkwood G.
+# 1. Prepare a small (2x2x2) lattice ("semi-lattice") of hydrogen-disordered ice Ic.
+# 2. Repeat it 4x4x4 times to make a larger lattice.
+# 3. Calculate the averaged Kirkwood G for 100 different semi-lattices.
+
+# Hydrogen-ordered semi-lattices
+lattices/kg8_%.py:
+	$(GENICE) 1c -s $* -f python -r 2 2 2 > $@
+	$(GENICE) 1c -s $* -f fixed  -r 2 2 2 >> $@  #Fix the HB orientations.
+                                                    #"fixed" is a local plugin just for this test.
+# Repeat the semi-lattices.
+kg8_%.log: lattices/kg8_%.py
+	$(GENICE) kg8_$* -f _KG -r 4 4 4 > $@
+
+
+
+lattices/kg9_%.py:
+	$(GENICE) 1c -s $* -f python -r 4 4 4 > $@
+	$(GENICE) 1c -s $* -f fixed  -r 4 4 4 >> $@  #Fix the HB orientations.
+                                                    #"fixed" is a local plugin just for this test.
+# Repeat the semi-lattices.
+kg9_%.log: lattices/kg9_%.py
+	$(GENICE) kg9_$* -f _KG -r 2 2 2 > $@
 
 test_kg%.done:
 	-mkdir trash
