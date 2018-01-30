@@ -9,13 +9,13 @@ all: test11.done test12.done test13.done test14.done test15.done
 all: test16.done test17.done test18.done
 #all: test19.done
 all: test_tsl.done
-all: test20.done test21.done
-all: test22.done test23.done test24.done
+all: test20.done 
+all: test22.done test23.done 
 
 clean:
-	-rm *.done
+	-rm *.done *~
 	-rm -rf trash sort_tmp
-	-rm *~
+
 
 test1.done:
 	-mkdir trash
@@ -98,23 +98,15 @@ test20.done:
 	-mkdir trash
 	$(GENICE) 2d --rep 8 8 8 > trash/2dL.gro
 	touch test20.done
-test21.done:
-	-mkdir trash
-	$(GENICE) 1c --rep 8 8 8 --format _ring > trash/1c888.ringtest  ;diff $(REFD)/1c888.ringtest trash/1c888.ringtest
-	touch test21.done
-test_tsl.done:
-	-mkdir trash
-	$(GENICE) 2D3 --rep 5 5 1 --format _ring > trash/2D3.ringtest  ;diff $(REFD)/2D3.ringtest trash/2D3.ringtest
-	touch test_tsl.done
 test22.done:
 	-mkdir trash
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] > trash/1hreshape.py  ;diff $(REFD)/1hreshape.py trash/1hreshape.py
 	touch test22.done
+test_tsl.done:
+	-mkdir trash
+	$(GENICE) 2D3 --rep 5 5 1 --format _ring > trash/2D3.ringtest  ;diff $(REFD)/2D3.ringtest trash/2D3.ringtest
+	touch test_tsl.done
 test23.done:
 	-mkdir trash
 	$(GENICE) prism[7] --rep 1 1 1 --format _ring > trash/prism7.ringtest  ;diff $(REFD)/prism7.ringtest trash/prism7.ringtest
 	touch test23.done
-test24.done:
-	-mkdir trash
-	$(GENICE) 3 --rep 4 4 4 --format _ring > trash/3x444.ringtest  ;diff $(REFD)/3x444.ringtest trash/3x444.ringtest
-	touch test24.done

@@ -34,3 +34,5 @@ tests/trash/*
 *.pdf
 
 *.eps
+
+*.log
