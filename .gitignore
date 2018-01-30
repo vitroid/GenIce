@@ -30,3 +30,7 @@ tests/*.done
 tests/sort_tmp/*
 tests/trash/*
 
+
+*.pdf
+
+*.eps
