@@ -73,5 +73,3 @@ test_kg%.done:
 	cat kg$*_*.log | awk '{s[$$1]+=$$2;ss[$$1]+=$$2*$$2}END{for(x in s){a=s[x]/100;d=ss[x]/100-a*a;print x,a,sqrt(d/100)}}' | sort -n -k 1 > trash/$@
 	diff $(REFD)/$@ trash/$@
 	rm kg$*_*.log;	ln -s trash/$@ .
-
-

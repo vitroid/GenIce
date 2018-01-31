@@ -178,6 +178,6 @@ set psdir
 set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap v5
 GNUTERM = "aqua"
 x = 0.0
-## Last datafile plotted: "trash/test_kg9.done"
-pl"trash/test_kg8.done" w errorbars, "trash/test_kg9.done" w errorbars
+## Last datafile plotted: "trash/test_kg1.done"
+pl"trash/test_kg8.done" w errorbars, "trash/test_kg9.done" w errorbars, "trash/test_kg1.done" w errorbars
 #    EOF
