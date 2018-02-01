@@ -73,3 +73,12 @@ test_kg%.done:
 	cat kg$*_*.log | awk '{s[$$1]+=$$2;ss[$$1]+=$$2*$$2}END{for(x in s){a=s[x]/100;d=ss[x]/100-a*a;print x,a,sqrt(d/100)}}' | sort -n -k 1 > trash/$@
 	diff $(REFD)/$@ trash/$@
 	rm kg$*_*.log;	ln -s trash/$@ .
+
+
+lattices/kg10_%.py:
+	$(GENICE) 1c -s $* -f python -r 2 2 2 > $@
+	$(GENICE) 1c -s $* -f fixed  -r 2 2 2 >> $@  #Specify the HB orientations.
+
+# Repeat the semi-lattices.
+kg10_%.log: lattices/kg10_%.py
+	$(GENICE) kg10_$* -f inversion -r 4 4 4 > $@
