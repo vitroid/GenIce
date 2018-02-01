@@ -51,7 +51,7 @@ def shortest_path(G, start, ends):
 class YaplotDraw(networkx.DiGraph):
     def __init__(self, coord, cell, data=None):
         super().__init__(data)
-        self.coord = coord
+        self.coord = coord # fractional coord.
         self.cell  = cell
 
     def draw_edge(self,i,j):
@@ -166,19 +166,17 @@ class IceGraph(networkx.DiGraph):
             t = path[i+1]
             self.invert_edge(f,t) #also invert the attribute vector
             
-    def _goahead(self,node,marked,order):
-        while not marked[node]:
-            marked[node] = True
+    def _goahead(self,node,marks,order):
+        while node not in marks:
+            marks[node] = len(order)
             order.append(node)
             nei = self.neighbors(node)
             next = random.randint(0,1)
-            if len(nei) != 2:
-                logging.getLogger().error("Dangling bond: {0} {1}".format(node,nei))
+            assert len(nei) == 2, "Dangling bond: {0} {1}".format(node,nei)
             node = nei[next]
         #a cyclic path is found.
         #trim the uncyclic part
-        while order[0] != node:
-            order.pop(0)
+        order = order[marks[node]:]
         #add the node at the last again
         order.append(node)
         return order
@@ -188,10 +186,10 @@ class IceGraph(networkx.DiGraph):
         """
         Randomly select a homodromic cycle
         """
-        marked = [False] * self.number_of_nodes()
+        marks = dict()
         order = []
         node = random.randint(0,self.number_of_nodes()-1)
-        return self._goahead(node,marked,order)
+        return self._goahead(node,marks,order)
 
 
     def isZ4(self):
@@ -307,7 +305,7 @@ class SpaceIceGraph(IceGraph):
     def __init__(self, data=None, coord=None, pbc=True, ignores=set()):
         super(SpaceIceGraph, self).__init__(data)
         if coord is not None:
-            self.add_vectors(coord, pbc)
+            self.add_vectors(coord, pbc) # fractional coord
         self.ignores = ignores
             
     def add_vectors(self, coord, pbc=True):
