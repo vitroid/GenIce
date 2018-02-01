@@ -4726,7 +4726,7 @@ union {
  cylinder { <3.303, 1.661, 2.611> ,<3.198, 1.576, 2.755> ,RHB material { MATHB }  } 
  cylinder { <3.173, 2.028, 2.673> ,<3.364, 1.957, 2.550> ,RHB material { MATHB }  } 
 //
-//Command line: ../genice.x T --guest 12=g12 --rep 1 1 1 --format povray
+//Command line: ../../genice.x T --guest 12=g12 --rep 1 1 1 --format povray
   translate <-1.815, -1.815, -1.815> 
 }
 

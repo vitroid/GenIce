@@ -146,6 +146,7 @@ Write the code in eo.py and put it in the user module folder at either
 
 | OS | folder path |
 |-------|-----------------------------|
+| common | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
 
@@ -169,6 +170,7 @@ Put `4xFAU.py` module in the user's lattice module folder at either
 
 | OS | folder path |
 |-------|-----------------------------|
+| common | `./lattices` |
 | Linux | `~/.github/GenIce/lattices` |
 | MacOS | `~/Library/Application Support/GenIce/lattices` |
 
@@ -242,7 +244,8 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Compare the probabilities of the ring phases with that of Pauling model.
+`_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
+`_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking no long-range correlations in molecular orientations.
 
 ## Ice structures
 <!-- rreferences removed. -->

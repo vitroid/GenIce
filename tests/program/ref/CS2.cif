@@ -7,7 +7,7 @@ data_genice_CS2
 #[CS2] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 #[MTN] http://www.iza-structure.org/databases/
 #
-#Command line: ../genice.x CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2
+#Command line: ../../genice.x CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2
 _cell_length_a                17.120977156117426
 _cell_length_b                17.120977156117426
 _cell_length_c                34.24195431223485
