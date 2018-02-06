@@ -67,11 +67,13 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
 
 # Reshaping matrix (Must be integers)
 # for now they are hardcoded.  It will be given as options for the plugin in the future.
-ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
+# ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
 # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
 # ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
 # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
-# ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+
+#This is default.  No reshaping applied.
+ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
 
 def hook1(lattice):
     lattice.logger.info("Hook1: Output as a python module.")

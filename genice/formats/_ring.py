@@ -1,6 +1,8 @@
 # coding: utf-8
 """
 Test suite: ring direction statistics
+
+Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964).
 """
 
 # A directed cycle is expressed as an array of True and False.
@@ -17,7 +19,8 @@ from countrings import countrings_nx as cr
 import sys
 from collections import defaultdict
 import networkx as nx
-
+from math import log
+import fractions
 
 def isomorphs(a):
     """
@@ -71,22 +74,9 @@ def freedom(a):
     return n
 
 
-def pauling_probability(a):
+def ideal_frequency(a):
     N = len(a)
-    return symmetry(a) * freedom(a) / (2**N) / (1.5**N)
-
-
-def test():
-    uniq = set()
-    for a in it.product((False, True), repeat=6):
-        iso = isomorphs(a)
-        if len(iso & uniq) == 0:
-            uniq.add(a)
-            print(a)
-            print(symmetry(a))
-            print(freedom(a))
-            print(pauling_probability(a))
-
+    return symmetry(a) * freedom(a)
 
 
 def contains(a,b):
@@ -96,12 +86,23 @@ def contains(a,b):
     return len(a & isomorphs(b)) > 0
     
 
-def probabilities(N):
-    prob = dict()
+def ideal_frequencies(N):
+    freq = dict()
     for a in it.product((False, True), repeat=N):
         c = encode(a)
-        if c not in prob:
-            prob[c] = pauling_probability(a)
+        if c not in freq:
+            freq[c] = ideal_frequency(a)
+    return freq
+
+
+def probabilities(N):
+    freq = ideal_frequencies(N)
+    sum = 0
+    for v in freq:
+        sum += freq[v]
+    prob = dict()
+    for v in freq:
+        prob[v] = fractions.Fraction(freq[v], sum)
     return prob
 
 
@@ -117,22 +118,28 @@ def hook4(lattice):
     for n in 3,4,5,6,7,8:
         prob[n] = probabilities(n)
         stat[n] = defaultdict(int)
-    for ring in cr.rings_iter(graph, 8):
+    for ring in cr.CountRings(graph).rings_iter(8):
         ori = orientations(ring, lattice.spacegraph)
         c   = encode(ori)
         n   = len(ring)
         stat[n][c] += 1
-    score = 0
     #size code code(binary) Approx. Stat.
     for n in 3,4,5,6,7,8:
-        fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2:.5f}} {{3:.5f}}".format(n)
+        fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{4:.5f}}".format(n)
         denom = 0
         for c in stat[n]:
             denom += stat[n][c]
         if denom > 0:
+            dKL = 0.0
             for c in prob[n]:
-                print(fmtstr.format(n,c,prob[n][c], stat[n][c]/denom))
-                score += (prob[n][c] - stat[n][c]/denom)**2 * denom
+                print(fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom))
+                q = stat[n][c]/denom
+                p = prob[n][c]
+                if q > 0.0:
+                    dKL += q*(log(q) - log(p))
+            dKL /= log(2.0)  #bit
+            print("{1} {0} dKL[{0}-ring]".format(n,dKL))
+            lattice.logger.info("  dKL[{0}-ring]={1}".format(n,dKL))
     #print(score)
     lattice.logger.info("Hook4: end.")
 
