@@ -43,7 +43,7 @@ kg6_%.log:
 kg7_%.log:
 	$(GENICE) 1h -s $* -f _KG -r 7 8 6 --nodep  > $@
 
-# A test for Kirkwood G.
+# A test for radial Kirkwood G (KG).
 # 1. Prepare a small (2x2x2) lattice ("semi-lattice") of hydrogen-disordered ice Ic.
 # 2. Repeat it 4x4x4 times to make a larger lattice.
 # 3. Calculate the averaged Kirkwood G for 100 different semi-lattices.
@@ -53,7 +53,7 @@ lattices/kg8_%.py:
 	$(GENICE) 1c -s $* -f python -r 2 2 2 > $@
 	$(GENICE) 1c -s $* -f fixed  -r 2 2 2 >> $@  #Fix the HB orientations.
                                                     #"fixed" is a local plugin just for this test.
-# Repeat the semi-lattices.
+# _KG calculate the radial KG function
 kg8_%.log: lattices/kg8_%.py
 	$(GENICE) kg8_$* -f _KG -r 4 4 4 > $@
 
@@ -75,10 +75,11 @@ test_kg%.done:
 	rm kg$*_*.log;	ln -s trash/$@ .
 
 
+# Prepare a small cell of hydrogen-disordered.
 lattices/kg10_%.py:
 	$(GENICE) 1c -s $* -f python -r 2 2 2 > $@
 	$(GENICE) 1c -s $* -f fixed  -r 2 2 2 >> $@  #Specify the HB orientations.
 
-# Repeat the semi-lattices.
+# Tile them and shuffle it by cycle inversions.
 kg10_%.log: lattices/kg10_%.py
 	$(GENICE) kg10_$* -f inversion -r 4 4 4 > $@

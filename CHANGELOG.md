@@ -1,10 +1,18 @@
 # Change log
 
+## 0.16 (develop)
+
+* Ring phase statistics.
+* Radial Kirkwood G function.
+* Some plugins accept options using brackets.
+* Cell reshaper.
+* Added the current working path as a searchpath for the plugins.
+
 ## 0.15.1
 
 * Bug fix in case the atomic number exceeds 100 000 in Gromacs format.
 
-## 0.15
+## 0.15 (release)
 
 * Simulation cell-related functions are separated to a module.
 
