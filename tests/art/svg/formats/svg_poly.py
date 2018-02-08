@@ -48,7 +48,7 @@ proj = np.array([[-3**0.5/2, 1./2.],
 
 
 proj = np.array([[1., -1., 0.], [1., 1., -2.], [1., 1., 1.]])
-theta = 0.2
+theta = 0.1
 smallrot = np.array([[cos(theta),-sin(theta),0.],
                      [+sin(theta),cos(theta),0.],
                      [0.,0.,1.0]])

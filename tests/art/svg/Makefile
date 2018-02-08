@@ -8,7 +8,7 @@ clean:
 	-rm -rf formats/__pycache__
 
 ITT.svg: # formats/svg_poly.py Makefile
-	$(GENICE) ITT -f svg_poly[-0.1,-0.1,-0.05] -r 2 2 2 > $@
+	$(GENICE) ITT -f svg_poly[-0.1,-0.1,-0.05] -r 3 3 2 > $@
 dtc.svg: # formats/svg_poly.py Makefile
 	$(GENICE) dtc -f svg_poly[-0.05,-0.05,-0.02]  -r 3 3 5 > $@
 FAU.svg: # formats/svg_poly.py Makefile
