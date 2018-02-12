@@ -6,54 +6,8 @@
 
 from math import acos, pi, sin, cos
 from collections import defaultdict
-import sys
-import itertools as it
-
 import numpy as np
-
-from genice import pairlist as pl
-from genice import yaplotlib as yp
-
-def LoadAR3R(file):
-    while True:
-        line = file.readline()
-        if len(line) == 0:
-            break
-        if "@BOX3" == line[:5]:
-            line  = file.readline()
-            cols  = line.split()
-            dimen = np.array([float(x) for x in cols])
-            cell  = np.diag(dimen)
-        elif "@AR3R" == line[:5]:
-            natom = int(file.readline())
-            Os = []
-            for i in range(natom):
-                line = file.readline()
-                cols = line.split()
-                xyz = np.array([float(x) for x in cols])
-                xyz -= np.floor( xyz + 0.5 )
-                Os.append(xyz)
-            Os = np.array(Os)
-    #the last line is cell shape
-    return cell, Os
-
-                 
-
-def shortest_distance(coord, cell, pairs=None):
-    dmin = 1e99
-    if pairs is None:
-        iter = it.combinations(coord,2)
-    else:
-        iter = [(coord[i],coord[j]) for i,j in pairs]
-    for c1,c2 in iter:
-        d = c1-c2
-        d -= np.floor(d + 0.5)
-        r = np.dot(d,cell)
-        rr = np.dot(r,r)
-        if rr < dmin:
-            dmin = rr
-    return dmin**0.5
-
+import logging
 
 def tune_angles(sixvecs, pivot):
     """
@@ -85,10 +39,7 @@ def tune_angles(sixvecs, pivot):
 
     
 class decorate():
-    vertices = []
-    fixedEdges = []
-    yap = ""
-    def __init__(self, atoms, cell, pairs, Ncyl, mode = "python"):
+    def __init__(self, atoms, cell, pairs, Ncyl):
         """
         Ncyl is the number of cylinders to be inserted (>0)
         """
@@ -101,7 +52,8 @@ class decorate():
         self.atoms = atoms
         self.cell  = cell
         self.Ncyl  = Ncyl
-        self.mode = mode
+        self.vertices = []
+        self.fixedEdges = []
         for pair in pairs:
             self.one(pair)
 
@@ -150,12 +102,9 @@ class decorate():
         #
         a = np.dot(self.atoms[i],self.cell)
         s = ""
-        s += yp.Color(3)
-        s += yp.Line(a, a+dij*scale)
         for j in range(0, self.Ncyl+1):
             vec0 = dij*(rp + j*r)*scale + a
             for vec in sixvecs:
-                s += yp.Line(vec0, vec0 + vec*r*scale)
                 rpos = vec0 + vec*r*scale
                 pos = np.dot(rpos, np.linalg.inv(self.cell))
                 self.vertices.append(pos)
@@ -174,50 +123,28 @@ class decorate():
                         self.fixedEdges.append((first+k, first+k-6))
                     else:
                         self.fixedEdges.append((first+k-6, first+k))
-        self.yap += s
-
-    def __str__(self):
-        if self.mode == "yaplot":
-            return self._str_yaplot()
-        else:
-            return self._str_python()
-
-    def _str_python(self):
-        s = []
-        s.append("coord='relative'")
-        s.append("celltype='rect'")
-        s.append("cell='{0} {1} {2}'".format(self.cell[0,0],self.cell[1,1],self.cell[2,2]))
-        s.append('waters="""')
-        for a in self.vertices:
-            s.append("{0} {1} {2}".format(*a))
-        s.append('"""')
-        s.append('fixed="""')
-        for i,j in self.fixedEdges:
-            s.append("{0} {1}".format(i,j))
-        s.append('"""')
-        return "\n".join(s)
 
 
-    def _str_yaplot(self):
-        return self.yap
+logger = logging.getLogger()
 
-    
+from genice.lattices import ice1c # base topology
+cell1c = np.diag(np.fromstring(ice1c.cell, sep=" "))
+waters1c = np.fromstring(ice1c.waters, sep=" ")
+waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
+pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
+pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
+import sys
 
-def main():
-    mode = "python"  #output python module for GenIce
-    if sys.argv[1] == "-y":
-        mode = "yaplot"
-        sys.argv.pop(1)
-    Ncyl = int(sys.argv[1])
-    #read O positions
-    cell, atoms = LoadAR3R(sys.stdin)
-    #build the network
-    dmin = shortest_distance(atoms, cell)
-    pairs = [v for v in pl.pairlist_crude(atoms, dmin*1.1, cell, distance=False)]
+def argparser(arg):
+    global Ncyl, coord, celltype, cell, waters, fixed
+    Ncyl = int(arg)
+    logger.info("Superlattice {0}xFAU".format(Ncyl))
+    dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
+    coord='relative'
+    celltype='rect'
+    cell = "{0} {1} {2}".format(dec.cell[0,0],dec.cell[1,1],dec.cell[2,2])
+    waters = dec.vertices
+    fixed = dec.fixedEdges
 
-    #decorate
-    dec = decorate(atoms, cell, pairs, Ncyl, mode)
-    print(dec)
-
-if __name__ == "__main__":
-    main()
+# default.
+argparser("1")
