@@ -34,7 +34,7 @@ setup(name='GenIce',
                 'genice.lattices',
                 'genice.formats',
                 ],
-      install_requires=['numpy', 'networkx', ],
+      install_requires=['numpy', 'networkx', 'countrings>=0.1.4'],
       entry_points = {
               'console_scripts': [
                   'genice = genice.__main__:main'
