@@ -8,6 +8,8 @@ from math import acos, pi, sin, cos
 from collections import defaultdict
 import numpy as np
 import logging
+import re
+
 
 def tune_angles(sixvecs, pivot):
     """
@@ -126,17 +128,17 @@ class decorate():
 
 
 logger = logging.getLogger()
-
 from genice.lattices import ice1c # base topology
 cell1c = np.diag(np.fromstring(ice1c.cell, sep=" "))
 waters1c = np.fromstring(ice1c.waters, sep=" ")
 waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
 pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
 pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
-import sys
+
 
 def argparser(arg):
     global Ncyl, coord, celltype, cell, waters, fixed
+    assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
     Ncyl = int(arg)
     logger.info("Superlattice {0}xFAU".format(Ncyl))
     dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
