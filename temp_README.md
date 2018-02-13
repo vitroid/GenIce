@@ -179,6 +179,15 @@ Name |Application | extension | water | solute | HB | remarks
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
+You can prepare your own file formats.  Write the module and put it in
+either of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+| common | `./formats`  |
+| Linux | `~/.github/GenIce/formats` |
+| MacOS | `~/Library/Application Support/GenIce/formats` |
+
 ## Ice structures
 <!-- rreferences removed. -->
 
@@ -212,6 +221,15 @@ prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
+You can prepare your own ice structures.  Write the module and put it in
+either of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+| common | `./lattices`  |
+| Linux | `~/.github/GenIce/lattices` |
+| MacOS | `~/Library/Application Support/GenIce/lattices` |
+
 Note: Some structures in different frameworks are identical.
 
 CH/FI|CH  |ice|FK |Zeo|
@@ -229,7 +247,7 @@ C2   |-   |1c |*  |-  |
 
 FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 
--: No correspondence; *: Non-FK types; @: Not included in GenIce.
+-: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ## Water models
@@ -252,6 +270,16 @@ symbol | type
 `uathf`  | United atom 5-site THF  
 `g12`,`g14`,`g15`,`g16` | A monatomic dummy site
 `empty`  | Leave the cage empty.
+
+
+You can prepare your own guest molecules.  Write the module and put it in
+either of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+| common | `./molecules`  |
+| Linux | `~/.github/GenIce/molecules` |
+| MacOS | `~/Library/Application Support/GenIce/molecules` |
 
 # References
 
