@@ -1,2 +1,3 @@
 # -*- coding: utf-8 -*-
-__version__ = "0.16"
+# even: stable; odd: develop
+__version__ = "0.17"
