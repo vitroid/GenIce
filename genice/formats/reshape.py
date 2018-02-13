@@ -115,12 +115,12 @@ def hook1(lattice):
     s += "coord='relative'\n"
     if isZero(regcell[1,0]) and isZero(regcell[2,0]) and isZero(regcell[2,1]):
         s += "celltype='rect'\n"
-        s += "cell='{0} {1} {2}'\n".format(regcell[0,0]*10,regcell[1,1]*10,regcell[2,2]*10)
+        s += "cell='{0:.8f} {1:.8f} {2:.8f}'\n".format(regcell[0,0]*10,regcell[1,1]*10,regcell[2,2]*10)
     else:
         s += "celltype='triclinic'\n"
         s += "cell='"
         for d in range(3):
-            s += "{0} {1} {2} ".format(regcell[d,0]*10,regcell[d,1]*10,regcell[d,2]*10)
+            s += "{0:.8f} {1:.8f} {2:.8f} ".format(regcell[d,0]*10,regcell[d,1]*10,regcell[d,2]*10)
         s += "'\n"
     # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
     s += "density={0}\n".format(lattice.density)
