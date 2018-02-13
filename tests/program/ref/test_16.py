@@ -16,7 +16,7 @@ Reshaping the unit cell.
 bondlen=3.034768428692841
 coord='relative'
 celltype='rect'
-cell='17.120977156117426 17.120977156117426 34.24195431223485'
+cell='17.12097716 17.12097716 34.24195431'
 density=0.81
 waters="""
     0.5680    0.8708    0.2840
