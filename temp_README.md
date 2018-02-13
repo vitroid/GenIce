@@ -247,7 +247,7 @@ C2   |-   |1c |*  |-  |
 
 FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 
--: No correspondence; *: Non-FK types; @: Not included in GenIce.
+-: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ## Water models
