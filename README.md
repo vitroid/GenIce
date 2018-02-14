@@ -142,11 +142,11 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
     labels = ["Oe","Ce","Ce"]
     name = "EO"
 
-Write the code in eo.py and put it in the user module folder at either
+Write the code in eo.py and put it in the user module folder at one of the following paths.
 
 | OS | folder path |
 |-------|-----------------------------|
-| common | `./molecules`  |
+|  | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
 
@@ -220,11 +220,11 @@ Name |Application | extension | water | solute | HB | remarks
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
 You can prepare your own file formats.  Write the module and put it in
-either of the following paths.
+one of the following paths.
 
 | OS | folder path |
 |-------|-----------------------------|
-| common | `./formats`  |
+|  | `./formats`  |
 | Linux | `~/.github/GenIce/formats` |
 | MacOS | `~/Library/Application Support/GenIce/formats` |
 
@@ -262,11 +262,11 @@ prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 Ice names with double quotations are not experimentally verified.
 
 You can prepare your own ice structures.  Write the module and put it in
-either of the following paths.
+one of the following paths.
 
 | OS | folder path |
 |-------|-----------------------------|
-| common | `./lattices`  |
+|  | `./lattices`  |
 | Linux | `~/.github/GenIce/lattices` |
 | MacOS | `~/Library/Application Support/GenIce/lattices` |
 
@@ -313,11 +313,11 @@ symbol | type
 
 
 You can prepare your own guest molecules.  Write the module and put it in
-either of the following paths.
+one of the following paths.
 
 | OS | folder path |
 |-------|-----------------------------|
-| common | `./molecules`  |
+|  | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
 
