@@ -1,5 +1,5 @@
 all:
-	for s in povray svg; do make -C $$s all; done
+	for s in svg openscad; do make -C $$s all; done
 clean:
-	for s in povray svg; do make -C $$s clean; done
+	for s in svg openscad; do make -C $$s clean; done
 

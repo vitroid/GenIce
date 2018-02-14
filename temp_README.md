@@ -164,8 +164,8 @@ Name |Application | extension | water | solute | HB | remarks
 `cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
-`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
-`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o | See tests/art/openscad for usage.
+`povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
 `y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
@@ -176,6 +176,7 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 

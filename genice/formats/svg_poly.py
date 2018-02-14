@@ -12,33 +12,6 @@ from math import sin,cos
 
 offset = np.zeros(3)
 
-
-# copied from povray.py
-
-def Block(name, content):
-    return " " + name + " { " + content + " } "
-
-def Vector(v):
-    return "<{0:.3f}, {1:.3f}, {2:.3f}> ".format(*v)
-
-def Juxtapose(v):
-    return ",".join(v)
-
-def Atom(atomtype, pos):
-    return Block( "sphere", Juxtapose( [Vector(pos), "R{0}".format(atomtype) ] ) + Block( "material", "MAT{0}".format(atomtype) ) ) + "\n"
-    
-def Bond(bondtype, pos1, pos2):
-    return Block( "cylinder", Juxtapose( [Vector(pos1), Vector(pos2), "R{0}".format(bondtype)] ) + Block( "material", "MAT{0}".format(bondtype) ) ) + "\n"
-
-# end copy
-
-
-def SmoothTriangle(facetype, pos):
-    vecs = [Vector(p) for p in pos]
-    return Block( "smooth_triangle", Juxtapose( vecs ) + Block( "material", "MAT{0}".format(facetype) ) ) + "\n"
-
-
-
 sun = np.array([1., -10., 5.])  # right, down, front
 sun /= np.linalg.norm(sun)
 
@@ -95,7 +68,7 @@ def face(center, rpos, svg):
 
 def hook4(lattice):
     global offset
-    lattice.logger.info("Hook4: Povray (polyhedral expressions).")
+    lattice.logger.info("Hook4: SVG (polyhedral expressions).")
     graph = nx.Graph(lattice.spacegraph) #undirected
     cellmat = lattice.repcell.mat
     projected = np.dot(cellmat, proj)
