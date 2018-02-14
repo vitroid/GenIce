@@ -16,7 +16,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'
 
 setup(name='GenIce',
       version=metadata['version'],
-      description='Hydrogen-disordered ice generator',
+      description='A Swiss army knife to generate hydrogen-disordered ice structures.',
       #long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Development Status :: 4 - Beta",
