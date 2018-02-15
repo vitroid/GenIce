@@ -1,6 +1,6 @@
 # Change log
 
-## 0.18 (release candidate)
+## 0.18 (stable, release)
 
 * Direct graphical rendering with vpython.
 * Added polygonnal expression in yaplot output.
@@ -10,7 +10,7 @@
 
 * svg_poly module.
 
-## 0.16 (stable, release)
+## 0.16
 
 * Ring phase statistics.
 * Radial Kirkwood G function.
