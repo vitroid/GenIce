@@ -17,6 +17,6 @@ def hook2(lattice):
     s += "-1 -1\n"
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
-    lattice.logger.info("Hook4: end.")
+    lattice.logger.info("Hook2: end.")
 
 hooks = {2:hook2}

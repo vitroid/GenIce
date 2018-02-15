@@ -1,18 +1,24 @@
 # Change log
 
-## 0.16 (develop)
+## 0.17 (develop)
+
+* svg_poly module.
+
+## 0.16 (stable, release)
 
 * Ring phase statistics.
 * Radial Kirkwood G function.
 * Some plugins accept options using brackets.
 * Cell reshaper.
 * Added the current working path as a searchpath for the plugins.
+* Aeroice generator.
+* Accept the structure that does not obey the ice rules.
 
 ## 0.15.1
 
 * Bug fix in case the atomic number exceeds 100 000 in Gromacs format.
 
-## 0.15 (release)
+## 0.15
 
 * Simulation cell-related functions are separated to a module.
 

@@ -1,7 +1,7 @@
 ![Logo](https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png)
 # GenIce
 
-A Swiss army knife to generate proton-disordered ice structures.
+A Swiss army knife to generate hydrogen-disordered ice structures.
 
 ## Requirements
 
@@ -102,11 +102,11 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
     labels = ["Oe","Ce","Ce"]
     name = "EO"
 
-Write the code in eo.py and put it in the user module folder at either
+Write the code in eo.py and put it in the user module folder at one of the following paths.
 
 | OS | folder path |
 |-------|-----------------------------|
-| common | `./molecules`  |
+|  | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
 
@@ -164,11 +164,11 @@ Name |Application | extension | water | solute | HB | remarks
 `cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
-`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
-`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o | See tests/art/openscad for usage.
+`povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
@@ -176,8 +176,19 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`v`, `vpython`      |Direct visualization |     | Atomic positions | none | o | Display the structure in the browser using VPython. 
+`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
+
+You can prepare your own file formats.  Write the module and put it in
+one of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+|  | `./formats`  |
+| Linux | `~/.github/GenIce/formats` |
+| MacOS | `~/Library/Application Support/GenIce/formats` |
 
 ## Ice structures
 <!-- rreferences removed. -->
@@ -212,6 +223,15 @@ prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
+You can prepare your own ice structures.  Write the module and put it in
+one of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+|  | `./lattices`  |
+| Linux | `~/.github/GenIce/lattices` |
+| MacOS | `~/Library/Application Support/GenIce/lattices` |
+
 Note: Some structures in different frameworks are identical.
 
 CH/FI|CH  |ice|FK |Zeo|
@@ -229,7 +249,7 @@ C2   |-   |1c |*  |-  |
 
 FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 
--: No correspondence; *: Non-FK types; @: Not included in GenIce.
+-: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
 ## Water models
@@ -252,6 +272,16 @@ symbol | type
 `uathf`  | United atom 5-site THF  
 `g12`,`g14`,`g15`,`g16` | A monatomic dummy site
 `empty`  | Leave the cage empty.
+
+
+You can prepare your own guest molecules.  Write the module and put it in
+one of the following paths.
+
+| OS | folder path |
+|-------|-----------------------------|
+|  | `./molecules`  |
+| Linux | `~/.github/GenIce/molecules` |
+| MacOS | `~/Library/Application Support/GenIce/molecules` |
 
 # References
 
