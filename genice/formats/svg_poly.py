@@ -75,18 +75,24 @@ def hook4(lattice):
     queue = []
     for ring in cr.CountRings(graph).rings_iter(8):
         deltas = np.zeros((len(ring),3))
+        d2 = np.zeros(3)
         for k,i in enumerate(ring):
             d = lattice.reppositions[i] - lattice.reppositions[ring[0]]
             d -= np.floor(d+0.5)
             deltas[k] = d
-        comofs = np.sum(deltas, axis=0) / len(ring)
-        deltas -= comofs
-        com = lattice.reppositions[ring[0]] + comofs + offset
-        com -= np.floor(com)
-        # rel to abs
-        com    = np.dot(com,    projected)
-        deltas = np.dot(deltas, projected)
-        queue.append((com, deltas))
+            dd = lattice.reppositions[ring[k]] - lattice.reppositions[ring[k-1]]
+            dd -= np.floor(dd+0.5)
+            d2 += dd
+        # d2 must be zeros
+        if np.all(np.absolute(d2) < 1e-5):
+            comofs = np.sum(deltas, axis=0) / len(ring)
+            deltas -= comofs
+            com = lattice.reppositions[ring[0]] + comofs + offset
+            com -= np.floor(com)
+            # rel to abs
+            com    = np.dot(com,    projected)
+            deltas = np.dot(deltas, projected)
+            queue.append((com, deltas))
     # translate = -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2
     svg = sw.Drawing()
     for com, deltas in sorted(queue, key=lambda x: x[0][2]): #key is z of com
