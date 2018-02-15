@@ -31,7 +31,7 @@ for i in range(3):
 proj = np.dot(proj,smallrot)
 proj = np.linalg.inv(proj)
 
-hue_sat = {3:(60., 1.0), 4:(180, 0.8), 5:(0, 0.5), 6:(0, 0.0), 8:(300, 0.5)}
+hue_sat = {3:(60., 1.0), 4:(180, 0.8), 5:(0, 0.5), 6:(0, 0.0), 7:(240, 0.5), 8:(300, 0.5)}
 
 
 def face(center, rpos, svg):
