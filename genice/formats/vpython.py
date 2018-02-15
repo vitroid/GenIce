@@ -12,6 +12,8 @@ from countrings import countrings_nx as cr
 
 hue_sat = {3:(60., 1.0), 4:(180, 0.8), 5:(0, 0.5), 6:(0, 0.0), 7:(240, 0.5), 8:(300, 0.5)}
 
+sun = np.array([1., -10., 5.])  # right, down, front
+sun /= np.linalg.norm(sun)
 
 def face(center, rpos):
     n = rpos.shape[0]
@@ -27,6 +29,9 @@ def face(center, rpos):
     # central normal
     c_normal = np.sum(normals, axis=0)
     c_normal /= np.linalg.norm(c_normal)
+    if np.dot(c_normal, sun) < 0.0:
+        c_normal = - c_normal
+        normals  = - normals
     
     hue, sat = hue_sat[n]
     bri = 1
