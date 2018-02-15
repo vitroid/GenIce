@@ -1,7 +1,7 @@
 ![Logo](https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png)
 # GenIce
 
-A Swiss army knife to generate proton-disordered ice structures.
+A Swiss army knife to generate hydrogen-disordered ice structures.
 
 ## Requirements
 
@@ -78,6 +78,10 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+
+* With the aid of VPython, you can render and handle the ice structure directly in the web browser.
+
+        genice CS1 --format v
 
 ## Basics
 
@@ -204,11 +208,11 @@ Name |Application | extension | water | solute | HB | remarks
 `cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
-`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
-`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o | See tests/art/openscad for usage.
+`povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
@@ -216,6 +220,8 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`v`, `vpython`      |Direct visualization |     | Atomic positions | none | o | Display the structure in the browser using VPython. 
+`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 

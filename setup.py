@@ -16,7 +16,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'
 
 setup(name='GenIce',
       version=metadata['version'],
-      description='Hydrogen-disordered ice generator',
+      description='A Swiss army knife to generate hydrogen-disordered ice structures.',
       #long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Development Status :: 4 - Beta",
@@ -34,7 +34,7 @@ setup(name='GenIce',
                 'genice.lattices',
                 'genice.formats',
                 ],
-      install_requires=['numpy', 'networkx', 'countrings>=0.1.4'],
+      install_requires=['numpy', 'networkx', 'countrings>=0.1.4', 'svgwrite', 'vpython'],
       entry_points = {
               'console_scripts': [
                   'genice = genice.__main__:main'
