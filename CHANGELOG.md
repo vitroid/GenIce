@@ -1,5 +1,11 @@
 # Change log
 
+## 0.18 (release candidate)
+
+* Direct graphical rendering with vpython.
+* Added polygonnal expression in yaplot output.
+* Added art examples for OpenSCAD format.
+
 ## 0.17 (develop)
 
 * svg_poly module.
