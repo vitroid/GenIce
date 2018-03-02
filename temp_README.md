@@ -39,7 +39,8 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
-* With the aid of VPython, you can render and handle the ice structure directly in the web browser.
+* With the aid of VPython, you can render and handle the ice structure
+  directly in the web browser. (You must install VPython separately.)
 
         genice CS1 --format v
 
@@ -224,6 +225,8 @@ xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
+gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See
+the output of `genice gromacs` for usage. 
 
 Ice names with double quotations are not experimentally verified.
 
