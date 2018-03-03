@@ -19,7 +19,7 @@ def argparser(arg):
     global waters, cell, celltype, coord, density, pairs
     logger = logging.getLogger()
     args = arg.split(":")
-    assert 0 < len(args) <= 3, print(__doc__)
+    assert 0 < len(args) <= 3, __doc__
     if len(args) == 1:
         O = "Ow"
         H = "Hw"

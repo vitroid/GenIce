@@ -64,7 +64,8 @@ def orientations(coord, graph, cell):
                 vcomp = complement(vpred+vsucc)
                 logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
                 vsucc = (vsucc+vcomp)[:2]
-            logger.debug("Node {0} vsucc {1}".format(node,vsucc))    
+            logger.debug("Node {0} vsucc {1}".format(node,vsucc))
+            assert 2<=len(vsucc), "Probably a wrong ice network."
             y = vsucc[1] - vsucc[0]
             y /= np.linalg.norm(y)
             z = (vsucc[0] + vsucc[1]) / 2
@@ -648,7 +649,10 @@ class Lattice():
         make a true ice graph.
         """
         self.logger.info("Stage3: Bernal-Fowler rule.")
-        self.graph.purge_ice_defects()
+        if self.asis:
+            self.logger.info("  Skip applying the ice rule by request.")
+        else:
+            self.graph.purge_ice_defects()
         self.logger.info("Stage3: end.")
 
     def stage4(self):

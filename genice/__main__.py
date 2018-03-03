@@ -12,16 +12,16 @@ import numpy as np
 
 def getoptions():
     parser = ap.ArgumentParser(description='')
-    parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=[2,2,2],
-                        help='Repeat the unit cell in x,y, and z directions. [2,2,2]')
+    parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=[1,1,1],
+                        help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
     parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens', default=(-1,),
                         help='Specify the ice density in g/cm3')
     parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                         help='Random seed [1000]')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
-                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)]')
+                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.)')
+                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
     parser.add_argument('--Guest', '-G', nargs = 1,           dest='spot_guests', metavar="13=me", action="append", 
