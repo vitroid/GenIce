@@ -73,8 +73,12 @@ def argparser(arg):
         pairs = []
         for o,h in pairs0:
             if h == o*2 or h == o*2+1:
-                pass
+                # adjust oxygen positions
+                dh = rh[h] - ro[o]
+                dh -= np.floor(dh + 0.5)
+                waters[o] += np.dot(dh, cell)*1./16.
             else:
+                # register a new intermolecular pair
                 pairs.append((h//2, o))
         logger.debug("# of pairs: {0} {1}".format(len(pairs),len(waters)))
         

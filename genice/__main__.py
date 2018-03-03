@@ -34,6 +34,8 @@ def getoptions():
                         help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
     parser.add_argument('--nodep', action='store_true', dest='nodep',
                         help='No depolarization.')
+    parser.add_argument('--asis', action='store_true', dest='asis',
+                        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
@@ -92,6 +94,7 @@ def main():
     rep          = options.rep
     density      = options.dens[0]
     depolarize   = not options.nodep
+    asis         = options.asis
     anions = dict()
     if options.anions is not None:
         logger.info(options.anions)
@@ -127,6 +130,7 @@ def main():
                           density=density,
                           rep=rep,
                           depolarize=depolarize,
+                          asis=asis,
                           cations=cations,
                           anions=anions,
                           spot_guests=spot_guests,
