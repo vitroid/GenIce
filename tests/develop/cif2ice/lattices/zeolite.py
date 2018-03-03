@@ -79,7 +79,6 @@ def argparser(arg):
     args = arg.split(":")
     Nbox = (1,1,1) # should be given as an option
     name = args[0]
-    logger.info(__name__)
     #input must be a file......too bad.
     if os.path.exists(name):
         fNameIn = name

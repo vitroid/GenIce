@@ -241,7 +241,7 @@ one of the following paths.
 | MacOS | `~/Library/Application Support/GenIce/lattices` |
 
 [cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
-cif file of zeolites from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
+cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
 module in the path above.
 
 Note: Some structures in different frameworks are identical.
