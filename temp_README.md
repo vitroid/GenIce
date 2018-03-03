@@ -44,6 +44,14 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice CS1 --format v
 
+* You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
+
+        genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
+
+* You can retrieve a zeolite structure from [IZA structure database](http://www.iza-structure.org/databases).
+
+        genice zeolite[ITT] -r 1 1 1 > ITT.gro
+
 ## Basics
 
 The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero (except the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
@@ -225,9 +233,9 @@ xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
-gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage. 
-zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
-cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
+gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
+zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
+cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
 
 Ice names with double quotations are not experimentally verified.
 

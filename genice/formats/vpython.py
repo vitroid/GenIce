@@ -121,6 +121,7 @@ def draw(lattice):
             if rr1 < rr0 and rr1 < 0.245**2:
                 lattice.vpobjects['a'].add(vp.arrow(shaftwidth=0.015, pos=vp.vector(*H1), axis=vp.vector(*(O-H1)), color=vp.vector(1,1,0)))
     lattice.logger.info("  Tips: use keys to draw/hide layers. [3 4 5 6 7 8 a w l]")
+    lattice.logger.info("  Tips: Type ctrl-C twice at the terminal to stop.")
     lattice.logger.info("Hook6: end.")
 
 

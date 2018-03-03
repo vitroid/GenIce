@@ -23,9 +23,8 @@ Install with pip3.
 ## Usage
 
     usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqdypoc] [--water model] [--guest D=empty]
-                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                  [--cation 3=Na] [--nodep] [--debug] [--quiet]
+                  [--format gmeqdypoc] [--water model] [--guest D=empty] [--nodep]
+                  [--debug] [--quiet]
                   Type
     
     positional arguments:
@@ -46,19 +45,7 @@ Install with pip3.
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.)
       --guest D=empty, -g D=empty
-                            Specify guest(s) in the cage type. (D=empty,
-                            T=co2*0.5+me*0.3, etc.)
-      --Guest 13=me, -G 13=me
-                            Specify guest in the specific cage. (13=me, 32=co2,
-                            etc.)
-      --Group 13=bu-:0, -H 13=bu-:0
-                            Specify the group. (-H 13=bu-:0, etc.)
-      --anion 3=Cl, -a 3=Cl
-                            Specify a monatomic anion that replaces a water
-                            molecule. (3=Cl, 39=F, etc.)
-      --cation 3=Na, -c 3=Na
-                            Specify a monatomic cation that replaces a water
-                            molecule. (3=Na, 39=NH4, etc.)
+                            Specify guest in the cage. (D=empty, T=co2, etc.)
       --nodep               No depolarization.
       --debug, -D           Output debugging info.
       --quiet, -q           Do not output progress messages.
@@ -83,6 +70,14 @@ THF (united atom with a dummy site) in the large cage in GROMACS
   directly in the web browser. (You must install VPython separately.)
 
         genice CS1 --format v
+
+* You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
+
+        genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
+
+* You can retrieve a zeolite structure from [IZA structure database](http://www.iza-structure.org/databases).
+
+        genice zeolite[ITT] -r 1 1 1 > ITT.gro
 
 ## Basics
 
@@ -265,9 +260,9 @@ xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
-gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage. 
-zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
-cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
+gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
+zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
+cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
 
 Ice names with double quotations are not experimentally verified.
 
