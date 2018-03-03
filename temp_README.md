@@ -13,7 +13,6 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 * countrings
 * VPython (optional)
 
-Note: WinPython includes all of these requirements.
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
 Install with pip3.
