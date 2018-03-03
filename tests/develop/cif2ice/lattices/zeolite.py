@@ -4,7 +4,6 @@
 import os
 import sys
 import itertools as it
-import argparse as ap
 import logging
 #external modules
 import numpy as np
@@ -80,6 +79,7 @@ def argparser(arg):
     args = arg.split(":")
     Nbox = (1,1,1) # should be given as an option
     name = args[0]
+    logger.info(__name__)
     #input must be a file......too bad.
     if os.path.exists(name):
         fNameIn = name
@@ -89,7 +89,8 @@ def argparser(arg):
             name = os.path.basename(name)
             if name[-4:] in (".cif", ".CIF"):
                 name = name[:-4]
-        else:
+        elif __name__ == "lattices.zeolite":
+            # it only works when my module name is zeolite.
             URL = "http://www.iza-structure.org/IZA-SC/cif/"+name+".cif"
         fNameIn = name + ".cif"
         assert not os.path.exists(fNameIn) or options.force, "File exists: {0}. Use '--force' option to overwrite.".format(fNameIn)
