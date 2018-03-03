@@ -23,8 +23,9 @@ Install with pip3.
 ## Usage
 
     usage: genice [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqdypoc] [--water model] [--guest D=empty] [--nodep]
-                  [--debug] [--quiet]
+                  [--format gmeqdypoc] [--water model] [--guest D=empty]
+                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
+                  [--cation 3=Na] [--nodep] [--debug] [--quiet]
                   Type
     
     positional arguments:
@@ -45,7 +46,19 @@ Install with pip3.
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.)
       --guest D=empty, -g D=empty
-                            Specify guest in the cage. (D=empty, T=co2, etc.)
+                            Specify guest(s) in the cage type. (D=empty,
+                            T=co2*0.5+me*0.3, etc.)
+      --Guest 13=me, -G 13=me
+                            Specify guest in the specific cage. (13=me, 32=co2,
+                            etc.)
+      --Group 13=bu-:0, -H 13=bu-:0
+                            Specify the group. (-H 13=bu-:0, etc.)
+      --anion 3=Cl, -a 3=Cl
+                            Specify a monatomic anion that replaces a water
+                            molecule. (3=Cl, 39=F, etc.)
+      --cation 3=Na, -c 3=Na
+                            Specify a monatomic cation that replaces a water
+                            molecule. (3=Na, 39=NH4, etc.)
       --nodep               No depolarization.
       --debug, -D           Output debugging info.
       --quiet, -q           Do not output progress messages.
@@ -75,9 +88,6 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
 
-* You can retrieve a zeolite structure from [IZA structure database](http://www.iza-structure.org/databases).
-
-        genice zeolite[ITT] -r 1 1 1 > ITT.gro
 
 ## Basics
 
@@ -94,6 +104,24 @@ The program generates various ice lattice with proton disorder and without defec
 * To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
         genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
+
+## File conversion
+
+GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options. You can not only use GenIce to make a known ice structure but also use it to convert some file format to another.
+
+* If you want to load a .gro file named "cs1.gro' and output it in yaplot format with using tip5p water model, just type the following.
+
+        genice gromacs[cs1.gro:O:H] --format y --water tip5p > cs1.yap
+
+where O and H are the atom names of water defined in the input .gro file. You can use regular expression for hydrogen atom name.  If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+
+        genice gromacs[cs1.gro:O] --format y > cs1.yap
+
+* Some zeolites share the network topology with low-density ices. If you want to retrieve a zeolite ITT structure from [IZA structure database](http://www.iza-structure.org/databases) to prepare a low-density ice, try the following command:
+
+        genice zeolite[ITT] -r 1 1 1 > ITT.gro
+
+
 
 ## Clathrate hydrates
 

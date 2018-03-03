@@ -48,9 +48,6 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
 
-* You can retrieve a zeolite structure from [IZA structure database](http://www.iza-structure.org/databases).
-
-        genice zeolite[ITT] -r 1 1 1 > ITT.gro
 
 ## Basics
 
@@ -67,6 +64,24 @@ The program generates various ice lattice with proton disorder and without defec
 * To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
         genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
+
+## File conversion
+
+GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options. You can not only use GenIce to make a known ice structure but also use it to convert some file format to another.
+
+* If you want to load a .gro file named "cs1.gro' and output it in yaplot format with using tip5p water model, just type the following.
+
+        genice gromacs[cs1.gro:O:H] --format y --water tip5p > cs1.yap
+
+where O and H are the atom names of water defined in the input .gro file. You can use regular expression for hydrogen atom name.  If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+
+        genice gromacs[cs1.gro:O] --format y > cs1.yap
+
+* Some zeolites share the network topology with low-density ices. If you want to retrieve a zeolite ITT structure from [IZA structure database](http://www.iza-structure.org/databases) to prepare a low-density ice, try the following command:
+
+        genice zeolite[ITT] -r 1 1 1 > ITT.gro
+
+
 
 ## Clathrate hydrates
 
