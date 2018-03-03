@@ -8,8 +8,11 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 * Python 3
 * NetworkX
 * numpy
+* svgwrite
+* cif2ice
+* countrings
+* VPython (optional)
 
-Note: WinPython includes all of these requirements.
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
 Install with pip3.
@@ -73,9 +76,13 @@ GenIce is a modular program; it reads a unit cell data from a lattice plugin def
 
         genice gromacs[cs1.gro:O:H] --format y --water tip5p > cs1.yap
 
-where O and H are the atom names of water defined in the input .gro file. You can use regular expression for hydrogen atom name.  If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+where O and H are the atom names of water defined in the input .gro
+file. You can use regular expression for hydrogen atom name.  If you
+want to let genice ignore hydrogen bonds and assume them from
+positions of oxygen atoms, specify the atom name of oxygen only.
+`--asis` option preserve bond orientations.
 
-        genice gromacs[cs1.gro:O] --format y > cs1.yap
+        genice gromacs[cs1.gro:O] --format y --asis > cs1.yap
 
 * Some zeolites share the network topology with low-density ices. If you want to retrieve a zeolite ITT structure from [IZA structure database](http://www.iza-structure.org/databases) to prepare a low-density ice, try the following command:
 
@@ -219,7 +226,7 @@ one of the following paths.
 | MacOS | `~/Library/Application Support/GenIce/formats` |
 
 ## Ice structures
-<!-- rreferences removed. -->
+<!-- references removed. -->
 
 Symbol | Description
 -------|------------

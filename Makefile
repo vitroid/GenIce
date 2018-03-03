@@ -1,7 +1,7 @@
 all:
 	echo Hello.
 %: temp_% genice/__main__.py
-	genice -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
+	./genice.x -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
 %.rst: %.md
 	md2rst $<
 test:

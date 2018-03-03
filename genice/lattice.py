@@ -64,7 +64,8 @@ def orientations(coord, graph, cell):
                 vcomp = complement(vpred+vsucc)
                 logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
                 vsucc = (vsucc+vcomp)[:2]
-            logger.debug("Node {0} vsucc {1}".format(node,vsucc))    
+            logger.debug("Node {0} vsucc {1}".format(node,vsucc))
+            assert 2<=len(vsucc), "Probably a wrong ice network."
             y = vsucc[1] - vsucc[0]
             y /= np.linalg.norm(y)
             z = (vsucc[0] + vsucc[1]) / 2
@@ -342,6 +343,7 @@ class Lattice():
                  density=0,
                  rep=(1, 1, 1),
                  depolarize=True,
+                 asis=False,
                  cations=dict(),
                  anions=dict(),
                  spot_guests=dict(),
@@ -351,6 +353,7 @@ class Lattice():
         self.lattice_type = lattice_type
         self.rep         = rep
         self.depolarize  = depolarize
+        self.asis        = asis
         self.cations     = cations
         self.anions      = anions
         self.spot_guests = spot_guests
@@ -496,6 +499,9 @@ class Lattice():
         else:
             self.dopeIonsToUnitCell = None
         self.dopants = set()
+        # if asis, make pairs to be fixed.
+        if self.asis and len(self.fixed) == 0:
+            self.fixed = self.pairs
 
         # filled cages
         self.filled_cages = set()
@@ -643,7 +649,10 @@ class Lattice():
         make a true ice graph.
         """
         self.logger.info("Stage3: Bernal-Fowler rule.")
-        self.graph.purge_ice_defects()
+        if self.asis:
+            self.logger.info("  Skip applying the ice rule by request.")
+        else:
+            self.graph.purge_ice_defects()
         self.logger.info("Stage3: end.")
 
     def stage4(self):
@@ -651,7 +660,7 @@ class Lattice():
         depolarize.
         """
         self.logger.info("Stage4: Depolarization.")
-        if not self.depolarize:
+        if not self.depolarize or self.asis:
             self.logger.info("  Skip depolarization by request.")
             self.yapresult = ""
             self.spacegraph = dg.SpaceIceGraph(self.graph,
@@ -680,8 +689,8 @@ class Lattice():
         """
         self.logger.info("Stage5: Orientation.")
         # Add small noises to the molecular positions
-        self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)
-                                    * 0.01 - 0.005)
+        if not self.asis:
+            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(

@@ -76,9 +76,9 @@ test_prism7.ringtest:
 test_3xFAU.yap:
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot > $@           ;diff $(REFD)/$@ $@
 test_7.gro:
-	$(GENICE) 7 > $@
+	$(GENICE) 7 -r 2 2 2 > $@
 test_7.re.gro: test_7.gro
-	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 > $@           ;diff $(REFD)/$@ $@
+	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 --asis  > $@           ;diff $(REFD)/$@ $@
 	-$(GENICE) gromacs[$<:O]  --rep 1 1 1 > $@ # should fail
 	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
 test_MTN.gro:

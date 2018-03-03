@@ -93,7 +93,6 @@ def argparser(arg):
             # it only works when my module name is zeolite.
             URL = "http://www.iza-structure.org/IZA-SC/cif/"+name+".cif"
         fNameIn = name + ".cif"
-        assert not os.path.exists(fNameIn) or options.force, "File exists: {0}. Use '--force' option to overwrite.".format(fNameIn)
         assert validators.url(URL)
         download(URL, fNameIn)
     logger.info("Input: {0}".format(fNameIn))
