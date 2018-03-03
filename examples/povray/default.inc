@@ -1,4 +1,9 @@
 // -*- c++ -*-
+// The light source is placed at the center of lattice
+// (which corresponds to the center of the image.)
+// I used Adobe Illustrator to add the lens flare in the following cover picture.
+// http://onlinelibrary.wiley.com/doi/10.1002/jcc.v39.1/issuetoc
+
 #include "glass.inc"
 
 
@@ -56,7 +61,7 @@ global_settings {
 #end
 
 camera {
-  location <0, 10, 0>
+  location <0, 3, 0>
     look_at <0,0,0>
     sky z
     right x
@@ -65,7 +70,7 @@ camera {
     aperture 0.05    
     blur_samples 30
 #end
-    angle 90  //2.7
+    angle 45  //2.7
     }
 
 #declare INTOH = interior { ior 1.0 }

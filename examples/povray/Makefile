@@ -1,9 +1,9 @@
 GENICE=../../genice.x
-%.png: %.pov
+%.png: %.pov default.inc
 	povray +I$< +W400 +H400 +D +FN +O$@ 
 
-all: T.png
-T.pov:
-	$(GENICE) T -f povray -r 3 3 3 > T.pov
+all: 1h.png
+%.pov:
+	$(GENICE) $* -f povray -r 3 3 3 > $@
 clean:
-	rm T.*
+	rm 1h.*
