@@ -79,7 +79,8 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
-* With the aid of VPython, you can render and handle the ice structure directly in the web browser.
+* With the aid of VPython, you can render and handle the ice structure
+  directly in the web browser. (You must install VPython separately.)
 
         genice CS1 --format v
 
@@ -264,6 +265,9 @@ xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
+gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage. 
+zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
+cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it.
 
 Ice names with double quotations are not experimentally verified.
 
@@ -275,6 +279,10 @@ one of the following paths.
 |  | `./lattices`  |
 | Linux | `~/.github/GenIce/lattices` |
 | MacOS | `~/Library/Application Support/GenIce/lattices` |
+
+[cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
+cif file of zeolites from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
+module in the path above.
 
 Note: Some structures in different frameworks are identical.
 
