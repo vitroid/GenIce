@@ -36,3 +36,5 @@ tests/trash/*
 *.eps
 
 *.log
+
+*.svg

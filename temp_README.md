@@ -8,8 +8,11 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 * Python 3
 * NetworkX
 * numpy
+* svgwrite
+* cif2ice
+* countrings
+* VPython (optional)
 
-Note: WinPython includes all of these requirements.
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
 Install with pip3.
@@ -39,6 +42,16 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
+* With the aid of VPython, you can render and handle the ice structure
+  directly in the web browser. (You must install VPython separately.)
+
+        genice CS1 --format v
+
+* You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
+
+        genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
+
+
 ## Basics
 
 The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero (except the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
@@ -54,6 +67,28 @@ The program generates various ice lattice with proton disorder and without defec
 * To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
         genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
+
+## File conversion
+
+GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options. You can not only use GenIce to make a known ice structure but also use it to convert some file format to another.
+
+* If you want to load a .gro file named "cs1.gro' and output it in yaplot format with using tip5p water model, just type the following.
+
+        genice gromacs[cs1.gro:O:H] --format y --water tip5p --asis > cs1.yap
+
+where O and H are the atom names of water defined in the input .gro
+file. You can use regular expression for hydrogen atom name. `--asis`
+option avoids the network rearrangements. 
+
+If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+
+        genice gromacs[cs1.gro:O] --format y > cs1.yap
+
+* Some zeolites share the network topology with low-density ices. If you want to retrieve a zeolite ITT structure from [IZA structure database](http://www.iza-structure.org/databases) to prepare a low-density ice, try the following command:
+
+        genice zeolite[ITT] -r 1 1 1 > ITT.gro
+
+
 
 ## Clathrate hydrates
 
@@ -164,11 +199,11 @@ Name |Application | extension | water | solute | HB | remarks
 `cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
-`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o |
-`povray`      |Povray module | `.pov`     | Atomic positions | Atomic Positions | o | 
+`o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o | See tests/art/openscad for usage.
+`povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o |
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
@@ -176,6 +211,8 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`v`, `vpython`      |Direct visualization |     | Atomic positions | none | o | Display the structure in the browser using VPython.  You must install VPython separately. 
+`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
@@ -189,7 +226,7 @@ one of the following paths.
 | MacOS | `~/Library/Application Support/GenIce/formats` |
 
 ## Ice structures
-<!-- rreferences removed. -->
+<!-- references removed. -->
 
 Symbol | Description
 -------|------------
@@ -218,6 +255,9 @@ xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
+gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
+zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
+cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
 
 Ice names with double quotations are not experimentally verified.
 
@@ -229,6 +269,10 @@ one of the following paths.
 |  | `./lattices`  |
 | Linux | `~/.github/GenIce/lattices` |
 | MacOS | `~/Library/Application Support/GenIce/lattices` |
+
+[cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
+cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
+module in the path above.
 
 Note: Some structures in different frameworks are identical.
 

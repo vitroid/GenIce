@@ -1,18 +1,38 @@
 # Change log
 
-## 0.16 (develop)
+## 0.19 (develop), 0.20 (stable, release)
+
+* Added gromacs module as a lattice module in order to load a .gro
+file as an ice structure.
+* Added zeolite module as a lattice mofule.
+* Added cif module.
+* Added `--asis` option to use GenIce for file conversion.
+
+## 0.18
+
+* Direct graphical rendering with vpython.
+* Added polygonnal expression in yaplot output.
+* Added art examples for OpenSCAD format.
+
+## 0.17
+
+* svg_poly module.
+
+## 0.16
 
 * Ring phase statistics.
 * Radial Kirkwood G function.
 * Some plugins accept options using brackets.
 * Cell reshaper.
 * Added the current working path as a searchpath for the plugins.
+* Aeroice generator.
+* Accept the structure that does not obey the ice rules.
 
 ## 0.15.1
 
 * Bug fix in case the atomic number exceeds 100 000 in Gromacs format.
 
-## 0.15 (release)
+## 0.15
 
 * Simulation cell-related functions are separated to a module.
 

@@ -80,7 +80,7 @@ class Cell():
             """
             Put the vectors like following:
             cell = "ax 0 0 bx by 0 cx cy cz"
-            when you define a unit cell in Lattice/
+            when you define a unit cell in lattices/
             """
             if type(desc) is str:
                 desc = np.fromstring(desc, sep=" ")
