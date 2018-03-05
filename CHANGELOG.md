@@ -1,12 +1,20 @@
 # Change log
 
-## 0.18 (stable, release)
+## 0.19 (develop), 0.20 (stable, release)
+
+* Added gromacs module as a lattice module in order to load a .gro
+file as an ice structure.
+* Added zeolite module as a lattice mofule.
+* Added cif module.
+* Added `--asis` option to use GenIce for file conversion.
+
+## 0.18
 
 * Direct graphical rendering with vpython.
 * Added polygonnal expression in yaplot output.
 * Added art examples for OpenSCAD format.
 
-## 0.17 (develop)
+## 0.17
 
 * svg_poly module.
 
