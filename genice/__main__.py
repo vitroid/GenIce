@@ -6,12 +6,13 @@ import sys
 import argparse  as ap
 import logging
 from genice.importer import safe_import
-from genice import lattice
+from genice import lattice, __version__
 import random
 import numpy as np
 
 def getoptions():
-    parser = ap.ArgumentParser(description='')
+    parser = ap.ArgumentParser(description='', prog='genice')
+    parser.add_argument('--version', '-V', action='version', version='%(prog)s {0}'.format(__version__))
     parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=[1,1,1],
                         help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
     parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens', default=(-1,),
