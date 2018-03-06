@@ -81,7 +81,7 @@ GenIce is a modular program; it reads a unit cell data from a lattice plugin def
 file. You can use regular expression for hydrogen atom name. `--asis`
 option avoids the network rearrangements. 
 
-    If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+* If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
 
         genice gromacs[cs1.gro:O] --format y > cs1.yap
 
