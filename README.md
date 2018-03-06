@@ -25,11 +25,11 @@ Install with pip3.
     
 ## Usage
 
-    usage: genice.x [-h] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                    [--format gmeqdypoc] [--water model] [--guest D=empty]
-                    [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                    [--cation 3=Na] [--nodep] [--asis] [--debug] [--quiet]
-                    Type
+    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS] [--seed SEED]
+                  [--format gmeqdypoc] [--water model] [--guest D=empty]
+                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
+                  [--cation 3=Na] [--nodep] [--asis] [--debug] [--quiet]
+                  Type
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
@@ -38,6 +38,7 @@ Install with pip3.
     
     optional arguments:
       -h, --help            show this help message and exit
+      --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell in x,y, and z directions. [1,1,1]
       --dens DENS, -d DENS  Specify the ice density in g/cm3
