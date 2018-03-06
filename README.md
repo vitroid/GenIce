@@ -95,6 +95,7 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
 
+    (If you are using csh and descendants, you may need to escape `[` and `]` characters.)
 
 ## Basics
 
