@@ -226,6 +226,18 @@ one of the following paths.
 | Linux | `~/.github/GenIce/formats` |
 | MacOS | `~/Library/Application Support/GenIce/formats` |
 
+Internally, there are seven stages to generate an ice structure.
+
+1. Cell repetition.
+2. Random graph generation and replication.
+3. Apply ice rule.
+4. Depolarize.
+5. Determine orientations of the water molecules.
+6. Place atoms in water molecules.
+7. Place atoms in guests.
+
+In the format plugin, you define the hook functions that are invoked after processing each stage. 
+
 ## Ice structures
 <!-- references removed. -->
 

@@ -31,6 +31,9 @@ Install with pip3.
                   [--cation 3=Na] [--nodep] [--asis] [--debug] [--quiet]
                   Type
     
+    GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
+    (version 0.20.2)
+    
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
                             https://github.com/vitroid/GenIce for available ice
@@ -269,6 +272,18 @@ one of the following paths.
 |  | `./formats`  |
 | Linux | `~/.github/GenIce/formats` |
 | MacOS | `~/Library/Application Support/GenIce/formats` |
+
+Internally, there are seven stages to generate an ice structure.
+
+1. Cell repetition.
+2. Random graph generation and replication.
+3. Apply ice rule.
+4. Depolarize.
+5. Determine orientations of the water molecules.
+6. Place atoms in water molecules.
+7. Place atoms in guests.
+
+In the format plugin, you define the hook functions that are invoked after processing each stage. 
 
 ## Ice structures
 <!-- references removed. -->
