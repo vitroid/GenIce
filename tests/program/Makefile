@@ -7,7 +7,7 @@ REFD=ref
 all: test1.done   test2.done   test3.done   test4.done   test_2d.gro
 all: test_3.ar3a  test_4.ngph  test_5.nx3a  test_6.gro   test_7.mdv
 all: test_12.scad test_16.py   test_17.nx4a test_1c.ar3r test_CS1.cif
-all: test_CS2.cif test_HS1.xyz test_TS1.yap test_2dL.gro
+all: test_CS2.cif test_HS1.xyz test_TS1.yap test_2dL.gro test_7.mdva
 #all: test19.done
 all: test_1hreshape.py test_2D3.ringtest test_prism7.ringtest
 all: test_3xFAU.yap
@@ -46,6 +46,8 @@ test_6.gro:
 	$(GENICE) 6  --rep 2 2 4 --format g > $@                        ;diff $(REFD)/$@ $@
 test_7.mdv:
 	$(GENICE) 7  --rep 2 2 4 --format m > $@                        ;diff $(REFD)/$@ $@
+test_7.mdva:
+	$(GENICE) 7  --rep 2 2 4 --format mdv_au > $@                   ;diff $(REFD)/$@ $@
 test_12.scad:
 	$(GENICE) 12 --rep 2 2 3 --format o > $@                        ;diff $(REFD)/$@ $@
 test_16.py:

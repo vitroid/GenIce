@@ -51,6 +51,7 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
 
+    (If you are using csh and descendants, you may need to escape `[` and `]` characters.)
 
 ## Basics
 
@@ -76,11 +77,11 @@ GenIce is a modular program; it reads a unit cell data from a lattice plugin def
 
         genice gromacs[cs1.gro:O:H] --format y --water tip5p --asis > cs1.yap
 
-where O and H are the atom names of water defined in the input .gro
+    where O and H are the atom names of water defined in the input .gro
 file. You can use regular expression for hydrogen atom name. `--asis`
 option avoids the network rearrangements. 
 
-If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
+* If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
 
         genice gromacs[cs1.gro:O] --format y > cs1.yap
 
@@ -224,6 +225,18 @@ one of the following paths.
 |  | `./formats`  |
 | Linux | `~/.github/GenIce/formats` |
 | MacOS | `~/Library/Application Support/GenIce/formats` |
+
+Internally, there are seven stages to generate an ice structure.
+
+1. Cell repetition.
+2. Random graph generation and replication.
+3. Apply ice rule.
+4. Depolarize.
+5. Determine orientations of the water molecules.
+6. Place atoms in water molecules.
+7. Place atoms in guests.
+
+In the format plugin, you define the hook functions that are invoked after processing each stage. 
 
 ## Ice structures
 <!-- references removed. -->
