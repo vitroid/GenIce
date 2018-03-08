@@ -19,9 +19,9 @@ def hook5(lattice):
             s += "{0} {1} {2}\n".format(cellmat[0,d]*10,cellmat[1,d]*10,cellmat[2,d]*10)
     s += "@NX3A\n"
     s += "{0}\n".format(len(lattice.reppositions))
-    for i in range(len(lattice.reppositions)):
-        position = np.dot(lattice.reppositions[i],cellmat)*10   #in Angstrom
-        euler = rigid.quat2euler(rigid.rotmat2quat(lattice.rotmatrices[i].transpose()))
+    for pos,rot  in zip(lattice.reppositions, lattice.rotmatrices):
+        position = np.dot(pos,cellmat)*10   #in Angstrom
+        euler = rigid.quat2euler(rigid.rotmat2quat(rot.transpose()))
         s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f}\n".format(position[0],
                                                                             position[1],
                                                                             position[2],

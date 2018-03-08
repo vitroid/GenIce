@@ -49,16 +49,16 @@ def run(lattice, water_type="TIP3P", guests=[]):
         #molecule name, number of molecules, sites in a molecule, bonds in a molecule
         #last one is undefined i GenIce.
         s.append("{0:15}                {1:4}  {2:3}  {3:3}".format(gname, lattice.nGuestAtoms[gname], len(guest.sites), 0))
-        for i in range(len(lattice.guestAtoms[gname])):
-            molorder, resname, atomname, position = lattice.guestAtoms[gname][i]
+        for atom in lattice.guestAtoms[gname]:
+            molorder, resname, atomname, position = atom
             q = 0.0  #charge
             s.append("{0:4}  {1:8.4f}  {2:15.9f}  {3:15.9f}  {4:15.9f}".format(atomname,q,position[0],position[1],position[2]))
 
     #water
     water = safe_import("molecule", water_type)
     s.append("{0:15}                {1:4}  {2:3}  {3:3}".format(water_type, len(lattice.reppositions), len(water.sites), 0))
-    for i in range(len(lattice.atoms)):
-        molorder, resname, atomname, position = lattice.atoms[i]
+    for atom in lattice.atoms:
+        molorder, resname, atomname, position = atom
         q = 0.0
         s.append("{0:4}  {1:8.4f}  {2:15.9f}  {3:15.9f}  {4:15.9f}".format(atomname,q,position[0],position[1],position[2]))
 
