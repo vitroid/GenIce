@@ -1,12 +1,23 @@
 # Change log
 
-## 0.19 (develop), 0.20 (stable, release)
+
+## 0.20.2, 0.20.3  (stable, release)
+
+* Added --version option.
+* The version number is also shown in the usage.
+
+## 0.20.1
+
+* Atomic unit is supported in mdview format.
+
+## 0.19 (develop), 0.20
 
 * Added gromacs module as a lattice module in order to load a .gro
 file as an ice structure.
 * Added zeolite module as a lattice mofule.
 * Added cif module.
 * Added `--asis` option to use GenIce for file conversion.
+* Changed the default lattice repetition numbers from [2,2,2] to [1,1,1]
 
 ## 0.18
 
