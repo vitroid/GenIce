@@ -2487,7 +2487,6 @@ s 1.0580 1.0580 1.0529 1.1670 1.1690 1.1639
 #       genice gromacs[filename:Ow:Hw[12]]  Specify the names of O and H atoms. (Regexp is accepted.)
 #
 #
-#Command line: ../../analice.x test_7.gro -f yaplot
 y 4
 a 1
 

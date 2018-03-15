@@ -1,0 +1,4 @@
+clean:
+	-rm test* *~
+	-rm -rf sort_tmp
+	-rm *.cif

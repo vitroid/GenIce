@@ -2,7 +2,6 @@
 
 Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
 
-Command line: ../../genice.x 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1]
 Reshaping the unit cell.
   i:[ 1  1 -2]
   j:[ 1 -1  0]

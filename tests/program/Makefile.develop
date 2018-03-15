@@ -1,0 +1,12 @@
+BASE=../..
+GENICE=$(BASE)/genice.x
+ANALICE=$(BASE)/analice.x
+LIB=$(BASE)/genice
+FMT=$(LIB)/formats
+LTC=$(LIB)/lattices
+UTIL=.
+REFD=ref
+.DELETE_ON_ERROR:
+
+include Makefile.rules
+include Makefile.common
