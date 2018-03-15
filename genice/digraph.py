@@ -206,7 +206,7 @@ class IceGraph(networkx.DiGraph):
     def purgedefects(self, defects):
         d = defects[0]
         logger = logging.getLogger()
-        logger.debug(self.ignores)
+        # logger.debug(self.ignores)
         if d in self.ignores:
             defects.pop(0)
             return
