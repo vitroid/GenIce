@@ -28,7 +28,7 @@ def ArrangeAddress(xyz,grid):
 
 
 
-def pairlist(xyz,grid):
+def pairs(xyz,grid):
     logger = logging.getLogger()
     logger.debug("START Arrange")
     residents = ArrangeAddress(xyz,grid)
@@ -56,7 +56,7 @@ def pairlist(xyz,grid):
                                 yield a,b
 
 
-def pairlist_hetero(xyz,xyz2,grid):
+def pairs_hetero(xyz,xyz2,grid):
     logger = logging.getLogger()
     logger.debug("START Arrange")
     residents  = ArrangeAddress(xyz,grid)
@@ -82,9 +82,9 @@ def pairlist_hetero(xyz,xyz2,grid):
 
                                 
 #assume xyz and box are numpy.array
-def pairlist_fine(xyz,rc,cell,grid,distance=True):
+def pairs_fine(xyz,rc,cell,grid,distance=True):
     logger= logging.getLogger()
-    for i,j in pairlist(xyz,grid):
+    for i,j in pairs(xyz,grid):
         moli = xyz[i]
         molj = xyz[j]
         d = moli-molj
@@ -98,7 +98,7 @@ def pairlist_fine(xyz,rc,cell,grid,distance=True):
                 yield i,j
 
 
-def pairlist_crude(xyz,rc,cell,distance=True):
+def pairs_crude(xyz,rc,cell,distance=True):
     logger = logging.getLogger()
     logger.debug(xyz)
     logger.debug(rc)
@@ -123,9 +123,8 @@ def pairlist_crude(xyz,rc,cell,distance=True):
 
 
 #assume xyz and box are numpy.array
-def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
-    newpairs = []
-    for i,j in pairlist_hetero(xyz,xyz2,grid):
+def pairs_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
+    for i,j in pairs_hetero(xyz,xyz2,grid):
         moli = xyz[i]
         molj = xyz2[j]
         d = moli-molj
@@ -135,10 +134,9 @@ def pairlist_fine_hetero(xyz,xyz2,rc,cell,grid,distance=True):
             
         if rr < rc**2:
             if distance:
-                newpairs.append((i,j,math.sqrt(rr)))
+                yield i,j,math.sqrt(rr)
             else:
-                newpairs.append((i,j))
-    return newpairs
+                yield i,j
 
 
 #
@@ -188,10 +186,8 @@ def test():
     box = np.diag((4,4,4))
     rc = 1.000000001
     grid = determine_grid(box,rc)
-    pairs = pairlist_fine_hetero(xyz,xyz2,rc,box,grid)
-    for i,j,l in pairs:
+    for i,j,l in pairs_fine_hetero(xyz,xyz2,rc,box,grid):
         print(i,j,l)
-    print(len(pairs))
 
 if __name__ == "__main__":
     test()
