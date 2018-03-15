@@ -156,6 +156,13 @@ def main():
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Format: {0}".format(file_format))
         formatter = safe_import("format", file_format)
+        # Show the document of the module
+        try:
+            doc = formatter.__doc__.splitlines()
+        except:
+            doc = []
+        for line in doc:
+            logger.info("!!! {0}".format(line))
         lat = lattice.Lattice(lattice_type,
                               density=density,
                               rep=rep,
