@@ -6139,7 +6139,6 @@ union {
 //
 //[T] A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem, 2011, DOI:10.1021/ic102178d.
 //
-//Command line: ../../genice.x T --guest 12=g12 --rep 1 1 1 --format povray
   translate <-1.798, -1.798, -1.798> 
 }
 

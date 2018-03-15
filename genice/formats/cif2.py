@@ -55,8 +55,8 @@ _atom_site_fract_y
 _atom_site_fract_z
 _atom_site_type_symbol
 """
-    for i in range(len(lattice.atoms)):
-        molorder, resname, atomname, position, order = lattice.atoms[i]
+    for i, atom in enumerate(lattice.atoms):
+        molorder, resname, atomname, position, order = atom
         position = lattice.repcell.abs2rel(position)
         label = atomname+"{0}".format(i)
         s += "{4:>6}{1:10.4f}{2:10.4f}{3:10.4f}{0:>6}\n".format(atomname,position[0],position[1],position[2],label)

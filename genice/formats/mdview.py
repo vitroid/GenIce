@@ -19,8 +19,8 @@ def hook7(lattice):
     s += "-center 0 0 0\n"
     s += "-fold\n"
     s += "{0}\n".format(len(lattice.atoms))
-    for i in range(len(lattice.atoms)):
-        molorder, resname, atomname, position, order = lattice.atoms[i]
+    for atom in lattice.atoms:
+        molorder, resname, atomname, position, order = atom
         s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,*(position[:3]*conv))
     s = '#' + "\n#".join(lattice.doc) + "\n" + s
     print(s,end="")

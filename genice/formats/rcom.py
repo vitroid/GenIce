@@ -21,8 +21,8 @@ def hook1(lattice):
     s += "{0}\n".format(len(lattice.reppositions))
     for rpos in lattice.reppositions:
         s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(rpos[0],
-                                                rpos[1],
-                                                rpos[2])
+                                                   rpos[1],
+                                                   rpos[2])
     s = "\n".join(lattice.doc) + "\n" + s
     print(s,end="")
     lattice.logger.info("Hook1: end.")
