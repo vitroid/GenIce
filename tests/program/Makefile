@@ -1,5 +1,6 @@
 BASE=../..
 GENICE=$(BASE)/genice.x
+ANALICE=$(BASE)/analice.x
 LIB=$(BASE)/genice
 FMT=$(LIB)/formats
 UTIL=.
@@ -17,6 +18,8 @@ all: test_T.pov
 all: test_7.re.gro
 all: test_MTN.gro test_MTN.re.gro
 all: test_ITT.gro
+all: test_7.analice.yap
+all: test_2D3.analice.yap
 
 clean:
 	-rm test* *~
@@ -85,9 +88,15 @@ test_7.re.gro: test_7.gro $(FMT)/gromacs.py
 	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 --asis  > $@           ;diff $(REFD)/$@ $@
 	-$(GENICE) gromacs[$<:O]  --rep 1 1 1 > $@ # should fail
 	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
-test_MTN.gro: $(FMT)/gromacs.py
+test_MTN.gro: $(FMT)/zeolite.py
 	$(GENICE) zeolite[MTN] --rep 1 1 1 > $@
-test_MTN.re.gro: MTN.cif $(FMT)/gromacs.py
+test_MTN.re.gro: MTN.cif $(FMT)/cif.py
 	$(GENICE) cif[MTN.cif] --rep 1 1 1 > $@                     ;diff $(REFD)/$@ $@
-test_ITT.gro: $(FMT)/gromacs.py
+test_ITT.gro: $(FMT)/zeolite.py
 	$(GENICE) zeolite[ITT] --rep 1 1 1 > $@                     ;diff $(REFD)/$@ $@
+test_7.analice.yap: test_7.gro $(FMT)/gromacs.py
+	$(ANALICE) $< -f yaplot > $@                                ;diff $(REFD)/$@ $@
+test_2D3.gro: $(FMT)/gromacs.py
+	$(GENICE) 2D3 -r 4 4 1 > $@
+test_2D3.analice.yap: test_2D3.gro $(FMT)/gromacs.py
+	$(ANALICE) $< -f yaplot > $@                                ;diff $(REFD)/$@ $@

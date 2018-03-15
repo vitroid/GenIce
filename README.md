@@ -32,7 +32,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 0.20.3)
+    (version 0.21)
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
@@ -239,6 +239,22 @@ Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, 
 *Under preparation*
 
 It is more convenient if the lattice of the semiclathrate hydrate contains molecular ions in the appropriate locations in advance.  Here we explain the way to make the special module for semclathrates.
+
+## AnalIce command
+
+AnalIce is a variant of GenIce. AnalIce reads a Gromacs file and do not modify the molecular orientation or the hydrogen bond network topology.  AnalIce is prepared to use it for structure analysis.
+
+For example, if you want to see the ring statistic of a given `.gro` file, use like this:
+
+
+    analice input.gro -f _ring
+	
+If you want to replace water model from the original three-site one (described as OW, HW1, and HW2) to TIP4P-like four-site model, try
+
+    analice input.gro -O OW -H HW[12] -w tip4p 
+
+All the output formats are also available for AnalIce.
+
 
 ## Output formats
 

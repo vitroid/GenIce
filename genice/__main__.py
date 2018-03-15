@@ -47,17 +47,17 @@ def getoptions():
 
 
 def getoptions_analice():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice')
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice')
     parser.add_argument('--version', '-V', action='version', version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens', default=(-1,),
-                        help='Specify the ice density in g/cm3')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="O",
+                        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
+    parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="OW",
+                        default="O",
                         help='Specify atom name of oxygen in input Gromacs file. ("O")')
-    parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="H",
+    parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
+                        default="H",
                         help='Specify atom name of hydrogen in input Gromacs file. ("H")')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
