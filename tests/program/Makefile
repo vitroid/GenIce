@@ -1,8 +1,8 @@
 all:
 	echo Try \"make test_installed\".
 test_installed:
-	make -f Makefile.installed
+	make -f Makefile.installed -j 8
 test_develop:
-	make -f Makefile.develop
+	make -f Makefile.develop -j 8
 
 include Makefile.common
