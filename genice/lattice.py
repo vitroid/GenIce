@@ -358,6 +358,8 @@ class Lattice():
         self.anions      = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+        if lattice_type is None:
+            return
         lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
@@ -368,6 +370,14 @@ class Lattice():
         self.doc.append("Command line: {0}".format(" ".join(sys.argv)))
         for line in self.doc:
             self.logger.info("!!! {0}".format(line))
+        # ================================================================
+        # rotmatrices (analice)
+        #
+        try:
+            self.rotmatrices = lat.rotmat
+        except:
+            self.logger.info("No rotmatrices in lattice")
+            pass
         # ================================================================
         # waters: positions of water molecules
         #
@@ -521,7 +531,7 @@ class Lattice():
                               "Ethyl-": ethyl}
 
 
-    def format(self, water_type, guests, formatter):
+    def generate_ice(self, water_type, guests, formatter):
         if 0 in formatter.hooks:
             formatter.hooks[0](self)
         if max(0,*formatter.hooks.keys()) < 1:
@@ -560,10 +570,60 @@ class Lattice():
         if 7 in formatter.hooks:
             formatter.hooks[7](self)
 
+
+    def analize_ice(self, water_type, formatter):
+        """
+        Protocol for analice
+        """
+        if 0 in formatter.hooks:
+            formatter.hooks[0](self)
+        if max(0,*formatter.hooks.keys()) < 1:
+            return
+        self.stage1_analice()
+        if 1 in formatter.hooks:
+            formatter.hooks[1](self)
+        if max(0,*formatter.hooks.keys()) < 2:
+            return
+        # res = self.stage2_analice()
+        if 2 in formatter.hooks:
+            formatter.hooks[2](self)
+        if max(0,*formatter.hooks.keys()) < 3:
+            return
+        # self.stage3_analice()
+        if 3 in formatter.hooks:
+            formatter.hooks[3](self)
+        if max(0,*formatter.hooks.keys()) < 4:
+            return
+        self.stage4_analice()
+        if 4 in formatter.hooks:
+            formatter.hooks[4](self)
+        if max(0,*formatter.hooks.keys()) < 5:
+            return
+        self.stage5_analice()
+        if 5 in formatter.hooks:
+            formatter.hooks[5](self)
+        if max(0,*formatter.hooks.keys()) < 6:
+            return
+        self.stage6_analice(water_type)
+        if 6 in formatter.hooks:
+            formatter.hooks[6](self)
+        if max(0,*formatter.hooks.keys()) < 7:
+            return
+        # self.stage7_analice(guests)
+        if 7 in formatter.hooks:
+            formatter.hooks[7](self)
+            
         
     def stage1(self):
         """
-        replicate water molecules to make a repeated cell
+        Replicate water molecules to make a repeated cell
+
+        Provided variables:
+        repposition: replicated molecular positions (CoM, relative)
+        repcell:     replicated simulation cell shape matrix
+        repcagetype: replicated cage types array
+        repcagepos:  replicated cage positions (CoM, relative)
+        cagetypes:   set of cage types
         """
         self.logger.info("Stage1: Replication.")
         self.reppositions = replicate_positions(self.waters, self.rep)
@@ -594,7 +654,13 @@ class Lattice():
 
     def stage2(self):
         """
-        make a random graph and replicate.
+        Make a random graph and replicate.
+
+        Provided variables:
+        dopants:
+        groups:  replicated positions of the chemical groups (CoM, relative)
+        filled_cages:
+        graph:   replicated network topology (bond orientation may be random)
         """
         self.logger.info("Stage2: Graph preparation.")
         # Some edges are directed when ions are doped.
@@ -646,7 +712,10 @@ class Lattice():
 
     def stage3(self):
         """
-        make a true ice graph.
+        Make a true ice graph.
+
+        Provided variables:
+        graph: network obeying B-F rule.
         """
         self.logger.info("Stage3: Bernal-Fowler rule.")
         if self.asis:
@@ -657,7 +726,11 @@ class Lattice():
 
     def stage4(self):
         """
-        depolarize.
+        Depolarize.
+
+        Provided variables:
+        spacegraph: depolarized network with node positions.
+        yapresult:  Animation of the depolarization process in YaPlot format.
         """
         self.logger.info("Stage4: Depolarization.")
         if not self.depolarize or self.asis:
@@ -685,7 +758,11 @@ class Lattice():
 
     def stage5(self):
         """
-        orientations for rigid molecules.
+        Prepare orientations for rigid molecules.
+
+        Provided variables:
+        reppositions: molecular positions with random noise.
+        rotmatrices:  rotation matrices for water molecules
         """
         self.logger.info("Stage5: Orientation.")
         # Add small noises to the molecular positions
@@ -703,7 +780,10 @@ class Lattice():
 
     def stage6(self, water_type):
         """
-        arrange water atoms and replacements
+        Arrange water atoms and replacements
+
+        Provided variables:
+        atoms: atomic positions of water molecules. (absolute)
         """
         self.logger.info("Stage6: Atomic positions of water.")
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
@@ -720,7 +800,10 @@ class Lattice():
 
     def stage7(self, guests):
         """
-        arrange guest atoms
+        Arrange guest atoms
+
+        Provided variables:
+        atoms: atomic positions of all molecules.
         """
         self.logger.info("Stage7: Atomic positions of the guest.")
         if self.cagepos is not None:
@@ -822,6 +905,9 @@ class Lattice():
         self.logger.info("Stage7: end.")
 
 
+
+        
+        
     def prepare_random_graph(self, fixed):
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
@@ -914,3 +1000,82 @@ class Lattice():
 
     def __del__(self):
         self.logger.info("Completed.")
+
+
+    def stage1_analice(self):
+        """
+        Do nothing.
+
+        Provided variables:
+        repposition: replicated molecular positions (CoM, relative)
+        repcell:     replicated simulation cell shape matrix
+        """
+        self.logger.info("Stage1: (...)")
+        self.reppositions = self.waters
+        # This must be done before the replication of the cell.
+        self.logger.info("  Number of water molecules: {0}".format(
+            len(self.reppositions)))
+        # self.graph = self.prepare_random_graph(self.fixed)
+        self.graph = self.prepare_random_graph(self.pairs)
+        # scale the cell
+        self.repcell = Cell(self.cell)
+        # self.repcell.scale2(self.rep)
+
+        self.logger.info("Stage1: end.")
+
+
+
+    def stage4_analice(self):
+        """
+        Depolarize.
+
+        Provided variables:
+        spacegraph: depolarized network with node positions.
+        yapresult:  Animation of the depolarization process in YaPlot format.
+        """
+        self.logger.info("Stage4: (...)")
+        self.yapresult = ""
+        self.spacegraph = dg.SpaceIceGraph(self.graph,
+                                           coord=self.reppositions,
+                                           ignores=self.graph.ignores)
+        self.logger.info("Stage4: end.")
+
+    def stage5_analice(self):
+        """
+        Prepare orientations for rigid molecules.
+
+        Provided variables:
+        rotmatrices:  rotation matrices for water molecules
+        """
+        self.logger.info("Stage5: Orientation.")
+        # determine the orientations of the water molecules based on edge
+        # directions.
+        #self.rotmatrices = orientations(
+        #    self.reppositions, self.spacegraph, self.repcell)
+
+        # Activate it.
+        # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
+        # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
+        self.logger.info("Stage5: end.")
+
+    def stage6_analice(self, water_type):
+        """
+        Arrange water atoms and replacements
+
+        Provided variables:
+        atoms: atomic positions of water molecules. (absolute)
+        """
+        self.logger.info("Stage6: Atomic positions of water.")
+        # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
+        # water = importlib.import_module("genice.molecules."+water_type)
+        water = safe_import("molecule", water_type)
+        self.atoms = arrange_atoms(self.reppositions,
+                                   self.repcell,
+                                   self.rotmatrices,
+                                   water.sites,
+                                   water.labels,
+                                   water.name,
+                                   ignores=set(self.dopants))
+        self.logger.info("Stage6: end.")
+
+        

@@ -8,7 +8,9 @@ Usage: genice gromacs[filename]            Regards Ow and Hw to be of a water mo
        genice gromacs[filename:Ow:Hw[12]]  Specify the names of O and H atoms. (Regexp is accepted.)
 
 """
-
+#
+# For developer: This plugin is also used in analice. Be careful when you modify it.
+#
 
 import numpy as np
 import re
@@ -17,6 +19,8 @@ import genice.pairlist as pl
 
 def argparser(arg):
     global waters, cell, celltype, coord, density, pairs
+    # additional for analice
+    global rotmat
     logger = logging.getLogger()
     args = arg.split(":")
     assert 0 < len(args) <= 3, __doc__
@@ -67,6 +71,19 @@ def argparser(arg):
         # relative coord
         rh = [np.dot(x, celli) for x in hatoms]
         ro = [np.dot(x, celli) for x in waters]
+        # rotmatrices for analice
+        rotmat = []
+        for i in range(len(waters)):
+            o = waters[i]
+            h0, h1 = hatoms[i*2:i*2+2]
+            h0 -= o
+            h1 -= o
+            y = h1 - h0
+            y /= np.linalg.norm(y)
+            z = h0+h1
+            z /= np.linalg.norm(z)
+            x = np.cross(y,z)
+            rotmat.append(np.vstack([x,y,z]))
         grid = pl.determine_grid(cell, 0.245)
         pairs0 = pl.pairlist_fine_hetero(ro, rh, 0.245, cell, grid, distance=False)
         # remove intramolecular OHs
@@ -85,5 +102,5 @@ def argparser(arg):
     
     
 
-# default. Do nothing (leading to an error).
+# default. Do nothing (missing arguments lead to an error).
 

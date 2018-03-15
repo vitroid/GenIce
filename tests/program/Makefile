@@ -67,7 +67,7 @@ test_HS1.xyz: $(FMT)/xyz.py
 	$(GENICE) HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz > $@; diff $(REFD)/$@ $@
 test_TS1.yap: $(FMT)/yaplot.py
 	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot > $@ ;diff $(REFD)/$@ $@
-test_T.po: $(FMT)/povray.py
+test_T.pov: $(FMT)/povray.py
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray > $@   ;diff $(REFD)/$@ $@
 test_2dL.gro: $(FMT)/gromacs.py
 	$(GENICE) 2d --rep 8 8 8 > $@
