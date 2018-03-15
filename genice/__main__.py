@@ -46,6 +46,28 @@ def getoptions():
     return parser.parse_args()
 
 
+def getoptions_analice():
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice')
+    parser.add_argument('--version', '-V', action='version', version='%(prog)s {0}'.format(__version__))
+    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
+                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
+    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
+                        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
+    parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="OW",
+                        default="O",
+                        help='Specify atom name of oxygen in input Gromacs file. ("O")')
+    parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
+                        default="H",
+                        help='Specify atom name of hydrogen in input Gromacs file. ("H")')
+    parser.add_argument('--debug', '-D', action='store_true', dest='debug',
+                        help='Output debugging info.')
+    parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
+                        help='Do not output progress messages.')
+    parser.add_argument('File', nargs=1,
+                       help='Gromacs file.')
+    return parser.parse_args()
+
+
         
 
 def main():
@@ -69,7 +91,12 @@ def main():
 
 
     #Parse options
-    options = getoptions()
+    if sys.argv[0].find("analice") >= 0:
+        options = getoptions_analice()
+        mode    = "analice"
+    else:
+        options = getoptions()
+        mode    = "genice"
 
     
     #Set verbosity level
@@ -85,63 +112,83 @@ def main():
                             format="%(levelname)s %(message)s")
     logger = logging.getLogger()
     logger.debug("Debug mode.")
-    logger.debug(options.Type)
 
-    water_type   = options.water[0]
-    guests       = options.guests
-    lattice_type = options.Type[0]
-    file_format  = options.format[0]
-    seed         = options.seed[0]
-    rep          = options.rep
-    density      = options.dens[0]
-    depolarize   = not options.nodep
-    asis         = options.asis
-    anions = dict()
-    if options.anions is not None:
-        logger.info(options.anions)
-        for v in options.anions:
-            key, value = v[0].split("=")
-            anions[int(key)] = value
-    cations = dict()
-    if options.cations is not None:
-        for v in options.cations:
-            key, value = v[0].split("=")
-            cations[int(key)] = value
-    spot_guests = dict()
-    if options.spot_guests is not None:
-        for v in options.spot_guests:
-            key, value = v[0].split("=")
-            spot_guests[int(key)] = value
-    groups = dict()
-    if options.groups is not None:
-        for v in options.groups:
-            key, value = v[0].split("=")
-            groups[int(key)] = value
+    if mode == "genice":
+        logger.debug(options.Type)
 
-    del options  # Dispose for safety.
-    # Set random seeds
-    random.seed(seed)
-    np.random.seed(seed)
+        water_type   = options.water[0]
+        guests       = options.guests
+        lattice_type = options.Type[0]
+        file_format  = options.format[0]
+        seed         = options.seed[0]
+        rep          = options.rep
+        density      = options.dens[0]
+        depolarize   = not options.nodep
+        asis         = options.asis
+        anions = dict()
+        if options.anions is not None:
+            logger.info(options.anions)
+            for v in options.anions:
+                key, value = v[0].split("=")
+                anions[int(key)] = value
+        cations = dict()
+        if options.cations is not None:
+            for v in options.cations:
+                key, value = v[0].split("=")
+                cations[int(key)] = value
+        spot_guests = dict()
+        if options.spot_guests is not None:
+            for v in options.spot_guests:
+                key, value = v[0].split("=")
+                spot_guests[int(key)] = value
+        groups = dict()
+        if options.groups is not None:
+            for v in options.groups:
+                key, value = v[0].split("=")
+                groups[int(key)] = value
+
+        del options  # Dispose for safety.
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
     
-    logger.debug("Lattice: {0}".format(lattice_type))
-    # Main part of the program is contained in th Formatter object. (See formats/)
-    logger.debug("Format: {0}".format(file_format))
-    formatter = safe_import("format", file_format)
-    lat = lattice.Lattice(lattice_type,
-                          density=density,
-                          rep=rep,
-                          depolarize=depolarize,
-                          asis=asis,
-                          cations=cations,
-                          anions=anions,
-                          spot_guests=spot_guests,
-                          spot_groups=groups,
-                          )
-    # These arguments should also be in lattice, not in run()
-    lat.format(water_type=water_type,
-                guests=guests,
-                formatter=formatter
-                )
+        logger.debug("Lattice: {0}".format(lattice_type))
+        # Main part of the program is contained in th Formatter object. (See formats/)
+        logger.debug("Format: {0}".format(file_format))
+        formatter = safe_import("format", file_format)
+        lat = lattice.Lattice(lattice_type,
+                              density=density,
+                              rep=rep,
+                              depolarize=depolarize,
+                              asis=asis,
+                              cations=cations,
+                              anions=anions,
+                              spot_guests=spot_guests,
+                              spot_groups=groups,
+        )
+        lat.generate_ice(water_type=water_type,
+                   guests=guests,
+                   formatter=formatter
+        )
+    else: #analice
+        logger.debug(options.File)
+
+        water_type   = options.water[0]
+        file_format  = options.format[0]
+        oname        = "O"
+        hname        = "H"
+        filename     = options.File[0]
+        
+        del options  # Dispose for safety.
+    
+        # Main part of the program is contained in th Formatter object. (See formats/)
+        logger.debug("Format: {0}".format(file_format))
+        formatter = safe_import("format", file_format)
+        # reuse gromacs plugin to load the file.
+        s = "gromacs[{0}:{1}:{2}]".format(filename,oname,hname)
+        lat = lattice.Lattice(lattice_type=s)
+        lat.analize_ice(water_type=water_type,
+                        formatter=formatter)
     
 if __name__ == "__main__":
     main()

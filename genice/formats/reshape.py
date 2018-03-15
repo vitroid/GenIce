@@ -100,6 +100,10 @@ def hook1(lattice):
     # Let x axis of the newcell be along e1
     # and let y axis of the newcell be on the e1-e2 plane.
     regcell = np.dot(newcell, RI)
+    a = (-torr < regcell)
+    b = (regcell < torr)
+    c = a & b
+    regcell[c] = 0.0
 
     # header
     s = ""

@@ -2,7 +2,6 @@
 
 Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
 
-Command line: ../../genice.x 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1]
 Reshaping the unit cell.
   i:[ 1  1 -2]
   j:[ 1 -1  0]
@@ -11,7 +10,7 @@ Reshaping the unit cell.
 bondlen=2.9903306849378937
 coord='relative'
 celltype='triclinic'
-cell='21.02157236 0.00000000 -0.00000000 0.33878416 10.73112586 -0.00000000 -2.28553297 0.73581077 -13.82625855 '
+cell='21.02157236 0.00000000 0.00000000 0.33878416 10.73112586 0.00000000 -2.28553297 0.73581077 -13.82625855 '
 density=0.92
 waters="""
     0.9446    0.9625    0.2621

@@ -7,7 +7,6 @@ Data source:
 [CS2] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 [MTN] http://www.iza-structure.org/databases/
 
-Command line: ../../genice.x 16 --rep 1 1 2 --format p
 Reshaping the unit cell.
   i:[1 0 0]
   j:[0 1 0]

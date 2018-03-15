@@ -35,15 +35,12 @@ setup(name='GenIce',
                 'genice.formats',
                 ],
       # install_requires=['numpy', 'networkx', 'countrings>=0.1.4', 'svgwrite', 'vpython'],
-      install_requires=['numpy', 'networkx', 'countrings>=0.1.4', 'svgwrite', 'cif2ice>=0.2'],
+      install_requires=['numpy', 'networkx>=2', 'countrings>=0.1.4', 'svgwrite', 'cif2ice>=0.2'],
       entry_points = {
               'console_scripts': [
-                  'genice = genice.__main__:main'
+                  'genice = genice.__main__:main',
+                  'analice = genice.__main__:main'
               ]
           }
-#      entry_points="""
-#      [console_scripts]
-#      genice = genice.__main__:main
-#      """
       )
 

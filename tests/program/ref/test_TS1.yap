@@ -6085,7 +6085,6 @@ s 2.2460 0.9403 0.5563 2.2491 0.9453 0.7345
 #[sIII] Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.
 #[TS1] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 #
-#Command line: ../../genice.x TS1 --guest 12=g12 --rep 1 1 2 --format yaplot
 y 4
 a 1
 @ 4
