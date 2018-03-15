@@ -1,7 +1,6 @@
 
 Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
 
-Command line: ../../genice.x 4 --rep 2 2 3 --format d
 @NGPH
 576
 241 146
