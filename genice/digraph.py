@@ -366,11 +366,9 @@ def find_apsis(coord, cell, distance, vertex, axis):
     #for Z case
     apsis = coord[vertex] + axis*0.5
     #find the atoms near the apsis
-    pairs = pl.pairlist_fine_hetero([apsis,], coord, distance, cell, grid, distance=True)
-    logger.debug("Neighbors of the apsis: {0}".format(pairs))
     min_d = 1e99
     min_a = -1
-    for i,j,d in pairs:
+    for i,j,d in pl.pairs_fine_hetero([apsis,], coord, distance, cell, grid, distance=True):
         if d < min_d:
             min_a = j
             min_d = d

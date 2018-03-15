@@ -85,10 +85,9 @@ def argparser(arg):
             x = np.cross(y,z)
             rotmat.append(np.vstack([x,y,z]))
         grid = pl.determine_grid(cell, 0.245)
-        pairs0 = pl.pairlist_fine_hetero(ro, rh, 0.245, cell, grid, distance=False)
         # remove intramolecular OHs
         pairs = []
-        for o,h in pairs0:
+        for o,h in pl.pairs_fine_hetero(ro, rh, 0.245, cell, grid, distance=False):
             if h == o*2 or h == o*2+1:
                 # adjust oxygen positions
                 dh = rh[h] - ro[o]

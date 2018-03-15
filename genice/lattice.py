@@ -599,12 +599,12 @@ class Lattice():
             formatter.hooks[4](self)
         if max(0,*formatter.hooks.keys()) < 5:
             return
-        self.stage5_analice()
+        # self.stage5_analice()
         if 5 in formatter.hooks:
             formatter.hooks[5](self)
         if max(0,*formatter.hooks.keys()) < 6:
             return
-        self.stage6_analice(water_type)
+        self.stage6(water_type)
         if 6 in formatter.hooks:
             formatter.hooks[6](self)
         if max(0,*formatter.hooks.keys()) < 7:
@@ -917,11 +917,11 @@ class Lattice():
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
             assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            self.pairs = [v for v in pl.pairlist_fine(
+            self.pairs = [v for v in pl.pairs_fine(
                 self.waters, self.bondlen, self.cell.mat, grid, distance=False)]
             # Check using a simpler algorithm.
             if self.logger.level <= logging.DEBUG:
-                pairs2 = [v for v in pl.pairlist_crude(
+                pairs2 = [v for v in pl.pairs_crude(
                     self.waters, self.bondlen, self.cell.mat, distance=False)]
                 self.logger.debug("pairs: {0}".format(len(self.pairs)))
                 self.logger.debug("pairs2: {0}".format(len(pairs2)))
@@ -1040,42 +1040,6 @@ class Lattice():
                                            ignores=self.graph.ignores)
         self.logger.info("Stage4: end.")
 
-    def stage5_analice(self):
-        """
-        Prepare orientations for rigid molecules.
 
-        Provided variables:
-        rotmatrices:  rotation matrices for water molecules
-        """
-        self.logger.info("Stage5: Orientation.")
-        # determine the orientations of the water molecules based on edge
-        # directions.
-        #self.rotmatrices = orientations(
-        #    self.reppositions, self.spacegraph, self.repcell)
-
-        # Activate it.
-        # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
-        # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
-        self.logger.info("Stage5: end.")
-
-    def stage6_analice(self, water_type):
-        """
-        Arrange water atoms and replacements
-
-        Provided variables:
-        atoms: atomic positions of water molecules. (absolute)
-        """
-        self.logger.info("Stage6: Atomic positions of water.")
-        # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
-        # water = importlib.import_module("genice.molecules."+water_type)
-        water = safe_import("molecule", water_type)
-        self.atoms = arrange_atoms(self.reppositions,
-                                   self.repcell,
-                                   self.rotmatrices,
-                                   water.sites,
-                                   water.labels,
-                                   water.name,
-                                   ignores=set(self.dopants))
-        self.logger.info("Stage6: end.")
 
         
