@@ -182,8 +182,8 @@ def main():
 
         water_type   = options.water[0]
         file_format  = options.format[0]
-        oname        = "O"
-        hname        = "H"
+        oname        = options.oatom[0]
+        hname        = options.hatom[0]
         filename     = options.File[0]
         
         del options  # Dispose for safety.
