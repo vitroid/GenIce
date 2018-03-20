@@ -790,6 +790,12 @@ class Lattice():
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
         # water = importlib.import_module("genice.molecules."+water_type)
         water = safe_import("molecule", water_type)
+        try:
+            mdoc = water.__doc__.splitlines()
+        except:
+            mdoc = []
+        for line in mdoc:
+            logger.info("!!! {0}".format(line))
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
                                    self.rotmatrices,
@@ -886,6 +892,12 @@ class Lattice():
             # molecular guests
             for molec, cages in molecules.items():
                 gmol = safe_import("molecule", molec)
+                try:
+                    mdoc = gmol.__doc__.splitlines()
+                except:
+                    mdoc = []
+                for line in mdoc:
+                    logger.info("!!! {0}".format(line))
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
