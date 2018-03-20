@@ -1,3 +1,4 @@
+import colorsys
 
 def plaintext(a):
     s = ""
@@ -56,3 +57,16 @@ def NewPage():
     return "\n"
 
 
+def RandomPalettes(N, offset=10):
+    omega = (5**0.5 - 1)/2
+    s = ""
+    for i in range(N):
+        hue = (omega * i) % 1.0
+        sat = 0.5
+        bri = 1.0
+        r,g,b = colorsys.hsv_to_rgb(hue, sat, bri)
+        r = int(r*255)
+        g = int(g*255)
+        b = int(b*255)
+        s += SetPalette(i+offset, r,g,b)
+    return s
