@@ -766,8 +766,9 @@ class Lattice():
         """
         self.logger.info("Stage5: Orientation.")
         # Add small noises to the molecular positions
-        if not self.asis:
-            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
+        # Will be removed in v0.24.
+        # if not self.asis:
+        #     self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
