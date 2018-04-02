@@ -10,8 +10,8 @@ import networkx
 import random
 import numpy as np
 import logging
+import pairlist as pl
 from genice import yaplotlib as yp
-from genice import pairlist as pl
 
 #Dijkstra
 
@@ -361,17 +361,19 @@ class SpaceIceGraph(IceGraph):
 
 def find_apsis(coord, cell, distance, vertex, axis):
     logger = logging.getLogger()
-    grid = pl.determine_grid(cell, distance)
-    logger.debug("Grid: {0}".format(grid))
     #for Z case
     apsis = coord[vertex] + axis*0.5
     #find the atoms near the apsis
-    min_d = 1e99
+    min_r = 1e99
     min_a = -1
-    for i,j,d in pl.pairs_fine_hetero([apsis,], coord, distance, cell, grid, distance=True):
-        if d < min_d:
-            min_a = j
-            min_d = d
+    for i,p in enumerate(coord):
+        d = p - apsis
+        d -= np.floor(d + 0.5)
+        a = np.dot(d, cell)
+        r = np.dot(a,a)
+        if r < min_r:
+            min_a = i
+            min_r = r
     return min_a
         
 

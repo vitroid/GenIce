@@ -7,9 +7,9 @@ from math import sin, cos, pi
 from collections import Iterable, defaultdict
 
 import numpy as np
+import pairlist as pl
 
 from genice.importer import safe_import
-from genice import pairlist as pl
 from genice import digraph as dg
 from genice import rigid
 from genice.cells import rel_wrap, Cell

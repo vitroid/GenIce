@@ -9,9 +9,9 @@ from collections import defaultdict
 
 #non-standard libs
 import numpy as np
+import pairlist as pl
 
 #genice libs
-from genice import pairlist as pl
 from genice.lattice import flatten
 
 def shortest_distance(atoms, cell):
