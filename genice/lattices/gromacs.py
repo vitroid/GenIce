@@ -88,7 +88,8 @@ def argparser(arg):
         # remove intramolecular OHs
         pairs = []
         logger.debug("  Make pair list.")
-        for o,h in pl.pairs_fine_hetero(ro, rh, 0.245, cell, grid, distance=False):
+        os,hs = pl.pairs_fine_hetero(ro, rh, 0.245, cell, grid, distance=False):
+        for o,h in zip(os,hs):
             if h == o*2 or h == o*2+1:
                 # adjust oxygen positions
                 dh = rh[h] - ro[o]
