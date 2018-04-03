@@ -99,10 +99,10 @@ def tetrahedra(pairs, rc, coord, cell):
 
 def toWater(coord, cell):
     logger = logging.getLogger()
-    dmin  = shortest_distance(coord,cell)
-    j0, j1 = pl.pairs_crude(coord, dmin*1.4, cell, distance=False)
-    pairs = [v for v in zip(j0,j1)]
-    for vtet, dtet in tetrahedra(pairs, dmin*1.4, coord, cell):
+    dmin  = shortest_distance(coord,cell)*1.4
+    grid  = pl.determine_grid(cell, dmin)
+    pairs = pl.pairs_fine(coord, dmin, cell, grid, distance=False)
+    for vtet, dtet in tetrahedra(pairs, dmin, coord, cell):
         p = dtet[0] + (dtet[1] + dtet[2] + dtet[3])/4
         p -= np.floor( p )
         yield p

@@ -930,9 +930,9 @@ class Lattice():
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
             assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            j0,j1 = pl.pairs_fine(
+            self.pairs = pl.pairs_fine(
                 self.waters, self.bondlen, self.cell.mat, grid, distance=False)
-            self.pairs = [v for v in zip(j0,j1)]
+            # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.
             if self.logger.level <= logging.DEBUG:
                 pairs1 = self.pairs

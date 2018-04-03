@@ -10,7 +10,6 @@ import networkx
 import random
 import numpy as np
 import logging
-import pairlist as pl
 from genice import yaplotlib as yp
 
 #Dijkstra
@@ -112,11 +111,6 @@ class IceGraph(networkx.DiGraph):
         #is added automatically in cationize/anionize
         self.ignores = set()  
 
-#    def register_pairs(self,pairs):
-#        self.clear()
-#        for pair in pairs:
-#            x,y = pair[:2]
-#            self.add_edge(x,y)
 
     def cationize(self, which):
         invert = set()
