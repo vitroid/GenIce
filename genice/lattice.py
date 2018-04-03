@@ -442,7 +442,10 @@ class Lattice():
             self.bondlen = lat.bondlen
             self.logger.info("Bond length (specified): {0}".format(self.bondlen))
         except AttributeError:
-            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell)
+            self.logger.debug("  Assuming the bond threshold length...")
+            grid = pl.determine_grid(self.cell.mat, 0.3)
+            p = pl.pairs_fine(self.waters, 0.3, self.cell.mat, grid, distance=False)
+            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             self.logger.info("Bond length (assumed): {0}".format(self.bondlen))
         # Set density
         mass = 18  # water
