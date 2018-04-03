@@ -15,7 +15,7 @@ Usage: genice gromacs[filename]            Regards Ow and Hw to be of a water mo
 import numpy as np
 import re
 import logging
-import genice.pairlist as pl
+import pairlist as pl
 
 def argparser(arg):
     global waters, cell, celltype, coord, density, pairs
@@ -69,8 +69,8 @@ def argparser(arg):
     if len(hatoms) > 0:
         celli = np.linalg.inv(cell)
         # relative coord
-        rh = [np.dot(x, celli) for x in hatoms]
-        ro = [np.dot(x, celli) for x in waters]
+        rh = np.array([np.dot(x, celli) for x in hatoms])
+        ro = np.array([np.dot(x, celli) for x in waters])
         # rotmatrices for analice
         rotmat = []
         for i in range(len(waters)):
@@ -87,7 +87,9 @@ def argparser(arg):
         grid = pl.determine_grid(cell, 0.245)
         # remove intramolecular OHs
         pairs = []
-        for o,h in pl.pairs_fine_hetero(ro, rh, 0.245, cell, grid, distance=False):
+        logger.debug("  Make pair list.")
+        os,hs = pl.pairs_fine_hetero(ro, rh, 0.245, cell, grid, distance=False):
+        for o,h in zip(os,hs):
             if h == o*2 or h == o*2+1:
                 # adjust oxygen positions
                 dh = rh[h] - ro[o]
@@ -97,6 +99,7 @@ def argparser(arg):
                 # register a new intermolecular pair
                 pairs.append((h//2, o))
         logger.debug("# of pairs: {0} {1}".format(len(pairs),len(waters)))
+
         
     
     

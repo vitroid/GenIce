@@ -7,9 +7,9 @@ from math import sin, cos, pi
 from collections import Iterable, defaultdict
 
 import numpy as np
+import pairlist as pl
 
 from genice.importer import safe_import
-from genice import pairlist as pl
 from genice import digraph as dg
 from genice import rigid
 from genice.cells import rel_wrap, Cell
@@ -939,20 +939,22 @@ class Lattice():
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
             assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            self.pairs = [v for v in pl.pairs_fine(
-                self.waters, self.bondlen, self.cell.mat, grid, distance=False)]
+            self.pairs = pl.pairs_fine(
+                self.waters, self.bondlen, self.cell.mat, grid, distance=False)
+            # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.
             if self.logger.level <= logging.DEBUG:
+                pairs1 = self.pairs
                 pairs2 = [v for v in pl.pairs_crude(
                     self.waters, self.bondlen, self.cell.mat, distance=False)]
-                self.logger.debug("pairs: {0}".format(len(self.pairs)))
+                self.logger.debug("pairs1: {0}".format(len(pairs1)))
                 self.logger.debug("pairs2: {0}".format(len(pairs2)))
-                for pair in self.pairs:
+                for pair in pairs1:
                     i, j = pair
                     assert (i, j) in pairs2 or (j, i) in pairs2
                 for pair in pairs2:
                     i, j = pair
-                    assert (i, j) in self.pairs or (j, i) in self.pairs
+                    assert (i, j) in pairs1 or (j, i) in pairs1
 
         graph = dg.IceGraph()
         for i, j in fixed:
