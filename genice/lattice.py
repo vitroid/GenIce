@@ -28,7 +28,7 @@ def load_numbers(v):
 
 def complement(v):
     # assume missing vectors
-    assert len(v) > 1
+    assert len(v) > 0
     if len(v) == 3:
         return [-(v[0]+v[1]+v[2])]
     elif len(v) == 2:
@@ -39,7 +39,16 @@ def complement(v):
         x = np.cross(y,z)
         v2 = ( x*8.0**0.5 - z)/3.0
         v3 = (-x*8.0**0.5 - z)/3.0
-        return v2,v3
+        return [v2,v3]
+    elif len(v) == 1:
+        vr = np.array([random.random() for i in range(3)])
+        vr /= np.linalg.norm(vr)
+        z = v[0] / np.linalg.norm(v[0])
+        x = np.cross(z, vr)
+        y = np.cross(z, x)
+        x1 = -x/2 + 3.0**0.5*y/2
+        x2 = -x/2 - 3.0**0.5*y/2
+        return [x,x1,x2]
     return []
         
         

@@ -26,5 +26,5 @@ waters = """
 0.575 0.575 0.575
 """
 coord = "relative"
-bondlen = 3.40
+bondlen = 3.02
 density = 1.41339660784
