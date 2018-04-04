@@ -40,6 +40,7 @@ def argparser(arg):
     natom = int(file.readline())
     hatoms = []
     waters = []
+    skipped = set()
     for i in range(natom):
         line = file.readline()
         # resid = int(line[0:5])
@@ -52,7 +53,9 @@ def argparser(arg):
         elif H is not None and re.fullmatch(H, atomname):
             hatoms.append(pos)
         else:
-            logger.info("Skip {0}".format(atomname))
+            if atomname not in skipped:
+                logger.info("Skip {0}".format(atomname))
+                skipped.add(atomname)
     c = [float(x) for x in file.readline().split()]
     if len(c) == 3:
         cell = np.array([[c[0],0.,0.],
