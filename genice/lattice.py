@@ -437,21 +437,23 @@ class Lattice():
         #   This is used when "pairs" are not specified.
         #   It is applied to the original positions of molecules (before density setting).
         #
+        nmol = self.waters.shape[0]  # nmol in a unit cell
+        volume = self.cell.volume()  # volume of a unit cell in nm**3
         self.bondlen = None
         try:
             self.bondlen = lat.bondlen
             self.logger.info("Bond length (specified): {0}".format(self.bondlen))
         except AttributeError:
-            self.logger.debug("  Assuming the bond threshold length...")
-            grid = pl.determine_grid(self.cell.mat, 0.3)
-            p = pl.pairs_fine(self.waters, 0.3, self.cell.mat, grid, distance=False)
+            self.logger.debug("  Estimating the bond threshold length...")
+            # assume that the particles distribute homogeneously.
+            rc = (volume/nmol)**(1/3) *1.5
+            grid = pl.determine_grid(self.cell.mat, rc)
+            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
-            self.logger.info("Bond length (assumed): {0}".format(self.bondlen))
+            self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
         # Set density
         mass = 18  # water
         NB = 6.022e23
-        nmol = self.waters.shape[0]  # nmol in a unit cell
-        volume = self.cell.volume()  # volume of a unit cell in nm**3
         density0 = mass * nmol / (NB * volume * 1e-21)
         if density <= 0:
             try:
