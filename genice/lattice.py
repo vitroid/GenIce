@@ -809,7 +809,7 @@ class Lattice():
         except:
             mdoc = []
         for line in mdoc:
-            logger.info("!!! {0}".format(line))
+            self.logger.info("!!! {0}".format(line))
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
                                    self.rotmatrices,
