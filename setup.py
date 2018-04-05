@@ -35,7 +35,7 @@ setup(name='GenIce',
                 'genice.formats',
                 ],
       # install_requires=['numpy', 'networkx', 'countrings>=0.1.4', 'svgwrite', 'vpython'],
-      install_requires=['numpy', 'networkx>=2', 'countrings>=0.1.4', 'svgwrite', 'cif2ice>=0.2', 'pairlist'],
+      install_requires=['numpy', 'networkx>=2', 'countrings>=0.1.4', 'svgwrite', 'cif2ice>=0.2', 'pairlist', 'yaplotlib>=0.1'],
       entry_points = {
               'console_scripts': [
                   'genice = genice.__main__:main',

@@ -7,9 +7,9 @@ defined in https://github.com/vitroid/Yaplot
 from collections import defaultdict
 import numpy as np
 import networkx as nx
+import yaplotlib as yp
 
 from genice import rigid
-from genice import yaplotlib as yp
 from countrings import countrings_nx as cr
 
 
