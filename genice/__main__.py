@@ -37,6 +37,8 @@ def getoptions():
                         help='No depolarization.')
     parser.add_argument('--asis', action='store_true', dest='asis',
                         help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
+    parser.add_argument('--add_noise', action='store_true', dest='noise',
+                        help='Add noise to the molecular positions of water.')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
@@ -63,6 +65,8 @@ def getoptions_analice():
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
                         help='Do not output progress messages.')
+    parser.add_argument('--add_noise', action='store_true', dest='noise',
+                        help='Add noise to the molecular positions of water.')
     parser.add_argument('File', nargs=1,
                        help='Gromacs file.')
     return parser.parse_args()
@@ -125,6 +129,7 @@ def main():
         density      = options.dens[0]
         depolarize   = not options.nodep
         asis         = options.asis
+        noise        = options.noise
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -172,6 +177,7 @@ def main():
                               anions=anions,
                               spot_guests=spot_guests,
                               spot_groups=groups,
+                              noise=noise,
         )
         lat.generate_ice(water_type=water_type,
                    guests=guests,
@@ -185,6 +191,7 @@ def main():
         oname        = options.oatom[0]
         hname        = options.hatom[0]
         filename     = options.File[0]
+        noise        = options.noise
         
         del options  # Dispose for safety.
     

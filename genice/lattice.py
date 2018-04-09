@@ -357,6 +357,7 @@ class Lattice():
                  anions=dict(),
                  spot_guests=dict(),
                  spot_groups=dict(),
+                 noise=False,
                  ):
         self.logger      = logging.getLogger()
         self.lattice_type = lattice_type
@@ -367,6 +368,7 @@ class Lattice():
         self.anions      = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+        self.noise       = noise
         if lattice_type is None:
             return
         lat = safe_import("lattice", lattice_type)
@@ -648,6 +650,9 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         self.repcell.scale2(self.rep)
+        if self.noise:
+            # add small perturbations to the molecular positions.
+            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
 
         if self.cagepos is not None:
             self.logger.info("  Hints:")
@@ -1049,6 +1054,9 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         # self.repcell.scale2(self.rep)
+        if self.noise:
+            # add small perturbations to the molecular positions.
+            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
 
         self.logger.info("Stage1: end.")
 
