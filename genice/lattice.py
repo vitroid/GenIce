@@ -357,7 +357,7 @@ class Lattice():
                  anions=dict(),
                  spot_guests=dict(),
                  spot_groups=dict(),
-                 noise=False,
+                 noise=0.,
                  ):
         self.logger      = logging.getLogger()
         self.lattice_type = lattice_type
@@ -650,10 +650,11 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         self.repcell.scale2(self.rep)
-        if self.noise:
-            # add small perturbations to the molecular positions.
-            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
-
+        if self.noise > 0.0:
+            perturb = np.random.normal(loc=0.0,
+                                       scale=self.noise*0.01*3.0*0.5, # in percent, radius of water
+                                       size=self.reppositions.shape)
+            self.reppositions += self.repcell.abs2rel(perturb)
         if self.cagepos is not None:
             self.logger.info("  Hints:")
             self.repcagepos = replicate_positions(self.cagepos, self.rep)
@@ -780,14 +781,10 @@ class Lattice():
         Prepare orientations for rigid molecules.
 
         Provided variables:
-        reppositions: molecular positions with random noise.
+        reppositions: molecular positions.
         rotmatrices:  rotation matrices for water molecules
         """
         self.logger.info("Stage5: Orientation.")
-        # Add small noises to the molecular positions
-        # Will be removed in v0.24.
-        # if not self.asis:
-        #     self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
@@ -1054,9 +1051,12 @@ class Lattice():
         # scale the cell
         self.repcell = Cell(self.cell)
         # self.repcell.scale2(self.rep)
-        if self.noise:
-            # add small perturbations to the molecular positions.
-            self.reppositions += self.repcell.abs2rel(np.random.random(self.reppositions.shape)* 0.01 - 0.005)
+        # add small perturbations to the molecular positions.
+        if self.noise > 0.0:
+            perturb = np.random.normal(loc=0.0,
+                                       scale=self.noise*0.01*3.0*0.5, # in percent, radius of water
+                                       size=self.reppositions.shape)
+            self.reppositions += self.repcell.abs2rel(perturb)
 
         self.logger.info("Stage1: end.")
 

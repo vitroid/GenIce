@@ -17,6 +17,9 @@ def getoptions():
                         help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
     parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens', default=(-1,),
                         help='Specify the ice density in g/cm3')
+    parser.add_argument('--add_noise', nargs=1, type=float, dest='noise', default=(0.,),
+                        metavar='percent',
+                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
     parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
                         help='Random seed [1000]')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
@@ -37,8 +40,6 @@ def getoptions():
                         help='No depolarization.')
     parser.add_argument('--asis', action='store_true', dest='asis',
                         help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
-    parser.add_argument('--add_noise', action='store_true', dest='noise',
-                        help='Add noise to the molecular positions of water.')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
@@ -65,8 +66,9 @@ def getoptions_analice():
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
                         help='Do not output progress messages.')
-    parser.add_argument('--add_noise', action='store_true', dest='noise',
-                        help='Add noise to the molecular positions of water.')
+    parser.add_argument('--add_noise', nargs=1, type=float, dest='noise', default=(0.,),
+                        metavar='percent',
+                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
     parser.add_argument('File', nargs=1,
                        help='Gromacs file.')
     return parser.parse_args()
@@ -129,7 +131,7 @@ def main():
         density      = options.dens[0]
         depolarize   = not options.nodep
         asis         = options.asis
-        noise        = options.noise
+        noise        = options.noise[0]
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -191,7 +193,7 @@ def main():
         oname        = options.oatom[0]
         hname        = options.hatom[0]
         filename     = options.File[0]
-        noise        = options.noise
+        noise        = options.noise[0]
         
         del options  # Dispose for safety.
     
@@ -200,9 +202,10 @@ def main():
         formatter = safe_import("format", file_format)
         # reuse gromacs plugin to load the file.
         s = "gromacs[{0}:{1}:{2}]".format(filename,oname,hname)
-        lat = lattice.Lattice(lattice_type=s)
+        lat = lattice.Lattice(lattice_type=s, noise=noise)
         lat.analize_ice(water_type=water_type,
-                        formatter=formatter)
+                        formatter=formatter,
+        )
     
 if __name__ == "__main__":
     main()
