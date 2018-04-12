@@ -203,10 +203,41 @@ def test_rotation():
     print(qadd(q,q))
 
 
+def six2nine(a,b,c,alpha,beta,gamma):
+    # convert from angles to matrix
+    x = np.array([1.0, 0.0, 0.0])
+    y = np.array([0.0, 1.0, 0.0])
+    z = np.array([0.0, 0.0, 1.0])
+    alpha *= pi / 180
+    beta  *= pi / 180
+    gamma *= pi / 180
+    A = a*x
+    eb = x*cos(gamma)+y*sin(gamma)
+    B = b*eb
+    # ec.x = cos(beta)
+    # ec.eb = cos(alpha)
+    ecx = cos(beta)
+    # ecx*cos(gamma)+ecy*sin(gamma)=c cos(alpha)
+    ecy = (cos(alpha)-ecx*cos(gamma))/sin(gamma)
+    ecz = (1 - ecx**2 - ecy**2)**0.5
+    ec= np.array([ecx,ecy,ecz])
+    C = c*ec
+    # checked.
+    # LA = np.linalg.norm(A)
+    # LB = np.linalg.norm(B)
+    # LC = np.linalg.norm(C)
+    # print(a,b,c)
+    # print(LA,LB,LC)
+    # p = acos(np.dot(B,C)/(LB*LC))
+    # q = acos(np.dot(C,A)/(LC*LA))
+    # r = acos(np.dot(A,B)/(LA*LB))
+    # print(alpha, beta, gamma)
+    # print(p,q,r)
+    return np.vstack([A,B,C])
     
-
 def test():
     """Testing Docstring"""
+    six2nine(22.561,   26.318,   25.270, 102.09,  89.66,  89.45)
     q1 = np.array([0.5,0.5,0.5,0.5]);
     q2 = np.array([0.5,0.5,0.5,-0.5]);
     q21 = qadd(q2,qmul(q1,-1))

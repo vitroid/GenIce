@@ -25,10 +25,11 @@ Install with pip3.
     
 ## Usage
 
-    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS] [--seed SEED]
-                  [--format gmeqdypoc] [--water model] [--guest D=empty]
-                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                  [--cation 3=Na] [--nodep] [--asis] [--debug] [--quiet]
+    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
+                  [--add_noise percent] [--seed SEED] [--format gmeqdypoc]
+                  [--water model] [--guest D=empty] [--Guest 13=me]
+                  [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na] [--nodep]
+                  [--asis] [--debug] [--quiet]
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
@@ -45,6 +46,9 @@ Install with pip3.
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell in x,y, and z directions. [1,1,1]
       --dens DENS, -d DENS  Specify the ice density in g/cm3
+      --add_noise percent   Add a Gauss noise with given width (SD) to the
+                            molecular positions of water. The value 1 corresponds
+                            to 1 percent of the molecular diameter of water.
       --seed SEED, -s SEED  Random seed [1000]
       --format gmeqdypoc, -f gmeqdypoc
                             Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
