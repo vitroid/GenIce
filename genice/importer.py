@@ -1,7 +1,7 @@
 import re
 import importlib
 import logging
-
+import pkg_resources as pr
 #
 # Accept options parenthesized after the plugin name.
 #
@@ -15,6 +15,54 @@ def audit_name(name):
 
 
 
+def import_format_extra(name, arg):
+    logger = logging.getLogger()
+    logger.info("Extra plugin: {0}".format(name))
+    hooks = dict()
+    for i in (0,1,2,3,4,5,6,7):
+        groupname = 'genice_format_hook{0}'.format(i)
+        for ep in pr.iter_entry_points(group=groupname):
+            if ep.name == name:
+                func = ep.load()
+                if i == 0:
+                    #def newhook():
+                    #    return func(arg)
+                    hooks[0] = lambda: func(arg)
+                else:
+                    hooks[i] = func
+    return hooks
+
+
+def import_format_plugin(category, name, arg):
+    logger = logging.getLogger()
+    module = None
+    try:
+        module     = importlib.import_module(category+"s."+name) #at ~/.genice
+    except ImportError as e:
+        pass
+    if module is None:
+        fullname = "genice."+category+"s."+name
+        logger.debug("Load module: {0}".format(fullname))
+        try:
+            module     = importlib.import_module(fullname)
+        except ImportError as e:
+            pass
+    if module is None:
+        # load extras
+        return import_format_extra(name, arg)
+    
+    logger.info("Load {0} module {1} arguments [{2}]".format(category, name, arg))
+    if arg != "":
+        if "argparser" in module.__dict__:
+            module.argparser(arg)
+        else:
+            logger.info("Arguments are given but the module does not accept them.")
+    elif "usage" in module.__dict__:
+        module.usage()
+    return module.hooks
+    
+
+
 def safe_import(category, name):
     logger = logging.getLogger()
     assert category in ("lattice", "format", "molecule")
@@ -26,6 +74,10 @@ def safe_import(category, name):
         arg = name[left+1:right]
         name = name[:left]
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
+
+    if category == 'format':
+        return import_format_plugin(category, name, arg)
+
     module = None
     try:
         module     = importlib.import_module(category+"s."+name) #at ~/.genice
