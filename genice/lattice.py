@@ -547,87 +547,87 @@ class Lattice():
                               "Ethyl-": ethyl}
 
 
-    def generate_ice(self, water_type, guests, formatter):
-        if 0 in formatter.hooks:
-            formatter.hooks[0](self)
-        if max(0,*formatter.hooks.keys()) < 1:
+    def generate_ice(self, water_type, guests, hooks):
+        if 0 in hooks:
+            hooks[0](self)
+        if max(0,*hooks.keys()) < 1:
             return
         self.stage1()
-        if 1 in formatter.hooks:
-            formatter.hooks[1](self)
-        if max(0,*formatter.hooks.keys()) < 2:
+        if 1 in hooks:
+            hooks[1](self)
+        if max(0,*hooks.keys()) < 2:
             return
         res = self.stage2()
-        if 2 in formatter.hooks:
-            formatter.hooks[2](self)
-        if max(0,*formatter.hooks.keys()) < 3:
+        if 2 in hooks:
+            hooks[2](self)
+        if max(0,*hooks.keys()) < 3:
             return
         self.stage3()
-        if 3 in formatter.hooks:
-            formatter.hooks[3](self)
-        if max(0,*formatter.hooks.keys()) < 4:
+        if 3 in hooks:
+            hooks[3](self)
+        if max(0,*hooks.keys()) < 4:
             return
         self.stage4()
-        if 4 in formatter.hooks:
-            formatter.hooks[4](self)
-        if max(0,*formatter.hooks.keys()) < 5:
+        if 4 in hooks:
+            hooks[4](self)
+        if max(0,*hooks.keys()) < 5:
             return
         self.stage5()
-        if 5 in formatter.hooks:
-            formatter.hooks[5](self)
-        if max(0,*formatter.hooks.keys()) < 6:
+        if 5 in hooks:
+            hooks[5](self)
+        if max(0,*hooks.keys()) < 6:
             return
         self.stage6(water_type)
-        if 6 in formatter.hooks:
-            formatter.hooks[6](self)
-        if max(0,*formatter.hooks.keys()) < 7:
+        if 6 in hooks:
+            hooks[6](self)
+        if max(0,*hooks.keys()) < 7:
             return
         self.stage7(guests)
-        if 7 in formatter.hooks:
-            formatter.hooks[7](self)
+        if 7 in hooks:
+            hooks[7](self)
 
 
-    def analize_ice(self, water_type, formatter):
+    def analize_ice(self, water_type, hooks):
         """
         Protocol for analice
         """
-        if 0 in formatter.hooks:
-            formatter.hooks[0](self)
-        if max(0,*formatter.hooks.keys()) < 1:
+        if 0 in hooks:
+            hooks[0](self)
+        if max(0,*hooks.keys()) < 1:
             return
         self.stage1_analice()
-        if 1 in formatter.hooks:
-            formatter.hooks[1](self)
-        if max(0,*formatter.hooks.keys()) < 2:
+        if 1 in hooks:
+            hooks[1](self)
+        if max(0,*hooks.keys()) < 2:
             return
         # res = self.stage2_analice()
-        if 2 in formatter.hooks:
-            formatter.hooks[2](self)
-        if max(0,*formatter.hooks.keys()) < 3:
+        if 2 in hooks:
+            hooks[2](self)
+        if max(0,*hooks.keys()) < 3:
             return
         # self.stage3_analice()
-        if 3 in formatter.hooks:
-            formatter.hooks[3](self)
-        if max(0,*formatter.hooks.keys()) < 4:
+        if 3 in hooks:
+            hooks[3](self)
+        if max(0,*hooks.keys()) < 4:
             return
         self.stage4_analice()
-        if 4 in formatter.hooks:
-            formatter.hooks[4](self)
-        if max(0,*formatter.hooks.keys()) < 5:
+        if 4 in hooks:
+            hooks[4](self)
+        if max(0,*hooks.keys()) < 5:
             return
         # self.stage5_analice()
-        if 5 in formatter.hooks:
-            formatter.hooks[5](self)
-        if max(0,*formatter.hooks.keys()) < 6:
+        if 5 in hooks:
+            hooks[5](self)
+        if max(0,*hooks.keys()) < 6:
             return
         self.stage6(water_type)
-        if 6 in formatter.hooks:
-            formatter.hooks[6](self)
-        if max(0,*formatter.hooks.keys()) < 7:
+        if 6 in hooks:
+            hooks[6](self)
+        if max(0,*hooks.keys()) < 7:
             return
         # self.stage7_analice(guests)
-        if 7 in formatter.hooks:
-            formatter.hooks[7](self)
+        if 7 in hooks:
+            hooks[7](self)
             
         
     def stage1(self):
