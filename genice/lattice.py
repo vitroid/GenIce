@@ -547,9 +547,9 @@ class Lattice():
                               "Ethyl-": ethyl}
 
 
-    def generate_ice(self, water_type, guests, hooks):
+    def generate_ice(self, water_type, guests, hooks, arg):
         if 0 in hooks:
-            hooks[0](self)
+            hooks[0](self, arg)
         if max(0,*hooks.keys()) < 1:
             return
         self.stage1()
@@ -587,12 +587,12 @@ class Lattice():
             hooks[7](self)
 
 
-    def analize_ice(self, water_type, hooks):
+    def analize_ice(self, water_type, hooks, arg):
         """
         Protocol for analice
         """
         if 0 in hooks:
-            hooks[0](self)
+            hooks[0](self, arg)
         if max(0,*hooks.keys()) < 1:
             return
         self.stage1_analice()

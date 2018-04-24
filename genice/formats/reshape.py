@@ -65,28 +65,19 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
 
 
 
-# Reshaping matrix (Must be integers)
-# for now they are hardcoded.  It will be given as options for the plugin in the future.
-# ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
-# ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
-# ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
-# ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
-
-#This is default.  No reshaping applied.
-ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
 
 def hook1(lattice):
     lattice.logger.info("Hook1: Output as a python module.")
     # Original cell matrix.
     cellmat = lattice.repcell.mat
     lattice.logger.info("  Reshaping the unit cell.")
-    lattice.logger.info("    i:{0}".format(ijk[0]))
-    lattice.logger.info("    j:{0}".format(ijk[1]))
-    lattice.logger.info("    k:{0}".format(ijk[2]))
+    lattice.logger.info("    i:{0}".format(lattice.ijk[0]))
+    lattice.logger.info("    j:{0}".format(lattice.ijk[1]))
+    lattice.logger.info("    k:{0}".format(lattice.ijk[2]))
     # reshaped cell might not be rect.
-    newcell = np.dot(ijk, cellmat) 
+    newcell = np.dot(lattice.ijk, cellmat) 
     # replication ratio.
-    vol = abs(np.linalg.det(ijk))
+    vol = abs(np.linalg.det(lattice.ijk))
     vol = floor(vol*8192+0.5)/8192
     # Unit orthogonal vectors for the newcell.
     e1 = newcell[0].astype(float)
@@ -110,9 +101,9 @@ def hook1(lattice):
     s += '"""\n'
     s += "\n".join(lattice.doc) + "\n"
     s += "Reshaping the unit cell.\n"
-    s += "  i:{0}\n".format(ijk[0])
-    s += "  j:{0}\n".format(ijk[1])
-    s += "  k:{0}\n".format(ijk[2])
+    s += "  i:{0}\n".format(lattice.ijk[0])
+    s += "  j:{0}\n".format(lattice.ijk[1])
+    s += "  k:{0}\n".format(lattice.ijk[2])
     s += '"""\n'
     
     s += "bondlen={0}\n".format(lattice.bondlen*10)
@@ -131,14 +122,14 @@ def hook1(lattice):
     s += 'waters="""'+"\n"
     lattice.logger.info("  Total number of molecules: {0}".format(vol*len(lattice.reppositions)))
     
-    ncell, ss = FindEmptyCells(cellmat, ijk, lattice.reppositions)
+    ncell, ss = FindEmptyCells(cellmat, lattice.ijk, lattice.reppositions)
     assert vol == ncell
 
     s += ss + '"""' + "\n\n"
 
     if lattice.cagepos is not None:
         s += 'cages="""'+"\n"
-        ncell, ss = FindEmptyCells(cellmat, ijk, lattice.repcagepos, labels=lattice.repcagetype)
+        ncell, ss = FindEmptyCells(cellmat, lattice.ijk, lattice.repcagepos, labels=lattice.repcagetype)
         s += ss + '"""'+"\n\n"
     
     print(s,end="")
@@ -146,10 +137,24 @@ def hook1(lattice):
     lattice.logger.info("Hook1: end.")
 
 
-def argparser(arg):
-    global ijk
-    assert re.match("^[-+0-9,]+$", arg) is not None, "Argument must be nine integers separated by commas."
-    ijk = np.array([int(x) for x in arg.split(",")]).reshape(3,3)
+# Reshaping matrix (Must be integers)
+# for now they are hardcoded.  It will be given as options for the plugin in the future.
+# ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
+# ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
+# ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
+# ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+
+
+# argparser
+def hook0(lattice, arg):
+    lattice.logger.info("Hook0: ArgParser.")
+    if arg == "":
+        #This is default.  No reshaping applied.
+        lattice.ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    else:
+        assert re.match("^[-+0-9,]+$", arg) is not None, "Argument must be nine integers separated by commas."
+        lattice.ijk = np.array([int(x) for x in arg.split(",")]).reshape(3,3)
+    lattice.logger.info("Hook0: end.")
         
 
-hooks = {1:hook1}
+hooks = {0:hook0,1:hook1}

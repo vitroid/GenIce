@@ -2,6 +2,7 @@ import re
 import importlib
 import logging
 import pkg_resources as pr
+import sys
 #
 # Accept options parenthesized after the plugin name.
 #
@@ -15,7 +16,7 @@ def audit_name(name):
 
 
 
-def import_format_extra(name, arg):
+def import_format_extra(name):
     logger = logging.getLogger()
     logger.info("Extra plugin: {0}".format(name))
     hooks = dict()
@@ -24,16 +25,15 @@ def import_format_extra(name, arg):
         for ep in pr.iter_entry_points(group=groupname):
             if ep.name == name:
                 func = ep.load()
-                if i == 0:
-                    #def newhook():
-                    #    return func(arg)
-                    hooks[0] = lambda: func(arg)
-                else:
-                    hooks[i] = func
+                hooks[i] = func
+                logger.info("Load {1} Hook{0}.".format(i,name))
+    if len(hooks) == 0:
+        logger.error("No extra plugin named '{0}'.".format(name))
+        sys.exit(1)
     return hooks
 
 
-def import_format_plugin(category, name, arg):
+def import_format_plugin(category, name):
     logger = logging.getLogger()
     module = None
     try:
@@ -49,17 +49,11 @@ def import_format_plugin(category, name, arg):
             pass
     if module is None:
         # load extras
-        return import_format_extra(name, arg)
-    
-    logger.info("Load {0} module {1} arguments [{2}]".format(category, name, arg))
-    if arg != "":
-        if "argparser" in module.__dict__:
-            module.argparser(arg)
-        else:
-            logger.info("Arguments are given but the module does not accept them.")
-    elif "usage" in module.__dict__:
-        module.usage()
-    return module.hooks
+        hooks = import_format_extra(name)
+    else:
+        # load user-defined.
+        hooks = module.hooks
+    return hooks
     
 
 
@@ -76,7 +70,8 @@ def safe_import(category, name):
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
 
     if category == 'format':
-        return import_format_plugin(category, name, arg)
+        logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
+        return import_format_plugin(category, name), arg
 
     module = None
     try:
@@ -87,7 +82,7 @@ def safe_import(category, name):
         fullname = "genice."+category+"s."+name
         logger.debug("Load module: {0}".format(fullname))
         module     = importlib.import_module(fullname)
-    logger.info("Load {0} module {1} arguments [{2}]".format(category, name, arg))
+    logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     if arg != "":
         if "argparser" in module.__dict__:
             module.argparser(arg)

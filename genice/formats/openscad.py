@@ -115,8 +115,10 @@ def test():
 
 
 
-def hook0(lattice):
+def hook0(lattice, arg):
     lattice.logger.info("Hook0: Preprocess.")
+    if arg != "":
+        lattice.logger.warn("  openscad plugin does not accept options.")
     for d in range(3):
         lattice.rep[d] += 2  #Extend the size,then cut off later.
     lattice.logger.info("Hook0: end.")

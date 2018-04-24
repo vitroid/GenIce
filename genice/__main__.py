@@ -162,7 +162,7 @@ def main():
         logger.debug("Lattice: {0}".format(lattice_type))
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Format: {0}".format(file_format))
-        hooks = safe_import("format", file_format)
+        hooks, arg = safe_import("format", file_format)
         # Show the document of the module
         #try:
         #    doc = formatter.__doc__.splitlines()
@@ -182,8 +182,10 @@ def main():
                               noise=noise,
         )
         lat.generate_ice(water_type=water_type,
-                   guests=guests,
-                   hooks=hooks
+                         guests=guests,
+                         hooks=hooks,
+                         arg=arg
+                         
         )
     else: #analice
         logger.debug(options.File)
@@ -199,12 +201,13 @@ def main():
     
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Format: {0}".format(file_format))
-        formatter = safe_import("format", file_format)
+        hooks, arg = safe_import("format", file_format)
         # reuse gromacs plugin to load the file.
         s = "gromacs[{0}:{1}:{2}]".format(filename,oname,hname)
         lat = lattice.Lattice(lattice_type=s, noise=noise)
-        lat.analize_ice(water_type=water_type,
-                        hooks=hooks,
+        lat.analize_ice(water_type= water_type,
+                        hooks     = hooks,
+                        arg       = arg
         )
     
 if __name__ == "__main__":
