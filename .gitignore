@@ -12,7 +12,7 @@ Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
 
-
+/*.svg
 /*.yap
 /*.scad
 /*.ngph
