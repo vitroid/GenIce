@@ -725,7 +725,7 @@ class Lattice():
         # test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
-            self.logger.info("Test2 failed.")
+            self.logger.warn("Test2 failed.")
 
         self.logger.info("Stage2: end.")
         return self.test2

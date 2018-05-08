@@ -25,58 +25,7 @@ Install with pip3.
     
 ## Usage
 
-    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
-                  [--add_noise percent] [--seed SEED] [--format gmeqdypoc]
-                  [--water model] [--guest D=empty] [--Guest 13=me]
-                  [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na] [--nodep]
-                  [--asis] [--debug] [--quiet]
-                  Type
     
-    GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 0.23)
-    
-    positional arguments:
-      Type                  Crystal type (1c,1h,etc. See
-                            https://github.com/vitroid/GenIce for available ice
-                            structures.)
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      --version, -V         show program's version number and exit
-      --rep REP REP REP, -r REP REP REP
-                            Repeat the unit cell in x,y, and z directions. [1,1,1]
-      --dens DENS, -d DENS  Specify the ice density in g/cm3
-      --add_noise percent   Add a Gauss noise with given width (SD) to the
-                            molecular positions of water. The value 1 corresponds
-                            to 1 percent of the molecular diameter of water.
-      --seed SEED, -s SEED  Random seed [1000]
-      --format gmeqdypoc, -f gmeqdypoc
-                            Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
-                            rnion)|d(igraph)|y(aplot)|p(ython
-                            module)|o(penScad)|c(entersofmass)|r(elative com)]
-                            [gromacs]
-      --water model, -w model
-                            Specify water model. (tip3p, tip4p, etc.) [tip3p]
-      --guest D=empty, -g D=empty
-                            Specify guest(s) in the cage type. (D=empty,
-                            T=co2*0.5+me*0.3, etc.)
-      --Guest 13=me, -G 13=me
-                            Specify guest in the specific cage. (13=me, 32=co2,
-                            etc.)
-      --Group 13=bu-:0, -H 13=bu-:0
-                            Specify the group. (-H 13=bu-:0, etc.)
-      --anion 3=Cl, -a 3=Cl
-                            Specify a monatomic anion that replaces a water
-                            molecule. (3=Cl, 39=F, etc.)
-      --cation 3=Na, -c 3=Na
-                            Specify a monatomic cation that replaces a water
-                            molecule. (3=Na, 39=NH4, etc.)
-      --nodep               No depolarization.
-      --asis                Assumes all given HB pairs to be fixed. No shuffle and
-                            no depolarization.
-      --debug, -D           Output debugging info.
-      --quiet, -q           Do not output progress messages.
-
 
 Use `./genice.x` instead of `genice` if you want to use GenIce without installation. 
 
