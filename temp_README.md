@@ -366,11 +366,13 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 
 | pip name | usage | Description | output format | requirements (pip packages) |
 |----------|-------|-------------|---------------|--------------|
-|`genice-rdf`|`-f _RDF`| Radial distribution functions. | text | `PairList` |
-|`genice-svg`|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
-|          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
-|`genice-diffr`|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d`, `yaplotlib` |
-|`genice-vpython`|`-f vpython`| Display the structure in the browser using VPython.| (none) | vpython |
+|(`genice-rdf`)[https://github.com/vitroid/genice-rdf]|`-f _RDF`| Radial distribution functions. | text | `PairList` |
+|`genice-svg`)[https://github.com/vitroid/genice-svg]|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
+|          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite`)[https://github.com/vitroid/genice-svg] |
+|`genice-diffr`)[https://github.com/vitroid/genice-diffr]|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d`, `yaplotlib` |
+|`genice-vpython`)[https://github.com/vitroid/genice-vpython]|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
+|`matcher`)[https://github.com/vitroid/matcher]| -f matcher | Pattern matching with a given structure. | text | |
+|`matcher`)[https://github.com/vitroid/matcher]| -f smatcher | Pattern matching with a self-template. | text | |
 
 
 # References
