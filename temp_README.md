@@ -5,13 +5,12 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 
 ## Requirements
 
+* NetworkX (>=2)
 * Python 3
-* NetworkX
-* numpy
-* svgwrite
-* cif2ice
 * countrings
-* VPython (optional)
+* PairList
+* yaplotlib
+* numpy
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
@@ -41,11 +40,6 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
-
-* With the aid of VPython, you can render and handle the ice structure
-  directly in the web browser. (You must install VPython separately.)
-
-        genice CS1 --format v
 
 * You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
 
@@ -228,8 +222,6 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`v`, `vpython`      |Direct visualization |     | Atomic positions | none | o | Display the structure in the browser using VPython.  You must install VPython separately. 
-`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
@@ -353,6 +345,32 @@ one of the following paths.
 |  | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
+
+# Extra plugins
+(New in v1.0)
+
+Some extra plugins are available via python package index using pip command.
+
+For example, install RDF plugin by the following command,
+
+    % pip install genice-rdf
+	
+And use it as an output format to get the radial distribution functions.
+
+    % genice TS1 -f _RDF > TS1.rdf.txt
+
+
+
+## Output and analysis plugins
+Analysis plugin is a kind of output plugin (specified with -f option).
+| pip name | usage | Description | output format | requirements (pip packages) |
+|----------|-------|-------------|---------------|--------------|
+|`genice-rdf`|`-f _RDF`| Radial distribution functions. | text | `PairList` |
+|`genice-svg`|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
+|          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
+|`genice-diffr`|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d`, `yaplotlib` |
+|`genice-vpython`|`-f vpython`| Display the structure in the browser using VPython.| (none) | vpython |
+
 
 # References
 
