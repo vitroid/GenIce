@@ -422,7 +422,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
 |[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d`, `yaplotlib` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`matcher`](https://github.com/vitroid/matcher)| -f matcher2 | Pattern matching with a given structure. | text | |
+|[`genice-matcher`](https://github.com/vitroid/matcher)| -f matcher2 | Pattern matching with a given structure. | text | |
 |   | -f smatcher | Pattern matching with a self-template. | text | |
 
 
