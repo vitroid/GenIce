@@ -7,12 +7,10 @@ all:
 test:
 	make -C tests all
 install:
-	make README.rst
 	./setup.py install
 uninstall:
 	-pip3 uninstall -y genice
 pypi:
-	make README.rst
 	./setup.py check
 	./setup.py sdist bdist_wheel upload
 %.png: %.pov
@@ -21,7 +19,6 @@ distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist
 	-rm -rf GenIce.egg-info
-	-rm README.rst
 	-rm .DS_Store
 	find . -name __pycache__ | xargs rm -rf 
 	find . -name \*.pyc      | xargs rm -rf
