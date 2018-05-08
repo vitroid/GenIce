@@ -363,6 +363,7 @@ And use it as an output format to get the radial distribution functions.
 
 ## Output and analysis plugins
 Analysis plugin is a kind of output plugin (specified with -f option).
+
 | pip name | usage | Description | output format | requirements (pip packages) |
 |----------|-------|-------------|---------------|--------------|
 |`genice-rdf`|`-f _RDF`| Radial distribution functions. | text | `PairList` |
