@@ -5,13 +5,12 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 
 ## Requirements
 
+* NetworkX (>=2)
 * Python 3
-* NetworkX
-* numpy
-* svgwrite
-* cif2ice
 * countrings
-* VPython (optional)
+* PairList
+* yaplotlib
+* numpy
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
@@ -25,7 +24,58 @@ Install with pip3.
     
 ## Usage
 
+    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
+                  [--add_noise percent] [--seed SEED] [--format gmeqdypoc]
+                  [--water model] [--guest D=empty] [--Guest 13=me]
+                  [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na] [--nodep]
+                  [--asis] [--debug] [--quiet]
+                  Type
     
+    GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
+    (version 1.0.RC1)
+    
+    positional arguments:
+      Type                  Crystal type (1c,1h,etc. See
+                            https://github.com/vitroid/GenIce for available ice
+                            structures.)
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version, -V         show program's version number and exit
+      --rep REP REP REP, -r REP REP REP
+                            Repeat the unit cell in x,y, and z directions. [1,1,1]
+      --dens DENS, -d DENS  Specify the ice density in g/cm3
+      --add_noise percent   Add a Gauss noise with given width (SD) to the
+                            molecular positions of water. The value 1 corresponds
+                            to 1 percent of the molecular diameter of water.
+      --seed SEED, -s SEED  Random seed [1000]
+      --format gmeqdypoc, -f gmeqdypoc
+                            Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
+                            rnion)|d(igraph)|y(aplot)|p(ython
+                            module)|o(penScad)|c(entersofmass)|r(elative com)]
+                            [gromacs]
+      --water model, -w model
+                            Specify water model. (tip3p, tip4p, etc.) [tip3p]
+      --guest D=empty, -g D=empty
+                            Specify guest(s) in the cage type. (D=empty,
+                            T=co2*0.5+me*0.3, etc.)
+      --Guest 13=me, -G 13=me
+                            Specify guest in the specific cage. (13=me, 32=co2,
+                            etc.)
+      --Group 13=bu-:0, -H 13=bu-:0
+                            Specify the group. (-H 13=bu-:0, etc.)
+      --anion 3=Cl, -a 3=Cl
+                            Specify a monatomic anion that replaces a water
+                            molecule. (3=Cl, 39=F, etc.)
+      --cation 3=Na, -c 3=Na
+                            Specify a monatomic cation that replaces a water
+                            molecule. (3=Na, 39=NH4, etc.)
+      --nodep               No depolarization.
+      --asis                Assumes all given HB pairs to be fixed. No shuffle and
+                            no depolarization.
+      --debug, -D           Output debugging info.
+      --quiet, -q           Do not output progress messages.
+
 
 Use `./genice.x` instead of `genice` if you want to use GenIce without installation. 
 
@@ -41,11 +91,6 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
-
-* With the aid of VPython, you can render and handle the ice structure
-  directly in the web browser. (You must install VPython separately.)
-
-        genice CS1 --format v
 
 * You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
 
@@ -228,8 +273,6 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`v`, `vpython`      |Direct visualization |     | Atomic positions | none | o | Display the structure in the browser using VPython.  You must install VPython separately. 
-`svg_poly`      |SVG polygon| `.svg`     | Center of mass | none | o | See tests/art/svg for usage.
 `_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
@@ -353,6 +396,35 @@ one of the following paths.
 |  | `./molecules`  |
 | Linux | `~/.github/GenIce/molecules` |
 | MacOS | `~/Library/Application Support/GenIce/molecules` |
+
+# Extra plugins
+(New in v1.0)
+
+Some extra plugins are available via python package index using pip command.
+
+For example, you can install RDF plugin by the following command,
+
+    % pip install genice-rdf
+	
+And use it as an output format to get the radial distribution functions.
+
+    % genice TS1 -f _RDF > TS1.rdf.txt
+
+
+
+## Output and analysis plugins
+Analysis plugin is a kind of output plugin (specified with -f option).
+
+| pip name | GenIce option | Description | output format | requirements |
+|----------|-------|-------------|---------------|--------------|
+|[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
+|[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
+|          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
+|[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d` |
+|[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
+|[`genice-matcher`](https://github.com/vitroid/matcher)| `-f matcher2` | Pattern matching with a given structure. | text | |
+|   | `-f smatcher` | Pattern matching with a self-template. | text | |
+
 
 # References
 
