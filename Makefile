@@ -1,4 +1,4 @@
-all:
+all: README.md
 	echo Hello.
 %: temp_% genice/__main__.py genice/__init__.py
 	./genice.x -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
