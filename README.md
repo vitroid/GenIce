@@ -402,7 +402,7 @@ one of the following paths.
 
 Some extra plugins are available via python package index using pip command.
 
-For example, install RDF plugin by the following command,
+For example, you can install RDF plugin by the following command,
 
     % pip install genice-rdf
 	
@@ -420,10 +420,10 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
 |          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
-|[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d`, `yaplotlib` |
+|[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`genice-matcher`](https://github.com/vitroid/matcher)| -f matcher2 | Pattern matching with a given structure. | text | |
-|   | -f smatcher | Pattern matching with a self-template. | text | |
+|[`genice-matcher`](https://github.com/vitroid/matcher)| `-f matcher2` | Pattern matching with a given structure. | text | |
+|   | `-f smatcher` | Pattern matching with a self-template. | text | |
 
 
 # References
