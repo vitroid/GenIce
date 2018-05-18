@@ -17,6 +17,126 @@ from genice.cells import rel_wrap, Cell
 #for alkyl groups (Experimental)
 from genice import alkyl
 
+
+
+def str2rangevalues(s):
+    values = s.split(":")
+    assert len(values) > 0
+    if len(values) == 1:
+        return [0,int(values[0]),1]
+    elif len(values) == 2:
+        return [int(values[0]), int(values[1]), 1]
+    else:
+        return [int(v) for v in values]
+
+
+def str2range(s):
+    return range(*str2rangevalues(s))
+    
+
+class gromacs(): # for analice
+    def __init__(self, filename, oname, hname):
+        self.file = open(filename)
+        self.oname = oname
+        self.hname = hname
+        self.file.readline()
+    def load_iter(self):
+        logger = logging.getLogger()
+        while True:
+            line = self.file.readline()
+            if len(line) == 0:
+                return
+            natom = int(line)
+            hatoms = []
+            self.waters = []
+            skipped = set()
+            for i in range(natom):
+                line = file.readline()
+                # resid = int(line[0:5])
+                # resna = line[5:10]
+                atomname = line[10:15].replace(' ', '')
+                # atomid = int(line[15:20])
+                pos = np.array([float(x) for x in line[20:].split()[:3]]) #drop velocity
+                if atomname == O:
+                    self.waters.append(pos)
+                elif H is not None and re.fullmatch(H, atomname):
+                    hatoms.append(pos)
+                else:
+                    if atomname not in skipped:
+                        logger.info("Skip {0}".format(atomname))
+                        skipped.add(atomname)
+            c = [float(x) for x in file.readline().split()]
+            if len(c) == 3:
+                self.cell = np.array([[c[0],0.,0.],
+                                 [0.,c[1],0.],
+                                 [0.,0.,c[2]]])
+            else:
+                self.cell = np.array([[c[0],c[3],c[4]],
+                                 [c[5],c[1],c[6]],
+                                 [c[7],c[8],c[2]]])
+            self.celltype = 'triclinic'
+            self.coord = 'absolute'
+            self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+
+            if len(hatoms) > 0:
+                celli = np.linalg.inv(self.cell)
+                # relative coord
+                rh = np.array([np.dot(x, celli) for x in hatoms])
+                ro = np.array([np.dot(x, celli) for x in self.waters])
+                # rotmatrices for analice
+                self.rotmat = []
+                for i in range(len(self.waters)):
+                    o = self.waters[i]
+                    h0, h1 = hatoms[i*2:i*2+2]
+                    h0 -= o
+                    h1 -= o
+                    y = h1 - h0
+                    y /= np.linalg.norm(y)
+                    z = h0+h1
+                    z /= np.linalg.norm(z)
+                    x = np.cross(y,z)
+                    self.rotmat.append(np.vstack([x,y,z]))
+                grid = pl.determine_grid(self.cell, 0.245)
+                # remove intramolecular OHs
+                self.pairs = []
+                logger.debug("  Make pair list.")
+                for o,h in pl.pairs_fine_hetero(ro, rh, 0.245, self.cell, grid, distance=False):
+                    if h == o*2 or h == o*2+1:
+                        # adjust oxygen positions
+                        dh = rh[h] - ro[o]
+                        dh -= np.floor(dh + 0.5)
+                        self.waters[o] += np.dot(dh, self.cell)*1./16.
+                    else:
+                        # register a new intermolecular pair
+                        self.pairs.append((h//2, o))
+                logger.debug("  # of pairs: {0} {1}".format(len(self.pairs),len(self.waters)))
+            yield self
+        
+    
+
+
+
+def load_iter(filename, oname, hname, filerange, framerange):
+    logger = logging.getLogger()
+    rfile = str2range(filerange)
+    rframe = str2rangevalues(framerange)
+    frame = 0
+    for num in rfile:
+        fname = filename % num # c-style format specifier
+        logger.info("  Filename: {0}".format(fname))
+        s = "gromacs[:{0}:{1}]".format(oname,hname)
+        # single gromacs file may contain multiple frames
+        for lat in gromacs(fname, oname, hname).load_iter():
+            if frame == rframe[0]:
+                logger.info("  Frame: {0}".format(frame))
+                yield lat
+                rframe[0] += rframe[2]
+                if rframe[1] <= rframe[0]:
+                    rframe[0] = -1
+        frame += 1
+
+
+
 def load_numbers(v):
     if type(v) is str:
         return np.fromstring(v, sep=" ")
@@ -348,7 +468,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
 
 class Lattice():
     def __init__(self,
-                 lattice_type=None,
+                 lat,
                  density=0,
                  rep=(1, 1, 1),
                  depolarize=True,
@@ -360,7 +480,7 @@ class Lattice():
                  noise=0.,
                  ):
         self.logger      = logging.getLogger()
-        self.lattice_type = lattice_type
+        # self.lattice_type = lattice_type
         self.rep         = rep
         self.depolarize  = depolarize
         self.asis        = asis
@@ -369,9 +489,6 @@ class Lattice():
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
         self.noise       = noise
-        if lattice_type is None:
-            return
-        lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
             self.doc = lat.__doc__.splitlines()

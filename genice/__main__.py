@@ -24,7 +24,7 @@ def getoptions():
                         help='Random seed [1000]')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
+    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",l
                         help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
@@ -62,6 +62,12 @@ def getoptions_analice():
     parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
                         default="H",
                         help='Specify atom name of hydrogen in input Gromacs file. ("H")')
+    parser.add_argument('--filerange', nargs = 1,           dest='filerange', metavar="[from:]below[:interval]",
+                        default="0:1",
+                        help='Specify the number range for the filename. ("0:1")')
+    parser.add_argument('--framerange', nargs = 1,          dest='framerange', metavar="[from:]below[:interval]",
+                        default="0:1",
+                        help='Specify the number range for the frames. ("0:1")')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
@@ -170,7 +176,8 @@ def main():
         #    doc = []
         #for line in doc:
         #    logger.info("!!! {0}".format(line))
-        lat = lattice.Lattice(lattice_type,
+        assert  lattice_type is not None
+        lat = lattice.Lattice(safe_import("lattice", lattice_type),
                               density=density,
                               rep=rep,
                               depolarize=depolarize,
@@ -196,19 +203,19 @@ def main():
         hname        = options.hatom[0]
         filename     = options.File[0]
         noise        = options.noise[0]
+        filerange    = options.filerange[0]
+        framerange   = options.framerange[0]
         
         del options  # Dispose for safety.
-    
-        # Main part of the program is contained in th Formatter object. (See formats/)
-        logger.debug("Format: {0}".format(file_format))
-        hooks, arg = safe_import("format", file_format)
-        # reuse gromacs plugin to load the file.
-        s = "gromacs[{0}:{1}:{2}]".format(filename,oname,hname)
-        lat = lattice.Lattice(lattice_type=s, noise=noise)
-        lat.analize_ice(water_type= water_type,
-                        hooks     = hooks,
-                        arg       = arg
-        )
+
+        for lat in lattice.load_iter(filename, oname, hname, filerange, framerange):
+            # Main part of the program is contained in th Formatter object. (See formats/)
+            logger.debug("Format: {0}".format(file_format))
+            hooks, arg = safe_import("format", file_format)
+            lat.analize_ice(water_type= water_type,
+                            hooks     = hooks,
+                            arg       = arg
+            )
     
 if __name__ == "__main__":
     main()
