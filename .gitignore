@@ -34,3 +34,7 @@ tests/trash/*
 *.eps
 *.log
 
+
+*.voro
+
+*.db
