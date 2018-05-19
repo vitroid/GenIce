@@ -54,10 +54,10 @@ def getoptions_analice():
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
                         help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="OW",
-                        default="O",
+                        default=("O",),
                         help='Specify atom name of oxygen in input Gromacs file. ("O")')
     parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
-                        default="H",
+                        default=("H",),
                         help='Specify atom name of hydrogen in input Gromacs file. ("H")')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
