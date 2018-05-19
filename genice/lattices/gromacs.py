@@ -101,7 +101,6 @@ def argparser(arg):
                 # register a new intermolecular pair
                 pairs.append((h//2, o))
         logger.debug("  # of pairs: {0} {1}".format(len(pairs),len(waters)))
-
         
     
     
