@@ -32,7 +32,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.RC1)
+    (version 0.23.2)
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
@@ -129,11 +129,6 @@ option avoids the network rearrangements.
 * If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
 
         genice gromacs[cs1.gro:O] --format y > cs1.yap
-
-* Some zeolites share the network topology with low-density ices. If you want to retrieve a zeolite ITT structure from [IZA structure database](http://www.iza-structure.org/databases) to prepare a low-density ice, try the following command:
-
-        genice zeolite[ITT] -r 1 1 1 > ITT.gro
-
 
 
 ## Clathrate hydrates
@@ -328,8 +323,6 @@ iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
-zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
-cif[filename]|Retrieve cif file as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
 
 Ice names with double quotations are not experimentally verified.
 
@@ -422,8 +415,8 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
 |[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`genice-matcher`](https://github.com/vitroid/matcher)| `-f matcher2` | Pattern matching with a given structure. | text | |
-|   | `-f smatcher` | Pattern matching with a self-template. | text | |
+|[`genice-matcher`](https://github.com/vitroid/matcher)| `-f matcher2` | Geometrical pattern matching with a given structure. | text | |
+|   | `-f smatcher` | Translational pattern matching with a self-template. | text | |
 
 
 # References
