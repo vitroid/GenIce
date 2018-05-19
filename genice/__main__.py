@@ -24,7 +24,7 @@ def getoptions():
                         help='Random seed [1000]')
     parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",l
+    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
                         help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
@@ -57,16 +57,16 @@ def getoptions_analice():
     parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
                         help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="OW",
-                        default="O",
+                        default=("O",),
                         help='Specify atom name of oxygen in input Gromacs file. ("O")')
     parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
-                        default="H",
+                        default=("H",),
                         help='Specify atom name of hydrogen in input Gromacs file. ("H")')
     parser.add_argument('--filerange', nargs = 1,           dest='filerange', metavar="[from:]below[:interval]",
-                        default="0:1",
+                        default=("0:1",),
                         help='Specify the number range for the filename. ("0:1")')
     parser.add_argument('--framerange', nargs = 1,          dest='framerange', metavar="[from:]below[:interval]",
-                        default="0:1",
+                        default=("0:1",),
                         help='Specify the number range for the frames. ("0:1")')
     parser.add_argument('--debug', '-D', action='store_true', dest='debug',
                         help='Output debugging info.')
@@ -206,12 +206,19 @@ def main():
         filerange    = options.filerange[0]
         framerange   = options.framerange[0]
         
+        logger.debug(filerange)
+        logger.debug(framerange)
+        logger.debug(oname)
+        logger.debug(hname)
+        
         del options  # Dispose for safety.
 
-        for lat in lattice.load_iter(filename, oname, hname, filerange, framerange):
+        for w in lattice.load_iter(filename, oname, hname, filerange, framerange):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
+            lat = lattice.Lattice(w,
+                                  noise=noise)
             lat.analize_ice(water_type= water_type,
                             hooks     = hooks,
                             arg       = arg

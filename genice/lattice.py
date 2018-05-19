@@ -3,6 +3,7 @@ import logging
 import random
 import itertools as it
 import logging
+import re
 from math import sin, cos, pi
 from collections import Iterable, defaultdict
 
@@ -39,10 +40,10 @@ class gromacs(): # for analice
         self.file = open(filename)
         self.oname = oname
         self.hname = hname
-        self.file.readline()
     def load_iter(self):
         logger = logging.getLogger()
         while True:
+            self.file.readline() #1st line:comment
             line = self.file.readline()
             if len(line) == 0:
                 return
@@ -51,21 +52,21 @@ class gromacs(): # for analice
             self.waters = []
             skipped = set()
             for i in range(natom):
-                line = file.readline()
+                line = self.file.readline()
                 # resid = int(line[0:5])
                 # resna = line[5:10]
                 atomname = line[10:15].replace(' ', '')
                 # atomid = int(line[15:20])
                 pos = np.array([float(x) for x in line[20:].split()[:3]]) #drop velocity
-                if atomname == O:
+                if atomname == self.oname:
                     self.waters.append(pos)
-                elif H is not None and re.fullmatch(H, atomname):
+                elif self.hname is not None and re.fullmatch(self.hname, atomname):
                     hatoms.append(pos)
                 else:
                     if atomname not in skipped:
                         logger.info("Skip {0}".format(atomname))
                         skipped.add(atomname)
-            c = [float(x) for x in file.readline().split()]
+            c = [float(x) for x in self.file.readline().split()]
             if len(c) == 3:
                 self.cell = np.array([[c[0],0.,0.],
                                  [0.,c[1],0.],
@@ -120,6 +121,8 @@ def load_iter(filename, oname, hname, filerange, framerange):
     logger = logging.getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
+    logger.debug("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
+    logger.debug("  frame nnumber range: {0}:{1}:{2}".format(*rframe))
     frame = 0
     for num in rfile:
         fname = filename % num # c-style format specifier
@@ -133,7 +136,7 @@ def load_iter(filename, oname, hname, filerange, framerange):
                 rframe[0] += rframe[2]
                 if rframe[1] <= rframe[0]:
                     rframe[0] = -1
-        frame += 1
+            frame += 1
 
 
 
