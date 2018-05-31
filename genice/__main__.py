@@ -12,71 +12,177 @@ import numpy as np
 
 def getoptions():
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice')
-    parser.add_argument('--version', '-V', action='version', version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--rep',  '-r', nargs = 3, type=int,   dest='rep',  default=[1,1,1],
+    parser.add_argument('--version',
+                        '-V',
+                        action='version',
+                        version='%(prog)s {0}'.format(__version__))
+    parser.add_argument('--rep',
+                        '-r',
+                        nargs = 3,
+                        type=int,
+                        dest='rep',
+                        default=[1,1,1],
                         help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
-    parser.add_argument('--dens', '-d', nargs = 1, type=float, dest='dens', default=(-1,),
+    parser.add_argument('--dens',
+                        '-d',
+                        nargs = 1,
+                        type=float,
+                        dest='dens',
+                        default=(-1,),
                         help='Specify the ice density in g/cm3')
-    parser.add_argument('--add_noise', nargs=1, type=float, dest='noise', default=(0.,),
+    parser.add_argument('--add_noise',
+                        nargs=1,
+                        type=float,
+                        dest='noise',
+                        default=(0.,),
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--seed', '-s', nargs = 1, type=int,   dest='seed', default=(1000,),
+    parser.add_argument('--seed',
+                        '-s',
+                        nargs = 1,
+                        type=int,
+                        dest='seed',
+                        default=(1000,),
                         help='Random seed [1000]')
-    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
+    parser.add_argument('--format',
+                        '-f',
+                        nargs = 1,
+                        dest='format',
+                        default=("gromacs",),
+                        metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
+    parser.add_argument('--water',
+                        '-w',
+                        nargs = 1,
+                        dest='water',
+                        default=("tip3p",),
+                        metavar="model",
                         help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--guest', '-g', nargs = 1,           dest='guests', metavar="D=empty", action="append", 
+    parser.add_argument('--guest',
+                        '-g',
+                        nargs = 1,
+                        dest='guests',
+                        metavar="D=empty",
+                        action="append", 
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
-    parser.add_argument('--Guest', '-G', nargs = 1,           dest='spot_guests', metavar="13=me", action="append", 
+    parser.add_argument('--Guest',
+                        '-G',
+                        nargs = 1,
+                        dest='spot_guests',
+                        metavar="13=me",
+                        action="append", 
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
-    parser.add_argument('--Group', '-H', nargs = 1,           dest='groups', metavar="13=bu-:0", action="append", 
+    parser.add_argument('--Group',
+                        '-H',
+                        nargs = 1,
+                        dest='groups',
+                        metavar="13=bu-:0",
+                        action="append", 
                         help='Specify the group. (-H 13=bu-:0, etc.)')
-    parser.add_argument('--anion', '-a', nargs = 1,           dest='anions', metavar="3=Cl", action="append", 
+    parser.add_argument('--anion',
+                        '-a',
+                        nargs = 1,
+                        dest='anions',
+                        metavar="3=Cl",
+                        action="append", 
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
-    parser.add_argument('--cation', '-c', nargs = 1,           dest='cations', metavar="3=Na", action="append", 
+    parser.add_argument('--cation',
+                        '-c',
+                        nargs = 1,
+                        dest='cations',
+                        metavar="3=Na",
+                        action="append", 
                         help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
-    parser.add_argument('--nodep', action='store_true', dest='nodep',
+    parser.add_argument('--nodep',
+                        action='store_true',
+                        dest='nodep',
                         help='No depolarization.')
-    parser.add_argument('--asis', action='store_true', dest='asis',
+    parser.add_argument('--asis',
+                        action='store_true',
+                        dest='asis',
                         help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
-    parser.add_argument('--debug', '-D', action='store_true', dest='debug',
+    parser.add_argument('--debug',
+                        '-D',
+                        action='store_true',
+                        dest='debug',
                         help='Output debugging info.')
-    parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
+    parser.add_argument('--quiet',
+                        '-q',
+                        action='store_true',
+                        dest='quiet',
                         help='Do not output progress messages.')
-    parser.add_argument('Type', nargs=1,
-                       help='Crystal type (1c,1h,etc. See https://github.com/vitroid/GenIce for available ice structures.)')
+    parser.add_argument('Type',
+                        nargs=1,
+                        help='Crystal type (1c,1h,etc. See https://github.com/vitroid/GenIce for available ice structures.)')
     return parser.parse_args()
 
 
 def getoptions_analice():
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice')
-    parser.add_argument('--version', '-V', action='version', version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--format', '-f', nargs = 1,           dest='format', default=("gromacs",), metavar="gmeqdypoc",
+    parser.add_argument('--version',
+                        '-V',
+                        action='version',
+                        version='%(prog)s {0}'.format(__version__))
+    parser.add_argument('--format',
+                        '-f',
+                        nargs = 1,
+                        dest='format',
+                        default=("gromacs",),
+                        metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--water', '-w', nargs = 1,           dest='water', default=("tip3p",), metavar="model",
+    parser.add_argument('--water',
+                        '-w',
+                        nargs = 1,
+                        dest='water',
+                        default=("tip3p",),
+                        metavar="model",
                         help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--oxygen', '-O', nargs = 1,           dest='oatom', metavar="OW",
+    parser.add_argument('--oxygen',
+                        '-O',
+                        nargs = 1,
+                        dest='oatom',
+                        metavar="OW",
                         default=("O",),
                         help='Specify atom name of oxygen in input Gromacs file. ("O")')
-    parser.add_argument('--hydrogen', '-H', nargs = 1,           dest='hatom', metavar="HW[12]",
+    parser.add_argument('--hydrogen',
+                        '-H',
+                        nargs = 1,
+                        dest='hatom',
+                        metavar="HW[12]",
                         default=("H",),
                         help='Specify atom name of hydrogen in input Gromacs file. ("H")')
-    parser.add_argument('--filerange', nargs = 1,           dest='filerange', metavar="[from:]below[:interval]",
+    parser.add_argument('--filerange',
+                        nargs = 1,
+                        dest='filerange',
+                        metavar="[from:]below[:interval]",
                         default=("0:1",),
                         help='Specify the number range for the filename. ("0:1")')
-    parser.add_argument('--framerange', nargs = 1,          dest='framerange', metavar="[from:]below[:interval]",
+    parser.add_argument('--framerange',
+                        nargs = 1,
+                        dest='framerange',
+                        metavar="[from:]below[:interval]",
                         default=("0:1",),
                         help='Specify the number range for the frames. ("0:1")')
-    parser.add_argument('--debug', '-D', action='store_true', dest='debug',
+    parser.add_argument('--debug',
+                        '-D',
+                        action='store_true',
+                        dest='debug',
                         help='Output debugging info.')
-    parser.add_argument('--quiet', '-q', action='store_true', dest='quiet',
+    parser.add_argument('--quiet',
+                        '-q',
+                        action='store_true',
+                        dest='quiet',
                         help='Do not output progress messages.')
-    parser.add_argument('--add_noise', nargs=1, type=float, dest='noise', default=(0.,),
+    parser.add_argument('--add_noise',
+                        nargs=1,
+                        type=float,
+                        dest='noise',
+                        default=(0.,),
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('File', nargs=1,
-                       help='Gromacs file.')
+    parser.add_argument('File',
+                        nargs=1,
+                        help='Gromacs file.')
     return parser.parse_args()
 
 
@@ -167,7 +273,7 @@ def main():
     
         logger.debug("Lattice: {0}".format(lattice_type))
         # Main part of the program is contained in th Formatter object. (See formats/)
-        logger.debug("Format: {0}".format(file_format))
+        logger.debug("Output file format: {0}".format(file_format))
         hooks, arg = safe_import("format", file_format)
         # Show the document of the module
         #try:
@@ -213,9 +319,9 @@ def main():
         
         del options  # Dispose for safety.
 
-        for w in lattice.gromacs_load_iter(filename, oname, hname, filerange, framerange):
+        for w in lattice.load_iter(filename, oname, hname, filerange, framerange):
             # Main part of the program is contained in th Formatter object. (See formats/)
-            logger.debug("Format: {0}".format(file_format))
+            logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
             lat = lattice.Lattice(w,
                                   noise=noise)

@@ -117,6 +117,9 @@ def euler2quat(e):
     return np.array((a,b,c,d))
     
 
+def euler2rotmat(e):
+    return quat2rotmat(euler2quat(e))
+
 
 def quat2euler(q):
     e = np.zeros(3)

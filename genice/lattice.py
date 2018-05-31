@@ -116,12 +116,47 @@ class gromacs(): # for analice
                         self.pairs.append((h//2, o))
                 logger.debug("  # of pairs: {0} {1}".format(len(self.pairs),len(self.waters)))
             yield self
-        
+
+
+class nx3a(): # for analice
+    def __init__(self, filename):
+        logger = logging.getLogger()
+        logger.debug('load {0}'.format(filename))
+        self.file = open(filename)
+    def load_iter(self):
+        logger = logging.getLogger()
+        while True:
+            line = self.file.readline()
+            if len(line) == 0:
+                return
+            if len(line) > 4:
+                if line[:5] == "@BOX3":
+                    line = self.file.readline()
+                    box = np.array([float(x) for x in line.split()[:3]])
+                    self.cell = np.diag(box) / 10 # in nm
+                    celli = np.linalg.inv(self.cell)
+                    self.celltype = 'triclinic'
+                elif line[:5] == "@NX3A":
+                    line = self.file.readline()
+                    nmol = int(line.split()[0])
+                    self.waters = []
+                    self.rotmat = []
+                    for i in range(nmol):
+                        line = self.file.readline()
+                        cols = line.split()[:6]
+                        pos   = np.array([float(x) for x in cols[:3]])
+                        euler = np.array([float(x) for x in cols[3:6]])
+                        self.waters.append(pos /  10) # in nm
+                        self.rotmat.append(rigid.euler2rotmat(euler))
+                    self.coord = 'absolute'
+                    self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+                    yield self
+            
     
 
 
 
-def gromacs_load_iter(filename, oname, hname, filerange, framerange):
+def load_iter(filename, oname, hname, filerange, framerange):
     logger = logging.getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
@@ -141,11 +176,20 @@ def gromacs_load_iter(filename, oname, hname, filerange, framerange):
     for fname in filelist:
         logger.debug("files: {0}".format(fname))
     frame = 0
-    for fname in filelist:
+    logger.debug("  File range: {0}".format(filerange))
+    for num in rfile:
+        try:
+            fname = filename % num # c-style format specifier
+        except TypeError:
+            fname = filename
+            logger.warn("  Filename {0} does not contain a pattern.".format(fname))
         logger.info("  Filename: {0}".format(fname))
-        s = "gromacs[:{0}:{1}]".format(oname,hname)
         # single gromacs file may contain multiple frames
-        for lat in gromacs(fname, oname, hname).load_iter():
+        if fname.endswith('nx3a'):
+            loader = nx3a(fname)
+        else:
+            loader = gromacs(fname, oname, hname)
+        for lat in loader.load_iter():
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
                 yield lat
@@ -1100,8 +1144,9 @@ class Lattice():
                     assert (i, j) in pairs1 or (j, i) in pairs1
 
         graph = dg.IceGraph()
-        for i, j in fixed:
-            graph.add_edge(i, j, fixed=True)
+        if fixed is not None:
+            for i, j in fixed:
+                graph.add_edge(i, j, fixed=True)
         # Fixed pairs are default.
         for pair in self.pairs:
             i, j = pair
