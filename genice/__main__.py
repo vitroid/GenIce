@@ -213,7 +213,7 @@ def main():
         
         del options  # Dispose for safety.
 
-        for w in lattice.load_iter(filename, oname, hname, filerange, framerange):
+        for w in lattice.gromacs_load_iter(filename, oname, hname, filerange, framerange):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)

@@ -4,6 +4,7 @@ import random
 import itertools as it
 import logging
 import re
+import os
 from math import sin, cos, pi
 from collections import Iterable, defaultdict
 
@@ -117,21 +118,33 @@ class gromacs(): # for analice
 
 
 
-def load_iter(filename, oname, hname, filerange, framerange):
+def gromacs_load_iter(filename, oname, hname, filerange, framerange):
     logger = logging.getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
     logger.debug("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
     logger.debug("  frame nnumber range: {0}:{1}:{2}".format(*rframe))
+    # test whether filename has a regexp for enumeration
+    m = re.search("%[0-9]*d", filename)
+    # prepare file list
+    if m is None:
+        filelist = [filename,]
+    else:
+        filelist = []
+        for num in rfile:
+            fname = filename % num
+            if os.path.exists(fname):
+                filelist.append(fname)
+    for fname in filelist:
+        logger.debug("files: {0}".format(fname))
     frame = 0
-    for num in rfile:
-        fname = filename % num # c-style format specifier
+    for fname in filelist:
         logger.info("  Filename: {0}".format(fname))
         s = "gromacs[:{0}:{1}]".format(oname,hname)
         # single gromacs file may contain multiple frames
         for lat in gromacs(fname, oname, hname).load_iter():
             if frame == rframe[0]:
-                logger.info("  Frame: {0}".format(frame))
+                logger.info("Frame: {0}".format(frame))
                 yield lat
                 rframe[0] += rframe[2]
                 if rframe[1] <= rframe[0]:
