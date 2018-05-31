@@ -1130,7 +1130,8 @@ class Lattice():
                 self.waters, self.bondlen, self.cell.mat, grid, distance=False)
             # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.
-            if self.logger.level <= logging.DEBUG:
+            # Do not use it for normal debug because it is too slow
+            if False: # self.logger.level <= logging.DEBUG:
                 pairs1 = self.pairs
                 pairs2 = [v for v in pl.pairs_crude(
                     self.waters, self.bondlen, self.cell.mat, distance=False)]
