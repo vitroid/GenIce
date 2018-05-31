@@ -45,9 +45,12 @@ class gromacs(): # for analice
         logger = logging.getLogger()
         while True:
             self.file.readline() #1st line:comment
-            line = self.file.readline()
-            if len(line) == 0:
-                return
+            while True:
+                line = self.file.readline()
+                if len(line) == 0:
+                    return
+                if line[0] != '#':
+                    break
             natom = int(line)
             hatoms = []
             self.waters = []
@@ -123,7 +126,7 @@ def gromacs_load_iter(filename, oname, hname, filerange, framerange):
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
     logger.debug("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
-    logger.debug("  frame nnumber range: {0}:{1}:{2}".format(*rframe))
+    logger.debug("  frame number range: {0}:{1}:{2}".format(*rframe))
     # test whether filename has a regexp for enumeration
     m = re.search("%[0-9]*d", filename)
     # prepare file list

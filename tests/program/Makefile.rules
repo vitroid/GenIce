@@ -1,3 +1,4 @@
+# -*- makefile -*-
 all: test1.done   test2.done   test3.done   test4.done   test_2d.gro
 all: test_3.ar3a  test_4.ngph  test_5.nx3a  test_6.gro   test_7.mdv
 all: test_12.scad test_16.py   test_17.nx4a test_1c.ar3r test_CS1.cif
@@ -11,6 +12,7 @@ all: test_7.re.gro
 # all: test_ITT.gro
 all: test_7.analice.yap
 all: test_2D3.analice.yap
+all: test_gro2.gro
 
 
 test1.done: $(FMT)/gromacs.py
@@ -71,8 +73,8 @@ test_3xFAU.yap: $(FMT)/yaplot.py
 test_7.gro: $(FMT)/gromacs.py
 	$(GENICE) 7 -r 2 2 2 | fgrep -v "Command line:" > $@
 test_7.re.gro: test_7.gro $(FMT)/gromacs.py
-	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 --asis  | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
-	-$(GENICE) gromacs[$<:O]  --rep 1 1 1 | fgrep -v "Command line:" > $@ # should fail
+	$(ANALICE) $< -O O -H H --rep 1 1 1 --asis  | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
+	-$(ANALICE) $< -O O  --rep 1 1 1 | fgrep -v "Command line:" > $@ # should fail
 	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
 # test_MTN.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
 # 	$(GENICE) zeolite[MTN] --rep 1 1 1 | fgrep -v "Command line:" > $@
@@ -80,9 +82,11 @@ test_7.re.gro: test_7.gro $(FMT)/gromacs.py
 # 	$(GENICE) cif[MTN.cif] --rep 1 1 1 | fgrep -v "Command line:" > $@                     ;diff $(REFD)/$@ $@
 # test_ITT.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
 # 	$(GENICE) zeolite[ITT] --rep 1 1 1 | fgrep -v "Command line:" > $@                     ;diff $(REFD)/$@ $@
-test_7.analice.yap: test_7.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
-	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                ;diff $(REFD)/$@ $@
+test_7.analice.yap: test_7.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                           #     ;diff $(REFD)/$@ $@
 test_2D3.gro: $(FMT)/gromacs.py
 	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
-test_2D3.analice.yap: test_2D3.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
-	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                ;diff $(REFD)/$@ $@
+test_2D3.analice.yap: test_2D3.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                          #      ;diff $(REFD)/$@ $@
+test_gro2.gro:
+	$(ANALICE) %05d-0.gro --filerange 5:10 --framerange 0:9999:3 -O Ow -H Hw > $@
