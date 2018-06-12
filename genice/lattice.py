@@ -44,7 +44,9 @@ class gromacs(): # for analice
     def load_iter(self):
         logger = logging.getLogger()
         while True:
-            self.file.readline() #1st line:comment
+            line = self.file.readline() #1st line:comment
+            if len(line) == 0:
+                return
             while True:
                 line = self.file.readline()
                 if len(line) == 0:
@@ -160,8 +162,8 @@ def load_iter(filename, oname, hname, filerange, framerange):
     logger = logging.getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
-    logger.debug("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
-    logger.debug("  frame number range: {0}:{1}:{2}".format(*rframe))
+    logger.info("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
+    logger.info("  frame number range: {0}:{1}:{2}".format(*rframe))
     # test whether filename has a regexp for enumeration
     m = re.search("%[0-9]*d", filename)
     # prepare file list
@@ -173,17 +175,10 @@ def load_iter(filename, oname, hname, filerange, framerange):
             fname = filename % num
             if os.path.exists(fname):
                 filelist.append(fname)
-    for fname in filelist:
-        logger.debug("files: {0}".format(fname))
+    logger.debug("File list: {0}".format(filelist))
     frame = 0
-    logger.debug("  File range: {0}".format(filerange))
-    for num in rfile:
-        try:
-            fname = filename % num # c-style format specifier
-        except TypeError:
-            fname = filename
-            logger.warn("  Filename {0} does not contain a pattern.".format(fname))
-        logger.info("  Filename: {0}".format(fname))
+    for fname in filelist:
+        logger.info("  File name: {0}".format(fname))
         # single gromacs file may contain multiple frames
         if fname.endswith('nx3a'):
             loader = nx3a(fname)
@@ -192,10 +187,13 @@ def load_iter(filename, oname, hname, filerange, framerange):
         for lat in loader.load_iter():
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
+                lat.lattice_type = "analyce"
                 yield lat
                 rframe[0] += rframe[2]
                 if rframe[1] <= rframe[0]:
-                    rframe[0] = -1
+                    return
+            else:
+                logger.info("Skip frame: {0}".format(frame))
             frame += 1
 
 
@@ -543,7 +541,7 @@ class Lattice():
                  noise=0.,
                  ):
         self.logger      = logging.getLogger()
-        # self.lattice_type = lattice_type
+        self.lattice_type = lat.lattice_type
         self.rep         = rep
         self.depolarize  = depolarize
         self.asis        = asis

@@ -155,14 +155,14 @@ def getoptions_analice():
                         nargs = 1,
                         dest='filerange',
                         metavar="[from:]below[:interval]",
-                        default=("0:1",),
-                        help='Specify the number range for the filename. ("0:1")')
+                        default=("0:1000000",),
+                        help='Specify the number range for the filename. ("0:1000000")')
     parser.add_argument('--framerange',
                         nargs = 1,
                         dest='framerange',
                         metavar="[from:]below[:interval]",
-                        default=("0:1",),
-                        help='Specify the number range for the frames. ("0:1")')
+                        default=("0:1000000",),
+                        help='Specify the number range for the frames. ("0:1000000")')
     parser.add_argument('--debug',
                         '-D',
                         action='store_true',
