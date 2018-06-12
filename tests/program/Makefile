@@ -3,6 +3,6 @@ all:
 test_installed:
 	make -f Makefile.installed -j 8
 test_develop:
-	make -f Makefile.develop -k
+	make -f Makefile.develop
 
 include Makefile.common
