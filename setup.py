@@ -15,6 +15,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'
     metadata = dict(re.findall(r"""__([a-z]+)__ = "([^"]+)""", version_file.read()))
 
 setup(name='GenIce',
+      python_requires='>=3.5',
       version=metadata['version'],
       description='A Swiss army knife to generate hydrogen-disordered ice structures.',
       #long_description=README + '\n\n' +  CHANGES,
