@@ -102,7 +102,7 @@ def hook6(lattice):
             d1 = H1 - O
             rr0 = np.dot(d0,d0)
             rr1 = np.dot(d1,d1)
-            if rr0 < rr1 and rr0 < 0.27**2:
+            if rr0 < rr1 and rr0 < 0.245**2:
                 s += yp.Arrow(H0,O)
             if rr1 < rr0 and rr1 < 0.245**2:
                 s += yp.Arrow(H1,O)
