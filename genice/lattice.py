@@ -138,18 +138,28 @@ class nx3a(): # for analice
                     self.cell = np.diag(box) / 10 # in nm
                     celli = np.linalg.inv(self.cell)
                     self.celltype = 'triclinic'
-                elif line[:5] == "@NX3A":
+                elif line[:5] in ("@NX3A", "@NX4A"):
+                    nx3a = (line[:5] == "@NX3A")
                     line = self.file.readline()
                     nmol = int(line.split()[0])
                     self.waters = []
                     self.rotmat = []
-                    for i in range(nmol):
-                        line = self.file.readline()
-                        cols = line.split()[:6]
-                        pos   = np.array([float(x) for x in cols[:3]])
-                        euler = np.array([float(x) for x in cols[3:6]])
-                        self.waters.append(pos /  10) # in nm
-                        self.rotmat.append(rigid.euler2rotmat(euler))
+                    if nx3a:
+                        for i in range(nmol):
+                            line = self.file.readline()
+                            cols = line.split()[:6]
+                            pos   = np.array([float(x) for x in cols[:3]])
+                            euler = np.array([float(x) for x in cols[3:6]])
+                            self.waters.append(pos /  10) # in nm
+                            self.rotmat.append(rigid.euler2rotmat(euler))
+                    else: #nx4a
+                        for i in range(nmol):
+                            line = self.file.readline()
+                            cols = line.split()[:7]
+                            pos  = np.array([float(x) for x in cols[:3]])
+                            quat = np.array([float(x) for x in cols[3:7]])
+                            self.waters.append(pos /  10) # in nm
+                            self.rotmat.append(rigid.quat2rotmat(quat))
                     self.coord = 'absolute'
                     self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
                     yield self
@@ -179,8 +189,8 @@ def load_iter(filename, oname, hname, filerange, framerange):
     frame = 0
     for fname in filelist:
         logger.info("  File name: {0}".format(fname))
-        # single gromacs file may contain multiple frames
-        if fname.endswith('nx3a'):
+        # single file may contain multiple frames
+        if fname[-4:] in ('nx3a', 'nx4a'):
             loader = nx3a(fname)
         else:
             loader = gromacs(fname, oname, hname)
@@ -241,6 +251,7 @@ def orientations(coord, graph, cell):
     """
     logger = logging.getLogger()
     rotmatrices = []
+    assert len(coord) == graph.number_of_nodes() # just for a test of pure water
     for node in range(graph.number_of_nodes()):
         if node in graph.ignores:
             # for dopants; do not rotate
@@ -251,8 +262,10 @@ def orientations(coord, graph, cell):
                 vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
                 vsucc = [x / np.linalg.norm(x) for x in vsucc]
                 vpred = [x / np.linalg.norm(x) for x in vpred]
+                if len(vpred) > 2:
+                    vpred = vpred[:2]  # number of incoming bonds should be <= 2
                 vcomp = complement(vpred+vsucc)
-                logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
+                logger.debug("Node {0} vcomp {1} vsucc {2} vpred {3}".format(node,vcomp,vsucc, vpred))    
                 vsucc = (vsucc+vcomp)[:2]
             logger.debug("Node {0} vsucc {1}".format(node,vsucc))
             assert 2<=len(vsucc), "Probably a wrong ice network."
@@ -793,7 +806,7 @@ class Lattice():
             hooks[4](self)
         if max(0,*hooks.keys()) < 5:
             return
-        # self.stage5_analice()
+        self.stage5()
         if 5 in hooks:
             hooks[5](self)
         if max(0,*hooks.keys()) < 6:
