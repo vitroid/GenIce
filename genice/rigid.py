@@ -28,11 +28,11 @@ def decide2(v1,v2):
 
 #outer product of two vectors; return None if vector is too small
 def op(i,j,check=True):
-    if check and (np.linalg.norm(i) < 0.1 or np.linalg.norm(j) < 0.1):
-        return np.array([])
+    if check and (np.linalg.norm(i) < 0.001 or np.linalg.norm(j) < 0.001):
+        return None
     a = np.cross(i,j)
-    if check and np.linalg.norm(a) < 0.1:
-        return np.array([])
+    if check and np.linalg.norm(a) < 0.001:
+        return None
     return a
 
 
@@ -50,11 +50,11 @@ def rotmat2quat0(i,j,k):
     # 交線は、2つの面の法線のいずれとも直交する=外積である。*/
     
     a = op(i-ex, j-ey)
-    if a.size == 0:
+    if a is None:
         a = op(i-ex, k-ez)
-        if a.size == 0:
+        if a is None:
             a = op(k-ez, j-ey)
-            if a.size == 0:
+            if a is None:
                 #sys.stderr.write("outer prod warning\n")
                 #//全く回転しないケース
                 return 1.0, 0.0, 0.0, 0.0
@@ -68,17 +68,14 @@ def rotmat2quat0(i,j,k):
 
     i0 /= np.linalg.norm(i0)
     x0 /= np.linalg.norm(x0)
-    cosine = np.dot(i0,x0.transpose())
+    cosine = np.dot(i0,x0)
     if cosine < -1.0 or cosine > 1.0:
         cosh = 0.0
         sinh = 1.0
     else:
         cosh=sqrt((1.0+cosine)*0.5)
         sinh=sqrt(1.0-cosh*cosh)
-    #//fprintf(stderr,"sinh %24.17e %24.17e %24.17e\n",cosine,cosh,sinh);
-    #/*outer product to determine direction*/
     o = op(i0,x0,False)
-    a = a.transpose()
     if np.dot(o,a) < 0.0:
         sinh=-sinh;
     
@@ -104,7 +101,7 @@ def quat2rotmat(q):
     sp31=2.0*(a*c+b*d)
     sp32=2.0*(a*b-c*d)
     sp33=a*a+d*d-(b*b+c*c)
-    return np.array([[sp11,sp12,sp13], [sp21,sp22,sp23], [sp31,sp32,sp33]])
+    return np.array([[sp11,sp12,sp13], [sp21,sp22,sp23], [sp31,sp32,sp33]]).transpose()
 
 
 
@@ -119,6 +116,10 @@ def euler2quat(e):
 
 def euler2rotmat(e):
     return quat2rotmat(euler2quat(e))
+
+
+def rotmat2euler(e):
+    return quat2euler(rotmat2quat(e))
 
 
 def quat2euler(q):
@@ -241,11 +242,105 @@ def six2nine(a,b,c,alpha,beta,gamma):
 def test():
     """Testing Docstring"""
     six2nine(22.561,   26.318,   25.270, 102.09,  89.66,  89.45)
-    q1 = np.array([0.5,0.5,0.5,0.5]);
-    q2 = np.array([0.5,0.5,0.5,-0.5]);
+    print("test 1: identical projection")
+    e1 = np.zeros(3)
+    q1 = euler2quat(e1)
+    r1 = quat2rotmat(q1)
+    print("e id",e1)
+    print("q id",q1)
+    print("r id",r1)
+    print("rI to eI",rotmat2euler(r1))
+    print()
+
+    print("test 2a: cancellation via quat")
+    e1 = np.array([0.0, 0.0, 0.1])
+    e2 = np.array([0.0, 0.0,-0.1])
+    print("e1",e1)
+    print("e2",e2)
+    q1 = euler2quat(e1)
+    q2 = euler2quat(e2)
+    q12 = qadd(q1,q2)
+    print("q12",q12)
+    e12 = quat2euler(q12)
+    print("e1+e2",e12)
+    print()
+    
+    print("test 3a: euler addition via quat?")
+    e1 = np.array([0.1, 0.0, 0.0])
+    e2 = np.array([0.2, 0.0, 0.0])
+    print("e1",e1)
+    print("e2",e2)
+    q1 = euler2quat(e1)
+    q2 = euler2quat(e2)
+    print("++++++++++++++++++++++")
+    print("q1",q1)
+    print("q2",q2)
+    print("++++++++++++++++++++++")
+    q12 = qadd(q1,q2)
+    print("++++++++++++++++++++++")
+    print("q12",q12)
+    print("++++++++++++++++++++++")
+    e12 = quat2euler(q12)
+    print("e1+e2",e12)
+    print()
+    
+    print("test 3b: euler addition via quat")
+    e1 = np.array([0.0, 0.1, 0.0])
+    e2 = np.array([0.0, 0.2, 0.0])
+    print("e1",e1)
+    print("e2",e2)
+    q1 = euler2quat(e1)
+    q2 = euler2quat(e2)
+    print("q1",q1)
+    print("q2",q2)
+    q12 = qadd(q1,q2)
+    print("q12",q12)
+    e12 = quat2euler(q12)
+    print("e1+e2",e12)
+    print()
+    
+    print("test 3c: euler addition via quat")
+    e1 = np.array([0.0, 0.0, 0.1])
+    e2 = np.array([0.0, 0.0, 0.2])
+    print("e1",e1)
+    print("e2",e2)
+    q1 = euler2quat(e1)
+    q2 = euler2quat(e2)
+    print("q1",q1)
+    print("q2",q2)
+    q12 = qadd(q1,q2)
+    print("q12",q12)
+    e12 = quat2euler(q12)
+    print("e1+e2",e12)
+    r12 = quat2rotmat(q12)
+    print("  r12",r12)
+    print()
+    
+    print("test 4a: euler addition via rotmat")
+    e1 = np.array([0.0, 0.0, 0.1])
+    e2 = np.array([0.0, 0.0, 0.2])
+    print("e1",e1)
+    print("e2",e2)
+    r1 = euler2rotmat(e1)
+    r2 = euler2rotmat(e2)
+    r12 = np.dot(r1,r2)
+    print("r12",r12)
+    q12 = rotmat2quat(r12)
+    print("  q12",q12)
+    e12 = quat2euler(q12)
+    print("e1+e2",e12)
+    print()
+    
+    q2 = np.array([0.5,0.5,0.5,-0.5])
+    r1 = quat2rotmat(q1)
+    r1i = r1.transpose()
+    q1i = rotmat2quat(r1i)
+    print("q1",q1)
+    print("q1i",q1i)
+    print("q1+q1i",qadd(q1i, q1))
     q21 = qadd(q2,qmul(q1,-1))
-    print(q21)
-    print(qadd(q21,q1))
+    print("q21=q1-q2",q21)
+    print("q21+q1",qadd(q21,q1))
     q3 = np.array([0.60876143, -0.45804276,  0.45804276, -0.45804276])
     print(qadd(q3,q1))
     print(qadd(q1,q3))
