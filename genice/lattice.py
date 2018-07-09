@@ -803,7 +803,8 @@ class Lattice():
             hooks[4](self)
         if max(0,*hooks.keys()) < 5:
             return
-        self.stage5()
+        # molecular orientation should be given in the loader.
+        # self.stage5()
         if 5 in hooks:
             hooks[5](self)
         if max(0,*hooks.keys()) < 6:
