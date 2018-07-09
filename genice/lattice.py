@@ -125,7 +125,7 @@ class nx3a(): # for analice
         logger = logging.getLogger()
         logger.debug('load {0}'.format(filename))
         self.file = open(filename)
-        self.bondlen = 0.276
+        self.bondlen = 0.3
     def load_iter(self):
         logger = logging.getLogger()
         while True:
@@ -160,11 +160,12 @@ class nx3a(): # for analice
                         self.waters.append(pos /  10) # in nm
                     self.coord = 'absolute'
                     self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
-                    self.pairs = []
-                    grid = pl.determine_grid(self.cell, self.bondlen)
-                    logger.debug("  Make pair list.")
-                    self.pairs = [(o1,o2)
-                                  for o1,o2 in pl.pairs_fine(np.array(self.waters), self.bondlen, self.cell, grid, distance=False)]
+                    #self.pairs = []
+                    #grid = pl.determine_grid(self.cell, self.bondlen)
+                    #logger.debug("  Make pair list.")
+                    #self.pairs = [(o1,o2)
+                    #              for o1,o2 in pl.pairs_fine(np.array(self.waters), self.bondlen, self.cell, grid, distance=False)]
+                    #logger.info("Pairs: {0}".format(len(self.pairs)))
                     yield self
             
     

@@ -8,6 +8,15 @@ from collections import defaultdict
 import numpy as np
 import yaplotlib as yp
 
+def hook1(lattice):
+    lattice.logger.info("Hook1: Draw the cell in Yaplot format.")
+    s = yp.Layer(2)
+    x,y,z = lattice.repcell.mat
+    for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
+        for a in (np.zeros(3), p, q, p+q):
+            s += yp.Line(a,a+r)
+    print(s,end="")
+    lattice.logger.info("Hook1: end.")
 
 
 def hook6(lattice):
@@ -56,7 +65,8 @@ def hook6(lattice):
             d1 = H1 - O
             rr0 = np.dot(d0,d0)
             rr1 = np.dot(d1,d1)
-            if rr0 < rr1 and rr0 < 0.27**2:
+            # lattice.logger.info((O,H0,H1))
+            if rr0 < rr1 and rr0 < 0.245**2:
                 s += yp.Arrow(H0,O)
             if rr1 < rr0 and rr1 < 0.245**2:
                 s += yp.Arrow(H1,O)
@@ -91,4 +101,4 @@ def hook7(lattice):
     lattice.logger.info("Hook7: end.")
     
 
-hooks = {7:hook7, 6:hook6}
+hooks = {7:hook7, 6:hook6, 1:hook1}
