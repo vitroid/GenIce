@@ -140,6 +140,7 @@ class nx3a(): # for analice
                     self.celltype = 'triclinic'
                 elif line[:5] in ("@NX3A", "@NX4A"):
                     nx3a = (line[:5] == "@NX3A")
+                    logger.debug(line[:5])
                     line = self.file.readline()
                     nmol = int(line.split()[0])
                     self.waters = []
