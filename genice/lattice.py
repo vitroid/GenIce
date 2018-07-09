@@ -125,6 +125,7 @@ class nx3a(): # for analice
         logger = logging.getLogger()
         logger.debug('load {0}'.format(filename))
         self.file = open(filename)
+        self.bondlen = 2.76
     def load_iter(self):
         logger = logging.getLogger()
         while True:
