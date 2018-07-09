@@ -145,22 +145,18 @@ class nx3a(): # for analice
                     nmol = int(line.split()[0])
                     self.waters = []
                     self.rotmat = []
-                    if nx3a:
-                        for i in range(nmol):
-                            line = self.file.readline()
+                    for i in range(nmol):
+                        line = self.file.readline()
+                        if nx3a:
                             cols = line.split()[:6]
-                            pos   = np.array([float(x) for x in cols[:3]])
                             euler = np.array([float(x) for x in cols[3:6]])
-                            self.waters.append(pos /  10) # in nm
                             self.rotmat.append(rigid.euler2rotmat(euler))
-                    else: #nx4a
-                        for i in range(nmol):
-                            line = self.file.readline()
+                        else: #nx4a
                             cols = line.split()[:7]
-                            pos  = np.array([float(x) for x in cols[:3]])
                             quat = np.array([float(x) for x in cols[3:7]])
-                            self.waters.append(pos /  10) # in nm
                             self.rotmat.append(rigid.quat2rotmat(quat))
+                        pos   = np.array([float(x) for x in cols[:3]])
+                        self.waters.append(pos /  10) # in nm
                     self.coord = 'absolute'
                     self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
                     yield self
@@ -1170,7 +1166,7 @@ class Lattice():
                     graph.add_edge(i, j, fixed=False)
                 else:
                     graph.add_edge(j, i, fixed=False)
-        self.logger.debug("  Number of water nodes: {0}".format(graph.number_of_nodes()))
+        self.logger.info("  Number of water nodes: {0}".format(graph.number_of_nodes()))
         return graph
 
     def test_undirected_graph(self, graph):
