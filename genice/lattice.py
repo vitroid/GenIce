@@ -1132,7 +1132,7 @@ class Lattice():
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
             self.logger.info(
-                "  Start estimating the bonds according to the pair distances.")
+                "  Estimating the bonds according to the pair distances.")
             # make bonded pairs according to the pair distance.
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
@@ -1169,6 +1169,7 @@ class Lattice():
                     graph.add_edge(i, j, fixed=False)
                 else:
                     graph.add_edge(j, i, fixed=False)
+        self.logger.debug("  Number of water nodes: {0}".format(graph.number_of_nodes()))
         return graph
 
     def test_undirected_graph(self, graph):
