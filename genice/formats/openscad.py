@@ -115,10 +115,10 @@ def test():
 
 def argparser(arg):
     global options
-    options={'scale':50, 'rnode':0.07, 'rbond':0.06}
+    options={'scale':50, 'rnode':0.07, 'rbond':0.06, 'fn':20}
     for a in arg.split(","):
         kw,value = a.split("=")
-        if kw in ("scale", "rnode", "rbond"):
+        if kw in ("scale", "rnode", "rbond", 'fn'):
             options[kw] = float(value)
 
 
@@ -133,6 +133,7 @@ def hook2(lattice):
     scale = options["scale"]
     rnode = options["rnode"]
     rbond = options["rbond"]
+    fn    = options["fn"]
     lattice.logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
     cellmat = lattice.repcell.mat
     rep = np.array(lattice.rep)
@@ -168,7 +169,7 @@ def hook2(lattice):
     objs = [o.sphere(r="Rnode").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
     #operations
     ops = [bondfunc,
-        o.defvar("$fn", 20),
+        o.defvar("$fn", fn),
         o.defvar("Rnode", rnode),
         o.defvar("Rbond", rbond),
         ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
