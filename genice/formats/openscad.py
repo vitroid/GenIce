@@ -116,10 +116,11 @@ def test():
 def argparser(arg):
     global options
     options={'scale':50, 'rnode':0.07, 'rbond':0.06, 'fn':20}
-    for a in arg.split(","):
-        kw,value = a.split("=")
-        if kw in ("scale", "rnode", "rbond", 'fn'):
-            options[kw] = float(value)
+    if arg != "":
+        for a in arg.split(","):
+            kw,value = a.split("=")
+            if kw in ("scale", "rnode", "rbond", 'fn'):
+                options[kw] = float(value)
 
 
 def hook0(lattice):
