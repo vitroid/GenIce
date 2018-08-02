@@ -36,11 +36,6 @@ def safe_import(category, name):
         logger.debug("Load module: {0}".format(fullname))
         module     = importlib.import_module(fullname)
     logger.info("Load {0} module {1} arguments [{2}]".format(category, name, arg))
-    if arg != "":
-        if "argparser" in module.__dict__:
-            module.argparser(arg)
-        else:
-            logger.info("Arguments are given but the module does not accept them.")
-    elif "usage" in module.__dict__:
-        module.usage()
+    if "argparser" in module.__dict__:
+        module.argparser(arg)
     return module

@@ -148,8 +148,11 @@ def hook1(lattice):
 
 def argparser(arg):
     global ijk
-    assert re.match("^[-+0-9,]+$", arg) is not None, "Argument must be nine integers separated by commas."
-    ijk = np.array([int(x) for x in arg.split(",")]).reshape(3,3)
+    if arg == "":
+        ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    else:
+        assert re.match("^[-+0-9,]+$", arg) is not None, "Argument must be nine integers separated by commas."
+        ijk = np.array([int(x) for x in arg.split(",")]).reshape(3,3)
         
 
 hooks = {1:hook1}
