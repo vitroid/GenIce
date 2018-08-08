@@ -94,3 +94,8 @@ class Cell():
             sys.exit(1)
         self.inv = np.linalg.inv(self.mat)
 
+    def serialize_BOX9(self):
+        s = "@BOX9\n"
+        for d in range(3):
+            s += "{0:.4f} {1:.4f} {2:.4f}\n".format(*self.mat[d] * 10) # AA
+        return s
