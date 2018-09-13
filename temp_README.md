@@ -270,6 +270,8 @@ Symbol | Description
 17     | Negative-pressure ice XVII(17).[del Rosso 2016]
 0      | Hypothetical ice "0".[Russo 2014]
 i      | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
+iceA, iceB   | Hypothetical ices "A" and "B".[Baez 1995]
+quartzlike | Hypothetical "quartzlike" ice. [Svishchev 1996]
 C0, C0-II  | Filled ice C0 (Alias of 17).[Smirnov 2013]
 C1     | Filled ice C1 (Alias of 2).[Londono 1988]
 C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
@@ -285,6 +287,7 @@ T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
+iceT2  | Partial plastic ice T2 [Yagasaki 2018].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
 zeolite[XYZ]|Retrieve cif file of Zeolite XYZ from [IZA structure database](http://www.iza-structure.org/databases) as a unit lattice of an ice. Install [cif2ice](https://github.com/vitroid/cif2ice) separately to use it. (Experimental)
@@ -358,6 +361,7 @@ one of the following paths.
 
 # References
 
+* L. A. BÁEZ, P. CLANCY, J. Chem. Phys. 103, 9744–9755 (1998). [DOI: 10.1063/1.469938](http://doi.org/10.1063/1.469938)
 * L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394. [DOI: 10.1038/ncomms13394](http://dx.doi.org/10.1038/ncomms13394)
 * M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza, Acta
   Crystallogr. A 2010, 66, 602. [DOI: 10.1107/S0108767310022932](http://dx.doi.org/10.1107/S0108767310022932)
@@ -376,6 +380,7 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
   Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://dx.doi.org/10.1021/ic102178d)
 * K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://dx.doi.org/10.1038/35090532)
 * V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
+* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
@@ -385,11 +390,12 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
   Mater. Sci. 2001, 5, 497. [DOI: 10.1016/S1359-0286(02)00005-0](https://doi.org/10.1016/S1359-0286%2802%2900005-0)
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B
   2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://dx.doi.org/10.1021/acs.jpcb.5b09544)
-* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
 * J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
 * G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
+* I. M. Svishchev and P. G. Kusalik,Phys. Rev. B 53, R8815–R8817 (1996). [DOI: 10.1103/PhysRevB.53.R8815](http://doi.org/10.1103/PhysRevB.53.R8815)
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
   Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://dx.doi.org/10.1103/PhysRevLett.71.3150)
+* T. Yagasaki, M. Matsumoto, and H. Tanaka, J. Phys. Chem. B 122, 7718–7725 (2018). [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
 
 # The algorithm and how to cite it.
 
