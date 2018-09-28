@@ -310,18 +310,20 @@ module in the path above.
 
 Note: Some structures in different frameworks are identical.
 
-CH/FI|CH  |ice|FK |Zeo|
------|----|---|---|---|
-sI   |CS1 |-  |A15|MEP|
-sII  |CS2 |16 |C15|MTN|
-sIII |TS1 |-  |sigma|-  |
-sIV  |HS1 |-  |Z  |-  |
-sV   |HS2 |-  |*  |-  |
-sVII |CS4 |-  |*  |SOD|
-sH   |HS3 |-  |*  |DOH|
-C0   |-   |17 |*  |-  |
-C1   |-   |2  |*  |-  |
-C2   |-   |1c |*  |-  |
+CH/FI|CH  |ice|FK |Zeolite/Silica
+-----|----|---|---|-----------
+sI   |CS1 |-  |A15|MEP
+sII  |CS2 |16 |C15|MTN
+sIII |TS1 |-  |sigma|-  
+sIV  |HS1 |-  |Z  |-  
+sV   |HS2 |-  |*  |-  
+sVII |CS4 |-  |*  |SOD
+sH   |HS3 |-  |*  |DOH
+C0   |-   |17 |*  |-  
+C1   |-   |2  |*  |-  
+C2   |-   |1c |*  |Cristobalite
+     |-   |1h |*  |Tridymite
+	 |-   |3  |*  |Keatite
 
 FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 
