@@ -160,7 +160,7 @@ class mdview(): # for analice
                         skipped.add(atomname)
             self.celltype = 'triclinic'
             self.coord = 'absolute'
-            self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-24) * 18 / 6.022e23
+            self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
 
             if len(hatoms) > 0:
                 celli = np.linalg.inv(self.cell)
