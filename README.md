@@ -32,7 +32,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 0.22.10)
+    (version 0.22.11)
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
