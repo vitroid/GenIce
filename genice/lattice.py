@@ -97,7 +97,7 @@ class gromacs(): # for analice
                     h0, h1 = hatoms[i*2:i*2+2]
                     h0 -= o
                     h1 -= o
-                    y = h1 - h0
+                    y = h0 - h1
                     y /= np.linalg.norm(y)
                     z = h0+h1
                     z /= np.linalg.norm(z)
