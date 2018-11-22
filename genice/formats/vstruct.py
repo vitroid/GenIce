@@ -67,6 +67,7 @@ def hook5(lattice):
         positions.pop(0)
         dpositions.pop(0)
         cells.pop(0)
+    lattice.logger.info("Queue size: {0}".format(len(rots)))
     lattice.logger.info("Hook5: end.")
 
 
