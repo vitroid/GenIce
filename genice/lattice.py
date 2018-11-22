@@ -48,11 +48,11 @@ def readaline(file):
             return line
 
 class gromacs(): # for analice
-    def __init__(self, filename, oname, hname, Vlen=5):
+    def __init__(self, filename, oname, hname, avgspan=1):
         self.file = open(filename)
         self.oname = oname
         self.hname = hname
-        self.Vlen = Vlen # average width
+        self.avgspan = avgspan # average width
         self.opos = [] #history
         self.dopos = []
         self.hpos = []
@@ -151,11 +151,12 @@ class gromacs(): # for analice
                 logger.debug("  # of pairs: {0} {1}".format(len(self.pairs),len(self.waters)))
             yield self
             logger.info("Queue len: {0}".format(NQ))
-            if NQ == self.Vlen:
+            if NQ == self.avgspan:
                 self.opos.pop(0)
                 self.hpos.pop(0)
-                self.dopos.pop(0)
-                self.dhpos.pop(0)
+                if len(self.dopos) > 0:
+                    self.dopos.pop(0)
+                    self.dhpos.pop(0)
 
 
 class mdview(): # for analice
@@ -287,7 +288,7 @@ class nx3a(): # for analice
 
 
 
-def load_iter(filename, oname, hname, filerange, framerange):
+def load_iter(filename, oname, hname, filerange, framerange, avgspan=1):
     logger = logging.getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
@@ -314,7 +315,7 @@ def load_iter(filename, oname, hname, filerange, framerange):
         elif fname[-3:] == 'mdv' or fname[-4:] == 'mdvw':
             loader = mdview(fname, oname, hname)
         else:
-            loader = gromacs(fname, oname, hname)
+            loader = gromacs(fname, oname, hname, avgspan=avgspan)
         for lat in loader.load_iter():
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))

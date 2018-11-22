@@ -180,6 +180,13 @@ def getoptions_analice():
                         default=(0.,),
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
+    parser.add_argument('--avgspan','-v',
+                        nargs=1,
+                        type=float,
+                        dest='avgspan',
+                        default=(0.,),
+                        metavar='1',
+                        help='Average atomic positions in water molecules so as to remove fast librational motions and to make a smooth video. Specify the average span. The value 1 means no average.')
     parser.add_argument('File',
                         nargs=1,
                         help='Gromacs file.')
@@ -309,6 +316,7 @@ def main():
         hname        = options.hatom[0]
         filename     = options.File[0]
         noise        = options.noise[0]
+        avgspan      = options.avgspan[0]
         filerange    = options.filerange[0]
         framerange   = options.framerange[0]
         
@@ -319,7 +327,7 @@ def main():
         
         del options  # Dispose for safety.
 
-        for w in lattice.load_iter(filename, oname, hname, filerange, framerange):
+        for w in lattice.load_iter(filename, oname, hname, filerange, framerange, avgspan=avgspan):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
