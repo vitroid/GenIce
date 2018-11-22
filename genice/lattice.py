@@ -113,7 +113,7 @@ class gromacs(): # for analice
             for i in range(NQ-1):
                 weight = (NQ - 1 - i) / NQ
                 delta += self.dopos[i]*weight
-            logger.info(delta)
+            # logger.info(delta)
             ro_avg = self.opos[0] + delta
             self.waters = np.dot(ro_avg, self.cell) # abs pos
             if len(hatoms) > 0:

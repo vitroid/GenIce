@@ -118,7 +118,7 @@ def getoptions():
 
 
 def getoptions_analice():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice')
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]')
     parser.add_argument('--version',
                         '-V',
                         action='version',
@@ -130,6 +130,12 @@ def getoptions_analice():
                         default=("gromacs",),
                         metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
+    parser.add_argument('--output',
+                        '-o',
+                        nargs = 1,
+                        dest='output',
+                        metavar="%04d.gro",
+                        help='Output in separate files.')
     parser.add_argument('--water',
                         '-w',
                         nargs = 1,
@@ -319,24 +325,37 @@ def main():
         avgspan      = options.avgspan[0]
         filerange    = options.filerange[0]
         framerange   = options.framerange[0]
+        if options.output is None:
+            output   = None
+            stdout   = None
+        else:
+            output   = options.output[0]
+            stdout   = sys.stdout
         
         logger.debug(filerange)
         logger.debug(framerange)
         logger.debug(oname)
         logger.debug(hname)
+        logger.info("Output:{0}".format(output))
         
         del options  # Dispose for safety.
 
-        for w in lattice.load_iter(filename, oname, hname, filerange, framerange, avgspan=avgspan):
+        for i,w in enumerate(lattice.load_iter(filename, oname, hname, filerange, framerange, avgspan=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
             lat = lattice.Lattice(w,
                                   noise=noise)
+            if output is not None:
+                sys.stdout = open(output % i, "w")
             lat.analize_ice(water_type= water_type,
                             hooks     = hooks,
                             arg       = arg
             )
-    
+        if stdout is not None:
+            # recover stdout
+            sys.stdout = stdout
+
+
 if __name__ == "__main__":
     main()
