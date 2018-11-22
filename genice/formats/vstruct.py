@@ -104,7 +104,7 @@ def hook6(lattice):
                                                                 cellmat[2,0],
                                                                 cellmat[2,1],
                                                                 )
-    s += '#' + "\n#".join(lattice.doc) + "\n"
+    #s += '#' + "\n#".join(lattice.doc) + "\n"
     print(s,end="")
     lattice.logger.info("Hook6: end.")
 
