@@ -6,54 +6,17 @@ defined in https://github.com/vitroid/Yaplot
 
 from collections import defaultdict
 import numpy as np
-import networkx as nx
 import yaplotlib as yp
 
-from genice import rigid
-from countrings import countrings_nx as cr
-
-
-
-
-def face(center, rpos):
-    pos = rpos + center
-    n = rpos.shape[0]
-    s = yp.Color(n)
-    s += yp.Layer(n)
-    s += yp.Polygon(pos)
-    return s
-
-
-
-def hook4(lattice):
-    lattice.logger.info("Hook4: A. Output depolarization process in Yaplot format.")
-    print(lattice.yapresult, end="")
-    lattice.logger.info("Hook4: B. Polyhedral expression.")
-    # copied from svg_poly
-    graph = nx.Graph(lattice.spacegraph) #undirected
-    cellmat = lattice.repcell.mat
-    for ring in cr.CountRings(graph).rings_iter(8):
-        deltas = np.zeros((len(ring),3))
-        d2 = np.zeros(3)
-        for k,i in enumerate(ring):
-            d = lattice.reppositions[i] - lattice.reppositions[ring[0]]
-            d -= np.floor(d+0.5)
-            deltas[k] = d
-            dd = lattice.reppositions[ring[k]] - lattice.reppositions[ring[k-1]]
-            dd -= np.floor(dd+0.5)
-            d2 += dd
-        # d2 must be zeros
-        if np.all(np.absolute(d2) < 1e-5):
-            comofs = np.sum(deltas, axis=0) / len(ring)
-            deltas -= comofs
-            com = lattice.reppositions[ring[0]] + comofs
-            com -= np.floor(com)
-            # rel to abs
-            com    = np.dot(com,    cellmat)
-            deltas = np.dot(deltas, cellmat)
-            print(face(com,deltas), end="")
-    print()
-    lattice.logger.info("Hook4: end.")
+def hook1(lattice):
+    lattice.logger.info("Hook1: Draw the cell in Yaplot format.")
+    s = yp.Layer(2)
+    x,y,z = lattice.repcell.mat
+    for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
+        for a in (np.zeros(3), p, q, p+q):
+            s += yp.Line(a,a+r)
+    print(s,end="")
+    lattice.logger.info("Hook1: end.")
 
 
 def hook6(lattice):
@@ -102,7 +65,8 @@ def hook6(lattice):
             d1 = H1 - O
             rr0 = np.dot(d0,d0)
             rr1 = np.dot(d1,d1)
-            if rr0 < rr1 and rr0 < 0.27**2:
+            # lattice.logger.info((O,H0,H1))
+            if rr0 < rr1 and rr0 < 0.245**2:
                 s += yp.Arrow(H0,O)
             if rr1 < rr0 and rr1 < 0.245**2:
                 s += yp.Arrow(H1,O)
@@ -137,4 +101,4 @@ def hook7(lattice):
     lattice.logger.info("Hook7: end.")
     
 
-hooks = {7:hook7, 6:hook6, 4:hook4}
+hooks = {7:hook7, 6:hook6, 1:hook1}

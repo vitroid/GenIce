@@ -1,16 +1,20 @@
+# -*- makefile -*-
 all: test1.done   test2.done   test3.done   test4.done   test_2d.gro
 all: test_3.ar3a  test_4.ngph  test_5.nx3a  test_6.gro   test_7.mdv
 all: test_12.scad test_16.py   test_17.nx4a test_1c.ar3r test_CS1.cif
 all: test_CS2.cif test_HS1.xyz test_TS1.yap test_2dL.gro test_7.mdva
 #all: test19.done
+all: test_TS1_dep.yap test_TS1_rings.yap
 all: test_1hreshape.py test_2D3.ringtest test_prism7.ringtest
-all: test_3xFAU.yap
+all: test_3xFAU.yap test_3xFAU_dep.yap test_3xFAU_rings.yap
+all: test_3xFAU2.yap
 all: test_T.pov
-all: test_7.re.gro
+# all: test_7.re.gro
 # all: test_MTN.gro test_MTN.re.gro
 # all: test_ITT.gro
 all: test_7.analice.yap
 all: test_2D3.analice.yap
+all: test_gro2.gro
 
 
 test1.done: $(FMT)/gromacs.py
@@ -56,33 +60,35 @@ test_HS1.xyz: $(FMT)/xyz.py
 	$(GENICE) HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@; diff $(REFD)/$@ $@
 test_TS1.yap: $(FMT)/yaplot.py
 	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@ ;diff $(REFD)/$@ $@
+test_TS1_dep.yap: $(FMT)/_dep.py
+	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format _dep | fgrep -v "Command line:" > $@ ;diff $(REFD)/$@ $@
+test_TS1_rings.yap: $(FMT)/rings.py
+	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format rings | fgrep -v "Command line:" > $@ ;diff $(REFD)/$@ $@
 test_T.pov: $(FMT)/povray.py
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray | fgrep -v "Command line:" > $@   ;diff $(REFD)/$@ $@
 test_2dL.gro: $(FMT)/gromacs.py
 	$(GENICE) 2d --rep 8 8 8 | fgrep -v "Command line:" > $@
 test_1hreshape.py: $(FMT)/reshape.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@ ;diff $(REFD)/$@ $@
-test_2D3.ringtest: $(FMT)/_ring.py
-	$(GENICE) 2D3 --rep 5 5 1 --format _ring | fgrep -v "Command line:" > $@                ;diff $(REFD)/$@ $@
-test_prism7.ringtest: $(FMT)/_ring.py
-	$(GENICE) prism[7] --rep 1 1 1 --format _ring | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
-test_3xFAU.yap: $(FMT)/yaplot.py
+test_2D3.ringtest: $(FMT)/_ringstat.py
+	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat | fgrep -v "Command line:" > $@                ;diff $(REFD)/$@ $@
+test_prism7.ringtest: $(FMT)/_ringstat.py
+	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
+test_3xFAU.yap: $(FMT)/yaplot.py $(LTC)/xFAU.py
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
+test_3xFAU_dep.yap: $(FMT)/_dep.py $(LTC)/xFAU.py
+	$(GENICE) xFAU[3] --rep 1 1 1 --format _dep | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
+test_3xFAU_rings.yap: $(FMT)/rings.py $(LTC)/xFAU.py
+	$(GENICE) xFAU[3] --rep 1 1 1 --format rings | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
+test_3xFAU2.yap: $(FMT)/yaplot.py $(LTC)/xFAU2.py
+	$(GENICE) xFAU2[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
 test_7.gro: $(FMT)/gromacs.py
 	$(GENICE) 7 -r 2 2 2 | fgrep -v "Command line:" > $@
-test_7.re.gro: test_7.gro $(FMT)/gromacs.py
-	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 --asis  | fgrep -v "Command line:" > $@           ;diff $(REFD)/$@ $@
-	-$(GENICE) gromacs[$<:O]  --rep 1 1 1 | fgrep -v "Command line:" > $@ # should fail
-	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
-# test_MTN.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
-# 	$(GENICE) zeolite[MTN] --rep 1 1 1 | fgrep -v "Command line:" > $@
-# test_MTN.re.gro: MTN.cif $(LTC)/cif.py $(FMT)/gromacs.py
-# 	$(GENICE) cif[MTN.cif] --rep 1 1 1 | fgrep -v "Command line:" > $@                     ;diff $(REFD)/$@ $@
-# test_ITT.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
-# 	$(GENICE) zeolite[ITT] --rep 1 1 1 | fgrep -v "Command line:" > $@                     ;diff $(REFD)/$@ $@
-test_7.analice.yap: test_7.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
-	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                ;diff $(REFD)/$@ $@
+test_7.analice.yap: test_7.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                           #     ;diff $(REFD)/$@ $@
 test_2D3.gro: $(FMT)/gromacs.py
 	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
-test_2D3.analice.yap: test_2D3.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
-	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                ;diff $(REFD)/$@ $@
+test_2D3.analice.yap: test_2D3.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                          #      ;diff $(REFD)/$@ $@
+test_gro2.gro:
+	$(ANALICE) ../%05d-0.gro --filerange 5:10 --framerange 0:9999:3 -O Ow -H Hw > $@; diff $(REFD)/$@ $@

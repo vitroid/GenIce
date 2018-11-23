@@ -90,4 +90,6 @@ def safe_import(category, name):
             logger.info("Arguments are given but the module does not accept them.")
     elif "usage" in module.__dict__:
         module.usage()
+    if category == "lattice":
+        module.lattice_type = name
     return module

@@ -240,7 +240,7 @@ AnalIce is a variant of GenIce. AnalIce reads a Gromacs file and do not modify t
 For example, if you want to see the ring statistic of a given `.gro` file, use like this:
 
 
-    analice input.gro -f _ring
+    analice input.gro -f _ringstat
 	
 If you want to replace water model from the original three-site one (described as OW, HW1, and HW2) to TIP4P-like four-site model, try
 
@@ -260,7 +260,8 @@ Name |Application | extension | water | solute | HB | remarks
 `povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders molecular configurations and the HB network.
+`rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders rings in the structure.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
@@ -268,8 +269,9 @@ Name |Application | extension | water | solute | HB | remarks
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
-`_ring`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
+`_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
+`_dep`     |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders HB paths to reduce the net polarization.
 
 You can prepare your own file formats.  Write the module and put it in
 one of the following paths.
@@ -319,6 +321,7 @@ Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
 A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
 T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
+xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (Hydrogen bond orientations are modified.)
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].

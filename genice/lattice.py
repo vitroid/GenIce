@@ -3,6 +3,8 @@ import logging
 import random
 import itertools as it
 import logging
+import re
+import os
 from math import sin, cos, pi
 from collections import Iterable, defaultdict
 
@@ -16,6 +18,317 @@ from genice.cells import rel_wrap, Cell
 
 #for alkyl groups (Experimental)
 from genice import alkyl
+
+
+
+def str2rangevalues(s):
+    values = s.split(":")
+    assert len(values) > 0
+    if len(values) == 1:
+        return [0,int(values[0]),1]
+    elif len(values) == 2:
+        return [int(values[0]), int(values[1]), 1]
+    else:
+        return [int(v) for v in values]
+
+
+def str2range(s):
+    return range(*str2rangevalues(s))
+    
+
+def readaline(file):
+    """
+    read a non-comment line.
+    """
+    while True:
+        line = file.readline()
+        if len(line) == 0:
+            return line
+        if line[0] != "#":
+            return line
+
+class gromacs(): # for analice
+    def __init__(self, filename, oname, hname, avgspan=1):
+        self.file = open(filename)
+        self.oname = oname
+        self.hname = hname
+        self.avgspan = avgspan # average width
+        self.opos = [] #history
+        self.dopos = []
+        self.hpos = []
+        self.dhpos = []
+    def load_iter(self):
+        logger = logging.getLogger()
+        while True:
+            line = readaline(self.file)
+            if len(line) == 0:
+                return
+            line = readaline(self.file)
+            if len(line) == 0:
+                return
+            natom = int(line)
+            hatoms = []
+            oatoms = []
+            self.waters = []
+            skipped = set()
+            for i in range(natom):
+                line = self.file.readline()
+                # resid = int(line[0:5])
+                # resna = line[5:10]
+                atomname = line[10:15].replace(' ', '')
+                # atomid = int(line[15:20])
+                pos = np.array([float(x) for x in line[20:].split()[:3]]) #drop velocity
+                if atomname == self.oname:
+                    oatoms.append(pos)
+                elif self.hname is not None and re.fullmatch(self.hname, atomname):
+                    hatoms.append(pos)
+                else:
+                    if atomname not in skipped:
+                        logger.info("Skip {0}".format(atomname))
+                        skipped.add(atomname)
+            c = [float(x) for x in self.file.readline().split()]
+            if len(c) == 3:
+                self.cell = np.array([[c[0],0.,0.],
+                                 [0.,c[1],0.],
+                                 [0.,0.,c[2]]])
+            else:
+                self.cell = np.array([[c[0],c[3],c[4]],
+                                 [c[5],c[1],c[6]],
+                                 [c[7],c[8],c[2]]])
+            self.celltype = 'triclinic'
+            self.coord = 'absolute'
+            self.density = len(oatoms) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+            celli = np.linalg.inv(self.cell)
+            ro = np.array([np.dot(x, celli) for x in oatoms])
+            if len(self.opos) > 0:
+                self.dopos.append(rel_wrap(ro - self.opos[-1]))
+            self.opos.append(ro)
+            if len(hatoms) > 0:
+                rh = np.array([np.dot(x, celli) for x in hatoms])
+                if len(self.hpos) > 0:
+                    self.dhpos.append(rel_wrap(rh - self.hpos[-1]))
+                self.hpos.append(rh)
+            delta = np.zeros_like(oatoms)
+            NQ = len(self.opos)
+            for i in range(NQ-1):
+                weight = (NQ - 1 - i) / NQ
+                delta += self.dopos[i]*weight
+            # logger.info(delta)
+            ro_avg = self.opos[0] + delta
+            self.waters = np.dot(ro_avg, self.cell) # abs pos
+            if len(hatoms) > 0:
+                delta = np.zeros_like(hatoms)
+                for i in range(NQ-1):
+                    weight = (NQ - 1 - i) / NQ
+                    delta += self.dhpos[i]*weight
+                rh_avg = self.hpos[0] + delta
+                self.rotmat = []
+                for i in range(len(self.waters)):
+                    ro = ro_avg[i]
+                    rdh0 = rel_wrap(rh_avg[i*2] - ro)
+                    rdh1 = rel_wrap(rh_avg[i*2+1] - ro)
+                    o = np.dot(ro, self.cell)
+                    dh0 = np.dot(rdh0, self.cell)
+                    dh1 = np.dot(rdh1, self.cell)
+                    y = dh0 - dh1
+                    y /= np.linalg.norm(y)
+                    z = dh0+dh1
+                    z /= np.linalg.norm(z)
+                    x = np.cross(y,z)
+                    self.rotmat.append(np.vstack([x,y,z]))
+                    # 重心位置を補正。
+                    self.waters[i] += np.dot(dh0+dh1, self.cell)*1./16.
+                grid = pl.determine_grid(self.cell, 0.245)
+                # remove intramolecular OHs
+                # 水素結合は原子の平均位置で定義している。
+                self.pairs = []
+                logger.debug("  Make pair list.")
+                for o,h in pl.pairs_fine_hetero(ro_avg, rh_avg, 0.245, self.cell, grid, distance=False):
+                    if not (h == o*2 or h == o*2+1):
+                        # hとoは別の分子の上にあって近い。
+                        # register a new intermolecular pair
+                        self.pairs.append((h//2, o))
+                logger.debug("  # of pairs: {0} {1}".format(len(self.pairs),len(self.waters)))
+            yield self
+            logger.info("Queue len: {0}".format(NQ))
+            if NQ == self.avgspan:
+                self.opos.pop(0)
+                self.hpos.pop(0)
+                if len(self.dopos) > 0:
+                    self.dopos.pop(0)
+                    self.dhpos.pop(0)
+
+
+class mdview(): # for analice
+    def __init__(self, filename, oname, hname):
+        self.file = open(filename)
+        self.oname = oname
+        self.hname = hname
+    def load_iter(self):
+        logger = logging.getLogger()
+        au = 0.052917721067 # nm
+        while True:
+            line = self.file.readline() #1st line:comment
+            if len(line) == 0:
+                return
+            cols = line.split()
+            assert cols[0] == '#' #yaga style
+            c = [float(x) for x in cols[1:4]]
+            self.cell = np.array([[c[0],0.,0.],
+                                  [0.,c[1],0.],
+                                  [0.,0.,c[2]]])
+            self.cell *= au
+            line = self.file.readline()
+            natom = int(line)
+            hatoms = []
+            self.waters = []
+            skipped = set()
+            for i in range(natom):
+                line = self.file.readline()
+                cols = line.split()
+                atomname = cols[0]
+                # atomid = int(line[15:20])
+                pos = np.array([float(x) for x in cols[1:4]]) * au
+                if atomname == self.oname:
+                    self.waters.append(pos)
+                elif self.hname is not None and re.fullmatch(self.hname, atomname):
+                    hatoms.append(pos)
+                else:
+                    if atomname not in skipped:
+                        logger.info("Skip {0}".format(atomname))
+                        skipped.add(atomname)
+            self.celltype = 'triclinic'
+            self.coord = 'absolute'
+            self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+
+            if len(hatoms) > 0:
+                celli = np.linalg.inv(self.cell)
+                # relative coord
+                rh = np.array([np.dot(x, celli) for x in hatoms])
+                ro = np.array([np.dot(x, celli) for x in self.waters])
+                # rotmatrices for analice
+                self.rotmat = []
+                for i in range(len(self.waters)):
+                    o = self.waters[i]
+                    h0, h1 = hatoms[i*2:i*2+2]
+                    h0 -= o
+                    h1 -= o
+                    y = h1 - h0
+                    y /= np.linalg.norm(y)
+                    z = h0+h1
+                    z /= np.linalg.norm(z)
+                    x = np.cross(y,z)
+                    self.rotmat.append(np.vstack([x,y,z]))
+                grid = pl.determine_grid(self.cell, 0.245)
+                # remove intramolecular OHs
+                self.pairs = []
+                logger.debug("  Make pair list.")
+                for o,h in pl.pairs_fine_hetero(ro, rh, 0.245, self.cell, grid, distance=False):
+                    if h == o*2 or h == o*2+1:
+                        # adjust oxygen positions
+                        dh = rh[h] - ro[o]
+                        dh -= np.floor(dh + 0.5)
+                        self.waters[o] += np.dot(dh, self.cell)*1./16.
+                    else:
+                        # register a new intermolecular pair
+                        self.pairs.append((h//2, o))
+                logger.debug("  # of pairs: {0} {1}".format(len(self.pairs),len(self.waters)))
+            yield self
+
+            
+class nx3a(): # for analice
+    def __init__(self, filename):
+        logger = logging.getLogger()
+        logger.debug('load {0}'.format(filename))
+        self.file = open(filename)
+        self.bondlen = 0.3
+    def load_iter(self):
+        logger = logging.getLogger()
+        while True:
+            line = self.file.readline()
+            if len(line) == 0:
+                return
+            if len(line) > 4:
+                if line[:5] == "@BOX3":
+                    line = self.file.readline()
+                    box = np.array([float(x) for x in line.split()[:3]])
+                    self.cell = np.diag(box) / 10 # in nm
+                    celli = np.linalg.inv(self.cell)
+                    self.celltype = 'triclinic'
+                elif line[:5] in ("@NX3A", "@NX4A"):
+                    nx3a = (line[:5] == "@NX3A")
+                    logger.debug(line[:5])
+                    line = self.file.readline()
+                    nmol = int(line.split()[0])
+                    self.waters = []
+                    self.rotmat = []
+                    for i in range(nmol):
+                        line = self.file.readline()
+                        if nx3a:
+                            cols = line.split()[:6]
+                            euler = np.array([float(x) for x in cols[3:6]])
+                            self.rotmat.append(rigid.euler2rotmat(euler))
+                        else: #nx4a
+                            cols = line.split()[:7]
+                            quat = np.array([float(x) for x in cols[3:7]])
+                            self.rotmat.append(rigid.quat2rotmat(quat))
+                        pos   = np.array([float(x) for x in cols[:3]])
+                        self.waters.append(pos /  10) # in nm
+                    self.coord = 'absolute'
+                    self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+                    #self.pairs = []
+                    #grid = pl.determine_grid(self.cell, self.bondlen)
+                    #logger.debug("  Make pair list.")
+                    #self.pairs = [(o1,o2)
+                    #              for o1,o2 in pl.pairs_fine(np.array(self.waters), self.bondlen, self.cell, grid, distance=False)]
+                    #logger.info("Pairs: {0}".format(len(self.pairs)))
+                    yield self
+            
+    
+
+
+
+def load_iter(filename, oname, hname, filerange, framerange, avgspan=1):
+    logger = logging.getLogger()
+    rfile = str2range(filerange)
+    rframe = str2rangevalues(framerange)
+    logger.info("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
+    logger.info("  frame number range: {0}:{1}:{2}".format(*rframe))
+    # test whether filename has a regexp for enumeration
+    m = re.search("%[0-9]*d", filename)
+    # prepare file list
+    if m is None:
+        filelist = [filename,]
+    else:
+        filelist = []
+        for num in rfile:
+            fname = filename % num
+            if os.path.exists(fname):
+                filelist.append(fname)
+    logger.debug("File list: {0}".format(filelist))
+    frame = 0
+    for fname in filelist:
+        logger.info("  File name: {0}".format(fname))
+        # single file may contain multiple frames
+        if fname[-4:] in ('nx3a', 'nx4a'):
+            loader = nx3a(fname)
+        elif fname[-3:] == 'mdv' or fname[-4:] == 'mdvw':
+            loader = mdview(fname, oname, hname)
+        else:
+            loader = gromacs(fname, oname, hname, avgspan=avgspan)
+        for lat in loader.load_iter():
+            if frame == rframe[0]:
+                logger.info("Frame: {0}".format(frame))
+                lat.lattice_type = "analyce"
+                yield lat
+                rframe[0] += rframe[2]
+                if rframe[1] <= rframe[0]:
+                    return
+            else:
+                logger.info("Skip frame: {0}".format(frame))
+            frame += 1
+
+
 
 def load_numbers(v):
     if type(v) is str:
@@ -60,6 +373,7 @@ def orientations(coord, graph, cell):
     """
     logger = logging.getLogger()
     rotmatrices = []
+    assert len(coord) == graph.number_of_nodes() # just for a test of pure water
     for node in range(graph.number_of_nodes()):
         if node in graph.ignores:
             # for dopants; do not rotate
@@ -70,8 +384,10 @@ def orientations(coord, graph, cell):
                 vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
                 vsucc = [x / np.linalg.norm(x) for x in vsucc]
                 vpred = [x / np.linalg.norm(x) for x in vpred]
+                if len(vpred) > 2:
+                    vpred = vpred[:2]  # number of incoming bonds should be <= 2
                 vcomp = complement(vpred+vsucc)
-                logger.debug("Node {0} vcomp {1}".format(node,vcomp))    
+                logger.debug("Node {0} vcomp {1} vsucc {2} vpred {3}".format(node,vcomp,vsucc, vpred))    
                 vsucc = (vsucc+vcomp)[:2]
             logger.debug("Node {0} vsucc {1}".format(node,vsucc))
             assert 2<=len(vsucc), "Probably a wrong ice network."
@@ -348,7 +664,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
 
 class Lattice():
     def __init__(self,
-                 lattice_type=None,
+                 lat,
                  density=0,
                  rep=(1, 1, 1),
                  depolarize=True,
@@ -360,7 +676,7 @@ class Lattice():
                  noise=0.,
                  ):
         self.logger      = logging.getLogger()
-        self.lattice_type = lattice_type
+        self.lattice_type = lat.lattice_type
         self.rep         = rep
         self.depolarize  = depolarize
         self.asis        = asis
@@ -369,9 +685,6 @@ class Lattice():
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
         self.noise       = noise
-        if lattice_type is None:
-            return
-        lat = safe_import("lattice", lattice_type)
         # Show the document of the module
         try:
             self.doc = lat.__doc__.splitlines()
@@ -615,7 +928,8 @@ class Lattice():
             hooks[4](self)
         if max(0,*hooks.keys()) < 5:
             return
-        # self.stage5_analice()
+        # molecular orientation should be given in the loader.
+        # self.stage5()
         if 5 in hooks:
             hooks[5](self)
         if max(0,*hooks.keys()) < 6:
@@ -941,7 +1255,7 @@ class Lattice():
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
             self.logger.info(
-                "  Start estimating the bonds according to the pair distances.")
+                "  Estimating the bonds according to the pair distances.")
             # make bonded pairs according to the pair distance.
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
@@ -950,7 +1264,8 @@ class Lattice():
                 self.waters, self.bondlen, self.cell.mat, grid, distance=False)
             # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.
-            if self.logger.level <= logging.DEBUG:
+            # Do not use it for normal debug because it is too slow
+            if False: # self.logger.level <= logging.DEBUG:
                 pairs1 = self.pairs
                 pairs2 = [v for v in pl.pairs_crude(
                     self.waters, self.bondlen, self.cell.mat, distance=False)]
@@ -964,8 +1279,9 @@ class Lattice():
                     assert (i, j) in pairs1 or (j, i) in pairs1
 
         graph = dg.IceGraph()
-        for i, j in fixed:
-            graph.add_edge(i, j, fixed=True)
+        if fixed is not None:
+            for i, j in fixed:
+                graph.add_edge(i, j, fixed=True)
         # Fixed pairs are default.
         for pair in self.pairs:
             i, j = pair
@@ -976,6 +1292,7 @@ class Lattice():
                     graph.add_edge(i, j, fixed=False)
                 else:
                     graph.add_edge(j, i, fixed=False)
+        self.logger.info("  Number of water nodes: {0}".format(graph.number_of_nodes()))
         return graph
 
     def test_undirected_graph(self, graph):
