@@ -260,8 +260,9 @@ Name |Application | extension | water | solute | HB | remarks
 `povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders molecular configurations and the HB network.
-`rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders rings in the structure.
+`exyz`    |[extended XYZ](http://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html)         | `.xyz`      | Atomic positions | Atomic positions | none |Extended XYZ format defined in Open Babel|
+`exyz2`    |[extended XYZ](http://libatoms.github.io/QUIP/io.html#extendedxyz)         | `.xyz`      | Atomic positions | Atomic positions | none |Extended XYZ format defined in QUIP|
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |

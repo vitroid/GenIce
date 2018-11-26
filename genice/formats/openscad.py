@@ -109,10 +109,18 @@ def test():
     print(o.sphere(r=5).translate([1,2,3]))
     print(o.add(o.sphere(r=2), o.sphere(r=3)))
     print(o.sphere(r=2).add(o.sphere(r=3)).add(o.sphere(r=4))) #another way
+    print(o.sphere(r=2) | o.sphere(r=3) | o.sphere(r=4)) #another way
 
 
 
-
+def argparser(arg):
+    global options
+    options={'scale':50, 'rnode':0.07, 'rbond':0.06, 'fn':20}
+    if arg != "":
+        for a in arg.split(","):
+            kw,value = a.split("=")
+            if kw in ("scale", "rnode", "rbond", 'fn'):
+                options[kw] = float(value)
 
 
 def hook0(lattice, arg):
@@ -124,9 +132,11 @@ def hook0(lattice, arg):
     lattice.logger.info("Hook0: end.")
 
 def hook2(lattice):
-    scale=50
-    roxy=0.07
-    rbond=0.06
+    global options
+    scale = options["scale"]
+    rnode = options["rnode"]
+    rbond = options["rbond"]
+    fn    = options["fn"]
     lattice.logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
     cellmat = lattice.repcell.mat
     rep = np.array(lattice.rep)
@@ -140,33 +150,39 @@ def hook2(lattice):
     upper = (rep - 1.0 + margin) / rep
 
     bonds = []
-    for i,j in lattice.graph.edges(data=False):
-        s1 =lattice.reppositions[i]
-        s2 =lattice.reppositions[j]
-        d = s2-s1
-        d -= np.floor( d + 0.5 )
-        lattice.logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
-        s2 = s1 + d
-        if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-            (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-            bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
+    if rbond > 0.0:
+        for i,j in lattice.graph.edges(data=False):
+            s1 =lattice.reppositions[i]
+            s2 =lattice.reppositions[j]
+            d = s2-s1
+            d -= np.floor( d + 0.5 )
+            lattice.logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
+            s2 = s1 + d
+            if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
+              (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+                bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
 
     nodes = []
-    for s1 in lattice.reppositions:
-        if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-            nodes.append( np.dot(s1, cellmat) )
+    if rnode > 0.0:
+        for s1 in lattice.reppositions:
+            if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+                nodes.append( np.dot(s1, cellmat) )
 
     o = OpenScad()
-    objs = [o.sphere(r="Roxy").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
+    objs = [o.sphere(r="Rnode").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
     #operations
     ops = [bondfunc,
-        o.defvar("$fn", 20),
-        o.defvar("Roxy", roxy),
+        o.defvar("$fn", fn),
+        o.defvar("Rnode", rnode),
         o.defvar("Rbond", rbond),
-        ( o.rhomb(trimbox).translate(trimoffset) & o.add(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
+        ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
     s = o.encode(*ops)
     s = '//' + "\n//".join(lattice.doc) + "\n" + s
     print(s,end="")
     lattice.logger.info("Hook2: end.")
 
 hooks = {0:hook0, 2:hook2}
+
+
+if __name__ == "__main__":
+    test()
