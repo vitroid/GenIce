@@ -18,7 +18,7 @@ module bond(p1=[0,0,0],p2=[1,1,1],r=1)
     cylinder(r=r, h=H);
 }
 $fn=20;
-Roxy=0.07;
+Rnode=0.07;
 Rbond=0.06;
 scale([50,50,50]){
 translate([-0.7995846396734876,-0.7995846396734876,-0.7793671667760249]){
@@ -43,1357 +43,1357 @@ polyhedron([[0.0,0.0,0.0],
 } //translate
 union(){
 translate([0.6913528628472843,1.3992731194286032,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,0.7306567188525233]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,0.6332358230055202]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,0.6819462709290217]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9063771641482787,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9078164164996908,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,0.9742089584700311]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,1.3638925418580434]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9063771641482787,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9078164164996908,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,0.9742089584700311]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,1.3638925418580434]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7059618038217663,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7074010561731785,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,0.9742089584700311]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,1.3638925418580434]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7059618038217663,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7074010561731785,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,0.9742089584700311]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,1.3638925418580434]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,1.1203403022405356]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,1.5100238856285482]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,0.8280776146995265]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,1.217761198087539]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,1.0229194063935327]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,1.412602989781545]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,0.876788062623028]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,1.2664716460110403]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.5055464434952537,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.506985695846666,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.5055464434952537,0.9254985105465295]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.506985695846666,1.315182093934542]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,1.0716298543170342]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,1.4613134377050465]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,0.7793671667760249]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,1.1690507501640373]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9063771641482787,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9078164164996908,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,1.753576125246056]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,2.1432597086340683]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9063771641482787,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9078164164996908,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,1.753576125246056]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,2.1432597086340683]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7059618038217663,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7074010561731785,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,1.753576125246056]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,2.1432597086340683]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7059618038217663,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7074010561731785,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,1.753576125246056]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,2.1432597086340683]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,1.8997074690165605]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,2.2893910524045733]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,1.6074447814755513]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,1.9971283648635636]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,1.8022865731695576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,2.19197015655757]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,1.656155229399053]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,2.0458388127870655]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.5055464434952537,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.506985695846666,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.5055464434952537,1.7048656773225543]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.506985695846666,2.0945492607105667]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,1.850997021093059]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,2.240680604481071]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,1.5587343335520498]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,1.9484179169400622]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,1.3992731194286032,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9063771641482787,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9078164164996908,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,1.3992731194286032,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,0.9994807995918595,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,0.7995846396734876,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,2.5329432920220807]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.1993769595102313,2.922626875410093]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.3076087363364346,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.0919447673237015,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9063771641482787,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9078164164996908,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,1.3992731194286032,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,0.9994807995918595,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,0.7995846396734876,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,2.5329432920220807]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.1993769595102313,2.922626875410093]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.3076087363364346,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.0919447673237015,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,0.9994807995918595,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.6913528628472843,2.198857759102091,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7059618038217663,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7074010561731785,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.4909375025207718,2.198857759102091,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9078164164996908,1.7990654392653471,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.5991692793469752,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,2.5329432920220807]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,1.998961599183719,2.922626875410093]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.1071933760099224,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.891529406997189,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7059618038217663,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7074010561731785,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.2905221421942596,2.198857759102091,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7074010561731785,1.7990654392653471,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.5991692793469752,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,2.5329432920220807]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,1.998961599183719,2.922626875410093]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.1071933760099224,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,2.6790746357925856]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.891529406997189,3.068758219180598]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,2.386811948251576]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,2.7764955316395885]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,2.5816537399455823]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.506985695846666,1.7990654392653471,2.9713373233335947]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,2.435522396175078]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,2.82520597956309]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.5055464434952537,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.506985695846666,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.1993769595102313,2.3987539190204625,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.5055464434952537,2.484232844098579]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.506985695846666,2.873916427486592]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,2.630364187869084]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.998961599183719,2.3987539190204625,3.0200477712570963]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,2.3381015003280745]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,2.727785083716087]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,0.6913528628472843,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,0.6913528628472843,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,0.9063771641482787,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,1.4909375025207718,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.1993769595102313,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,0.7995846396734876,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,0.9994807995918595,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,1.3992731194286032,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,0.9063771641482787,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,1.4909375025207718,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.1993769595102313,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,0.7995846396734876,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,0.9994807995918595,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,1.3992731194286032,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.1993769595102313,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,0.7995846396734876,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,1.7059618038217663,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.9994807995918595,2.2905221421942596,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.998961599183719,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,1.5991692793469752,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.0911451826840282,1.7990654392653471,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3076087363364346,2.198857759102091,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,1.7059618038217663,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.7990654392653471,2.2905221421942596,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.998961599183719,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,1.5991692793469752,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.8907298223575157,1.7990654392653471,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.1071933760099224,2.198857759102091,3.166179115027601]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.998961599183719,3.2148895629511025]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,1.5991692793469752,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.3992731194286032,2.5055464434952537,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([0.7995846396734876,2.3987539190204625,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.198857759102091,2.5055464434952537,3.263600010874604]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([1.5991692793469752,2.3987539190204625,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 translate([2.3987539190204625,2.3987539190204625,3.1174686671040996]){
-sphere(r=Roxy);
+sphere(r=Rnode);
 } //translate
 bond([0.9078164164996908,0.9994807995918595,1.0229194063935327],[0.7995846396734876,0.7995846396734876,1.1690507501640373],r=Rbond);
 bond([0.9078164164996908,0.9994807995918595,1.0229194063935327],[1.0911451826840282,0.9994807995918595,1.217761198087539],r=Rbond);

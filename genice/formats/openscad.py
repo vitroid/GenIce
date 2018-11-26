@@ -113,23 +113,27 @@ def test():
 
 
 
-def argparser(arg):
+def argparser(lattice, arg):
     global options
+    lattice.logger.info("Hook0: Preprocess.")
     options={'scale':50, 'rnode':0.07, 'rbond':0.06, 'fn':20}
     if arg != "":
         for a in arg.split(","):
             kw,value = a.split("=")
             if kw in ("scale", "rnode", "rbond", 'fn'):
                 options[kw] = float(value)
-
-
-def hook0(lattice, arg):
-    lattice.logger.info("Hook0: Preprocess.")
-    if arg != "":
-        lattice.logger.warn("  openscad plugin does not accept options.")
     for d in range(3):
         lattice.rep[d] += 2  #Extend the size,then cut off later.
     lattice.logger.info("Hook0: end.")
+
+
+#def hook0(lattice, arg):
+#    lattice.logger.info("Hook0: Preprocess.")
+#    if arg != "":
+#        lattice.logger.warn("  openscad plugin does not accept options.")
+#    for d in range(3):
+#        lattice.rep[d] += 2  #Extend the size,then cut off later.
+#    lattice.logger.info("Hook0: end.")
 
 def hook2(lattice):
     global options
@@ -181,7 +185,7 @@ def hook2(lattice):
     print(s,end="")
     lattice.logger.info("Hook2: end.")
 
-hooks = {0:hook0, 2:hook2}
+hooks = {0:argparser, 2:hook2}
 
 
 if __name__ == "__main__":

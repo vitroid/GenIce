@@ -7,8 +7,8 @@ all: 1hreshape.py.test 2D3.ringtest.test prism7.ringtest.test
 all: 3xFAU.yap.test
 all: T.pov.test
 all: 7.re.gro
-all: MTN.gro MTN.re.gro.test
-all: ITT.gro.test
+# all: MTN.gro MTN.re.gro.test
+# all: ITT.gro.test
 all: 7.analice.yap.test
 all: 2D3.analice.yap.test
 
@@ -64,27 +64,30 @@ T.pov: $(FMT)/povray.py
 	$(GENICE) 2d --rep 8 8 8 | fgrep -v "Command line:" > $@
 1hreshape.py: $(FMT)/reshape.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@ 
-2D3.ringtest: $(FMT)/_ring.py
-	$(GENICE) 2D3 --rep 5 5 1 --format _ring | fgrep -v "Command line:" > $@                
-prism7.ringtest: $(FMT)/_ring.py
-	$(GENICE) prism[7] --rep 1 1 1 --format _ring | fgrep -v "Command line:" > $@           
+2D3.ringtest: $(FMT)/_ringstat.py
+	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat | fgrep -v "Command line:" > $@                
+prism7.ringtest: $(FMT)/_ringstat.py
+	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat | fgrep -v "Command line:" > $@           
 3xFAU.yap: $(FMT)/yaplot.py
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@           
 7.gro: $(FMT)/gromacs.py
 	$(GENICE) 7 -r 2 2 2 | fgrep -v "Command line:" > $@
 7.re.gro: 7.gro $(FMT)/gromacs.py
-	$(GENICE) gromacs[$<:O:H] --rep 1 1 1 --asis  | fgrep -v "Command line:" > $@           
-	-$(GENICE) gromacs[$<:O]  --rep 1 1 1 | fgrep -v "Command line:" > $@ # should fail
-	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
-MTN.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
-	$(GENICE) zeolite[MTN] --rep 1 1 1 | fgrep -v "Command line:" > $@
-MTN.re.gro: MTN.cif $(LTC)/cif.py $(FMT)/gromacs.py
-	$(GENICE) cif[MTN.cif] --rep 1 1 1 | fgrep -v "Command line:" > $@                     
-ITT.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
-	$(GENICE) zeolite[ITT] --rep 1 1 1 | fgrep -v "Command line:" > $@                     
-7.analice.yap: 7.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
+	$(ANALICE) $< -O O -H H  | fgrep -v "Command line:" > $@           
+	-$(ANALICE) $< -O O  | fgrep -v "Command line:" > $@ # should fail
+#	echo It must fail because the molecular orientations are missing.  Ice 7 is so crowded structure that its HB network cannot be estimated solely from Oxygen positions.
+
+
+# they are now in a separate module.
+#MTN.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
+#	$(GENICE) zeolite[MTN] --rep 1 1 1 | fgrep -v "Command line:" > $@
+#MTN.re.gro: MTN.cif $(LTC)/cif.py $(FMT)/gromacs.py
+#	$(GENICE) cif[MTN.cif] --rep 1 1 1 | fgrep -v "Command line:" > $@                     
+#ITT.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
+#	$(GENICE) zeolite[ITT] --rep 1 1 1 | fgrep -v "Command line:" > $@                     
+7.analice.yap: 7.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                
 2D3.gro: $(FMT)/gromacs.py
 	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
-2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py $(LTC)/gromacs.py
+2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                
