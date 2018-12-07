@@ -109,22 +109,7 @@ The program generates various ice lattice with proton disorder and without defec
 
         genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
 
-## File conversion
-
-GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options. You can not only use GenIce to make a known ice structure but also use it to convert some file format to another.
-
-* If you want to load a .gro file named "cs1.gro' and output it in yaplot format with using tip5p water model, just type the following.
-
-        genice gromacs[cs1.gro:O:H] --format y --water tip5p --asis > cs1.yap
-
-    where O and H are the atom names of water defined in the input .gro
-file. You can use regular expression for hydrogen atom name. `--asis`
-option avoids the network rearrangements. 
-
-* If you want to let genice ignore hydrogen bonds and assume them from positions of oxygen atoms, specify the atom name of oxygen only.
-
-        genice gromacs[cs1.gro:O] --format y > cs1.yap
-
+GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options.
 
 ## Clathrate hydrates
 
@@ -243,7 +228,18 @@ If you want to replace water model from the original three-site one (described a
 
 All the output formats are also available for AnalIce.
 
-### Usage
+### More examples
+
+Load every 10 frames from a set of .gro files and output ring statistics in separate files.
+
+    analice '%05d.gro' --framerange 0:1000000:10 -O OW -H HW[12] --format _ringstat -o '%04d.rstat'
+	
+Make V-structures (removal of quick librational motion of water) from the given set of .gro files.
+
+    analice '%05d.gro' -O OW -H HW[12] -w tip3p --avgspan 25 > vstruct.gro
+
+
+### Usage of `analice`
 
     usage: analice [options]
     
@@ -286,15 +282,6 @@ All the output formats are also available for AnalIce.
                             average.
 
 
-### Examples
-
-Load every 10 frames from a set of .gro files and output ring statistics in separate files.
-
-    analice '%05d.gro' --framerange 0:1000000:10 -O OW -H HW[12] --format _ringstat -o '%04d.rstat'
-	
-Make a V-structure (removal of quick librational motion of water) from the given set of .gro files.
-
-    analice '%05d.gro' -O OW -H HW[12] -w tip3p --avgspan 25 > vstruct.gro
 
 ## Output formats
 
