@@ -238,7 +238,6 @@ Make V-structures (removal of quick librational motion of water) from the given 
 
     analice '%05d.gro' -O OW -H HW[12] -w tip3p --avgspan 25 > vstruct.gro
 
-
 ### Usage of `analice`
 
     usage: analice [options]

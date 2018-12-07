@@ -25,10 +25,10 @@ def face(center, rpos):
 
 
 
-def hook4(lattice):
-    lattice.logger.info("Hook4: Show rings in Yaplot format.")
+def hook2(lattice):
+    lattice.logger.info("Hook2: Show rings in Yaplot format.")
     # copied from svg_poly
-    graph = nx.Graph(lattice.spacegraph) #undirected
+    graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
     for ring in cr.CountRings(graph).rings_iter(8):
         deltas = np.zeros((len(ring),3))
@@ -51,9 +51,9 @@ def hook4(lattice):
             deltas = np.dot(deltas, cellmat)
             print(face(com,deltas), end="")
     print()
-    lattice.logger.info("Hook4: end.")
+    lattice.logger.info("Hook2: end.")
 
 
     
 
-hooks = {4:hook4}
+hooks = {2:hook2}
