@@ -9,7 +9,7 @@ test:
 install:
 	./setup.py install
 uninstall:
-	-pip3 uninstall -y genice
+	-pip uninstall -y genice
 pypi:
 	./setup.py check
 	./setup.py sdist bdist_wheel upload

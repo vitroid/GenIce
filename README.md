@@ -283,6 +283,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
 
 
 ## Output formats
+They are common for `genice` and `analice`.
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
