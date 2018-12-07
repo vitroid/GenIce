@@ -41,11 +41,6 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
-* You can read a .gro file as a unit cell of ice and convert to other format.  "Ow" and "Hw" are the atom name of water in the file.
-
-        genice gromacs[mylattice.gro:Ow:Hw] --format scad --water tip5p > mylattice.scad
-
-    (If you are using csh and descendants, you may need to escape `[` and `]` characters.)
 
 ## Basics
 
@@ -197,14 +192,28 @@ If you want to replace water model from the original three-site one (described a
 
 All the output formats are also available for AnalIce.
 
+### Usage
+
+%%usage_analice%%
+
+### Examples
+
+Load every 10 frames from a set of .gro files and output ring statistics in separate files.
+
+    analice '%05d.gro' --framerange 0:1000000:10 -O OW -H HW[12] --format _ringstat -o '%04d.rstat'
+	
+Make a V-structure (removal of quick librational motion of water) from the given set of .gro files.
+
+    analice '%05d.gro' -O OW -H HW[12] -w tip3p --avgspan 25 > vstruct.gro
 
 ## Output formats
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
-`cif`    |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
-`g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none|
+`cif, cif2 |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
+`g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none| Default format.
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
+`mdv_au`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto| In atomic unit.
 `o`, `openscad`      |[OpenSCAD](http://www.openscad.org)    | `.scad`     | Center of mass | none | o | See tests/art/openscad for usage.
 `povray`      |Povray | `.pov`     | Atomic positions | Atomic Positions | o | 
 `towhee`      |TowHee    | `.coords`(?)      | Atomic positions | Atomic positions | none|
@@ -218,8 +227,9 @@ Name |Application | extension | water | solute | HB | remarks
 `graph`  |Graph       | `.ngph`     | none | none | o | Experimental.
 `c`, `com`      |CenterOfMass| `.ar3a`     | Center of mass | none | none |
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
-`p`, `python`      |Python module | `.py`     | Center of mass | none | none | Under development.
+`p`, `python`, `reshape`      |Python module | `.py`     | Center of mass | none | none | Under development.
 `_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
+`rings`      |Ring statistics |.rngs  | |  | | List of HB rings in @RNGS format.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 `_dep`     |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders HB paths to reduce the net polarization.
 
@@ -254,6 +264,7 @@ Symbol | Description
 2d     | Hypothetical Proton-disordered Ice II.[Nakamura 2015]
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
 5      | Monoclinic ice V (testing).
+6h     | Half lattice of ice 6.
 16     | Negative-pressure ice XVI(16).[Falenty 2014]
 17     | Negative-pressure ice XVII(17).[del Rosso 2016]
 0      | Hypothetical ice "0".[Russo 2014]
@@ -266,16 +277,17 @@ CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. 
 sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. Jeffrey 1984]
 RHO    | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
 FAU    | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
+DOH, MEP, MTN, SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
 CRN1, CRN2, CRN3 | 4-coordinated continuous random network [Mousseau 2005]
 Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
-A15, sigma, Hcomp, Z, mu, zra-d, 9layers, 6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
+A15, sigma, Hcomp, Kcomp, Z, mu, zra-d, FK9layers, FK6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
 T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (Hydrogen bond orientations are modified.)
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
+iceT2  | Partial plastic ice T2 [Yagasaki 2018].
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
-gromacs[filename]| Read a .gro file as a unit lattice of an ice.  See the output of `genice gromacs` for usage.  Note that only water molecules will be obtained. 
 
 Ice names with double quotations are not experimentally verified.
 
@@ -359,17 +371,13 @@ And use it as an output format to get the radial distribution functions.
 
 
 ## Output and analysis plugins
-Analysis plugin is a kind of output plugin (specified with -f option).
+Analysis plugin is a kind of output plugin (specified with -f option). They are useful with analice command.
 
 | pip name | GenIce option | Description | output format | requirements |
 |----------|-------|-------------|---------------|--------------|
 |[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg` | 2D graphics in SVG format.| SVG | `svgwrite` |
-|          |`-f svg_poly` | Illustrates types of HB rings in SVG format.| SVG | `svgwrite` |
-|[`genice-diffr`](https://github.com/vitroid/genice-diffr)|`-f _Diffr`| 3D diffraction pattern. | [Yaplot](https://github.com/vitroid/Yaplot) | `contour3d` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`genice-matcher`](https://github.com/vitroid/matcher)| `-f matcher2` | Geometrical pattern matching with a given structure. | text | |
-|   | `-f smatcher` | Translational pattern matching with a self-template. | text | |
 
 
 # References
@@ -402,10 +410,11 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B
   2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://dx.doi.org/10.1021/acs.jpcb.5b09544)
 * C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
-* J. Russo, F. Romano, H. Tanaka, Nat Mater 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
-* G. S. Smirnov, V. V. Stegailov, J Phys Chem Lett 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
+* J. Russo, F. Romano, H. Tanaka, Nat. Mater. 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
+* G. S. Smirnov, V. V. Stegailov, J. Phys. Chem. Lett. 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
   Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://dx.doi.org/10.1103/PhysRevLett.71.3150)
+* T. Yagasaki, M. Matsumoto, H. Tanaka, J. Phys. Chem. B 122, 7718–7725 (2018). [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
 
 # The algorithm and how to cite it.
 

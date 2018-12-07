@@ -38,3 +38,5 @@ tests/trash/*
 *.voro
 
 *.db
+
+README\.md\.1
