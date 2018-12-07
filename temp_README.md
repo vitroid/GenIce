@@ -229,7 +229,7 @@ Name |Application | extension | water | solute | HB | remarks
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`, `reshape`      |Python module | `.py`     | Center of mass | none | none | Under development.
 `_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
-`rings`      |Ring statistics |.rngs  | |  | | List of HB rings in @RNGS format.
+`rings`      |Ring statistics |  | |  | | Number of rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 `_dep`     |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders HB paths to reduce the net polarization.
 

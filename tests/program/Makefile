@@ -5,4 +5,7 @@ test_installed:
 test_develop:
 	make -f Makefile.develop
 
-include Makefile.common
+clean:
+	-rm test* *~ @*
+	-rm -rf sort_tmp
+	-rm *.cif *.test *.gro *.yap *.ar3a *.ringtest *.pov *.nx3a *.ar3a *.ar3r *.nx4a *.xyz *.mdv *.mdva *.py *.scad *.ngph *.rings *.kg *.ringstat
