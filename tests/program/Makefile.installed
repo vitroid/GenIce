@@ -9,4 +9,3 @@ REFD=ref
 .DELETE_ON_ERROR:
 
 include Makefile.rules
-include Makefile.common

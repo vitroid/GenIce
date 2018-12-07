@@ -1,5 +1,5 @@
 all: test1.done   test2.done   test3.done   test4.done   2d.gro.test
-all: 3.ar3a.test  4.ngph.test  5.nx3a.test  6.gro.test   7.mdv.test
+all: 3.ar3a.test  4.ngph.test  0.nx3a.test  6.gro.test   7.mdv.test
 all: 12.scad.test 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
 all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro 7.mdva.test
 #all: test19.done
@@ -10,14 +10,14 @@ all: 7.re.gro
 # all: MTN.gro MTN.re.gro.test
 # all: ITT.gro.test
 all: 7.analice.yap.test
-all: 2D3.analice.yap.test HS3.rings.test
+all: 2D3.analice.yap.test HS3.rings.yap.test
 all: 1h.ringstat.test
-all: T2.kg.test
+all: iceT2.kg.test
 all: RHO.dep.yap.test
 
 %.test: $(REFD)/% % 
 	diff $^ && touch $@
-%.rings: $(FMT)/rings.py
+%.rings.yap: $(FMT)/rings.py
 	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py
 	$(GENICE) $* -f _ringstat | fgrep -v "Command line:" > $@
@@ -43,8 +43,8 @@ test4.done: $(FMT)/gromacs.py
 	$(GENICE) 3  --rep 2 2 3 --format c | fgrep -v "Command line:" > $@                        
 4.ngph: $(FMT)/digraph.py
 	$(GENICE) 4  --rep 2 2 3 --format d | fgrep -v "Command line:" > $@                        
-5.nx3a:  $(FMT)/euler.py
-	$(GENICE) 5  --rep 2 2 3 --format e | fgrep -v "Command line:" > $@                        
+%.nx3a:  $(FMT)/euler.py
+	$(GENICE) $* --rep 2 2 3 --format e | fgrep -v "Command line:" > $@                        
 6.gro: $(FMT)/gromacs.py
 	$(GENICE) 6  --rep 2 2 4 --format g | fgrep -v "Command line:" > $@                        
 7.mdv: $(FMT)/mdview.py
