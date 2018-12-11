@@ -1,0 +1,41 @@
+data_global
+_chemical_name_mineral 'Ice R'
+loop_
+_publ_author_name
+'Mochizuki K'
+_journal_name_full 'Phys Chem Chem Phys'
+_journal_volume 16 
+_journal_year 2014
+_journal_page_first 16419
+_journal_page_last 16425
+_publ_section_title
+;
+Diversity of transition pathways in the
+course of crystallization into ice VII
+;
+_cell_length_a 7.1
+_cell_length_b 7.1
+_cell_length_c 7.1
+_cell_angle_alpha 89.32
+_cell_angle_beta 89.32
+_cell_angle_gamma 89.32
+_symmetry_space_group_name_H-M 'R 3'
+loop_
+_space_group_symop_operation_xyz
+  'x,y,z'
+  'y,z,x'
+  'z,x,y'
+loop_
+_atom_site_label
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+T1 0.575 0.575 0.575
+T2 0.953 0.953 0.953
+T3 0.186 0.186 0.186
+T4 0.833 0.291 0.701
+T5 0.445 0.318 0.839
+T6 0.720 0.626 0.953
+T7 0.519 0.189 0.435
+T8 0.938 0.072 0.420
+T9 0.204 0.085 0.703
