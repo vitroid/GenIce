@@ -1,14 +1,4 @@
 data_T2_refined
-#**************************************************************************
-#
-# CIF taken from the IZA-SC Database of Zeolite Structures
-# Ch. Baerlocher and L.B. McCusker
-# Database of Zeolite Structures: http://www.iza-structure.org/databases/ 
-#
-# The atom coordinates and the cell parameters were optimized with DLS76
-# assuming a pure SiO2 composition.
-#
-#**************************************************************************
 
 _cell_length_a                  19.912(0)
 _cell_length_b                  19.912(0)
