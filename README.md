@@ -337,11 +337,13 @@ In the format plugin, you define the hook functions that are invoked after proce
 Symbol | Description
 -------|------------
 1h, 1c | Most popular Ice I (hexagonal or cubic)|
-2|Proton-ordered ice II |
-2d     | Hypothetical Proton-disordered Ice II.[Nakamura 2015]
+2      |Hydrogen-ordered ice II |
+2d     | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
 5      | Monoclinic ice V (testing).
+5R     | Ice V with orthogonal unit cell. (testing)
 6h     | Half lattice of ice 6.
+9      | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
 16     | Negative-pressure ice XVI(16).[Falenty 2014]
 17     | Negative-pressure ice XVII(17).[del Rosso 2016]
 0      | Hypothetical ice "0".[Russo 2014]
@@ -351,7 +353,7 @@ C1     | Filled ice C1 (Alias of 2).[Londono 1988]
 C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
 sTprime | Filled ice "sT'" [Smirnov 2013]
 CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999] 
-sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. Jeffrey 1984]
+sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. [Jeffrey 1984]
 RHO    | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
 FAU    | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
 DOH, MEP, MTN, SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
@@ -361,10 +363,10 @@ A15, sigma, Hcomp, Kcomp, Z, mu, zra-d, FK9layers, FK6layers, C36, C15, C14, del
 T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
 xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
 xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (Hydrogen bond orientations are modified.)
-iceR   | Partial plastic ice R [Mochizuki 2014].
-iceT   | Partial plastic ice T [Hirata 2017].
-iceT2  | Partial plastic ice T2 [Yagasaki 2018].
-prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
+iceR   | Partial plastic ice R. [Mochizuki 2014]
+iceT   | Partial plastic ice T. [Hirata 2017]
+iceT2  | Partial plastic ice T2. [Yagasaki 2018]
+prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001]
 
 Ice names with double quotations are not experimentally verified.
 
@@ -478,6 +480,7 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
 * K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://dx.doi.org/10.1038/35090532)
 * V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
+* D. Londono, W. F. Kuhs, J. L. Finney, J. Chem. Phys. 98, 4878–4888 (1993). [DOI: 10.1063/1.464942](http://doi.org/10.1063/1.464942)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
 * K. Mochizuki, K. Himoto, and M. Matsumoto,
