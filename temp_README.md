@@ -274,6 +274,7 @@ xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (
 iceR   | Partial plastic ice R [Mochizuki 2014].
 iceT   | Partial plastic ice T [Hirata 2017].
 iceT2  | Partial plastic ice T2 [Yagasaki 2018].
+dtc    | Ultralow-density ice containing cylindrical pores. [Matsui 2019]
 prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
@@ -387,16 +388,18 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
   Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://dx.doi.org/10.1021/ic102178d)
 * K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://dx.doi.org/10.1038/35090532)
 * V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
+* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
 * D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
+* T. Matsui, T. Yagasaki, M. Matsumoto, H. Tanaka,
+  J. Chem. Phys. in press (2019).
 * K. Mochizuki, K. Himoto, and M. Matsumoto,
   Phys. Chem. Chem. Phys. 16, 16419–16425 (2014). [DOI: 10.1039/c4cp01616e](http://dx.doi.org/10.1039/c4cp01616e)
 * N. Mousseau, G. T. Barkema, Curr. Opin. Solid State
   Mater. Sci. 2001, 5, 497. [DOI: 10.1016/S1359-0286(02)00005-0](https://doi.org/10.1016/S1359-0286%2802%2900005-0)
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B
   2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://dx.doi.org/10.1021/acs.jpcb.5b09544)
-* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
 * J. Russo, F. Romano, H. Tanaka, Nat. Mater. 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
 * G. S. Smirnov, V. V. Stegailov, J. Phys. Chem. Lett. 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
