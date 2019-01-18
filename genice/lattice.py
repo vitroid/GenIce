@@ -137,7 +137,7 @@ class gromacs(): # for analice
                     x = np.cross(y,z)
                     self.rotmat.append(np.vstack([x,y,z]))
                     # 重心位置を補正。
-                    self.waters[i] += np.dot(dh0+dh1, self.cell)*1./16.
+                    self.waters[i] += (dh0+dh1)*1./18.
                 grid = pl.determine_grid(self.cell, 0.245)
                 # remove intramolecular OHs
                 # 水素結合は原子の平均位置で定義している。
