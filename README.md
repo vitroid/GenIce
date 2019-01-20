@@ -32,7 +32,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.RC2)
+    (version 1.0.RC3)
     
     positional arguments:
       Type                  Crystal type (1c,1h,etc. See
@@ -243,7 +243,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.RC2)
+    (version 1.0.RC3)
     
     positional arguments:
       File                  Gromacs file.
@@ -342,7 +342,7 @@ Symbol | Description
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
 5      | Monoclinic ice V (testing).
 5R     | Ice V with orthogonal unit cell. (testing)
-6h     | Half lattice of ice 6.
+6h     | Half lattice of ice IV.
 9      | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
 16     | Negative-pressure ice XVI(16).[Falenty 2014]
 17     | Negative-pressure ice XVII(17).[del Rosso 2016]
@@ -351,7 +351,7 @@ i      | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
 C0, C0-II  | Filled ice C0 (Alias of 17).[Smirnov 2013]
 C1     | Filled ice C1 (Alias of 2).[Londono 1988]
 C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
-sTprime | Filled ice "sT'" [Smirnov 2013]
+sTprime | Filled ice "sT'". [Smirnov 2013]
 CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999] 
 sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. [Jeffrey 1984]
 RHO    | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
