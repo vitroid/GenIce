@@ -14,6 +14,9 @@ all: 2D3.analice.yap.test HS3.rings.yap.test
 all: 1h.ringstat.test
 all: iceT2.kg.test
 all: RHO.dep.yap.test
+all: 9.yap.test dtc.yap.test # 5R.yap.test iceR.yap.test
+
+
 
 %.test: $(REFD)/% % 
 	diff $^ && touch $@
@@ -102,3 +105,6 @@ prism7.ringtest: $(FMT)/_ringstat.py
 	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
 2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@                                
+
+%.yap: $(FMT)/yaplot.py
+	$(GENICE) $* -f yaplot | fgrep -v "Command line:" > $@
