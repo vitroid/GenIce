@@ -255,33 +255,45 @@ class nx3a(): # for analice
                     self.cell = np.diag(box) / 10 # in nm
                     celli = np.linalg.inv(self.cell)
                     self.celltype = 'triclinic'
-                elif line[:5] in ("@NX3A", "@NX4A"):
+                elif line[:5] in ("@NX3A", "@NX4A", "@AR3R"):
                     nx3a = (line[:5] == "@NX3A")
+                    ar3r = (line[:5] == "@AR3R")
                     logger.debug(line[:5])
                     line = self.file.readline()
                     nmol = int(line.split()[0])
                     self.waters = []
-                    self.rotmat = []
-                    for i in range(nmol):
-                        line = self.file.readline()
-                        if nx3a:
+                    if nx3a:
+                        logger.info("@NX3A")
+                        self.rotmat = []
+                        for i in range(nmol):
+                            line = self.file.readline()
                             cols = line.split()[:6]
                             euler = np.array([float(x) for x in cols[3:6]])
                             self.rotmat.append(rigid.euler2rotmat(euler))
-                        else: #nx4a
+                            pos   = np.array([float(x) for x in cols[:3]])
+                            self.waters.append(pos /  10) # in nm
+                        self.coord = 'absolute'
+                    elif not ar3r: #@NX4A
+                        logger.info("@NX4A")
+                        self.rotmat = []
+                        for i in range(nmol):
+                            line = self.file.readline()
                             cols = line.split()[:7]
                             quat = np.array([float(x) for x in cols[3:7]])
                             self.rotmat.append(rigid.quat2rotmat(quat))
-                        pos   = np.array([float(x) for x in cols[:3]])
-                        self.waters.append(pos /  10) # in nm
-                    self.coord = 'absolute'
+                            pos   = np.array([float(x) for x in cols[:3]])
+                            self.waters.append(pos /  10) # in nm
+                        self.coord = 'absolute'
+                    else: # @AR3R
+                        logger.info("@AR3R")
+                        for i in range(nmol):
+                            line = self.file.readline()
+                            cols = line.split()[:3]
+                            pos   = np.array([float(x) for x in cols[:3]])
+                            self.waters.append(pos)
+                        self.coord = 'relative'
+                        self.rotmat = None
                     self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
-                    #self.pairs = []
-                    #grid = pl.determine_grid(self.cell, self.bondlen)
-                    #logger.debug("  Make pair list.")
-                    #self.pairs = [(o1,o2)
-                    #              for o1,o2 in pl.pairs_fine(np.array(self.waters), self.bondlen, self.cell, grid, distance=False)]
-                    #logger.info("Pairs: {0}".format(len(self.pairs)))
                     yield self
             
     
@@ -310,7 +322,7 @@ def load_iter(filename, oname, hname, filerange, framerange, avgspan=1):
     for fname in filelist:
         logger.info("  File name: {0}".format(fname))
         # single file may contain multiple frames
-        if fname[-4:] in ('nx3a', 'nx4a'):
+        if fname[-4:] in ('nx3a', 'nx4a', 'ar3r'):
             loader = nx3a(fname)
         elif fname[-3:] == 'mdv' or fname[-4:] == 'mdvw':
             loader = mdview(fname, oname, hname)
@@ -913,12 +925,14 @@ class Lattice():
             hooks[1](self)
         if max(0,*hooks.keys()) < 2:
             return
-        # res = self.stage2_analice()
+        if self.rotmatrices is None:
+            res = self.stage2()
         if 2 in hooks:
             hooks[2](self)
         if max(0,*hooks.keys()) < 3:
             return
-        # self.stage3_analice()
+        if self.rotmatrices is None:
+            self.stage3()
         if 3 in hooks:
             hooks[3](self)
         if max(0,*hooks.keys()) < 4:
@@ -929,7 +943,8 @@ class Lattice():
         if max(0,*hooks.keys()) < 5:
             return
         # molecular orientation should be given in the loader.
-        # self.stage5()
+        if self.rotmatrices is None:
+            self.stage5()
         if 5 in hooks:
             hooks[5](self)
         if max(0,*hooks.keys()) < 6:
