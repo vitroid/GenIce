@@ -24,6 +24,9 @@ def Atom(atomtype, pos):
 def Bond(bondtype, pos1, pos2):
     return Block( "cylinder", Juxtapose( [Vector(pos1), Vector(pos2), "R{0}".format(bondtype)] ) + Block( "material", "MAT{0}".format(bondtype) ) ) + "\n"
     
+def Include(filename):
+    return '#include "{0}"\n'.format(filename)
+
 
 def hook6(lattice):
     global nwateratoms
@@ -40,7 +43,7 @@ def hook6(lattice):
                 waters[order]["H0"] = position
             else:
                 waters[order]["H1"] = position
-    s = '#include "default.inc"\n'
+    s = Include("default.inc")
     s += "union {\n"
     for order, water in waters.items():
         O = water["O"]

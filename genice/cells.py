@@ -60,11 +60,10 @@ class Cell():
         logger = logging.getLogger()
         if celltype == "rect":
             if type(desc) is str:
-                vec = np.fromstring(desc, sep=" ")
+                desc = np.fromstring(desc, sep=" ")
             elif type(desc) is list:
-                vec = np.array(desc)
-            logger.debug("parse_cell 1: {0}".format(self.mat))
-            self.mat = np.diag(vec)
+                desc = np.array(desc)
+            self.mat = np.diag(desc)
         elif celltype == "monoclinic":
             if type(desc) is str:
                 desc = np.fromstring(desc, sep=" ")
