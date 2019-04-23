@@ -250,6 +250,7 @@ Symbol | Description
 2      |Hydrogen-ordered ice II |
 2d     | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
+4R     | Ice IV with orthogonal unit cell. (testing)
 5      | Monoclinic ice V (testing).
 5R     | Ice V with orthogonal unit cell. (testing)
 6h     | Half lattice of ice IV.

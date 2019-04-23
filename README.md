@@ -266,10 +266,11 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             Specify atom name of hydrogen in input Gromacs file.
                             ("H")
       --filerange [from:]below[:interval]
-                            Specify the number range for the filename.
+                            Specify the number range for the input filename.
                             ("0:1000000")
       --framerange [from:]below[:interval]
-                            Specify the number range for the frames. ("0:1000000")
+                            Specify the number range for the input frames.
+                            ("0:1000000")
       --debug, -D           Output debugging info.
       --quiet, -q           Do not output progress messages.
       --add_noise percent   Add a Gauss noise with given width (SD) to the
@@ -340,6 +341,7 @@ Symbol | Description
 2      |Hydrogen-ordered ice II |
 2d     | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
 3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
+4R     | Ice IV with orthogonal unit cell. (testing)
 5      | Monoclinic ice V (testing).
 5R     | Ice V with orthogonal unit cell. (testing)
 6h     | Half lattice of ice IV.
