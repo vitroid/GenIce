@@ -21,12 +21,14 @@ def import_format_extra(name):
     logger.info("Extra plugin: {0}".format(name))
     hooks = dict()
     for i in (0,1,2,3,4,5,6,7):
+        logger.debug("  Looking for hook{0}...".format(i))
         groupname = 'genice_format_hook{0}'.format(i)
         for ep in pr.iter_entry_points(group=groupname):
+            logger.debug("    Entry point for hook{1}: {0}".format(ep, i))
             if ep.name == name:
-                func = ep.load()
-                hooks[i] = func
-                logger.info("Load {1} Hook{0}.".format(i,name))
+                logger.debug("      Loading {0}...".format(name))
+                hooks[i] = ep.load()
+                logger.info("      Loaded {1} Hook{0}.".format(i,name))
     if len(hooks) == 0:
         logger.error("No extra plugin named '{0}'.".format(name))
         sys.exit(1)
