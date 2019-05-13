@@ -1,62 +1,5 @@
 #!/usr/bin/python
 
-import numpy as np
-from math import *
-
-from logging import getLogger, StreamHandler, DEBUG, INFO
-logger = getLogger(__name__)
-handler = StreamHandler()
-handler.setLevel(INFO)
-logger.setLevel(INFO)
-logger.addHandler(handler)
-logger.propagate = False
-
-
-
-def fullatoms(atomd, sops):
-    global x,y,z
-    # the variables to be evaluated by eval() must be global (?)
-    full = []
-    names = []
-    for name, pos in atomd.items():
-        x,y,z = pos
-        for sop in sops:
-            print(x,sop)
-            p = np.array([eval(s) for s in sop])
-            p -= np.floor(p)
-            tooclose = False
-            for f in full:
-                d = f - p
-                d -= np.floor(d+0.5)
-                L2 = np.dot(d,d)
-                if L2 < 0.0001:
-                    print(f,p)
-                    tooclose = True
-                    break
-            if not tooclose:
-                yield name, p
-                full.append(p)
-                names.append(name)
-
-
-def cellvectors(a,b,c,A=90,B=90,C=90):
-    A *= pi/180
-    B *= pi/180
-    C *= pi/180
-    ea = np.array([1.0, 0.0, 0.0])
-    eb = np.array([cos(C), sin(C), 0])
-    # ec.ea = ecx = cos(B)
-    # ec.eb = ecx*ebx + ecy*eby = cos(A)
-    ecx = cos(B)
-    ecy = (cos(A) - ecx*eb[0]) / eb[1]
-    ecz = sqrt(1-ecx**2-ecy**2)
-    ec = np.array([ecx, ecy, ecz])
-    logger.debug((cos(A), np.dot(eb, ec)))
-    logger.debug((cos(B), np.dot(ec, ea)))
-    logger.debug((cos(C), np.dot(ea, eb)))
-    return np.vstack([ea*a, eb*b, ec*c])
-
-
 # Crystallographic data of ice XIII
 # 1.	Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).
 
@@ -95,40 +38,16 @@ symops="""
     1/2+x        1/2-y          z
 """
 
-a=9.2417
-b=7.4724
-c=10.2970
+a=9.2417 / 10.0 #nm
+b=7.4724 / 10.0 #nm
+c=10.2970 / 10.0 #nm
 A=90
 B=109.6873
 C=90
 
+import CIF
 
-atomd = dict()
-for atom in atoms.split("\n"):
-    cols = atom.split()
-    if len(cols) == 0:
-        continue
-    # remove error digits from 1-3 cols.
-    xyz = np.array([float(col[:col.find("(")]) for col in cols[1:]])
-    name = cols[0]
-    atomd[name] = xyz
-
-sops = []
-for symop in symops.split("\n"):
-    cols = symop.split()
-    if len(cols) == 0:
-        continue
-    sops.append(cols)
-    
-# symmetry operation
-for name, pos in fullatoms(atomd, sops):
-    logger.info((name, pos))
-
-
-
-rotmat = cellvectors(a,b,c,A,B,C)
-
-# で、どうする？
-# geniceのpyを生成するのか、それともgroを生成するのか。
-# 後者のほうが汎用性はある。しかしフォーマットがなあ。
-# まあ、それでやってみるか。
+cell  = CIF.cellvectors(a,b,c,A,B,C)
+atomd = CIF.atomdic(atoms)
+sops  = CIF.symmetry_operators(symops)
+CIF.gromacs(cell, atomd, sops)
