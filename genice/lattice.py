@@ -244,6 +244,7 @@ class nx3a(): # for analice
         self.bondlen = 0.3
     def load_iter(self):
         logger = logging.getLogger()
+        logger.info("NX3A/NX4A: Orientations are ignored.")
         while True:
             line = self.file.readline()
             if len(line) == 0:

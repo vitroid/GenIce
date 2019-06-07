@@ -37,7 +37,7 @@ def op(i,j,check=True):
 
 
 
-#calculate quaternions from a rotation matrix (three orthogonal vectors)
+#calculate quaternions from a rotation matrix (three orthogonal unit vectors)
 def rotmat2quat0(i,j,k):
     #print sqlen(i),sqlen(j),sqlen(k)
     ex = np.array((1.0, 0.0, 0.0))
