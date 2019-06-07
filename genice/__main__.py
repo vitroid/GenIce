@@ -348,7 +348,7 @@ def main():
                                   noise=noise)
             if output is not None:
                 sys.stdout = open(output % i, "w")
-            lat.analize_ice(water_type= water_type,
+            lat.analyze_ice(water_type= water_type,
                             hooks     = hooks,
                             arg       = arg
             )

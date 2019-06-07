@@ -61,7 +61,7 @@ def import_format_plugin(category, name):
 
 def safe_import(category, name):
     logger = logging.getLogger()
-    assert category in ("lattice", "format", "molecule")
+    assert category in ("lattice", "format", "molecule", "loader")
     # name may contain arguments
     left = name.find("[")
     right = name.rfind("]")
