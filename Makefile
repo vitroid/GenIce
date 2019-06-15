@@ -2,19 +2,25 @@ all:
 	echo Hello.
 %: temp_% genice/__main__.py genice/__init__.py
 	./genice.x -h | python3 Utilities/replace.py %%usage%% "    " $< > $@
-%.rst: %.md
-	md2rst $<
 test:
 	make -C tests all
+
+test-deploy: build
+	twine upload -r pypitest dist/*
+test-install:
+	pip install --index-url https://test.pypi.org/simple/ GenIce
+
+
 install:
-	make README.rst
 	./setup.py install
 uninstall:
 	-pip3 uninstall -y genice
-pypi:
-	make README.rst
+check:
 	./setup.py check
-	./setup.py sdist bdist_wheel upload
+	./setup.py sdist bdist_wheel
+deploy:
+	twine upload dist/*
+
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@ 
 distclean:

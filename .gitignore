@@ -31,10 +31,6 @@ tests/sort_tmp/*
 tests/trash/*
 
 
-*.pdf
-
 *.eps
-
 *.log
 
-*.svg
