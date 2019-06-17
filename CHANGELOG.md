@@ -1,7 +1,10 @@
 # Change log
 
+## 0.22 (stable, release)
 
-## 0.20.2, 0.20.3  (stable, release)
+* Added AnalIce.
+
+## 0.20.2, 0.20.3
 
 * Added --version option.
 * The version number is also shown in the usage.
