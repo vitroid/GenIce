@@ -478,7 +478,6 @@ def depolarize(spaceicegraph, cell, draw=None):
                     s += draw.draw_path(path)
                     s += yp.NewPage()
                 spaceicegraph.invert_path(path)
-                ## chk_net_polar = spaceicegraph.net_polarization()
                 net_polar = new_net_polar
                 logger.info("  Net polarization: [ {0:.3f} {1:.3f} {2:.3f} ]".format(*net_polar))
                 ## assert np.linalg.norm(new_net_polar - chk_net_polar) < 1e-5
