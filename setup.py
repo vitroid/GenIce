@@ -37,6 +37,7 @@ setup(name='GenIce',
                 'genice.molecules',
                 'genice.lattices',
                 'genice.formats',
+                'genice.loaders',
                 ],
       install_requires=['networkx>=2', 'countrings>=0.1.4', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy', ],
       entry_points = {

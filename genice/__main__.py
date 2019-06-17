@@ -6,7 +6,7 @@ import sys
 import argparse  as ap
 import logging
 from genice.importer import safe_import
-from genice import lattice, __version__
+from genice import lattice, __version__, load
 import random
 import numpy as np
 
@@ -25,70 +25,65 @@ def getoptions():
                         help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
     parser.add_argument('--dens',
                         '-d',
-                        nargs = 1,
                         type=float,
                         dest='dens',
-                        default=(-1,),
+                        default=-1,
                         help='Specify the ice density in g/cm3')
     parser.add_argument('--add_noise',
-                        nargs=1,
                         type=float,
                         dest='noise',
-                        default=(0.,),
+                        default=0.,
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
     parser.add_argument('--seed',
                         '-s',
-                        nargs = 1,
                         type=int,
                         dest='seed',
-                        default=(1000,),
+                        default=1000,
                         help='Random seed [1000]')
     parser.add_argument('--format',
                         '-f',
-                        nargs = 1,
                         dest='format',
-                        default=("gromacs",),
+                        default="gromacs",
                         metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
     parser.add_argument('--water',
                         '-w',
-                        nargs = 1,
                         dest='water',
-                        default=("tip3p",),
+                        default="tip3p",
                         metavar="model",
                         help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--guest',
                         '-g',
-                        nargs = 1,
+                        nargs=1,
                         dest='guests',
                         metavar="D=empty",
                         action="append", 
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
     parser.add_argument('--Guest',
                         '-G',
-                        nargs = 1,
+                        nargs=1,
                         dest='spot_guests',
                         metavar="13=me",
                         action="append", 
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
     parser.add_argument('--Group',
                         '-H',
-                        nargs = 1,
+                        nargs=1,
                         dest='groups',
                         metavar="13=bu-:0",
                         action="append", 
                         help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
-                        nargs = 1,
+                        nargs=1,
                         dest='anions',
                         metavar="3=Cl",
                         action="append", 
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation',
                         '-c',
-                        nargs = 1,
+                        nargs=1,
                         dest='cations',
                         metavar="3=Na",
                         action="append", 
@@ -112,7 +107,6 @@ def getoptions():
                         dest='quiet',
                         help='Do not output progress messages.')
     parser.add_argument('Type',
-                        nargs=1,
                         help='Crystal type (1c,1h,etc. See https://github.com/vitroid/GenIce for available ice structures.)')
     return parser.parse_args()
 
@@ -125,53 +119,52 @@ def getoptions_analice():
                         version='%(prog)s {0}'.format(__version__))
     parser.add_argument('--format',
                         '-f',
-                        nargs = 1,
                         dest='format',
-                        default=("gromacs",),
+                        default="gromacs",
                         metavar="gmeqdypoc",
                         help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
     parser.add_argument('--output',
                         '-o',
-                        nargs = 1,
                         dest='output',
                         metavar="%04d.gro",
                         help='Output in separate files.')
     parser.add_argument('--water',
                         '-w',
-                        nargs = 1,
                         dest='water',
-                        default=("tip3p",),
+                        default="tip3p",
                         metavar="model",
                         help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
     parser.add_argument('--oxygen',
                         '-O',
-                        nargs = 1,
                         dest='oatom',
                         metavar="OW",
-                        default=("O",),
+                        default="O",
                         help='Specify atom name of oxygen in input Gromacs file. ("O")')
     parser.add_argument('--hydrogen',
                         '-H',
-                        nargs = 1,
                         dest='hatom',
                         metavar="HW[12]",
-                        default=("H",),
-                        help='Specify atom name of hydrogen in input Gromacs file. ("H")')
+                        default="H",
+                        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")')
+    parser.add_argument('--suffix',
+                        '-s',
+                        dest='suffix',
+                        metavar="gro",
+                        default=None,
+                        help='Override the file suffix. (None)')
     parser.add_argument('--filerange',
-                        nargs = 1,
                         dest='filerange',
                         metavar="[from:]below[:interval]",
-                        default=("0:1000000",),
+                        default="0:1000000",
                         help='Specify the number range for the input filename. ("0:1000000")')
     parser.add_argument('--framerange',
-                        nargs = 1,
                         dest='framerange',
                         metavar="[from:]below[:interval]",
-                        default=("0:1000000",),
+                        default="0:1000000",
                         help='Specify the number range for the input frames. ("0:1000000")')
     parser.add_argument('--debug',
                         '-D',
-                        action='store_true',
+                        action='count',
                         dest='debug',
                         help='Output debugging info.')
     parser.add_argument('--quiet',
@@ -180,21 +173,18 @@ def getoptions_analice():
                         dest='quiet',
                         help='Do not output progress messages.')
     parser.add_argument('--add_noise',
-                        nargs=1,
                         type=float,
                         dest='noise',
-                        default=(0.,),
+                        default=0.,
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
     parser.add_argument('--avgspan','-v',
-                        nargs=1,
                         type=float,
                         dest='avgspan',
-                        default=(0.,),
+                        default=0,
                         metavar='1',
-                        help='Average atomic positions in water molecules so as to remove fast librational motions and to make a smooth video. Specify the average span. The value 1 means no average.')
+                        help='Average atomic positions in water molecules so as to remove fast librational motions and to make a smooth video. Specify the average span. The values 0 and 1 specify no averaging.')
     parser.add_argument('File',
-                        nargs=1,
                         help='Gromacs file.')
     return parser.parse_args()
 
@@ -247,16 +237,16 @@ def main():
     if mode == "genice":
         logger.debug(options.Type)
 
-        water_type   = options.water[0]
+        water_type   = options.water
         guests       = options.guests
-        lattice_type = options.Type[0]
-        file_format  = options.format[0]
-        seed         = options.seed[0]
+        lattice_type = options.Type
+        file_format  = options.format
+        seed         = options.seed
         rep          = options.rep
-        density      = options.dens[0]
+        density      = options.dens
         depolarize   = not options.nodep
         asis         = options.asis
-        noise        = options.noise[0]
+        noise        = options.noise
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -316,31 +306,33 @@ def main():
     else: #analice
         logger.debug(options.File)
 
-        water_type   = options.water[0]
-        file_format  = options.format[0]
-        oname        = options.oatom[0]
-        hname        = options.hatom[0]
-        filename     = options.File[0]
-        noise        = options.noise[0]
-        avgspan      = options.avgspan[0]
-        filerange    = options.filerange[0]
-        framerange   = options.framerange[0]
+        water_type   = options.water
+        file_format  = options.format
+        oname        = options.oatom
+        hname        = options.hatom
+        filename     = options.File
+        noise        = options.noise
+        avgspan      = options.avgspan
+        filerange    = options.filerange
+        framerange   = options.framerange
+        suffix       = options.suffix
         if options.output is None:
             output   = None
             stdout   = None
         else:
-            output   = options.output[0]
+            output   = options.output
             stdout   = sys.stdout
         
         logger.debug(filerange)
         logger.debug(framerange)
         logger.debug(oname)
         logger.debug(hname)
+        logger.debug(suffix)
         logger.info("Output:{0}".format(output))
         
         del options  # Dispose for safety.
 
-        for i,w in enumerate(lattice.load_iter(filename, oname, hname, filerange, framerange, avgspan=avgspan)):
+        for i,w in enumerate(load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix, avgspan=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
