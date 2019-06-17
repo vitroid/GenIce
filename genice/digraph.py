@@ -455,6 +455,7 @@ def depolarize(spaceicegraph, cell, draw=None):
         reject_count = 10
         while reject_count > 0:
             net_polar = spaceicegraph.net_polarization()
+            # logger.info("  Net polarization: {0:.3f}".format(net_polar))
             if np.dot(net_polar, net_polar) < 0.05**2:
                 break  # without problem
             while True:
@@ -478,7 +479,10 @@ def depolarize(spaceicegraph, cell, draw=None):
                     s += yp.NewPage()
                 spaceicegraph.invert_path(path)
                 net_polar = new_net_polar
-                logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                logger.info("  Net polarization: [ {0:.3f} {1:.3f} {2:.3f} ]".format(*net_polar))
+                ## assert np.linalg.norm(new_net_polar - chk_net_polar) < 1e-5
+                ## logger.debug("New dipole {0}".format(new_net_polar))
+                ## logger.debug("Chk dipole {0}".format(chk_net_polar))
                 reject_count = 10
             else:
                 logger.debug("  Reject inversion")
@@ -489,7 +493,7 @@ def depolarize(spaceicegraph, cell, draw=None):
 
     while True:
         net_polar = spaceicegraph.net_polarization()
-        logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+        logger.info("  Net polarization: [ {0:.3f} {1:.3f} {2:.3f} ]".format(*net_polar))
         if np.dot(net_polar, net_polar) < 0.2**2:
             break  # without problem
         if -1 <= net_polar[0]  <= 1 and -1 <= net_polar[1]  <= 1 and -1 <= net_polar[2]  <= 1:
