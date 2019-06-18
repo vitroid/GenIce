@@ -3,7 +3,6 @@ Data source:
 
 Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif
 """
-celltype = "triclinic"
 cell = """
 15.070097094562836 0 0
 5.129552870714296 14.170233370911644 0
@@ -142,3 +141,11 @@ waters = """
 coord = "relative"
 bondlen = 3
 density = 1.3072141048893433
+
+from genice.cell import cellvectors
+cell = cellvectors(a=15.070097094562836,
+                   b=15.070097094562836,
+                   c=15.070097094562838,
+                   A=70.1,
+                   B=70.1,
+                   C=70.1)

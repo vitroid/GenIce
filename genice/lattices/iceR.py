@@ -4,7 +4,6 @@ Data Source
 [Methane A] Maynard-Casely, H. E. et al. The distorted close-packed crystal structure of methane A. J. Chem. Phys. 133, 064504 (2010).
 [ice R] Mochizuki, K., Himoto, K. & Matsumoto, M. Diversity of transition pathways in the course of crystallization into ice VII. Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
 """
-celltype = "triclinic"
 cell = """
 7.547382417065826 0 0
 0.08957203488361681 7.54685087967168 0
@@ -36,3 +35,11 @@ waters = """
 coord = "relative"
 bondlen = 3.05
 density = 1.5
+
+from genice.cell import cellvectors
+cell = cellvectors(a=7.547382417065826,
+                   b=7.547382417065826,
+                   c=7.547382417065826,
+                   A=89.31999999999998,
+                   B=89.31999999999998,
+                   C=89.31999999999998)

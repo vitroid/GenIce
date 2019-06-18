@@ -1,5 +1,4 @@
 # coding: utf-8
-celltype = "triclinic"
 cell = """
 12.4212113964 0 0
 -6.21060569818 10.757084615 0
@@ -44,3 +43,9 @@ waters = """
 coord = "absolute"
 bondlen = 3
 density = 0.755632278461
+
+from genice.cell import cellvectors
+cell = cellvectors(a=12.4212113964,
+                   b=12.421211396338748,
+                   c=10.0656455142,
+                   C=120.0000000000566)

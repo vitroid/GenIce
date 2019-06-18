@@ -1105,7 +1105,6 @@ cages="""
 
 bondlen = 3
 
-celltype = 'triclinic'
 
 cell = """
 26.935331764866525 0.0 0.0
@@ -1116,3 +1115,9 @@ cell = """
 density = 0.44104471589272415
 
 
+
+from genice.cell import cellvectors
+cell = cellvectors(a=26.935331764866525,
+                   b=26.935331764866525,
+                   c=36.8892602895128,
+                   C=119.99999999999999)

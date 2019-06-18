@@ -9,7 +9,6 @@ cell="""
 
 bondlen=0.28
 coord="relative"
-celltype="rect"
 
 waters="""
 0.062500 0.937500 0.937500
@@ -933,3 +932,8 @@ waters="""
 0.000000 0.406250 1.000000
 0.000000 0.593750 1.000000
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=2.75276384094,
+                   b=2.75276384094,
+                   c=2.75276384094)

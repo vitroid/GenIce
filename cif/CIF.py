@@ -5,7 +5,7 @@ from math import *
 import pairlist as pl
 from collections import defaultdict
 import logging
-
+from gromacs.cells import cellvectors
 from logging import getLogger, StreamHandler, DEBUG, INFO
 logger = getLogger(__name__)
 handler = StreamHandler()
@@ -42,22 +42,6 @@ def fullatoms(atomd, sops):
                 names.append(name)
 
 
-def cellvectors(a,b,c,A=90,B=90,C=90):
-    A *= pi/180
-    B *= pi/180
-    C *= pi/180
-    ea = np.array([1.0, 0.0, 0.0])
-    eb = np.array([cos(C), sin(C), 0])
-    # ec.ea = ecx = cos(B)
-    # ec.eb = ecx*ebx + ecy*eby = cos(A)
-    ecx = cos(B)
-    ecy = (cos(A) - ecx*eb[0]) / eb[1]
-    ecz = sqrt(1-ecx**2-ecy**2)
-    ec = np.array([ecx, ecy, ecz])
-    logger.debug((cos(A), np.dot(eb, ec)))
-    logger.debug((cos(B), np.dot(ec, ea)))
-    logger.debug((cos(C), np.dot(ea, eb)))
-    return np.vstack([ea*a, eb*b, ec*c])
 
 
 def atomdic(atoms):

@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import logging
 from genice.valueparsers import put_in_array
+from math import pi, sin, cos, sqrt, acos
 
 
 def rel_wrap(relvec):
@@ -13,6 +14,40 @@ def rel_wrap(relvec):
 
 def rel_wrapf(relvec):
     return relvec - np.floor(relvec)
+
+
+def sincos(A):
+    cA = cos(A)
+    if abs(cA) < 1e-16:
+        return 1.0, 0.0
+    return sin(A), cA
+
+
+# moved from GenIce/cif/CIF.py
+def cellvectors(a,b,c,A=90,B=90,C=90):
+    """
+    Generate cell vectors from a,b,c and alpha, beta, gamma.
+    """
+
+    logger = logging.getLogger()
+    A *= pi/180
+    B *= pi/180
+    C *= pi/180
+    sA, cA = sincos(A)
+    sB, cB = sincos(B)
+    sC, cC = sincos(C)
+    ea = np.array([1.0, 0.0, 0.0])
+    eb = np.array([cC, sC, 0])
+    # ec.ea = ecx = cos(B)
+    # ec.eb = ecx*ebx + ecy*eby = cos(A)
+    ecx = cB
+    ecy = (cA - ecx*eb[0]) / eb[1]
+    ecz = sqrt(1-ecx**2-ecy**2)
+    ec = np.array([ecx, ecy, ecz])
+    # logger.info((cos(A), np.dot(eb, ec)))
+    # logger.info((cos(B), np.dot(ec, ea)))
+    # logger.info((cos(C), np.dot(ea, eb)))
+    return np.vstack([ea*a, eb*b, ec*c])
 
 
 class Cell():
@@ -54,15 +89,10 @@ class Cell():
     def parse(self, desc, celltype):
         logger = logging.getLogger()
         if celltype == "rect":
-            self.mat = np.diag(put_in_array(desc))
+            self.mat = cellvectors(*put_in_array(desc))
         elif celltype == "monoclinic":
             desc = put_in_array(desc)
-            beta = desc[3] * pi / 180.
-            M = np.array(((desc[0] * 1.0, desc[1] * 0.0, desc[2] * cos(beta)),
-                          (desc[0] * 0.0, desc[1] * 1.0, desc[2] * 0.0),
-                          (desc[0] * 0.0, desc[1] * 0.0, desc[2] * sin(beta))))
-            # all the vector calculations are done in transposed manner.
-            self.mat = M.transpose()
+            self.mat = cellvectors(*desc[:3], B=lat.beta)
         elif celltype == "triclinic":
             """
             Put the vectors like following:
@@ -72,8 +102,21 @@ class Cell():
             self.mat = np.reshape(put_in_array(desc), (3, 3))
             # assert cell[0, 1] == 0 and cell[0, 2] == 0 and cell[1, 2] == 0
         else:
-            logger.error("unknown cell type: {0}".format(celltype))
-            sys.exit(1)
+            logger.info("Assume that the cell vectors are given: {0}".format(celltype))
+            self.mat = desc
+        La = np.linalg.norm(self.mat[0])
+        Lb = np.linalg.norm(self.mat[1])
+        Lc = np.linalg.norm(self.mat[2])
+        alpha = acos((self.mat[1] @ self.mat[2]) / (Lb * Lc)) * 180 / pi
+        beta = acos((self.mat[2] @ self.mat[0]) / (Lc * La)) * 180 / pi
+        gamma = acos((self.mat[0] @ self.mat[1]) / (La * Lb)) * 180 / pi
+        logging.info("Cell dimension:")
+        logging.info("  a = {0}".format(La))
+        logging.info("  b = {0}".format(Lb))
+        logging.info("  c = {0}".format(Lc))
+        logging.info("  A = {0}".format(alpha))
+        logging.info("  B = {0}".format(beta))
+        logging.info("  C = {0}".format(gamma))
         self.inv = np.linalg.inv(self.mat)
 
     def serialize_BOX9(self):

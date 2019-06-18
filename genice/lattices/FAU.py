@@ -1,5 +1,4 @@
 # coding: utf-8
-celltype = "rect"
 cell = """
 22.0521436845 22.0521436845 22.0521436845
 """
@@ -200,3 +199,8 @@ waters = """
 coord = "absolute"
 bondlen = 3
 density = 0.535156176286
+
+from genice.cell import cellvectors
+cell = cellvectors(a=22.0521436845,
+                   b=22.0521436845,
+                   c=22.0521436845)

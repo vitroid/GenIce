@@ -8,7 +8,6 @@ Data source: Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies 
 density = 0.92     #default density
 
 bondlen = 0.4      #bond threshold	 
-celltype = "rect"
 
 cell = """
 1.0 1.0 0.94
@@ -34,3 +33,8 @@ waters = """
 """
 
 coord = "absolute"
+
+from genice.cell import cellvectors
+cell = cellvectors(a=1.0,
+                   b=1.0,
+                   c=0.94)

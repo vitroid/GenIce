@@ -8,7 +8,6 @@ Reshaping the unit cell.
 """
 bondlen=2.8577528998751287
 coord='relative'
-celltype='rect'
 cell='19.91215483 19.91215483 7.57505890'
 density=1.5127
 waters="""
@@ -166,3 +165,8 @@ waters="""
     0.0000    0.0000    0.2500
 """
 
+
+from genice.cell import cellvectors
+cell = cellvectors(a=19.91215483,
+                   b=19.91215483,
+                   c=7.5750589)

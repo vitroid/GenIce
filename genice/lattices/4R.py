@@ -15,7 +15,6 @@ The result lattice is too large. We halve it.
 """
 bondlen=3.0000000000000004
 coord='relative'
-celltype='rect'
 cell='33.83992669 17.30924416 29.98049032'
 density=1.3072141048893433
 waters="""
@@ -806,3 +805,8 @@ cell = "{0} {1} {2}".format(*cell)
 
 
 
+
+from genice.cell import cellvectors
+cell = cellvectors(a=16.919963345,
+                   b=8.65462208,
+                   c=14.99024516)

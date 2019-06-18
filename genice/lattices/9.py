@@ -5,7 +5,6 @@ Data Source
 """
 
 
-celltype = "rect"
 cell = """
 6.67 6.67 6.97
 """
@@ -53,3 +52,8 @@ fixed="""
 11 1
 11 8
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=6.67,
+                   b=6.67,
+                   c=6.97)

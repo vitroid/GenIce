@@ -4,7 +4,7 @@ import re
 import numpy as np
 import pairlist as pl
 
-from genice.cells import rel_wrap, Cell
+from genice.cell import rel_wrap, Cell
 
 
 def readaline(file):

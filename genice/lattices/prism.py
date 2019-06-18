@@ -5,6 +5,7 @@ Note: Due to the technical limitation in the GenIce algorithm, the minimum latti
 
 from math import sin, pi, cos
 import logging
+from genice.cell import cellvectors
 
 def usage():
     logger = logging.getLogger()
@@ -28,8 +29,6 @@ def argparser(arg):
     L = 2.75
     bondlen = 3
     R = L/2/sin(pi/sides)
-    celltype = "rect"
-    cell = [L*20, L*20, L*rows]
     density = sides*rows / (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
 
     waters = []
@@ -42,6 +41,9 @@ def argparser(arg):
 
     coord = "absolute"
 
+    cell = cellvectors(a=L*20,
+                       b=L*20,
+                       c=L*rows)
 
 # default.
 argparser("6,10")

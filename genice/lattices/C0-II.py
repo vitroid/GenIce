@@ -8,7 +8,6 @@ Data sources
 density = 0.88     #default density
 
 bondlen = 1.2
-celltype = "rect"
 
 coord="relative"
 
@@ -30,3 +29,8 @@ waters="""
 0.0249999999983 0.542129277596 0.0249999994377
 0.67721183746 0.659412115799 -0.142291817189
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=2.66453550129,
+                   b=4.69111124482,
+                   c=2.55091895393)

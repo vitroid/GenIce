@@ -9,6 +9,7 @@ from collections import defaultdict
 import numpy as np
 import logging
 import re
+from genice.cell import cellvectors
 
 
 def tune_angles(sixvecs, pivot):
@@ -129,7 +130,7 @@ class decorate():
 
 logger = logging.getLogger()
 from genice.lattices import ice1c # base topology
-cell1c = np.diag(np.fromstring(ice1c.cell, sep=" "))
+cell1c = ice1c.cell
 waters1c = np.fromstring(ice1c.waters, sep=" ")
 waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
 pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
@@ -143,8 +144,9 @@ def argparser(arg):
     logger.info("Superlattice {0}xFAU".format(Ncyl))
     dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
     coord='relative'
-    celltype='rect'
-    cell = "{0} {1} {2}".format(dec.cell[0,0],dec.cell[1,1],dec.cell[2,2])
+    cell = cellvectors(a=dec.cell[0,0],
+                       b=dec.cell[1,1],
+                       c=dec.cell[2,2])
     waters = dec.vertices
     fixed = dec.fixedEdges
 

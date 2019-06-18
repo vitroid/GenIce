@@ -4,7 +4,6 @@ Data source:
 Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
 """
 
-celltype = "rect"
 cell = """
 13.339813507 13.339813507 13.339813507
 """
@@ -61,3 +60,8 @@ waters = """
 coord = "absolute"
 bondlen = 3
 density = 0.604398971981
+
+from genice.cell import cellvectors
+cell = cellvectors(a=13.339813507,
+                   b=13.339813507,
+                   c=13.339813507)

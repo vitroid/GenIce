@@ -5,7 +5,6 @@ Note: Due to the technical limitation in the GenIce algorithm, the minimum latti
 
 density = 1.6     #default density
 
-celltype = "rect"
 cell = """
 4 4 4
 """
@@ -66,3 +65,8 @@ pairs = """
 15 10
 """
 
+
+from genice.cell import cellvectors
+cell = cellvectors(a=4.0,
+                   b=4.0,
+                   c=4.0)

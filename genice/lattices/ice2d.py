@@ -10,7 +10,6 @@ density = 1.2     #default density
 
 
 bondlen = 3     #bond threshold	 
-celltype = "rect"
 
 cell="""
 13.25 22.9496665056 6.19244244367
@@ -91,3 +90,8 @@ waters="""
 4.0795 18.8115 1.5336
 10.7045 14.9866 5.6619
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=13.25,
+                   b=22.9496665056,
+                   c=6.19244244367)

@@ -1,4 +1,3 @@
-celltype = "rect"
 cell = """
 10.705511333378356 10.705511333378356 10.705511333378356
 """
@@ -31,3 +30,8 @@ waters = """
 coord = "relative"
 bondlen = 3
 density = 0.5846833799862865
+
+from genice.cell import cellvectors
+cell = cellvectors(a=10.705511333378356,
+                   b=10.705511333378356,
+                   c=10.705511333378356)

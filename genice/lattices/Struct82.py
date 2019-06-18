@@ -1035,7 +1035,6 @@ cages="""
 
 bondlen = 3
 
-celltype = 'rect'
 
 cell = """
 14.905144573524241 67.5212848021559 21.91947448011618
@@ -1044,3 +1043,8 @@ cell = """
 density = 0.4335854541833566
 
 
+
+from genice.cell import cellvectors
+cell = cellvectors(a=14.905144573524241,
+                   b=67.5212848021559,
+                   c=21.91947448011618)

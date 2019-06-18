@@ -1,4 +1,3 @@
-celltype = "triclinic"
 cell = """
 17.3705982487 0 0
 -8.68529912436 15.0433793623 0
@@ -49,3 +48,9 @@ waters = """
 coord = "relative"
 bondlen = 3
 density = 0.610666558384
+
+from genice.cell import cellvectors
+cell = cellvectors(a=17.3705982487,
+                   b=17.370598248698347,
+                   c=7.49251160134,
+                   C=120.00000000004124)

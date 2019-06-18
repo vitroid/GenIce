@@ -8,7 +8,6 @@
 density = 0.8     #default density
 
 bondlen = 3        #bond threshold	 
-celltype = "rect"
 
 coord = "absolute"
 
@@ -223,3 +222,8 @@ cages="""
 15    0.1050    0.8950    1.0000
 15    0.8950    0.1050    1.0000
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=22.3842,
+                   b=22.3842,
+                   c=11.6954)

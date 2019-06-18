@@ -11,7 +11,6 @@ Data source
 
 
 bondlen = 3     #bond threshold	 
-celltype = "rect"
 
 cell="""
 13.25 22.9496665056 6.19244244367
@@ -360,3 +359,8 @@ fixed="""
 36 14
 15 36
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=13.25,
+                   b=22.9496665056,
+                   c=6.19244244367)

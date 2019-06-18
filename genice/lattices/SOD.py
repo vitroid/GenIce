@@ -5,7 +5,6 @@
 [SOD] http://www.iza-structure.org/databases/
 """
 
-celltype = "rect"
 cell = """
 7.8064588643 7.8064588643 7.8064588643
 """
@@ -31,3 +30,8 @@ cages="""
 K 0 0 0
 K 0.5 0.5 0.5
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=7.8064588643,
+                   b=7.8064588643,
+                   c=7.8064588643)

@@ -17,18 +17,15 @@ cages="""
 
 
 
-celltype = 'rect'
-
-cell = """
-12.747893943706936 12.747893943706936 12.747893943706936
-"""
-
 from genice         import FrankKasper
 from genice.lattice import parse_cages
-from genice.cells   import Cell
+from genice.cell import cellvectors
+cell = cellvectors(a=12.747893943706936,
+                   b=12.747893943706936,
+                   c=12.747893943706936)
 cagepos, cagetype = parse_cages(cages)
-cell9             = Cell(cell, celltype)
-waters = [w for w in FrankKasper.toWater(cagepos, cell9.mat)]
+waters = [w for w in FrankKasper.toWater(cagepos, cell)]
 coord = "relative"
-density = FrankKasper.estimate_density(waters, cell9.mat, 2.76)
+density = FrankKasper.estimate_density(waters, cell, 2.76)
 bondlen = 2.76 * 1.2
+

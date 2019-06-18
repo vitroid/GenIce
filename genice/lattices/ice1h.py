@@ -5,10 +5,9 @@ Note: Due to the technical limitation in the GenIce algorithm, the minimum latti
 density = 0.92     #default density
 
 bondlen = 3        #bond threshold	 
-celltype = "rect"
-cell = """
-7.84813412606925 7.37735062301457 9.06573834219084
-"""
+
+from genice.cell import cellvectors
+cell = cellvectors(a=7.84813412606925, b=7.37735062301457, c=9.06573834219084)
 
 waters = """
 1.328 1.802 3.38

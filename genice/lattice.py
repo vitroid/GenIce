@@ -13,7 +13,7 @@ import pairlist as pl
 from genice.importer import safe_import
 from genice import digraph as dg
 from genice import rigid
-from genice.cells import rel_wrap, Cell
+from genice.cell import rel_wrap, Cell
 from genice.valueparsers import parse_cages, parse_pairs, put_in_array, flatten
 
 # for alkyl groups (Experimental)
@@ -408,6 +408,10 @@ class Lattice():
         # celltype: symmetry of the cell
         #   see parse_cell for syntax.
         #
+        try:
+            logging.debug(lat.celltype)
+        except AttributeError:
+            lat.celltype = ""
         self.cell = Cell(lat.cell, lat.celltype)
         #self.cell = parse_cell(lat.cell, lat.celltype)
 

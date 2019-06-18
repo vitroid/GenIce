@@ -6,7 +6,6 @@ Petrenko and Whitworth, Physics of Ice, Table 11.2
 """
 bondlen=3.0
 coord='relative'
-celltype='rect'
 cell='6.666 6.666 6.936'
 density=1.165
 waters="""
@@ -23,3 +22,8 @@ waters="""
     0.1098    0.3022    0.2915
     0.8024    0.3911    0.0379
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=6.666,
+                   b=6.666,
+                   c=6.936)

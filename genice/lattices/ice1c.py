@@ -7,7 +7,6 @@ density = 0.92     #default density
 
 
 bondlen = 1.9      #bond threshold	 
-celltype = "rect"
 cell = """
 4 4 4
 """
@@ -42,3 +41,8 @@ pairs="""
 3 6
 3 7
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=4.0,
+                   b=4.0,
+                   c=4.0)

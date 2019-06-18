@@ -7,7 +7,6 @@ import numpy as np
 #Unnecessary when pairs are given.
 #bondlen = 2.0 * 3.0 / 8.0**0.5 * 1.1
 
-celltype = 'rect'
 
 cell = [4*3**0.5, 6.0, 2/8**0.5*20]
 
@@ -91,3 +90,8 @@ pairs="""
 23 18
 20 18
 """
+
+from genice.cell import cellvectors
+cell = cellvectors(a=6.928203230275509,
+                   b=6.0,
+                   c=14.14213562373095)

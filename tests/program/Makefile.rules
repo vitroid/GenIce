@@ -1,5 +1,5 @@
 all: test1.done   test2.done   test3.done   test4.done   2d.gro.test
-all: 3.ar3a.test  4.ngph.test  0.nx3a.test  6.gro.test   7.mdv.test
+all: 3.ar3a.test  4.ngph.test  0.nx3a.test  5.gro.test   7.mdv.test
 all: 12.scad.test 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
 all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro 7.mdva.test
 #all: test19.done
@@ -48,8 +48,8 @@ test4.done: $(FMT)/gromacs.py
 	$(GENICE) 4  --rep 2 2 3 --format d | fgrep -v "Command line:" > $@                        
 %.nx3a:  $(FMT)/euler.py
 	$(GENICE) $* --rep 2 2 3 --format e | fgrep -v "Command line:" > $@                        
-6.gro: $(FMT)/gromacs.py
-	$(GENICE) 6  --rep 2 2 4 --format g | fgrep -v "Command line:" > $@                        
+5.gro: $(FMT)/gromacs.py
+	$(GENICE) 5  --rep 2 2 4 --format g | fgrep -v "Command line:" > $@                        
 7.mdv: $(FMT)/mdview.py
 	$(GENICE) 7  --rep 2 2 4 --format m | fgrep -v "Command line:" > $@                        
 7.mdva: $(FMT)/mdv_au.py

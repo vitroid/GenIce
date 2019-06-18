@@ -1,10 +1,11 @@
 # coding: utf-8
-celltype = "triclinic"
-cell = """
-9.19977812589 0 0
-0 7.52346280577 0
--3.39630443536 0 9.75285784283
-"""
+
+from genice.cell import cellvectors
+cell = cellvectors(a=9.19977812589,
+                   b=7.52346280577,
+                   c=10.327299740014166,
+                   B=109.2)
+
 waters = """
 0.8993 0.1404 0.4854
 0.6007 0.1404 0.5146

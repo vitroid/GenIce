@@ -9,7 +9,6 @@ Data source: Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and i
 density = 0.92     #default density
 
 bondlen = 3      #bond threshold	 
-celltype = "rect"
 cell = """
 5.85695813012517 5.85695813012517 10.4558393727084
 """
@@ -30,3 +29,8 @@ waters = """
 """
 
 coord = "absolute"
+
+from genice.cell import cellvectors
+cell = cellvectors(a=5.85695813012517,
+                   b=5.85695813012517,
+                   c=10.4558393727084)

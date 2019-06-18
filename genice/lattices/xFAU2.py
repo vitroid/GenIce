@@ -145,13 +145,11 @@ pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
 
 
 def argparser(arg):
-    global Ncyl, coord, celltype, cell, waters, fixed
     assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
     Ncyl = int(arg)
     logger.info("Superlattice {0}xFAU".format(Ncyl))
     dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
     coord='relative'
-    celltype='rect'
     cell = "{0} {1} {2}".format(dec.cell[0,0],dec.cell[1,1],dec.cell[2,2])
     waters = dec.vertices
     fixed = dec.fixedEdges

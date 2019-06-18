@@ -6,7 +6,6 @@ Data sources
 """
 
 bondlen = 3      #bond threshold	 
-celltype = "rect"
 
 cell = """
 8.2816 8.2816 8.0722
@@ -42,3 +41,8 @@ waters="""
 """
 
 coord="relative"
+
+from genice.cell import cellvectors
+cell = cellvectors(a=8.2816,
+                   b=8.2816,
+                   c=8.0722)
