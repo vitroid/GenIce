@@ -2,12 +2,14 @@ import logging
 
 import numpy as np
 
-class Loader(): # for analice
-    def __init__(self, filename, oname="", hname="", avgspan=0): #oname, hname and avgspan are unused.
+
+class Loader():  # for analice
+    def __init__(self, filename, oname="", hname="", avgspan=0):  # oname, hname and avgspan are unused.
         logger = logging.getLogger()
         logger.debug('load {0}'.format(filename))
         self.file = open(filename)
         self.bondlen = 0.3
+
     def load_iter(self):
         logger = logging.getLogger()
         logger.info("  Loading AR3Rs...")
@@ -20,7 +22,7 @@ class Loader(): # for analice
                     logger.info("  @BOX3")
                     line = self.file.readline()
                     box = np.array([float(x) for x in line.split()[:3]])
-                    self.cell = np.diag(box) / 10 # in nm
+                    self.cell = np.diag(box) / 10  # in nm
                     celli = np.linalg.inv(self.cell)
                     self.celltype = 'triclinic'
                 elif line[:5] == "@AR3R":
@@ -31,9 +33,9 @@ class Loader(): # for analice
                     for i in range(nmol):
                         line = self.file.readline()
                         cols = line.split()[:3]
-                        pos   = np.array([float(x) for x in cols[:3]])
+                        pos = np.array([float(x) for x in cols[:3]])
                         self.waters.append(pos)
                     self.coord = 'relative'
                     self.rotmat = None
-                    self.density = len(self.waters) / (np.linalg.det(self.cell)*1e-21) * 18 / 6.022e23
+                    self.density = len(self.waters) / (np.linalg.det(self.cell) * 1e-21) * 18 / 6.022e23
                     yield self
