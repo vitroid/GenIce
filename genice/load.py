@@ -8,7 +8,7 @@ def str2rangevalues(s):
     values = s.split(":")
     assert len(values) > 0
     if len(values) == 1:
-        return [0,int(values[0]),1]
+        return [0, int(values[0]), 1]
     elif len(values) == 2:
         return [int(values[0]), int(values[1]), 1]
     else:
@@ -17,7 +17,7 @@ def str2rangevalues(s):
 
 def str2range(s):
     return range(*str2rangevalues(s))
-    
+
 
 def iterate(filename, oname, hname, filerange, framerange, suffix=None, avgspan=1):
     logger = logging.getLogger()
@@ -30,7 +30,7 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None, avgspan=
     m = re.search("%[0-9]*d", filename)
     # prepare file list
     if m is None:
-        filelist = [filename,]
+        filelist = [filename, ]
     else:
         filelist = []
         for num in rfile:

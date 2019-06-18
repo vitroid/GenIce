@@ -3,12 +3,13 @@
 
 import os
 import sys
-import argparse  as ap
+import argparse as ap
 import logging
 from genice.importer import safe_import
 from genice import lattice, __version__, load
 import random
 import numpy as np
+
 
 def getoptions():
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice')
@@ -18,10 +19,10 @@ def getoptions():
                         version='%(prog)s {0}'.format(__version__))
     parser.add_argument('--rep',
                         '-r',
-                        nargs = 3,
+                        nargs=3,
                         type=int,
                         dest='rep',
-                        default=[1,1,1],
+                        default=[1, 1, 1],
                         help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
     parser.add_argument('--dens',
                         '-d',
@@ -58,35 +59,35 @@ def getoptions():
                         nargs=1,
                         dest='guests',
                         metavar="D=empty",
-                        action="append", 
+                        action="append",
                         help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
     parser.add_argument('--Guest',
                         '-G',
                         nargs=1,
                         dest='spot_guests',
                         metavar="13=me",
-                        action="append", 
+                        action="append",
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
     parser.add_argument('--Group',
                         '-H',
                         nargs=1,
                         dest='groups',
                         metavar="13=bu-:0",
-                        action="append", 
+                        action="append",
                         help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
                         nargs=1,
                         dest='anions',
                         metavar="3=Cl",
-                        action="append", 
+                        action="append",
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation',
                         '-c',
                         nargs=1,
                         dest='cations',
                         metavar="3=Na",
-                        action="append", 
+                        action="append",
                         help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
     parser.add_argument('--nodep',
                         action='store_true',
@@ -178,7 +179,7 @@ def getoptions_analice():
                         default=0.,
                         metavar='percent',
                         help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--avgspan','-v',
+    parser.add_argument('--avgspan', '-v',
                         type=float,
                         dest='avgspan',
                         default=0,
@@ -189,38 +190,34 @@ def getoptions_analice():
     return parser.parse_args()
 
 
-        
-
 def main():
     # Module-loading paths
     # 1. Look for the modules in the current working directory
     sys.path.append(".")
-    #prepare user's workarea
+    # prepare user's workarea
     home = os.path.expanduser("~")
-    if os.path.exists(home+"/Library/Application Support"): #MacOS
-        homegenice = home+"/Library/Application Support/GenIce"
+    if os.path.exists(home + "/Library/Application Support"):  # MacOS
+        homegenice = home + "/Library/Application Support/GenIce"
     else:
-        homegenice = os.path.expanduser(home + "/.genice") #Other unix
+        homegenice = os.path.expanduser(home + "/.genice")  # Other unix
     try:
-        os.makedirs(homegenice+"/formats")
-        os.makedirs(homegenice+"/lattices")
-        os.makedirs(homegenice+"/molecules")
-    except:
-        pass #just ignore when failed.
+        os.makedirs(homegenice + "/formats")
+        os.makedirs(homegenice + "/lattices")
+        os.makedirs(homegenice + "/molecules")
+    except BaseException:
+        pass  # just ignore when failed.
     # 2. Look for user's home.
     sys.path.append(homegenice)
 
-
-    #Parse options
+    # Parse options
     if sys.argv[0].find("analice") >= 0:
         options = getoptions_analice()
-        mode    = "analice"
+        mode = "analice"
     else:
         options = getoptions()
-        mode    = "genice"
+        mode = "genice"
 
-    
-    #Set verbosity level
+    # Set verbosity level
     if options.debug:
         logging.basicConfig(level=logging.DEBUG,
                             format="%(asctime)s %(levelname)s %(message)s")
@@ -228,7 +225,7 @@ def main():
         logging.basicConfig(level=logging.WARN,
                             format="%(levelname)s %(message)s")
     else:
-        #normal
+        # normal
         logging.basicConfig(level=logging.INFO,
                             format="%(levelname)s %(message)s")
     logger = logging.getLogger()
@@ -237,16 +234,16 @@ def main():
     if mode == "genice":
         logger.debug(options.Type)
 
-        water_type   = options.water
-        guests       = options.guests
+        water_type = options.water
+        guests = options.guests
         lattice_type = options.Type
-        file_format  = options.format
-        seed         = options.seed
-        rep          = options.rep
-        density      = options.dens
-        depolarize   = not options.nodep
-        asis         = options.asis
-        noise        = options.noise
+        file_format = options.format
+        seed = options.seed
+        rep = options.rep
+        density = options.dens
+        depolarize = not options.nodep
+        asis = options.asis
+        noise = options.noise
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -273,19 +270,19 @@ def main():
         # Set random seeds
         random.seed(seed)
         np.random.seed(seed)
-    
+
         logger.debug("Lattice: {0}".format(lattice_type))
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Output file format: {0}".format(file_format))
         hooks, arg = safe_import("format", file_format)
         # Show the document of the module
-        #try:
+        # try:
         #    doc = formatter.__doc__.splitlines()
-        #except:
+        # except:
         #    doc = []
-        #for line in doc:
+        # for line in doc:
         #    logger.info("!!! {0}".format(line))
-        assert  lattice_type is not None
+        assert lattice_type is not None
         lat = lattice.Lattice(safe_import("lattice", lattice_type),
                               density=density,
                               rep=rep,
@@ -296,43 +293,43 @@ def main():
                               spot_guests=spot_guests,
                               spot_groups=groups,
                               noise=noise,
-        )
+                              )
         lat.generate_ice(water_type=water_type,
                          guests=guests,
                          hooks=hooks,
                          arg=arg
-                         
-        )
-    else: #analice
+
+                         )
+    else:  # analice
         logger.debug(options.File)
 
-        water_type   = options.water
-        file_format  = options.format
-        oname        = options.oatom
-        hname        = options.hatom
-        filename     = options.File
-        noise        = options.noise
-        avgspan      = options.avgspan
-        filerange    = options.filerange
-        framerange   = options.framerange
-        suffix       = options.suffix
+        water_type = options.water
+        file_format = options.format
+        oname = options.oatom
+        hname = options.hatom
+        filename = options.File
+        noise = options.noise
+        avgspan = options.avgspan
+        filerange = options.filerange
+        framerange = options.framerange
+        suffix = options.suffix
         if options.output is None:
-            output   = None
-            stdout   = None
+            output = None
+            stdout = None
         else:
-            output   = options.output
-            stdout   = sys.stdout
-        
+            output = options.output
+            stdout = sys.stdout
+
         logger.debug(filerange)
         logger.debug(framerange)
         logger.debug(oname)
         logger.debug(hname)
         logger.debug(suffix)
         logger.info("Output:{0}".format(output))
-        
+
         del options  # Dispose for safety.
 
-        for i,w in enumerate(load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix, avgspan=avgspan)):
+        for i, w in enumerate(load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix, avgspan=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
@@ -340,10 +337,10 @@ def main():
                                   noise=noise)
             if output is not None:
                 sys.stdout = open(output % i, "w")
-            lat.analyze_ice(water_type= water_type,
-                            hooks     = hooks,
-                            arg       = arg
-            )
+            lat.analyze_ice(water_type=water_type,
+                            hooks=hooks,
+                            arg=arg
+                            )
         if stdout is not None:
             # recover stdout
             sys.stdout = stdout

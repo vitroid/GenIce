@@ -4,6 +4,8 @@
 import numpy as np
 import sys
 import logging
+from genice.valueparsers import put_in_array
+
 
 def rel_wrap(relvec):
     return relvec - np.floor(relvec + 0.5)
@@ -14,61 +16,47 @@ def rel_wrapf(relvec):
 
 
 class Cell():
-    mat = np.zeros(9).reshape(3,3)
+    mat = np.zeros(9).reshape(3, 3)
     inv = None
+
     def __init__(self, desc=None, celltype=None):
         if celltype is not None:
-            self.parse(desc,celltype)
+            self.parse(desc, celltype)
         else:
             # copy the Cell class
             self.mat = desc.mat.copy()
             self.inv = desc.inv.copy()
 
-            
     def abs2rel(self, absvecs):
         return np.dot(absvecs, self.inv)
 
-        
     def rel2abs(self, relvec):
         return np.dot(relvec, self.mat)
 
-    
     def abs_wrap(self, absvec):
         return self.rel2abs(rel_wrap(self.abs2rel(absvec)))
-
 
     def abs_wrapf(self, absvec):
         return self.rel2abs(rel_wrapf(self.abs2rel(absvec)))
 
-    
     def volume(self):
         return np.linalg.det(self.mat)
-    
 
     def scale(self, x):
         self.mat *= x
         self.inv = np.linalg.inv(self.mat)
-        
 
     def scale2(self, x):
         for d in range(3):
             self.mat[d, :] = self.mat[d, :] * x[d]
         self.inv = np.linalg.inv(self.mat)
 
-
     def parse(self, desc, celltype):
         logger = logging.getLogger()
         if celltype == "rect":
-            if type(desc) is str:
-                desc = np.fromstring(desc, sep=" ")
-            elif type(desc) is list:
-                desc = np.array(desc)
-            self.mat = np.diag(desc)
+            self.mat = np.diag(put_in_array(desc))
         elif celltype == "monoclinic":
-            if type(desc) is str:
-                desc = np.fromstring(desc, sep=" ")
-            elif type(desc) is list:
-                desc = np.array(desc)
+            desc = put_in_array(desc)
             beta = desc[3] * pi / 180.
             M = np.array(((desc[0] * 1.0, desc[1] * 0.0, desc[2] * cos(beta)),
                           (desc[0] * 0.0, desc[1] * 1.0, desc[2] * 0.0),
@@ -81,12 +69,7 @@ class Cell():
             cell = "ax 0 0 bx by 0 cx cy cz"
             when you define a unit cell in lattices/
             """
-            if type(desc) is str:
-                desc = np.fromstring(desc, sep=" ")
-                logger.debug(desc)
-            elif type(desc) is list:
-                desc = np.array(desc)
-            self.mat = np.reshape(desc, (3, 3))
+            self.mat = np.reshape(put_in_array(desc), (3, 3))
             # assert cell[0, 1] == 0 and cell[0, 2] == 0 and cell[1, 2] == 0
         else:
             logger.error("unknown cell type: {0}".format(celltype))
@@ -96,5 +79,5 @@ class Cell():
     def serialize_BOX9(self):
         s = "@BOX9\n"
         for d in range(3):
-            s += "{0:.4f} {1:.4f} {2:.4f}\n".format(*self.mat[d] * 10) # AA
+            s += "{0:.4f} {1:.4f} {2:.4f}\n".format(*self.mat[d] * 10)  # AA
         return s

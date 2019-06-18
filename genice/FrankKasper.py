@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
 
-#from Frank-Kasper (Tetrahedrally close-packed) alloy to its dual.
+# from Frank-Kasper (Tetrahedrally close-packed) alloy to its dual.
 
-#Standard libs
+# Standard libs
 import itertools as it
 import logging
 from collections import defaultdict
 
-#non-standard libs
+# non-standard libs
 import numpy as np
 import pairlist as pl
 
-#genice libs
+# genice libs
 from genice.lattice import flatten
+
 
 def shortest_distance(atoms, cell):
     logger = logging.getLogger()
     dmin = 1e99
-    for a1,a2 in it.combinations(atoms,2):
-        d = a1-a2
+    for a1, a2 in it.combinations(atoms, 2):
+        d = a1 - a2
         d -= np.floor(d + 0.5)
         dv = np.dot(d, cell)
-        dd = np.dot(dv,dv)
+        dd = np.dot(dv, dv)
         if dd < dmin:
             dmin = dd
     logger.debug("shortest_distance: {0}".format(dmin**0.5))
@@ -31,13 +32,11 @@ def shortest_distance(atoms, cell):
 def estimate_density(atoms, cell, bondlen):
     dmin = shortest_distance(atoms, cell)
     scale = bondlen / dmin
-    return 18/6.022e23*len(atoms) / (np.linalg.det(cell)*1e-24 * scale**3)
-
-    
+    return 18 / 6.022e23 * len(atoms) / (np.linalg.det(cell) * 1e-24 * scale**3)
 
 
 def is_zero(v):
-    return np.dot(v,v) < 1e-10
+    return np.dot(v, v) < 1e-10
 
 
 def equivalents(v, cell, rc):
@@ -45,16 +44,16 @@ def equivalents(v, cell, rc):
     yield a set of vectors pointing to the image of the original point v.
     """
     origin = v.copy()
-    img = [[0., 1.],[0., 1.],[0., 1.]]
+    img = [[0., 1.], [0., 1.], [0., 1.]]
     for d in range(3):
         if origin[d] > 0.0:
             origin[d] -= 1.0
     for x in img[0]:
         for y in img[1]:
             for z in img[2]:
-                d = origin + np.array([x,y,z])
-                r = np.dot(d,cell)
-                if np.dot(r,r) < rc**2:
+                d = origin + np.array([x, y, z])
+                r = np.dot(d, cell)
+                if np.dot(r, r) < rc**2:
                     yield d
 
 
@@ -66,7 +65,7 @@ def adjacency_vectors(pairs, rc, coord, cell):
     for v in vertices:
         adjv[v] = []
         adjd[v] = []
-    for i,j in pairs:
+    for i, j in pairs:
         d = coord[j] - coord[i]
         d -= np.floor(d + 0.5)
         for dd in equivalents(d, cell, rc):
@@ -82,7 +81,7 @@ def tetrahedra(pairs, rc, coord, cell):
     vertices, adjv, adjd = adjacency_vectors(pairs, rc, coord, cell)
     for v in vertices:
         logger.debug(len(adjv[v]))
-        for i,j,k in it.combinations(range(len(adjv[v])), 3):
+        for i, j, k in it.combinations(range(len(adjv[v])), 3):
             vi, vj, vk = adjv[v][i], adjv[v][j], adjv[v][k]
             if vi < v or vj < v or vk < v:
                 continue
@@ -90,22 +89,19 @@ def tetrahedra(pairs, rc, coord, cell):
             dij = np.dot(di - dj, cell)
             djk = np.dot(dj - dk, cell)
             dki = np.dot(dk - di, cell)
-            if np.dot(dij,dij) < rc**2:
-                if np.dot(djk,djk) < rc**2:
-                    if np.dot(dki,dki) < rc**2:
-                        logger.debug((v,vi,vj,vk))
-                        yield (v,vi,vj,vk), (coord[v], di,dj,dk)
+            if np.dot(dij, dij) < rc**2:
+                if np.dot(djk, djk) < rc**2:
+                    if np.dot(dki, dki) < rc**2:
+                        logger.debug((v, vi, vj, vk))
+                        yield (v, vi, vj, vk), (coord[v], di, dj, dk)
 
 
 def toWater(coord, cell):
     logger = logging.getLogger()
-    dmin  = shortest_distance(coord,cell)*1.4
-    grid  = pl.determine_grid(cell, dmin)
+    dmin = shortest_distance(coord, cell) * 1.4
+    grid = pl.determine_grid(cell, dmin)
     pairs = pl.pairs_fine(coord, dmin, cell, grid, distance=False)
     for vtet, dtet in tetrahedra(pairs, dmin, coord, cell):
-        p = dtet[0] + (dtet[1] + dtet[2] + dtet[3])/4
-        p -= np.floor( p )
+        p = dtet[0] + (dtet[1] + dtet[2] + dtet[3]) / 4
+        p -= np.floor(p)
         yield p
-
-    
-    

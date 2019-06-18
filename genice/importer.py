@@ -15,12 +15,11 @@ def audit_name(name):
     return re.match('^[A-Za-z0-9-_]+$', name) is not None
 
 
-
 def import_format_extra(name):
     logger = logging.getLogger()
     logger.info("Extra plugin: {0}".format(name))
     hooks = dict()
-    for i in (0,1,2,3,4,5,6,7):
+    for i in (0, 1, 2, 3, 4, 5, 6, 7):
         logger.debug("  Looking for hook{0}...".format(i))
         groupname = 'genice_format_hook{0}'.format(i)
         for ep in pr.iter_entry_points(group=groupname):
@@ -28,7 +27,7 @@ def import_format_extra(name):
             if ep.name == name:
                 logger.debug("      Loading {0}...".format(name))
                 hooks[i] = ep.load()
-                logger.info("      Loaded {1} Hook{0}.".format(i,name))
+                logger.info("      Loaded {1} Hook{0}.".format(i, name))
     if len(hooks) == 0:
         logger.error("No extra plugin named '{0}'.".format(name))
         sys.exit(1)
@@ -39,14 +38,14 @@ def import_format_plugin(category, name):
     logger = logging.getLogger()
     module = None
     try:
-        module     = importlib.import_module(category+"s."+name) #at ~/.genice
+        module = importlib.import_module(category + "s." + name)  # at ~/.genice
     except ImportError as e:
         pass
     if module is None:
-        fullname = "genice."+category+"s."+name
+        fullname = "genice." + category + "s." + name
         logger.debug("Load module: {0}".format(fullname))
         try:
-            module     = importlib.import_module(fullname)
+            module = importlib.import_module(fullname)
         except ImportError as e:
             pass
     if module is None:
@@ -56,7 +55,6 @@ def import_format_plugin(category, name):
         # load user-defined.
         hooks = module.hooks
     return hooks
-    
 
 
 def safe_import(category, name):
@@ -67,7 +65,7 @@ def safe_import(category, name):
     right = name.rfind("]")
     arg = ""
     if left < right:
-        arg = name[left+1:right]
+        arg = name[left + 1:right]
         name = name[:left]
     assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
 
@@ -77,13 +75,13 @@ def safe_import(category, name):
 
     module = None
     try:
-        module     = importlib.import_module(category+"s."+name) #at ~/.genice
+        module = importlib.import_module(category + "s." + name)  # at ~/.genice
     except ImportError as e:
         pass
     if module is None:
-        fullname = "genice."+category+"s."+name
+        fullname = "genice." + category + "s." + name
         logger.debug("Load module: {0}".format(fullname))
-        module     = importlib.import_module(fullname)
+        module = importlib.import_module(fullname)
     logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     if arg != "":
         if "argparser" in module.__dict__:
