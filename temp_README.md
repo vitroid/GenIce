@@ -112,10 +112,10 @@ Write the code in eo.py and put it in the user module folder at one of the follo
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./molecules`  |
-| Linux | `~/.github/GenIce/molecules` |
-| MacOS | `~/Library/Application Support/GenIce/molecules` |
 
 *Note*: multiple occupancy is not implemented. If it is required, make a module of a virtual molecule that contains multiple molecules.
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 ## Doping ions
 
@@ -226,8 +226,8 @@ one of the following paths.
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./formats`  |
-| Linux | `~/.github/GenIce/formats` |
-| MacOS | `~/Library/Application Support/GenIce/formats` |
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 Internally, there are seven stages to generate an ice structure.
 
@@ -288,8 +288,8 @@ one of the following paths.
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./lattices`  |
-| Linux | `~/.github/GenIce/lattices` |
-| MacOS | `~/Library/Application Support/GenIce/lattices` |
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 [cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice

@@ -194,20 +194,6 @@ def main():
     # Module-loading paths
     # 1. Look for the modules in the current working directory
     sys.path.append(".")
-    # prepare user's workarea
-    home = os.path.expanduser("~")
-    if os.path.exists(home + "/Library/Application Support"):  # MacOS
-        homegenice = home + "/Library/Application Support/GenIce"
-    else:
-        homegenice = os.path.expanduser(home + "/.genice")  # Other unix
-    try:
-        os.makedirs(homegenice + "/formats")
-        os.makedirs(homegenice + "/lattices")
-        os.makedirs(homegenice + "/molecules")
-    except BaseException:
-        pass  # just ignore when failed.
-    # 2. Look for user's home.
-    sys.path.append(homegenice)
 
     # Parse options
     if sys.argv[0].find("analice") >= 0:

@@ -1,5 +1,33 @@
 # Change log
 
+## 1.0RC4
+
+* GenIce no longer refers the files in the User global folder (.genice). Make them locally if necessary.
+* The way to define cell dimension is changed.
+* File loaders for analice tool are separated into a folder.
+
+## 1.0RC3
+
+* Several exotic ices are added.
+
+## 1.0RC2
+
+* Load and save multiple files (analice).
+
+## 1.0RC1
+
+* Documents are updated.
+
+## 1.0RC
+
+* Some functions for common use are separated into other packages. (PairList, etc)
+* Some plugins that require special libraries are separated into extra packages (vpython, cif, zeolite, svg).
+* New plugin hander that enables to implement extensions in separate packages.
+
+## 0.24
+
+* Random noise is no logger added to the molecular positions by default. (Use --add_noise option instead.)
+
 ## 0.22 (stable, release)
 
 * Added AnalIce.

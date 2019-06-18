@@ -163,10 +163,10 @@ Write the code in eo.py and put it in the user module folder at one of the follo
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./molecules`  |
-| Linux | `~/.github/GenIce/molecules` |
-| MacOS | `~/Library/Application Support/GenIce/molecules` |
 
 *Note*: multiple occupancy is not implemented. If it is required, make a module of a virtual molecule that contains multiple molecules.
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 ## Doping ions
 
@@ -263,8 +263,9 @@ Make V-structures (removal of quick librational motion of water) from the given 
       --oxygen OW, -O OW    Specify atom name of oxygen in input Gromacs file.
                             ("O")
       --hydrogen HW[12], -H HW[12]
-                            Specify atom name of hydrogen in input Gromacs file.
-                            ("H")
+                            Specify atom name (regexp) of hydrogen in input
+                            Gromacs file. ("H")
+      --suffix gro, -s gro  Override the file suffix. (None)
       --filerange [from:]below[:interval]
                             Specify the number range for the input filename.
                             ("0:1000000")
@@ -278,8 +279,8 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             to 1 percent of the molecular diameter of water.
       --avgspan 1, -v 1     Average atomic positions in water molecules so as to
                             remove fast librational motions and to make a smooth
-                            video. Specify the average span. The value 1 means no
-                            average.
+                            video. Specify the average span. The values 0 and 1
+                            specify no averaging.
 
 
 
@@ -317,8 +318,8 @@ one of the following paths.
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./formats`  |
-| Linux | `~/.github/GenIce/formats` |
-| MacOS | `~/Library/Application Support/GenIce/formats` |
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 Internally, there are seven stages to generate an ice structure.
 
@@ -379,8 +380,8 @@ one of the following paths.
 | OS | folder path |
 |-------|-----------------------------|
 |  | `./lattices`  |
-| Linux | `~/.github/GenIce/lattices` |
-| MacOS | `~/Library/Application Support/GenIce/lattices` |
+
+GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 [cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
