@@ -21,6 +21,7 @@ from collections import defaultdict
 import networkx as nx
 from math import log
 import fractions
+import numpy as np
 
 def isomorphs(a):
     """
@@ -110,29 +111,70 @@ def orientations(members, digraph):
     return [digraph.has_edge(members[i-1], members[i]) for i in range(len(members))]
 
 
+def spanning(ring, rpos):
+    dsum = np.zeros(3)
+
+    for k in range(len(ring)):
+        d = rpos[ring[k-1]] - rpos[ring[k]]
+        d -= np.floor(d+0.5)
+        dsum += d
+
+    return not np.all(np.absolute(dsum) < 1e-5)
+    
+
+
+
 def hook4(lattice):
-    lattice.logger.info("Hook4: Ring test.")
+    lattice.logger.info("Hook4: Statistics on the HBs along a ring.")
     graph = nx.Graph(lattice.spacegraph) #undirected
     stat = dict()
     prob = defaultdict(int)
-    for n in 3,4,5,6,7,8:
+
+    # Ideal distributions
+    for n in range(3, lattice.largestring+1):
         prob[n] = probabilities(n)
         stat[n] = defaultdict(int)
-    for ring in cr.CountRings(graph).rings_iter(8):
-        ori = orientations(ring, lattice.spacegraph)
-        c   = encode(ori)
-        n   = len(ring)
-        stat[n][c] += 1
+
+    for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
+        if not spanning(ring, lattice.reppositions):
+            ori = orientations(ring, lattice.spacegraph)
+            c   = encode(ori)
+            n   = len(ring)
+            stat[n][c] += 1
+
     #size code code(binary) Approx. Stat.
-    for n in 3,4,5,6,7,8:
-        fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{4:.5f}}".format(n)
+    lattice.logger.info("""
+    _ringstat plugin makes the statistics of bond orientations along each
+    HB ring and compare the distribution with that of an ideal (isolated
+    random) ring. The difference in the distribution is evaluated by
+    Kullback-Leibler # divergence, d_{KL}.
+    A typical dKL is zero for hydrogen-disordered ices, while it is
+    larger than 1 for hydrogen-ordered ones like ices 2 and 9.
+
+    Ringstat analysis validates the ring-scale randomness. GenIce tool
+    also certifies the zero net dipole moment and Bernal-Fowler-Pauling
+    ice rule in terms of the validity in global and local structures.
+
+    Columns in the output:
+      ring size
+      code (decimal) indicating the orientations of the bonds.
+      code (binary)
+      expectation (fractional) for an isolated random ring
+      expectation (numerical)
+      observation (fractional) in the given structure
+      observation (numerical)
+
+    dKL between expectiations and observations is also calculated.
+    """)
+    for n in range(3, lattice.largestring+1):
+        fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(n)
         denom = 0
         for c in stat[n]:
             denom += stat[n][c]
         if denom > 0:
             dKL = 0.0
             for c in prob[n]:
-                print(fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom))
+                print(fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom, stat[n][c], denom))
                 q = stat[n][c]/denom
                 p = prob[n][c]
                 if q > 0.0:
@@ -144,4 +186,21 @@ def hook4(lattice):
     lattice.logger.info("Hook4: end.")
 
 
-hooks = {4:hook4}
+# argparser
+def hook0(lattice, arg):
+    lattice.logger.info("Hook0: ArgParser.")
+
+    if arg == "":
+        lattice.largestring=8
+    else:
+        try:
+            lattice.largestring=int(arg)
+        except:
+            lattice.logger.error("Argument must be a positive integer.")
+            sys.exit(1)
+
+    lattice.logger.info("  Largest ring: {0}.".format(lattice.largestring))
+    lattice.logger.info("Hook0: end.")
+
+
+hooks = {4:hook4, 0:hook0}

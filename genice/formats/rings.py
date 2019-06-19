@@ -4,6 +4,7 @@ Show rings in Yaplot format.
 defined in https://github.com/vitroid/Yaplot
 """
 
+import sys
 from collections import defaultdict
 import numpy as np
 import networkx as nx
@@ -30,7 +31,7 @@ def hook2(lattice):
     # copied from svg_poly
     graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
-    for ring in cr.CountRings(graph).rings_iter(8):
+    for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)
         for k,i in enumerate(ring):
@@ -55,5 +56,22 @@ def hook2(lattice):
 
 
     
+# argparser
+def hook0(lattice, arg):
+    lattice.logger.info("Hook0: ArgParser.")
 
-hooks = {2:hook2}
+    if arg == "":
+        lattice.largestring=8
+    else:
+        try:
+            lattice.largestring=int(arg)
+        except:
+            logging.error("Argument must be a positive integer.")
+            sys.exit(1)
+
+    logging.info("  Largest ring: {0}.".format(lattice.largestring))
+    lattice.logger.info("Hook0: end.")
+
+
+
+hooks = {2:hook2, 0:hook0}
