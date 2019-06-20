@@ -3,8 +3,9 @@
 ## 1.0RC4
 
 * GenIce no longer refers the files in the User global folder (.genice). Make them locally if necessary.
-* The way to define cell dimension is changed.
+* The way to define cell dimension is changed (lattices/*.py).
 * File loaders for analice tool are separated into a folder.
+* One can specify the size of the largest ring in rings and _ringstat plugins.
 
 ## 1.0RC3
 

@@ -66,10 +66,10 @@ def hook0(lattice, arg):
         try:
             lattice.largestring=int(arg)
         except:
-            logging.error("Argument must be a positive integer.")
+            lattice.logger.error("Argument must be a positive integer.")
             sys.exit(1)
 
-    logging.info("  Largest ring: {0}.".format(lattice.largestring))
+    lattice.logger.info("  Largest ring: {0}.".format(lattice.largestring))
     lattice.logger.info("Hook0: end.")
 
 
