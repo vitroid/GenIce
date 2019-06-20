@@ -107,15 +107,9 @@ Although only a few kinds of guest molecules are preset, you can easily prepare 
     labels = ["Oe","Ce","Ce"]
     name = "EO"
 
-Write the code in eo.py and put it in the user module folder at one of the following paths.
-
-| OS | folder path |
-|-------|-----------------------------|
-|  | `./molecules`  |
+Write the code in eo.py. Make a folder named `molecules` in the current working directory and put it in.
 
 *Note*: multiple occupancy is not implemented. If it is required, make a module of a virtual molecule that contains multiple molecules.
-
-GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 ## Doping ions
 
@@ -218,16 +212,8 @@ Name |Application | extension | water | solute | HB | remarks
 `_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `rings`      |Ring statistics |  | |  | | Number of rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
-`_dep`     |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      |  |  |none | It renders HB paths to reduce the net polarization.
 
-You can prepare your own file formats.  Write the module and put it in
-one of the following paths.
-
-| OS | folder path |
-|-------|-----------------------------|
-|  | `./formats`  |
-
-GenIce 1.0 no longer refers the files in `~/.genice` folder.
+You can prepare your own file formats. Create a folder named `formats` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 Internally, there are seven stages to generate an ice structure.
 
@@ -282,14 +268,7 @@ prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
-You can prepare your own ice structures.  Write the module and put it in
-one of the following paths.
-
-| OS | folder path |
-|-------|-----------------------------|
-|  | `./lattices`  |
-
-GenIce 1.0 no longer refers the files in `~/.genice` folder.
+You can prepare your own ice structures. Create a folder named `lattices` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 [cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
@@ -337,14 +316,7 @@ symbol | type
 `empty`  | Leave the cage empty.
 
 
-You can prepare your own guest molecules.  Write the module and put it in
-one of the following paths.
-
-| OS | folder path |
-|-------|-----------------------------|
-|  | `./molecules`  |
-| Linux | `~/.github/GenIce/molecules` |
-| MacOS | `~/Library/Application Support/GenIce/molecules` |
+You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
 
 # Extra plugins
 (New in v1.0)
