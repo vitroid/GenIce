@@ -358,24 +358,21 @@ class Lattice():
                  lat,
                  density=0,
                  rep=(1, 1, 1),
-                 depolarize=True,
-                 asis=False,
                  cations=dict(),
                  anions=dict(),
                  spot_guests=dict(),
                  spot_groups=dict(),
-                 noise=0.,
+                 asis=False,
                  ):
+
         self.logger = logging.getLogger()
         self.lattice_type = lat.lattice_type
         self.rep = rep
-        self.depolarize = depolarize
         self.asis = asis
         self.cations = cations
         self.anions = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
-        self.noise = noise
         # Show the document of the module
 
         try:
@@ -548,7 +545,15 @@ class Lattice():
                               "3-methylbutyl-": _3_methylbutyl,
                               "Ethyl-": ethyl}
 
-    def generate_ice(self, water_type, guests, hooks, arg, record_depolarization_path=None):
+    def generate_ice(self,
+                     water_type,
+                     guests,
+                     hooks,
+                     arg,
+                     record_depolarization_path=None,
+                     depolarize=True,
+                     noise=0.):
+
         maxstage = max(0, *hooks.keys())
 
         if 0 in hooks:
@@ -556,7 +561,7 @@ class Lattice():
             if maxstage < 1:
                 return
 
-        self.stage1()
+        self.stage1(noise)
 
         if 1 in hooks:
             hooks[1](self)
@@ -577,7 +582,8 @@ class Lattice():
             if maxstage < 4:
                 return
 
-        self.stage4(record_depolarization_path)
+        self.stage4(depolarize=depolarize,
+                    record_depolarization_path=record_depolarization_path)
 
         if 4 in hooks:
             hooks[4](self)
@@ -603,7 +609,7 @@ class Lattice():
         if 7 in hooks:
             hooks[7](self)
 
-    def analyze_ice(self, water_type, hooks, arg):
+    def analyze_ice(self, water_type, hooks, arg, noise=0.):
         """
         Protocol for analice
         """
@@ -615,7 +621,7 @@ class Lattice():
             if maxstage < 1:
                 return
 
-        self.stage1_analice()
+        self.stage1_analice(noise)
 
         if 1 in hooks:
             hooks[1](self)
@@ -665,7 +671,8 @@ class Lattice():
         if 7 in hooks:
             hooks[7](self)
 
-    def stage1(self):
+    def stage1(self,
+               noise=0.):
         """
         Replicate water molecules to make a repeated cell
 
@@ -689,9 +696,10 @@ class Lattice():
         self.repcell = Cell(self.cell)
         self.repcell.scale2(self.rep)
 
-        if self.noise > 0.0:
+        if noise > 0.0:
+            self.logger.info("  Add noise: {0}.".format(noise))
             perturb = np.random.normal(loc=0.0,
-                                       scale=self.noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
+                                       scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 
@@ -798,7 +806,7 @@ class Lattice():
 
         self.logger.info("Stage3: end.")
 
-    def stage4(self, record_depolarization_path=None):
+    def stage4(self, depolarize=True, record_depolarization_path=None):
         """
         Depolarize.
 
@@ -809,8 +817,8 @@ class Lattice():
 
         self.logger.info("Stage4: Depolarization.")
 
-        if not self.depolarize or self.asis:
-            self.logger.info("  Skip depolarization by request.")
+        if not depolarize or self.asis:
+            self.logger.info("  Skip depolarization by request. {0} {1}".format(depolarize, self.asis))
             self.yapresult = ""
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,
@@ -1133,7 +1141,8 @@ class Lattice():
     def __del__(self):
         self.logger.info("Completed.")
 
-    def stage1_analice(self):
+    def stage1_analice(self,
+                       noise=0.):
         """
         Do nothing.
 
@@ -1156,9 +1165,10 @@ class Lattice():
 
         # self.repcell.scale2(self.rep)
         # add small perturbations to the molecular positions.
-        if self.noise > 0.0:
+        if noise > 0.0:
+            self.logger.info("  Add noise: {0}.".format(noise))
             perturb = np.random.normal(loc=0.0,
-                                       scale=self.noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
+                                       scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 

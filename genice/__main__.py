@@ -97,10 +97,12 @@ def getoptions():
     parser.add_argument('--nodep',
                         action='store_true',
                         dest='nodep',
+                        default=False,
                         help='No depolarization.')
     parser.add_argument('--asis',
                         action='store_true',
                         dest='asis',
+                        default=False,
                         help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
     parser.add_argument('--debug',
                         '-D',
@@ -225,20 +227,11 @@ def main():
     if mode == "genice":
         logger.debug(options.Type)
 
-        water_type = options.water
-        guests = options.guests
         lattice_type = options.Type
-        file_format = options.format
         seed = options.seed
         rep = options.rep
         density = options.dens
-        depolarize = not options.nodep
         asis = options.asis
-        noise = options.noise
-        if options.visual != "":
-            record_depolarization_path = open(options.visual, "w")
-        else:
-            record_depolarization_path = None
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -261,39 +254,48 @@ def main():
                 key, value = v[0].split("=")
                 groups[int(key)] = value
 
-        del options  # Dispose for safety.
         # Set random seeds
         random.seed(seed)
         np.random.seed(seed)
 
         logger.debug("Lattice: {0}".format(lattice_type))
-        # Main part of the program is contained in th Formatter object. (See formats/)
-        logger.debug("Output file format: {0}".format(file_format))
-        hooks, arg = safe_import("format", file_format)
-        # Show the document of the module
-        # try:
-        #    doc = formatter.__doc__.splitlines()
-        # except:
-        #    doc = []
-        # for line in doc:
-        #    logger.info("!!! {0}".format(line))
         assert lattice_type is not None
+
+        # Initialize the Lattice class with arguments which are required for plugins.
         lat = lattice.Lattice(safe_import("lattice", lattice_type),
                               density=density,
                               rep=rep,
-                              depolarize=depolarize,
-                              asis=asis,
                               cations=cations,
                               anions=anions,
                               spot_guests=spot_guests,
                               spot_groups=groups,
-                              noise=noise,
+                              asis=asis,
                               )
+
+        water_type = options.water
+        guests = options.guests
+        noise = options.noise
+        depolarize = not options.nodep
+        file_format = options.format
+
+        # Main part of the program is contained in th Formatter object. (See formats/)
+        logger.debug("Output file format: {0}".format(file_format))
+        hooks, arg = safe_import("format", file_format)
+
+        if options.visual != "":
+            record_depolarization_path = open(options.visual, "w")
+        else:
+            record_depolarization_path = None
+
+        del options  # Dispose for safety.
+
         lat.generate_ice(water_type=water_type,
                          guests=guests,
                          hooks=hooks,
                          arg=arg,
                          record_depolarization_path=record_depolarization_path,
+                         noise=noise,
+                         depolarize=depolarize,
                          )
     else:  # analice
         logger.debug(options.File)
@@ -328,13 +330,13 @@ def main():
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             hooks, arg = safe_import("format", file_format)
-            lat = lattice.Lattice(w,
-                                  noise=noise)
+            lat = lattice.Lattice(w)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,
                             hooks=hooks,
-                            arg=arg
+                            arg=arg,
+                            noise=noise,
                             )
         if stdout is not None:
             # recover stdout
