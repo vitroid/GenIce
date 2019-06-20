@@ -1,5 +1,9 @@
 # Change log
 
+## 1.0RC5
+
+* Visualization of the depolarization paths becomes an option.
+
 ## 1.0RC4
 
 * GenIce no longer refers the files in the User global folder (.genice). Make them locally if necessary.

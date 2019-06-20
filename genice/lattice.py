@@ -548,7 +548,7 @@ class Lattice():
                               "3-methylbutyl-": _3_methylbutyl,
                               "Ethyl-": ethyl}
 
-    def generate_ice(self, water_type, guests, hooks, arg):
+    def generate_ice(self, water_type, guests, hooks, arg, record_depolarization_path=None):
         maxstage = max(0, *hooks.keys())
 
         if 0 in hooks:
@@ -577,7 +577,7 @@ class Lattice():
             if maxstage < 4:
                 return
 
-        self.stage4()
+        self.stage4(record_depolarization_path)
 
         if 4 in hooks:
             hooks[4](self)
@@ -798,7 +798,7 @@ class Lattice():
 
         self.logger.info("Stage3: end.")
 
-    def stage4(self):
+    def stage4(self, record_depolarization_path=None):
         """
         Depolarize.
 
@@ -825,10 +825,12 @@ class Lattice():
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,
                                                ignores=self.graph.ignores)
-            draw = dg.YaplotDraw(
-                self.reppositions, self.repcell.mat, data=self.spacegraph)
-            self.yapresult = dg.depolarize(
-                self.spacegraph, self.repcell.mat, draw=draw)
+            if record_depolarization_path is not None:
+                draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
+                yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw)
+                record_depolarization_path.write(yapresult)
+            else:
+                dg.depolarize(self.spacegraph, self.repcell.mat, draw=None)
         self.logger.info("Stage4: end.")
 
     def stage5(self):

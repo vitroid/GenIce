@@ -89,6 +89,11 @@ def getoptions():
                         metavar="3=Na",
                         action="append",
                         help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
+    parser.add_argument('--visual',
+                        dest='visual',
+                        default="",
+                        metavar="visual",
+                        help='Specify the yaplot file to store the depolarization paths. [""]')
     parser.add_argument('--nodep',
                         action='store_true',
                         dest='nodep',
@@ -230,6 +235,10 @@ def main():
         depolarize = not options.nodep
         asis = options.asis
         noise = options.noise
+        if options.visual != "":
+            record_depolarization_path = open(options.visual, "w")
+        else:
+            record_depolarization_path = None
         anions = dict()
         if options.anions is not None:
             logger.info(options.anions)
@@ -283,8 +292,8 @@ def main():
         lat.generate_ice(water_type=water_type,
                          guests=guests,
                          hooks=hooks,
-                         arg=arg
-
+                         arg=arg,
+                         record_depolarization_path=record_depolarization_path,
                          )
     else:  # analice
         logger.debug(options.File)

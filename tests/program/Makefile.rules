@@ -23,11 +23,11 @@ all: 9.yap.test dtc.yap.test # 5R.yap.test iceR.yap.test
 %.rings.yap: $(FMT)/rings.py
 	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py
-	$(GENICE) $* -f _ringstat | fgrep -v "Command line:" > $@
+	$(GENICE) $* -f _ringstat -r 2 2 2 | fgrep -v "Command line:" > $@
 %.kg: $(FMT)/_KG.py
 	$(GENICE) $* -f _KG | fgrep -v "Command line:" > $@
 %.dep.yap: $(FMT)/_dep.py
-	$(GENICE) $* -f _dep | fgrep -v "Command line:" > $@
+	$(GENICE) $* --visual $@ -r 2 2 2 > /dev/null
 test1.done: $(FMT)/gromacs.py
 	$(GENICE) test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test1.done
