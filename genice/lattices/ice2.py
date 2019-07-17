@@ -359,6 +359,8 @@ fixed="""
 36 14
 15 36
 """
+# set pairs in this way for hydrogen-ordered ices.
+pairs = fixed
 
 from genice.cell import cellvectors
 cell = cellvectors(a=13.25,

@@ -335,10 +335,12 @@ Symbol | Description
 5R     | Ice V with orthogonal unit cell. (testing)
 6h     | Half lattice of ice IV.
 9      | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
-16     | Negative-pressure ice XVI(16).[Falenty 2014]
-17     | Negative-pressure ice XVII(17).[del Rosso 2016]
+13     | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
+16     | Negative-pressure ice XVI.[Falenty 2014]
+17     | Negative-pressure ice XVII.[del Rosso 2016]
 0      | Hypothetical ice "0".[Russo 2014]
 i      | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
+A, B   | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
 C0, C0-II  | Filled ice C0 (Alias of 17).[Smirnov 2013]
 C1     | Filled ice C1 (Alias of 2).[Londono 1988]
 C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
@@ -439,41 +441,43 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 
 # References
 
-* L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394. [DOI: 10.1038/ncomms13394](http://dx.doi.org/10.1038/ncomms13394)
+* L.A. Báez, P. Clancy, J. Chem. Phys. 103, 9744–9755 (1998).[DOI: 10.1063/1.469938](http://doi.org/10.1063/1.469938)
+* L. del Rosso, M. Celli, L. Ulivi, Nat Commun 2016, 7, 13394. [DOI: 10.1038/ncomms13394](http://doi.org/10.1038/ncomms13394)
 * M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza, Acta
-  Crystallogr. A 2010, 66, 602. [DOI: 10.1107/S0108767310022932](http://dx.doi.org/10.1107/S0108767310022932)
-* A. Falenty, T. C. Hansen, W. F. Kuhs, Nature 2014, 516, 231. [DOI: 10.1038/nature14014](http://dx.doi.org/10.1038/nature14014)
+  Crystallogr. A 2010, 66, 602. [DOI: 10.1107/S0108767310022932](http://doi.org/10.1107/S0108767310022932)
+* A. Falenty, T. C. Hansen, W. F. Kuhs, Nature 2014, 516, 231. [DOI: 10.1038/nature14014](http://doi.org/10.1038/nature14014)
 * C. J. Fennell, J. D. Gezelter, J. Chem. Theory Comput. 2005,
-  1, 662. [DOI: 10.1021/ct050005s](http://dx.doi.org/10.1021/ct050005s)
+  1, 662. [DOI: 10.1021/ct050005s](http://doi.org/10.1021/ct050005s)
 * M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka, to be published in
-  Langmuir (2017). [DOI: 10.1021/acs.langmuir.7b01764](http://dx.doi.org/10.1021/acs.langmuir.7b01764)
+  Langmuir (2017). [DOI: 10.1021/acs.langmuir.7b01764](http://doi.org/10.1021/acs.langmuir.7b01764)
 * Y. Huang, C. Zhu, L. Wang, X. Cao, Y. Su, X. Jiang, S. Meng,
-  J. Zhao, X. C. Zeng, Science Advances 2016, 2, e1501010. [DOI: 10.1126/sciadv.1501010](http://dx.doi.org/10.1126/sciadv.1501010)
+  J. Zhao, X. C. Zeng, Science Advances 2016, 2, e1501010. [DOI: 10.1126/sciadv.1501010](http://doi.org/10.1126/sciadv.1501010)
 * Y. Huang, C. Zhu, L. Wang, J. Zhao, X. C. Zeng,
-  Chem. Phys. Lett. 2017, 671, 186. [DOI: 10.1016/j.cplett.2017.01.035](http://dx.doi.org/10.1016/j.cplett.2017.01.035)
+  Chem. Phys. Lett. 2017, 671, 186. [DOI: 10.1016/j.cplett.2017.01.035](http://doi.org/10.1016/j.cplett.2017.01.035)
 * G. A. Jeffrey, In Inclusion Compounds; J. L. Atwood,
 J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5.
 * A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg
-  Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://dx.doi.org/10.1021/ic102178d)
-* K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://dx.doi.org/10.1038/35090532)
-* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://dx.doi.org/10.1007/BF02903652)
-* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://dx.doi.org/10.1038/34622)
-* D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://dx.doi.org/10.1038/332141a0)
+  Chem 2011, 50, 1733. [DOI: 10.1021/ic102178d](http://doi.org/10.1021/ic102178d)
+* K Koga, GT Gao, H Tanaka, XC Zeng, Nature 412 (6849), 802-805 [DOI:10.1038/35090532](http://doi.org/10.1038/35090532)
+* V. I. Kosyakov, T. M. Polyanskaya, J. Struct. Chem. 1999, 40, 239. [DOI:10.1007/BF02903652](http://doi.org/10.1007/BF02903652)
+* C. Lobban, J. L. Finney, W. F. Kuhs, Nature 1998, 391, 268. [DOI: 10.1038/34622](http://doi.org/10.1038/34622)
+* D. Londono, W. F. Kuhs, J. L. Finney, Nature 1988, 332, 141. [DOI: 10.1038/332141a0](http://doi.org/10.1038/332141a0)
 * D. Londono, W. F. Kuhs, J. L. Finney, J. Chem. Phys. 98, 4878–4888 (1993). [DOI: 10.1063/1.464942](http://doi.org/10.1063/1.464942)
 * T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
-  J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://dx.doi.org/10.1063/1.4994757)
+  J. Chem. Phys. 147, 091101 (2017). [DOI: /10.1063/1.4994757](http://doi.org/10.1063/1.4994757)
 * T. Matsui, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. in press (2019).
 * K. Mochizuki, K. Himoto, and M. Matsumoto,
-  Phys. Chem. Chem. Phys. 16, 16419–16425 (2014). [DOI: 10.1039/c4cp01616e](http://dx.doi.org/10.1039/c4cp01616e)
+  Phys. Chem. Chem. Phys. 16, 16419–16425 (2014). [DOI: 10.1039/c4cp01616e](http://doi.org/10.1039/c4cp01616e)
 * N. Mousseau, G. T. Barkema, Curr. Opin. Solid State
   Mater. Sci. 2001, 5, 497. [DOI: 10.1016/S1359-0286(02)00005-0](https://doi.org/10.1016/S1359-0286%2802%2900005-0)
 * T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka, J. Phys. Chem. B
-  2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://dx.doi.org/10.1021/acs.jpcb.5b09544)
-* J. Russo, F. Romano, H. Tanaka, Nat. Mater. 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://dx.doi.org/10.1038/NMAT3977)
-* G. S. Smirnov, V. V. Stegailov, J. Phys. Chem. Lett. 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://dx.doi.org/10.1021/jz401669d)
+  2015, 120, 1843. [DOI: 10.1021/acs.jpcb.5b09544](http://doi.org/10.1021/acs.jpcb.5b09544)
+* J. Russo, F. Romano, H. Tanaka, Nat. Mater. 2014, 13, 733. [DOI: 10.1038/NMAT3977](http://doi.org/10.1038/NMAT3977)
+* C.G. Salzmann, P. Radaelli, A. Hallbrucker, E. Mayer, Science 311, 1758–1761 (2006).[DOI: 10.1126/science.1123896](http://doi.org/10.1126/science.1123896)
+* G. S. Smirnov, V. V. Stegailov, J. Phys. Chem. Lett. 2013, 4, 3560. [DOI: 10.1021/jz401669d](http://doi.org/10.1021/jz401669d)
 * W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
-  Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://dx.doi.org/10.1103/PhysRevLett.71.3150)
+  Phys. Rev. Lett. 1993, 71, 3150. [DOI: 10.1103/PhysRevLett.71.3150](http://doi.org/10.1103/PhysRevLett.71.3150)
 * T. Yagasaki, M. Matsumoto, H. Tanaka, J. Phys. Chem. B 122, 7718–7725 (2018). [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
 
 # The algorithm and how to cite it.
@@ -481,8 +485,8 @@ J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Cha
 The algorithm to make a depolarized hydrogen-disordered ice is explained in our recent paper:
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
-Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://dx.doi.org/10.1002/jcc.25077)
+Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://doi.org/10.1002/jcc.25077)
 
 # How to contribute
 
-GenIce is served at the GitHub (https://github.com/vitroid/GenIce) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome.
+GenIce is served at the GitHub (https://github.com/vitroid/GenIce) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.

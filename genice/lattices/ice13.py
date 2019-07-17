@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 # Crystallographic data of ice XIII
-# 1.	Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).
+# Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).
 
 atoms="""
 O1 0.2541(6)  0.5629(5) 0.2517(5)
@@ -45,9 +45,19 @@ A=90
 B=109.6873
 C=90
 
-import CIF
+from genice.cell import cellvectors
+cell  = cellvectors(a,b,c,A,B,C)
 
-cell  = CIF.cellvectors(a,b,c,A,B,C)
+# helper routines to make from CIF-like data
+from genice import CIF
 atomd = CIF.atomdic(atoms)
 sops  = CIF.symmetry_operators(symops)
-CIF.gromacs(cell, atomd, sops)
+waters, fixed = CIF.waters_and_pairs(cell, atomd, sops)
+
+# set pairs in this way for hydrogen-ordered ices.
+pairs = fixed
+
+import numpy as np
+density = 18*len(waters)/6.022e23 / (np.linalg.det(cell)*1e-21)
+
+coord = "relative"
