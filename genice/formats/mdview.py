@@ -1,6 +1,10 @@
 # coding: utf-8
 """
 MDView file format
+
+Usage:
+    genice III -f mdview > 3.rings.mdv
+    mdview -format- rings.mdv
 """
 
 import numpy as np

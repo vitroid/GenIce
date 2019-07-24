@@ -1,7 +1,10 @@
 # coding: utf-8
 """
-Show rings in Yaplot format.
-defined in https://github.com/vitroid/Yaplot
+Show rings in Yaplot format, defined in https://github.com/vitroid/Yaplot
+
+Usage:
+    genice III -f rings > 3.rings.yap
+    genice III -f rings[5] > output.yap    # up to 5-membered rings.
 """
 
 import sys

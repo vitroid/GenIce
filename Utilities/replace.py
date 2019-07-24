@@ -5,13 +5,12 @@
 from __future__ import print_function
 import sys
 import string
-tmp  = sys.argv[1]
-by = sys.stdin.readlines()
-sep = sys.argv[2]
-by = sep.join(by)
-by = sep+by
-orig = open(sys.argv[3]).readlines()
-orig = "".join(orig)
-orig = orig.replace(tmp, by)
-print(orig, end="")
+tag  = sys.argv[1]
+for line in open(sys.argv[2]):
+    loc = line.find(tag)
+    if loc >= 0:
+        for newline in sys.stdin:
+            print(" "*loc + newline, end="")
+    else:
+        print(line, end="")
 
