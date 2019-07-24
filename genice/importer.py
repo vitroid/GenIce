@@ -57,6 +57,20 @@ def import_format_plugin(category, name):
     return hooks
 
 
+def import_extra(category, name):
+    logger = logging.getLogger()
+    logger.info("Extra {0} plugin: {1}".format(category,name))
+    groupname = 'genice_{0}'.format(category)
+    for ep in pr.iter_entry_points(group=groupname):
+        logger.debug("    Entry point: {0}".format(ep))
+        if ep.name == name:
+            logger.debug("      Loading {0}...".format(name))
+            module = ep.load()
+            logger.info("      Loaded {0}.".format(name))
+    return module
+
+
+
 def safe_import(category, name):
     logger = logging.getLogger()
     assert category in ("lattice", "format", "molecule", "loader")
@@ -81,7 +95,13 @@ def safe_import(category, name):
     if module is None:
         fullname = "genice." + category + "s." + name
         logger.debug("Load module: {0}".format(fullname))
-        module = importlib.import_module(fullname)
+        try:
+            module = importlib.import_module(fullname)
+        except:
+            pass
+    if module is None:
+        module = import_extra(category, name)
+        
     logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     if arg != "":
         if "argparser" in module.__dict__:
@@ -90,6 +110,4 @@ def safe_import(category, name):
             logger.info("Arguments are given but the module does not accept them.")
     elif "usage" in module.__dict__:
         module.usage()
-    if category == "lattice":
-        module.lattice_type = name
     return module

@@ -366,7 +366,7 @@ class Lattice():
                  ):
 
         self.logger = logging.getLogger()
-        self.lattice_type = lat.lattice_type
+        # self.lattice_type = lat.lattice_type
         self.rep = rep
         self.asis = asis
         self.cations = cations

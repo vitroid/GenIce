@@ -232,32 +232,39 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 Symbol | Description
 -------|------------
-1h, 1c | Most popular Ice I (hexagonal or cubic)|
-2      | Hydrogen-ordered ice II |
-2d     | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
-3, 4, 6, 7, 12 | Conventional high-pressure ices III, IV,  VI, VII, and XII.[Lobban 1998]
-4R     | Ice IV with orthogonal unit cell. (testing)
-5      | Monoclinic ice V (testing).
-5R     | Ice V with orthogonal unit cell. (testing)
-6h     | Half lattice of ice IV.
-9      | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
-13     | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
-16     | Negative-pressure ice XVI.[Falenty 2014]
-17     | Negative-pressure ice XVII.[del Rosso 2016]
-0      | Hypothetical ice "0".[Russo 2014]
-i      | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
-A, B   | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
-C0, C0-II  | Filled ice C0 (Alias of 17).[Smirnov 2013]
-C1     | Filled ice C1 (Alias of 2).[Londono 1988]
-C2     | Filled ice C2 (Alias of 1c).[Vos 1993]
-sTprime | Filled ice "sT'". [Smirnov 2013]
+1h, ice1h, Ih   | Most popular Ice I (hexagonal)
+1c, ice1c, Ic   | Cubic type of ice I
+2, ice2, II     | Hydrogen-ordered ice II
+2d, ice2d       | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
+3, ice3, III    | Conventional high-pressure ice III.[Lobban 1998]
+4, ice4, IV     | Metastable high-pressure ice IV.[Lobban 1998]
+4R              | Ice IV with orthogonal unit cell. (testing)
+5, ice5, V      | Monoclinic ice V (testing).
+5R              | Ice V with orthogonal unit cell. (testing)
+6, ice6, VI     | Conventional high-pressure ice VI.[Lobban 1998]
+6h              | Half lattice of ice IV.
+7, ice7, VII    | Conventional high-pressure ice VII.[Lobban 1998]
+8, ice8, VIII   | Ice VIII, a hydrogen-ordered counterpart of ice VII.[Kuhs 1998]
+9, ice9, IX     | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
+12, ice12, XII  | Metastable high-pressure ice XII.[Lobban 1998]
+13, ice13, XIII | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
+16, ice16, XVI  | Negative-pressure ice XVI.[Falenty 2014]
+17, ice17, XVII | Negative-pressure ice XVII.[del Rosso 2016]
+0, ice0         | Hypothetical ice "0".[Russo 2014]
+i               | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
+A, iceA         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
+B, iceB         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
+C0, C0-II       | Filled ice C0 (Alias of 17).[Smirnov 2013]
+C1              | Filled ice C1 (Alias of 2).[Londono 1988]
+C2              | Filled ice C2 (Alias of 1c).[Vos 1993]
+sTprime         | Filled ice "sT'". [Smirnov 2013]
 CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999] 
 sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. [Jeffrey 1984]
-RHO    | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
-FAU    | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
-EMT    | Hypothetical ice with a large cavity.[Liu 2019]
-DOH, MEP, MTN, SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
-CRN1, CRN2, CRN3 | 4-coordinated continuous random network [Mousseau 2005]
+RHO             | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
+FAU             | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
+EMT             | Hypothetical ice with a large cavity.[Liu 2019]
+DOH,MEP,MTN,SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
+CRN1,CRN2,CRN3  | 4-coordinated continuous random network [Mousseau 2005]
 Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
 A15, sigma, Hcomp, Kcomp, Z, mu, zra-d, FK9layers, FK6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
 T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
@@ -345,6 +352,12 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
 
+## Input plugins
+Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
+
+| pip name   | GenIce usage    | Description  |requirements |
+|------------|-----------------|--------------|-------------|
+|[`genice-cif`](https://github.com/vitroid/genice-cif)| genice cif[ITT.cif]<br /> genice zeolite[ITT]| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
 
 # References
 
@@ -385,6 +398,9 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 * V.I. Kosyakov, T.M. Polyanskaya, 
   J. Struct. Chem. 1999, 40, 239.
   [DOI:10.1007/BF02903652](http://doi.org/10.1007/BF02903652)
+* WF Kuhs, JL Finney, C Vettier, DV Bliss,
+  J. Chem. Phys. 81, 3612–3623 (1998).
+  [DOI: 10.1063/1.448109](http://doi.org/10.1063/1.448109)
 * Y. Liu, Y. Huang, C. Zhu, H. Li, J. Zhao, L. Wang, L. Ojamäe, J.S. Francisco, X.C. Zeng,
   PNAS 116, 12684-12691 (2019).
   [DOI: 10.1073/pnas.1900739116](https://doi.org/10.1073/pnas.1900739116)

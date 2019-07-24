@@ -28,6 +28,7 @@ def fullatoms(atomd, sops):
     names = []
     for name, pos in atomd.items():
         x,y,z = pos
+        X,Y,Z = x,y,z # alias
         for sop in sops:
             # print(x,sop)
             p = np.array([eval(s) for s in sop])
@@ -39,6 +40,7 @@ def fullatoms(atomd, sops):
                 L2 = np.dot(d,d)
                 if L2 < 0.0001:
                     # print(f,p)
+                    logger.debug("Too close: {0} {1}".format(f,p))
                     tooclose = True
                     break
             if not tooclose:
@@ -123,9 +125,8 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.15, cell, grid, distance=False):
         oh[i].append(j)
         parent[j] = i
-
-    logger.debug(oh)
-    logger.debug(parent)
+    for i in oh:
+        logger.debug((i,oh[i]))
     
     grid = pl.determine_grid(cell, 0.20)
     pairs = []
@@ -140,6 +141,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
 
     waters = []
     for i in range(len(oh)):
+        logger.debug((i, oh[i]))
         j,k = oh[i]
         com = (oxygens[i]*16 + hydrogens[j] + hydrogens[k])/18
         waters.append(com)
