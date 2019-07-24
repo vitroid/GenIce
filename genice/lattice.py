@@ -384,7 +384,7 @@ class Lattice():
         self.doc.append("Command line: {0}".format(" ".join(sys.argv)))
 
         for line in self.doc:
-            self.logger.info("!!! {0}".format(line))
+            self.logger.info("  "+line)
         # ================================================================
         # rotmatrices (analice)
         #
@@ -548,18 +548,24 @@ class Lattice():
     def generate_ice(self,
                      water_type,
                      guests,
-                     hooks,
-                     arg,
+                     formatter,
                      record_depolarization_path=None,
                      depolarize=True,
                      noise=0.):
 
+        hooks = formatter.hooks
+        arg   = formatter.arg
         maxstage = max(0, *hooks.keys())
 
         if 0 in hooks:
-            abort = hooks[0](self, arg)
-            if maxstage < 1 or abort:
-                return
+            hooks[0](self, arg)
+        elif arg != "":
+            logger.info("Arguments are given but the module does not accept them.")
+            if "usage" in formatter.__dict__:
+                formatter.usage()
+            else:
+                for line in formatter.__doc__.splitlines():
+                    logger.info("  "+line)
 
         self.stage1(noise)
 
@@ -609,17 +615,24 @@ class Lattice():
         if 7 in hooks:
             hooks[7](self)
 
-    def analyze_ice(self, water_type, hooks, arg, noise=0.):
+    def analyze_ice(self, water_type, formatter, noise=0.):
         """
         Protocol for analice
         """
+        hooks = formatter.hooks
+        arg   = formatter.arg
 
         maxstage = max(0, *hooks.keys())
 
         if 0 in hooks:
             hooks[0](self, arg)
-            if maxstage < 1:
-                return
+        elif arg != "":
+            logger.info("Arguments are given but the module does not accept them.")
+            if "usage" in formatter.__dict__:
+                formatter.usage()
+            else:
+                for line in formatter.__doc__.splitlines():
+                    logger.info("  "+line)
 
         self.stage1_analice(noise)
 
@@ -882,7 +895,7 @@ class Lattice():
             mdoc = []
 
         for line in mdoc:
-            self.logger.info("!!! {0}".format(line))
+            self.logger.info("  "+line)
 
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
@@ -1006,7 +1019,7 @@ class Lattice():
                 except BaseException:
                     mdoc = []
                 for line in mdoc:
-                    logger.info("!!! {0}".format(line))
+                    logger.info("  "+line)
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,

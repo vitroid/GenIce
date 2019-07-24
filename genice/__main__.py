@@ -280,7 +280,7 @@ def main():
 
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Output file format: {0}".format(file_format))
-        hooks, arg = safe_import("format", file_format)
+        formatter = safe_import("format", file_format)
 
         if options.visual != "":
             record_depolarization_path = open(options.visual, "w")
@@ -291,8 +291,7 @@ def main():
 
         lat.generate_ice(water_type=water_type,
                          guests=guests,
-                         hooks=hooks,
-                         arg=arg,
+                         formatter=formatter,
                          record_depolarization_path=record_depolarization_path,
                          noise=noise,
                          depolarize=depolarize,
@@ -329,13 +328,12 @@ def main():
         for i, w in enumerate(load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix, avgspan=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
-            hooks, arg = safe_import("format", file_format)
+            formatter = safe_import("format", file_format)
             lat = lattice.Lattice(w)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,
-                            hooks=hooks,
-                            arg=arg,
+                            formatter=formatter,
                             noise=noise,
                             )
         if stdout is not None:
