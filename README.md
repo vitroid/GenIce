@@ -3,13 +3,14 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
+version 1.0rc5
+
 ## Requirements
 
-* NetworkX (>=2)
-* Python 3
-* countrings
-* PairList
-* yaplotlib
+* networkx>=2
+* countrings>=0.1.4
+* pairlist>=0.2.3
+* yaplotlib>=0.1
 * numpy
 
 ## Installation
@@ -77,7 +78,6 @@ Install with pip3.
                             no depolarization.
       --debug, -D           Output debugging info.
       --quiet, -q           Do not output progress messages.
-
 
 Use `./genice.x` instead of `genice` if you want to use GenIce without installation. 
 
@@ -277,7 +277,6 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             remove fast librational motions and to make a smooth
                             video. Specify the average span. The values 0 and 1
                             specify no averaging.
-
 
 
 ## Output formats
@@ -547,4 +546,4 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
 
 # How to contribute
 
-GenIce is served at the GitHub (https://github.com/vitroid/GenIce) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.
+GenIce is served at the GitHub (https://github.com/vitroid/GenIce/) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.

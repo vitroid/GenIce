@@ -9,8 +9,9 @@ tag  = sys.argv[1]
 for line in open(sys.argv[2]):
     loc = line.find(tag)
     if loc >= 0:
+        indent = line[:loc]
         for newline in sys.stdin:
-            print(" "*loc + newline, end="")
+            print(indent + newline, end="")
     else:
         print(line, end="")
 
