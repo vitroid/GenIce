@@ -348,6 +348,7 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 |[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
+|[`genice-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice-svg` |
 
 ## Input plugins
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
