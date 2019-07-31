@@ -73,7 +73,7 @@ def average(load_iter, span=0):
         if len(ohist) == 0:
             # first ohist; just store
             ohist.append(oatoms)
-        else:
+        elif span > 1:
             # displacements
             d = oatoms - ohist[-1]
             d -= np.floor(d+0.5)
@@ -85,6 +85,8 @@ def average(load_iter, span=0):
                 ohist.pop(0)
             # overwrite the water positions with averaged ones.
             oatoms = np.average(np.array(ohist), axis=0)
+        else:
+            ohist[0] = oatoms
 
         yield oatoms, hatoms, cellmat
 
