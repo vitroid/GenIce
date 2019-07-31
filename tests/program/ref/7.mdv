@@ -1,6 +1,4 @@
-#
-#Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
-#
+# 13.372334972042182 13.372334972042182 26.744669944084364
 -center 0 0 0
 -fold
 768
