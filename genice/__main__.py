@@ -325,7 +325,7 @@ def main():
 
         del options  # Dispose for safety.
 
-        for i, w in enumerate(load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix, avgspan=avgspan)):
+        for i, w in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)

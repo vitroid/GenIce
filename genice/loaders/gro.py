@@ -20,15 +20,10 @@ def readaline(file):
 
 
 class Loader():  # for analice
-    def __init__(self, filename, oname, hname, avgspan=1):
+    def __init__(self, filename, oname, hname):
         self.file = open(filename)
         self.oname = oname
         self.hname = hname
-        self.avgspan = avgspan  # average width
-        self.opos = []  # history
-        self.dopos = []
-        self.hpos = []
-        self.dhpos = []
 
     def load_iter(self):
         logger = logging.getLogger()
@@ -73,33 +68,14 @@ class Loader():  # for analice
             self.density = len(oatoms) / (np.linalg.det(self.cell) * 1e-21) * 18 / 6.022e23
             celli = np.linalg.inv(self.cell)
             ro = np.array([np.dot(x, celli) for x in oatoms])
-            if len(self.opos) > 0:
-                self.dopos.append(rel_wrap(ro - self.opos[-1]))
-            self.opos.append(ro)
             if len(hatoms) > 0:
                 rh = np.array([np.dot(x, celli) for x in hatoms])
-                if len(self.hpos) > 0:
-                    self.dhpos.append(rel_wrap(rh - self.hpos[-1]))
-                self.hpos.append(rh)
-            delta = np.zeros_like(oatoms)
-            NQ = len(self.opos)
-            for i in range(NQ - 1):
-                weight = (NQ - 1 - i) / NQ
-                delta += self.dopos[i] * weight
-            # logger.info(delta)
-            ro_avg = self.opos[0] + delta
-            self.waters = np.dot(ro_avg, self.cell)  # abs pos
+            self.waters = np.dot(ro, self.cell)  # abs pos
             if len(hatoms) > 0:
-                delta = np.zeros_like(hatoms)
-                for i in range(NQ - 1):
-                    weight = (NQ - 1 - i) / NQ
-                    delta += self.dhpos[i] * weight
-                rh_avg = self.hpos[0] + delta
                 self.rotmat = []
                 for i in range(len(self.waters)):
-                    ro = ro_avg[i]
-                    rdh0 = rel_wrap(rh_avg[i * 2] - ro)
-                    rdh1 = rel_wrap(rh_avg[i * 2 + 1] - ro)
+                    rdh0 = rel_wrap(rh[i * 2] - ro[i])
+                    rdh1 = rel_wrap(rh[i * 2 + 1] - ro[i])
                     o = np.dot(ro, self.cell)
                     dh0 = np.dot(rdh0, self.cell)
                     dh1 = np.dot(rdh1, self.cell)
@@ -116,17 +92,10 @@ class Loader():  # for analice
                 # 水素結合は原子の平均位置で定義している。
                 self.pairs = []
                 logger.debug("  Make pair list.")
-                for o, h in pl.pairs_fine_hetero(ro_avg, rh_avg, 0.245, self.cell, grid, distance=False):
+                for o, h in pl.pairs_fine_hetero(ro, rh, 0.245, self.cell, grid, distance=False):
                     if not (h == o * 2 or h == o * 2 + 1):
                         # hとoは別の分子の上にあって近い。
                         # register a new intermolecular pair
                         self.pairs.append((h // 2, o))
                 logger.debug("  # of pairs: {0} {1}".format(len(self.pairs), len(self.waters)))
             yield self
-            logger.info("Queue len: {0}".format(NQ))
-            if NQ == self.avgspan:
-                self.opos.pop(0)
-                self.hpos.pop(0)
-                if len(self.dopos) > 0:
-                    self.dopos.pop(0)
-                    self.dhpos.pop(0)

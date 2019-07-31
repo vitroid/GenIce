@@ -40,7 +40,7 @@ class Loader():  # for analice
                 atomname = cols[0]
                 # atomid = int(line[15:20])
                 pos = np.array([float(x) for x in cols[1:4]]) * au
-                if atomname == self.oname:
+                if re.fullmatch(self.oname, atomname):
                     self.waters.append(pos)
                 elif self.hname is not None and re.fullmatch(self.hname, atomname):
                     hatoms.append(pos)
@@ -48,9 +48,10 @@ class Loader():  # for analice
                     if atomname not in skipped:
                         logger.info("Skip {0}".format(atomname))
                         skipped.add(atomname)
+            self.waters = np.array(self.waters)
             self.celltype = 'triclinic'
             self.coord = 'absolute'
-            self.density = len(self.waters) / (np.linalg.det(self.cell) * 1e-21) * 18 / 6.022e23
+            self.density = self.waters.shape[0] / (np.linalg.det(self.cell) * 1e-21) * 18 / 6.022e23
 
             if len(hatoms) > 0:
                 celli = np.linalg.inv(self.cell)
@@ -59,7 +60,7 @@ class Loader():  # for analice
                 ro = np.array([np.dot(x, celli) for x in self.waters])
                 # rotmatrices for analice
                 self.rotmat = []
-                for i in range(len(self.waters)):
+                for i in range(self.waters.shape[0]):
                     o = self.waters[i]
                     h0, h1 = hatoms[i * 2:i * 2 + 2]
                     h0 -= o
@@ -83,7 +84,7 @@ class Loader():  # for analice
                     else:
                         # register a new intermolecular pair
                         self.pairs.append((h // 2, o))
-                logger.debug("  # of pairs: {0} {1}".format(len(self.pairs), len(self.waters)))
+                logger.debug("  # of pairs: {0} {1}".format(len(self.pairs), self.waters.shape[0]))
             else:
                 self.bondlen = 0.3
             yield self
