@@ -392,7 +392,7 @@ class Lattice():
             self.rotmatrices = lat.rotmat
         except BaseException:
             self.logger.info("No rotmatrices in lattice")
-            pass
+            self.rotmatrices = None
         # ================================================================
         # waters: positions of water molecules
         #
@@ -1048,6 +1048,7 @@ class Lattice():
             self.logger.info("  Pairs are not given explicitly.")
             self.logger.info("  Estimating the bonds according to the pair distances.")
 
+            self.logger.debug("Bondlen: {0}".format(self.bondlen))
             # make bonded pairs according to the pair distance.
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)

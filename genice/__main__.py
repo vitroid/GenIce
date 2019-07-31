@@ -191,7 +191,7 @@ def getoptions_analice():
                         dest='avgspan',
                         default=0,
                         metavar='1',
-                        help='Average atomic positions in water molecules so as to remove fast librational motions and to make a smooth video. Specify the average span. The values 0 and 1 specify no averaging.')
+                        help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
     parser.add_argument('File',
                         help='Gromacs file.')
     return parser.parse_args()

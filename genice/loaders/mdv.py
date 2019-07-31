@@ -1,7 +1,8 @@
 import logging
+import re
 
 import numpy as np
-
+import pairlist as pl
 
 class Loader():  # for analice
     """
@@ -83,4 +84,6 @@ class Loader():  # for analice
                         # register a new intermolecular pair
                         self.pairs.append((h // 2, o))
                 logger.debug("  # of pairs: {0} {1}".format(len(self.pairs), len(self.waters)))
+            else:
+                self.bondlen = 0.3
             yield self

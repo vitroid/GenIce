@@ -294,7 +294,7 @@ Name |Application | extension | water | solute | HB | remarks
 `xyz`    |XYZ         | `.xyz`      | Atomic positions | Atomic positions | none |Experimental
 `exyz`    |[extended XYZ](http://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html)         | `.xyz`      | Atomic positions | Atomic positions | none |Extended XYZ format defined in Open Babel|
 `exyz2`    |[extended XYZ](http://libatoms.github.io/QUIP/io.html#extendedxyz)         | `.xyz`      | Atomic positions | Atomic positions | none |Extended XYZ format defined in QUIP|
-`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders (1) HB paths to reduce the net polarization. (2) Rings in the structure. (3) Molecular configurations and the HB network.
+`y`, `yaplot`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | Atomic positions | Atomic positions |o | It renders molecular configurations and the HB network.
 `e`, `euler`      |Euler angles| `.nx3a`     | Rigid rotor | none | none|
 `q`, `quaternion`      |Quaternions | `.nx4a`     | Rigid rotor | none |none|
 `d`, `digraph`      |Digraph     | `.ngph`     | none | none | o |
@@ -303,7 +303,7 @@ Name |Application | extension | water | solute | HB | remarks
 `r`, `rcom`      |Relative CoM| `.ar3r`     | Center of mass | none | none | In fractional coordinate system.
 `p`, `python`, `reshape`      |Python module | `.py`     | Center of mass | none | none | Under development.
 `_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
-`rings`      |Ring statistics |  | |  | | Number of rings.
+`rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | center of mass | none |o | It renders HB rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
 You can prepare your own file formats. Create a folder named `formats` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
@@ -444,14 +444,14 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 |[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`genice-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice-svg` |
+|[`genice-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice-svg` |
 
 ## Input plugins
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 | pip name   | GenIce usage    | Description  |requirements |
 |------------|-----------------|--------------|-------------|
-|[`genice-cif`](https://github.com/vitroid/genice-cif)| genice cif[ITT.cif]<br /> genice zeolite[ITT]| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
+|[`genice-cif`](https://github.com/vitroid/genice-cif)| `genice cif[ITT.cif]`<br /> `genice zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
 
 # References
 
@@ -513,6 +513,9 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 * T. Matsui, T. Yagasaki, M. Matsumoto, H. Tanaka,
   J. Chem. Phys. 150, 041102 (2019).
   [DOI: 10.1063/1.5083021](http://doi.org/10.1063/1.5083021)
+* M. Matsumoto, T. Yagasaki, H. Tanaka,
+  J. Chem. Phys. 150, 214504 (2019).
+  [DOI: 10.1063/1.5096556](https://doi.org/10.1063/1.5096556)
 * K. Mochizuki, K. Himoto, M. Matsumoto,
   Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
   [DOI: 10.1039/c4cp01616e](http://doi.org/10.1039/c4cp01616e)

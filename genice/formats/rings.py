@@ -34,6 +34,14 @@ def hook2(lattice):
     # copied from svg_poly
     graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
+    s = ""
+    s += yp.Layer(2)
+    s += yp.Color(0)
+    for i,j in graph.edges():
+        pi, pj = lattice.reppositions[i], lattice.reppositions[j]
+        d = pj - pi
+        d -= np.floor(d+0.5)
+        s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
     for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)
@@ -53,8 +61,8 @@ def hook2(lattice):
             # rel to abs
             com    = np.dot(com,    cellmat)
             deltas = np.dot(deltas, cellmat)
-            print(face(com,deltas), end="")
-    print()
+            s += face(com,deltas)
+    print(s)
     lattice.logger.info("Hook2: end.")
 
 

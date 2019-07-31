@@ -8,6 +8,24 @@ from collections import defaultdict
 import numpy as np
 import yaplotlib as yp
 
+
+def hook0(lattice, args):
+    lattice.logger.info("Hook0: ArgParser.")
+    lattice.yaplot_size_H = 0.01
+    if args != "":
+        for arg in args.split(":"):
+            cols = arg.split("=")
+            if len(cols) == 2:
+                if cols[0] == "H":
+                    lattice.yaplot_size_H = float(cols[1])
+                    continue
+            assert False, "Unknown option."
+    lattice.logger.info("Hook0: end.")
+    
+    
+
+
+
 def hook1(lattice):
     lattice.logger.info("Hook1: Draw the cell in Yaplot format.")
     s = yp.Layer(2)
@@ -17,6 +35,25 @@ def hook1(lattice):
             s += yp.Line(a,a+r)
     print(s,end="")
     lattice.logger.info("Hook1: end.")
+
+
+def hook2(lattice):
+    global nwateratoms
+    if lattice.yaplot_size_H > 0:
+        return
+    lattice.logger.info("Hook2: Output CoM of water molecules in Yaplot format.")
+    # prepare the reverse dict
+    waters = defaultdict(dict)
+    pos = lattice.reppositions @ lattice.repcell.mat
+    s = ""
+    for p in pos:
+        s += yp.Layer(4)
+        s += yp.Color(3)
+        s += yp.Size(0.03)
+        s += yp.Circle(p)
+    print(s, end="")
+    lattice.logger.info("Hook2: end.")
+    return True
 
 
 def hook6(lattice):
@@ -46,7 +83,7 @@ def hook6(lattice):
         s += yp.Circle(O)
         s += yp.Line(O,H0)
         s += yp.Line(O,H1)
-        s += yp.Size(0.01)
+        s += yp.Size(lattice.yaplot_size_H)
         s += yp.Circle(H0)
         s += yp.Circle(H1)
         s += yp.Color(2)
@@ -100,4 +137,4 @@ def hook7(lattice):
     lattice.logger.info("Hook7: end.")
     
 
-hooks = {7:hook7, 6:hook6, 1:hook1}
+hooks = {0:hook0, 7:hook7, 6:hook6, 1:hook1, 2:hook2}
