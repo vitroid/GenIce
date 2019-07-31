@@ -51,7 +51,5 @@ def load_iter(file, oname, hname=None):
             hatoms = np.array(hatoms) @ celli
         else:
             hatoms = None
-        logger.info(oatoms)
-        logger.info(hatoms)
 
         yield oatoms, hatoms, cellmat
