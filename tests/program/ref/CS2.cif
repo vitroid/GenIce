@@ -1,4 +1,4 @@
-data_genice_CS2
+data_genice
 #
 #Data source:
 #[ice 16] Falenty, A., Hansen, T. C. & Kuhs, W. F. Formation and properties of ice XVI obtained by emptying a type sII clathrate hydrate. Nature 516, 231-233 (2014).
