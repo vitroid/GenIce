@@ -228,9 +228,9 @@ class IceGraph(networkx.DiGraph):
         """
         logger = logging.getLogger()
         defects = []
-        for node in self.nodes():
-            if self.in_degree(node) != 2 or self.out_degree(node) != 2:
-                defects.append(node)
+        for i in range(self.number_of_nodes()):
+            if self.in_degree(i) != 2 or self.out_degree(i) != 2:
+                defects.append(i)
         return defects
 
     def excess_in_defects(self):

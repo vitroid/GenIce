@@ -28,7 +28,7 @@ def hook7(lattice):
     beta  = acos(ca/(cL*aL)) * 180 / pi
     gamma = acos(ab/(aL*bL)) * 180 / pi
     s = ""
-    s += "data_genice_{0}\n".format(lattice.lattice_type)
+    s += "data_genice\n"
     s += '#' + "\n#".join(lattice.doc) + "\n"
     s += "_cell_length_a                {0}\n".format(aL*10)
     s += "_cell_length_b                {0}\n".format(bL*10)
