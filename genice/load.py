@@ -2,8 +2,10 @@ from logging import getLogger
 import re
 from pathlib import Path
 from genice.importer import safe_import
+from genice.cell import rel_wrap
 import numpy as np
-
+from types import SimpleNamespace
+import pairlist as pl
 
 def str2rangevalues(s):
     values = s.split(":")
@@ -45,12 +47,12 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
         # single file may contain multiple frames
         if suffix is None:
             suffix = Path(fname).suffix[1:]
-        loader = safe_import("loader", suffix).Loader(fname, oname, hname)
-        for lat in loader.load_iter():
+        loader = safe_import("loader", suffix)
+        file = open(fname)
+        for oatoms, hatoms, cellmat in loader.load_iter(file, oname=oname, hname=hname):
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
-                lat.lattice_type = "analice"
-                yield lat
+                yield oatoms, hatoms, cellmat
                 rframe[0] += rframe[2]
                 if rframe[1] <= rframe[0]:
                     return
@@ -63,25 +65,68 @@ def average(load_iter, span=0):
     logger = getLogger()
     if span < 1:
         span = 1
-    com = [] # center-of-mass position (relative)
+    ohist = [] # center-of-mass position (relative)
     rot = [] # rotation matrices
-    for lat in load_iter():
+    for oatoms, hatoms, cellmat in load_iter():
 
         # center of mass
-        if len(com) == 0:
-            # first com; just store
-            com.append(lat.waters)
+        if len(ohist) == 0:
+            # first ohist; just store
+            ohist.append(oatoms)
         else:
             # displacements
-            d = lat.waters - com[-1]
+            d = oatoms - ohist[-1]
             d -= np.floor(d+0.5)
             # new positions
-            com.append(com[-1]+d)
+            ohist.append(ohist[-1]+d)
             # if too many storage
-            if len(com) > span:
+            if len(ohist) > span:
                 # drop the oldest one.
-                com.pop(0)
+                ohist.pop(0)
             # overwrite the water positions with averaged ones.
-            lat.waters = np.average(np.array(com), axis=0)
+            oatoms = np.average(np.array(ohist), axis=0)
 
-        yield lat
+        yield oatoms, hatoms, cellmat
+
+
+def make_lattice_info(oatoms, hatoms, cellmat):
+    logger = getLogger()
+
+    assert oatoms.shape[0] > 0
+    assert hatoms is None or oatoms.shape[0] * 2 == hatoms.shape[0]
+    coord = 'relative'
+    density = oatoms.shape[0] / (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
+
+    if hatoms is None:
+        return SimpleNamespace(waters=oatoms, coord=coord, density=density, bondlen=0.3, cell=cellmat)
+
+    rotmat = np.zeros((oatoms.shape[0],3,3))
+    for i in range(oatoms.shape[0]):
+        ro = oatoms[i]
+        rdh0 = rel_wrap(hatoms[i * 2] - ro)
+        rdh1 = rel_wrap(hatoms[i * 2 + 1] - ro)
+        dh0 = np.dot(rdh0, cellmat)
+        dh1 = np.dot(rdh1, cellmat)
+        y = dh0 - dh1
+        y /= np.linalg.norm(y)
+        z = dh0 + dh1
+        z /= np.linalg.norm(z)
+        x = np.cross(y, z)
+        rotmat[i] = np.vstack([x, y, z])
+        # 重心位置を補正。
+        oatoms[i] += (rdh0 + rdh1) * 1. / 18.
+    grid = pl.determine_grid(cellmat, 0.245)
+    # remove intramolecular OHs
+    # 水素結合は原子の平均位置で定義している。
+    pairs = []
+    logger.debug("  Make pair list.")
+    for o, h in pl.pairs_fine_hetero(oatoms, hatoms, 0.245, cellmat, grid, distance=False):
+        if not (h == o * 2 or h == o * 2 + 1):
+            # hとoは別の分子の上にあって近い。
+            # register a new intermolecular pair
+            pairs.append((h // 2, o))
+    logger.debug("  # of pairs: {0} {1}".format(len(pairs), oatoms.shape[0]))
+        
+    return SimpleNamespace(waters=oatoms, coord=coord, density=density, paris=pairs, rotmat=rotmat, cell=cellmat)
+
+    

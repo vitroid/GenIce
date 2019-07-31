@@ -325,11 +325,12 @@ def main():
 
         del options  # Dispose for safety.
 
-        for i, w in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
+        for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)
-            lat = lattice.Lattice(w)
+            lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
+            lat = lattice.Lattice(lattice_info)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,
