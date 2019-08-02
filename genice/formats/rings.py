@@ -16,7 +16,10 @@ import yaplotlib as yp
 from genice import rigid
 from countrings import countrings_nx as cr
 
-
+#memory leak detection
+import os
+import psutil, gc
+import objgraph
 
 
 def face(center, rpos):
@@ -42,6 +45,10 @@ def hook2(lattice):
         d = pj - pi
         d -= np.floor(d+0.5)
         s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
+    # Dubious memory leak
+    #gc.collect()
+    #logger.debug(psutil.Process(os.getpid()).memory_info())
+    #objgraph.show_most_common_types(limit=50)
     for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)
@@ -62,6 +69,11 @@ def hook2(lattice):
             com    = np.dot(com,    cellmat)
             deltas = np.dot(deltas, cellmat)
             s += face(com,deltas)
+    # Dubious memory leak
+    #gc.collect()
+    #logger.debug(psutil.Process(os.getpid()).memory_info())
+    #objgraph.show_most_common_types(limit=50)
+    #print("")
     print(s)
     lattice.logger.info("Hook2: end.")
 

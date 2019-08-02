@@ -44,6 +44,7 @@ def fullatoms(atomd, sops):
                     tooclose = True
                     break
             if not tooclose:
+                # print(p, (x,y,z), sop)
                 yield name, p
                 full.append(p)
                 names.append(name)
@@ -117,7 +118,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     hydrogens /= np.array(rep)
 
     logger.debug([oxygens.shape, hydrogens.shape])
-
+    
     oh = defaultdict(list)
     parent = dict()
     grid = pl.determine_grid(cell, 0.15)
@@ -143,7 +144,11 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     for i in range(len(oh)):
         logger.debug((i, oh[i]))
         j,k = oh[i]
-        com = (oxygens[i]*16 + hydrogens[j] + hydrogens[k])/18
+        dhj = hydrogens[j] - oxygens[i]
+        dhk = hydrogens[k] - oxygens[i]
+        dhj -= np.floor(dhj+0.5)
+        dhk -= np.floor(dhk+0.5)
+        com = oxygens[i] + (dhj + dhk)/18
         waters.append(com)
 
     return waters, pairs
