@@ -11,18 +11,13 @@ from math import *
 import pairlist as pl
 from collections import defaultdict
 
-from logging import getLogger, StreamHandler, DEBUG, INFO
-logger = getLogger(__name__)
-handler = StreamHandler()
-handler.setLevel(DEBUG)
-logger.setLevel(DEBUG)
-logger.addHandler(handler)
-logger.propagate = False
+from logging import getLogger
 
 
 
 def fullatoms(atomd, sops):
     global x,y,z
+    logger = getLogger()
     # the variables to be evaluated by eval() must be global (?)
     full = []
     names = []
@@ -86,6 +81,9 @@ def symmetry_operators(symops):
 
 
 def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
+
+    logger = getLogger()
+
     oxygens = []
     hydrogens = []
     for name, pos in fullatoms(atomd, sops):
@@ -117,8 +115,6 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     hydrogens = np.array(hh)
     hydrogens /= np.array(rep)
 
-    logger.debug([oxygens.shape, hydrogens.shape])
-    
     oh = defaultdict(list)
     parent = dict()
     grid = pl.determine_grid(cell, 0.15)
@@ -126,8 +122,6 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.15, cell, grid, distance=False):
         oh[i].append(j)
         parent[j] = i
-    for i in oh:
-        logger.debug((i,oh[i]))
     
     grid = pl.determine_grid(cell, 0.20)
     pairs = []

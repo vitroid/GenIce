@@ -56,9 +56,10 @@ def load_iter(file, oname="O", hname=None):
             cellmat = np.array([[c[0], c[3], c[4]],
                                 [c[5], c[1], c[6]],
                                 [c[7], c[8], c[2]]])
-        oatoms = np.array(oatoms)
+        celli = np.linalg.inv(cellmat)
+        oatoms = np.array(oatoms) @ celli
         if len(hatoms) == 0:
             hatoms = None
         else:
-            hatoms = np.array(hatoms)
+            hatoms = np.array(hatoms) @ celli
         yield oatoms, hatoms, cellmat

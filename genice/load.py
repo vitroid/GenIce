@@ -129,6 +129,6 @@ def make_lattice_info(oatoms, hatoms, cellmat):
             pairs.append((h // 2, o))
     logger.debug("  # of pairs: {0} {1}".format(len(pairs), oatoms.shape[0]))
         
-    return SimpleNamespace(waters=oatoms, coord=coord, density=density, paris=pairs, rotmat=rotmat, cell=cellmat)
+    return SimpleNamespace(waters=oatoms, coord=coord, density=density, pairs=pairs, rotmat=rotmat, cell=cellmat, __doc__=None)
 
     
