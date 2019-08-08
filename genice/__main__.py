@@ -159,7 +159,7 @@ def getoptions_analice():
                         dest='suffix',
                         metavar="gro",
                         default=None,
-                        help='Override the file suffix. (None)')
+                        help='Specify the file suffix explicitly. ((None)')
     parser.add_argument('--filerange',
                         dest='filerange',
                         metavar="[from:]below[:interval]",
@@ -193,7 +193,7 @@ def getoptions_analice():
                         metavar='1',
                         help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
     parser.add_argument('File',
-                        help='Gromacs file.')
+                        help='Input file(s). Analice accepts `.gro` (Gromacs), `.mdv` (mdview), and `.nx3a` (rigid rotors) files as input file formats by default. File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.')
     return parser.parse_args()
 
 

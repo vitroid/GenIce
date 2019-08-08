@@ -182,9 +182,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
 
     %%usage_analice%%
 
-
-## Output formats
-They are common for `genice` and `analice`.
+## Output formats (`genice` and `analice`)
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
@@ -224,7 +222,7 @@ Internally, there are seven stages to generate an ice structure.
 
 In the format plugin, you define the hook functions that are invoked after processing each stage. 
 
-## Ice structures
+## Ice structures (`genice` only)
 <!-- references removed. -->
 
 Symbol | Description
@@ -301,7 +299,7 @@ FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 -: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
-## Water models
+## Water models (`genice` and `analice`)
 A water model can be chosen with `--water` option.
 
 symbol   | type
@@ -312,7 +310,7 @@ symbol   | type
 `5site`, `tip5p`  | 5-site TIP5P
 `6site`, `NvdE`   | 6-site NvdE
 
-## Guest molecules
+## Guest molecules (`genice` only)
 
 symbol | type 
 -------|---------
@@ -324,6 +322,17 @@ symbol | type
 
 
 You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
+
+## Input files (`analice` only)
+
+suffix | type
+-------|-------------------
+`gro`  | Gromacs
+`mdv`  | mdview (Angstrom)
+`mdva` | mdview (au)
+`nx3a` | Rigid rotors (with euler angles)
+
+You can prepare your own file loaders.  Create a folder named `loaders` in the current working directory and put the plugins in it. The plugin name is refered as the suffix of the file. (e.g. prepare pdb.py to load a *.pdb file.)
 
 # Extra plugins
 (New in v1.0)

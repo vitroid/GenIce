@@ -8,7 +8,7 @@ version 1.0rc5
 ## Requirements
 
 * networkx>=2
-* countrings>=0.1.4
+* countrings>=0.1.5
 * pairlist>=0.2.3
 * yaplotlib>=0.1
 * numpy
