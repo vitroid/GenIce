@@ -1,4 +1,6 @@
 all: test1.done   test2.done   test3.done   test4.done
+# debug in reshape
+all: 5x3R.py lattices/5x3R.py 5x3R.yap.test
 # new hydrogen-ordered family
 all: A.yap.test   B.yap.test  13.yap.test
 all: 3.ar3a.test   0.nx3a.test  5.gro.test   7.mdv.test
@@ -121,3 +123,12 @@ prism7.ringtest: $(FMT)/_ringstat.py
 	$(ANALICE) $< -O O -H H | fgrep -v "Command line:" > $@
 %.nx3a_gro: %.nx3a $(LDR)/nx3a.py
 	$(ANALICE) $< --debug | fgrep -v "Command line:" > $@
+
+# reshape debug
+5x3R.py:
+	$(GENICE) 5 -r 1 1 3 -f reshape[1,0,0,0,1,0,1,0,1] > $@
+lattices/5x3R.py: 5x3R.py
+	-mkdir lattices
+	cp $< lattices
+5x3R.yap: lattices/5x3R.py
+	$(GENICE) 5x3R -f y > $@

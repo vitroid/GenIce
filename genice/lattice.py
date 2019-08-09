@@ -401,15 +401,9 @@ class Lattice():
 
         # ================================================================
         # cell: cell dimension
-        # celltype: symmetry of the cell
         #   see parse_cell for syntax.
         #
-        try:
-            logging.debug(lat.celltype)
-        except AttributeError:
-            lat.celltype = ""
-        self.cell = Cell(lat.cell, lat.celltype)
-        #self.cell = parse_cell(lat.cell, lat.celltype)
+        self.cell = Cell(lat.cell)
 
         # ================================================================
         # coord: "relative" or "absolute"
@@ -705,7 +699,7 @@ class Lattice():
         self.graph = self.prepare_random_graph(self.fixed)
 
         # scale the cell
-        self.repcell = Cell(self.cell)
+        self.repcell = Cell(self.cell.mat)
         self.repcell.scale2(self.rep)
 
         if noise > 0.0:
@@ -1174,7 +1168,7 @@ class Lattice():
         self.graph = self.prepare_random_graph(self.pairs)
 
         # scale the cell
-        self.repcell = Cell(self.cell)
+        self.repcell = Cell(self.cell.mat)
 
         # self.repcell.scale2(self.rep)
         # add small perturbations to the molecular positions.

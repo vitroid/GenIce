@@ -54,13 +54,8 @@ class Cell():
     mat = np.zeros(9).reshape(3, 3)
     inv = None
 
-    def __init__(self, desc=None, celltype=None):
-        if celltype is not None:
-            self.parse(desc, celltype)
-        else:
-            # copy the Cell class
-            self.mat = desc.mat.copy()
-            self.inv = desc.inv.copy()
+    def __init__(self, desc=None):
+        self.parse(desc)
 
     def abs2rel(self, absvecs):
         return np.dot(absvecs, self.inv)
@@ -86,24 +81,10 @@ class Cell():
             self.mat[d, :] = self.mat[d, :] * x[d]
         self.inv = np.linalg.inv(self.mat)
 
-    def parse(self, desc, celltype):
+    def parse(self, mat):
         logger = logging.getLogger()
-        if celltype == "rect":
-            self.mat = cellvectors(*put_in_array(desc))
-        elif celltype == "monoclinic":
-            desc = put_in_array(desc)
-            self.mat = cellvectors(*desc[:3], B=lat.beta)
-        elif celltype == "triclinic":
-            """
-            Put the vectors like following:
-            cell = "ax 0 0 bx by 0 cx cy cz"
-            when you define a unit cell in lattices/
-            """
-            self.mat = np.reshape(put_in_array(desc), (3, 3))
-            # assert cell[0, 1] == 0 and cell[0, 2] == 0 and cell[1, 2] == 0
-        else:
-            logger.info("Assume that the cell vectors are given: {0}".format(celltype))
-            self.mat = desc
+        logger.debug(("MAT:",mat))
+        self.mat = mat
         La = np.linalg.norm(self.mat[0])
         Lb = np.linalg.norm(self.mat[1])
         Lc = np.linalg.norm(self.mat[2])

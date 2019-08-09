@@ -64,7 +64,9 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
 def average(load_iter, span=0):
     logger = getLogger()
     if span < 1:
-        span = 1
+        # pass through.
+        yield from load_iter()
+        return
     ohist = [] # center-of-mass position (relative)
     rot = [] # rotation matrices
     for oatoms, hatoms, cellmat in load_iter():
@@ -90,6 +92,9 @@ def average(load_iter, span=0):
 
         yield oatoms, hatoms, cellmat
 
+
+# def history(load_iter, span=0):
+    
 
 def make_lattice_info(oatoms, hatoms, cellmat):
     logger = getLogger()

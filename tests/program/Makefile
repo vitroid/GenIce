@@ -7,5 +7,5 @@ test_develop:
 
 clean:
 	-rm test* *~ @*
-	-rm -rf sort_tmp
-	-rm *.cif *.test *.gro *.yap *.ar3a *.ringtest *.pov *.nx3a *.ar3a *.ar3r *.nx4a *.xyz *.mdv *.mdva *.py *.scad *.ngph *.rings *.kg *.ringstat *_gro
+	-rm -rf sort_tmp lattices
+	-rm *.cif *.test *.gro *.yap *.ar3a *.ringtest *.pov *.nx3a *.ar3a *.ar3r *.nx4a *.xyz *.mdv *.mdva *.py *.scad *.ngph *.rings *.kg *.ringstat *_gro *.png *.svg
