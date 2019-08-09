@@ -20,7 +20,7 @@ def usage():
 
 
 def argparser(arg):
-    global sides, rows, bondlen, density, cell, celltype, waters, coord
+    global sides, rows, bondlen, density, cell, waters, coord
     a = [int(x) for x in arg.split(",")]
     if len(a)>0:
         sides = a[0]

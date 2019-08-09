@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO,
 name = sys.argv[1]
 module = importlib.import_module(name)
 
-cell = Cell(module.cell, module.celltype)
+cell = Cell(module.cell.mat)
 La = np.linalg.norm(cell.mat[0])
 Lb = np.linalg.norm(cell.mat[1])
 Lc = np.linalg.norm(cell.mat[2])

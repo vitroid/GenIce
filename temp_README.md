@@ -454,12 +454,21 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
   J. Phys. Chem. B 122, 7718–7725 (2018).
   [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
 
-# The algorithm and how to cite it.
+# Algorithm and how to cite it.
 
 The algorithm to make a depolarized hydrogen-disordered ice is explained in our recent paper:
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
 Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://doi.org/10.1002/jcc.25077)
+
+    @article{Matsumoto:2017bk,
+        author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
+        title = {{GenIce: Hydrogen-Disordered Ice Generator}},
+        journal = {Journal of Computational Chemistry},
+		volume = {39},
+		pages = {61-64},
+        year = {2017}
+    }
 
 # How to contribute
 

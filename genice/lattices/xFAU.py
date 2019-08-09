@@ -138,7 +138,7 @@ pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
 
 
 def argparser(arg):
-    global Ncyl, coord, celltype, cell, waters, fixed
+    global Ncyl, coord, cell, waters, fixed
     assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
     Ncyl = int(arg)
     logger.info("Superlattice {0}xFAU".format(Ncyl))

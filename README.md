@@ -242,7 +242,12 @@ Make V-structures (removal of quick librational motion of water) from the given 
     (version 1.0rc5)
     
     positional arguments:
-      File                  Gromacs file.
+      File                  Input file(s). Analice accepts `.gro` (Gromacs),
+                            `.mdv` (mdview), and `.nx3a` (rigid rotors) files as
+                            input file formats by default. File type is estimated
+                            from the suffix. Files of different types cannot be
+                            read at a time. File type can be specified explicitly
+                            with -s option.
     
     optional arguments:
       -h, --help            show this help message and exit
@@ -261,7 +266,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
       --hydrogen HW[12], -H HW[12]
                             Specify atom name (regexp) of hydrogen in input
                             Gromacs file. ("H")
-      --suffix gro, -s gro  Override the file suffix. (None)
+      --suffix gro, -s gro  Specify the file suffix explicitly. ((None)
       --filerange [from:]below[:interval]
                             Specify the number range for the input filename.
                             ("0:1000000")
@@ -277,9 +282,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             as to remove fast librational motions and to make a
                             smooth video. The values 0 and 1 specify no averaging.
 
-
-## Output formats
-They are common for `genice` and `analice`.
+## Output formats (`genice` and `analice`)
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
@@ -319,7 +322,7 @@ Internally, there are seven stages to generate an ice structure.
 
 In the format plugin, you define the hook functions that are invoked after processing each stage. 
 
-## Ice structures
+## Ice structures (`genice` only)
 <!-- references removed. -->
 
 Symbol | Description
@@ -396,7 +399,7 @@ FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 -: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
-## Water models
+## Water models (`genice` and `analice`)
 A water model can be chosen with `--water` option.
 
 symbol   | type
@@ -407,7 +410,7 @@ symbol   | type
 `5site`, `tip5p`  | 5-site TIP5P
 `6site`, `NvdE`   | 6-site NvdE
 
-## Guest molecules
+## Guest molecules (`genice` only)
 
 symbol | type 
 -------|---------
@@ -419,6 +422,17 @@ symbol | type
 
 
 You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
+
+## Input files (`analice` only)
+
+suffix | type
+-------|-------------------
+`gro`  | Gromacs
+`mdv`  | mdview (Angstrom)
+`mdva` | mdview (au)
+`nx3a` | Rigid rotors (with euler angles)
+
+You can prepare your own file loaders.  Create a folder named `loaders` in the current working directory and put the plugins in it. The plugin name is refered as the suffix of the file. (e.g. prepare pdb.py to load a *.pdb file.)
 
 # Extra plugins
 (New in v1.0)
@@ -540,12 +554,21 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
   J. Phys. Chem. B 122, 7718–7725 (2018).
   [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
 
-# The algorithm and how to cite it.
+# Algorithm and how to cite it.
 
 The algorithm to make a depolarized hydrogen-disordered ice is explained in our recent paper:
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
 Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://doi.org/10.1002/jcc.25077)
+
+    @article{Matsumoto:2017bk,
+        author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
+        title = {{GenIce: Hydrogen-Disordered Ice Generator}},
+        journal = {Journal of Computational Chemistry},
+		volume = {39},
+		pages = {61-64},
+        year = {2017}
+    }
 
 # How to contribute
 
