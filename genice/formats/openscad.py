@@ -146,8 +146,8 @@ def hook2(lattice):
     rep = np.array(lattice.rep)
     trimbox    = lattice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
     trimoffset = lattice.cell.mat[0]+lattice.cell.mat[1]+lattice.cell.mat[2]
-    lattice.logger.info(lattice.repcell.mat)
-    lattice.logger.info(lattice.cell.mat)
+    #lattice.logger.info(lattice.repcell.mat)
+    #lattice.logger.info(lattice.cell.mat)
 
     margin = 0.2 # expansion relative to the cell size
     lower = (1.0 - margin) / rep

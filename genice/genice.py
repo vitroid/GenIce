@@ -353,7 +353,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
     return atoms
 
 
-class Lattice():
+class GenIce():
     def __init__(self,
                  lat,
                  density=0,
@@ -608,74 +608,6 @@ class Lattice():
         if 7 in hooks:
             hooks[7](self)
 
-    def analyze_ice(self, water_type, formatter, noise=0.):
-        """
-        Protocol for analice
-        """
-        hooks = formatter.hooks
-        arg   = formatter.arg
-
-        maxstage = max(0, *hooks.keys())
-
-        if 0 in hooks:
-            hooks[0](self, arg)
-        elif arg != "":
-            logger.info("Arguments are given but the module does not accept them.")
-            if "usage" in formatter.__dict__:
-                formatter.usage()
-            else:
-                for line in formatter.__doc__.splitlines():
-                    logger.info("  "+line)
-
-        self.stage1_analice(noise)
-
-        if 1 in hooks:
-            hooks[1](self)
-            if maxstage < 2:
-                return
-
-        if self.rotmatrices is None:
-            res = self.stage2()
-
-        if 2 in hooks:
-            hooks[2](self)
-            if maxstage < 3:
-                return
-
-        if self.rotmatrices is None:
-            self.stage3()
-
-        if 3 in hooks:
-            hooks[3](self)
-            if maxstage < 4:
-                return
-
-        self.stage4_analice()
-
-        if 4 in hooks:
-            hooks[4](self)
-            if maxstage < 5:
-                return
-
-        # molecular orientation should be given in the loader.
-        if self.rotmatrices is None:
-            self.stage5()
-
-        if 5 in hooks:
-            hooks[5](self)
-            if maxstage < 6:
-                return
-
-        self.stage6(water_type)
-
-        if 6 in hooks:
-            hooks[6](self)
-            if maxstage < 7:
-                return
-
-        # self.stage7_analice(guests)
-        if 7 in hooks:
-            hooks[7](self)
 
     def stage1(self,
                noise=0.):
@@ -1148,51 +1080,3 @@ class Lattice():
     def __del__(self):
         self.logger.info("Completed.")
 
-    def stage1_analice(self,
-                       noise=0.):
-        """
-        Do nothing.
-
-        Provided variables:
-        repposition: replicated molecular positions (CoM, relative)
-        repcell:     replicated simulation cell shape matrix
-        """
-
-        self.logger.info("Stage1: (...)")
-        self.reppositions = self.waters
-
-        # This must be done before the replication of the cell.
-        self.logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
-
-        # self.graph = self.prepare_random_graph(self.fixed)
-        self.graph = self.prepare_random_graph(self.pairs)
-
-        # scale the cell
-        self.repcell = Cell(self.cell.mat)
-
-        # self.repcell.scale2(self.rep)
-        # add small perturbations to the molecular positions.
-        if noise > 0.0:
-            self.logger.info("  Add noise: {0}.".format(noise))
-            perturb = np.random.normal(loc=0.0,
-                                       scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
-                                       size=self.reppositions.shape)
-            self.reppositions += self.repcell.abs2rel(perturb)
-
-        self.logger.info("Stage1: end.")
-
-    def stage4_analice(self):
-        """
-        Depolarize.
-
-        Provided variables:
-        spacegraph: depolarized network with node positions.
-        yapresult:  Animation of the depolarization process in YaPlot format.
-        """
-
-        self.logger.info("Stage4: (...)")
-        self.yapresult = ""
-        self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                           coord=self.reppositions,
-                                           ignores=self.graph.ignores)
-        self.logger.info("Stage4: end.")

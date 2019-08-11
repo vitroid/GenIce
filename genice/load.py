@@ -63,12 +63,11 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
 
 def average(load_iter, span=0):
     logger = getLogger()
-    if span < 1:
+    if span <= 1:
         # pass through.
         yield from load_iter()
         return
     ohist = [] # center-of-mass position (relative)
-    rot = [] # rotation matrices
     for oatoms, hatoms, cellmat in load_iter():
 
         # center of mass

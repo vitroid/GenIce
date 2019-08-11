@@ -84,7 +84,7 @@ class Cell():
     def parse(self, mat):
         logger = logging.getLogger()
         logger.debug(("MAT:",mat))
-        self.mat = mat
+        self.mat = mat.copy()
         La = np.linalg.norm(self.mat[0])
         Lb = np.linalg.norm(self.mat[1])
         Lc = np.linalg.norm(self.mat[2])

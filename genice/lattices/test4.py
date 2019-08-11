@@ -34,7 +34,7 @@ cages = """
 
 
 from genice         import FrankKasper
-from genice.lattice import parse_cages
+from genice.genice  import parse_cages
 from genice.cell import cellvectors
 cell = cellvectors(a=12.747893943706936,
                    b=12.747893943706936,

@@ -6,7 +6,7 @@ import sys
 import argparse as ap
 import logging
 from genice.importer import safe_import
-from genice import lattice, __version__, load
+from genice import genice, analice, __version__, load
 import random
 import numpy as np
 
@@ -262,7 +262,7 @@ def main():
         assert lattice_type is not None
 
         # Initialize the Lattice class with arguments which are required for plugins.
-        lat = lattice.Lattice(safe_import("lattice", lattice_type),
+        lat = genice.GenIce(safe_import("lattice", lattice_type),
                               density=density,
                               rep=rep,
                               cations=cations,
@@ -330,7 +330,7 @@ def main():
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-            lat = lattice.Lattice(lattice_info)
+            lat = analice.AnalIce(lattice_info)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,
