@@ -126,9 +126,9 @@ prism7.ringtest: $(FMT)/_ringstat.py
 
 # reshape debug
 5x3R.py:
-	$(GENICE) 5 -r 1 1 3 -f reshape[1,0,0,0,1,0,1,0,1] > $@
+	$(GENICE) 5 -r 1 1 3 -f reshape[1,0,0,0,1,0,1,0,1] | fgrep -v "Command line:" > $@
 lattices/5x3R.py: 5x3R.py
 	-mkdir lattices
 	cp $< lattices
 5x3R.yap: lattices/5x3R.py
-	$(GENICE) 5x3R -f y > $@
+	$(GENICE) 5x3R -f y | fgrep -v "Command line:" > $@

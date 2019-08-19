@@ -1138,13 +1138,11 @@ s 0.4166 0.5311 2.1101 0.4707 0.6069 1.9507
 s 0.3217 0.4721 2.2122 0.1586 0.4250 2.2867 
 #
 #
-#Command line: ../../genice.x 5 -r 1 1 3 -f reshape[1,0,0,0,1,0,1,0,1]
 #Reshaping the unit cell.
 #  i:[1 0 0]
 #  j:[0 1 0]
 #  k:[1 0 1]
 #
-#Command line: ../../genice.x 5x3R -f y
 y 4
 a 1
 
