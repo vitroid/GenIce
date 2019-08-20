@@ -354,6 +354,7 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 
 | pip name | GenIce option | Description | output format | requirements |
 |----------|-------|-------------|---------------|--------------|
+|[`genice-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json | `countrings` |
 |[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
