@@ -7,8 +7,8 @@ Hollins, G. T. Configurational statistics and the dielectric constant of ice. Pr
 
 # A directed cycle is expressed as an array of True and False.
 # For example,
-# --> --> --> : [True, True, False]
-# --> <-- --> : [Frue, False, True]
+# --> --> <-- : [True, True, False]
+# --> <-- --> : [True, False, True]
 #They are isomorphic if they can be identical by rotations and inversions.
 
 # 
