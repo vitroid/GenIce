@@ -96,7 +96,7 @@ class OpenScad():
         return OpenScad(s)
 
     def bond(self, s1,s2,r=1.0):
-        return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(*s1,*s2,r))
+        return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(s1[0],s1[1],s1[2],s2[0],s2[1],s2[2],r))
 
     def sphere(self, r=1):
         return OpenScad("sphere(r={0});\n".format(r))

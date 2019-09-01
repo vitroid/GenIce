@@ -40,7 +40,7 @@ def hook2(lattice):
         pi, pj = lattice.reppositions[i], lattice.reppositions[j]
         d = pj - pi
         d -= np.floor(d+0.5)
-        s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
+        s += yp.Line(np.dot(pi, cellmat), np.dot((pi+d), cellmat))
     for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)

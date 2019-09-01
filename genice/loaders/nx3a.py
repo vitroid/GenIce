@@ -34,10 +34,10 @@ def load_iter(file, **kwargs):
                     # oatoms.append(pos / 10)  # in nm
                     euler = np.array([float(x) for x in cols[3:6]])
                     rotmat = rigid.euler2rotmat(euler)
-                    a = tip4p.sites @ rotmat + pos
+                    a = np.dot(tip4p.sites, rotmat) + pos
                     oatoms.append(a[0])
                     hatoms.append(a[1])
                     hatoms.append(a[2])
-                oatoms = np.array(oatoms) @ celli
-                hatoms = np.array(hatoms) @ celli
+                oatoms = np.dot(np.array(oatoms), celli)
+                hatoms = np.dot(np.array(hatoms), celli)
                 yield oatoms, hatoms, cellmat

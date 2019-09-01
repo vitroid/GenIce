@@ -23,9 +23,9 @@ cell = Cell(module.cell.mat)
 La = np.linalg.norm(cell.mat[0])
 Lb = np.linalg.norm(cell.mat[1])
 Lc = np.linalg.norm(cell.mat[2])
-alpha = acos((cell.mat[1] @ cell.mat[2]) / (Lb * Lc)) * 180 / pi
-beta = acos((cell.mat[2] @ cell.mat[0]) / (Lc * La)) * 180 / pi
-gamma = acos((cell.mat[0] @ cell.mat[1]) / (La * Lb)) * 180 / pi
+alpha = acos(np.dot(cell.mat[1], cell.mat[2]) / (Lb * Lc)) * 180 / pi
+beta = acos(np.dot(cell.mat[2], cell.mat[0]) / (Lc * La)) * 180 / pi
+gamma = acos(np.dot(cell.mat[0], cell.mat[1]) / (La * Lb)) * 180 / pi
 
 s = []
 s.append("a={0}".format(La))

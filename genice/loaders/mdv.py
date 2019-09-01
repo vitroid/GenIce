@@ -46,9 +46,9 @@ def load_iter(file, oname, hname=None):
                     logger.info("Skip {0}".format(atomname))
                     skipped.add(atomname)
         # fractional coordinate
-        oatoms = np.array(oatoms) @ celli
+        oatoms = np.dot(np.array(oatoms), celli)
         if len(hatoms) > 0:
-            hatoms = np.array(hatoms) @ celli
+            hatoms = np.dot(np.array(hatoms), celli)
         else:
             hatoms = None
 

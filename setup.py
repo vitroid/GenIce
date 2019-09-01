@@ -17,7 +17,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'
 long_desc = "".join(open("README.md").readlines())
 
 setup(name='GenIce',
-      python_requires='>=3.5',
+      python_requires='>=3.4',
       version=metadata['version'],
       description='A Swiss army knife to generate hydrogen-disordered ice structures.',
       long_description=long_desc,
@@ -26,7 +26,7 @@ setup(name='GenIce',
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.4",
         ],
       author='Masakazu Matsumoto',
       author_email='vitroid@gmail.com',

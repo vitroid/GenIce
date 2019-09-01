@@ -44,7 +44,7 @@ def hook2(lattice):
     lattice.logger.info("Hook2: Output CoM of water molecules in Yaplot format.")
     # prepare the reverse dict
     waters = defaultdict(dict)
-    pos = lattice.reppositions @ lattice.repcell.mat
+    pos = np.dot(lattice.reppositions, lattice.repcell.mat)
     s = ""
     for p in pos:
         s += yp.Layer(4)

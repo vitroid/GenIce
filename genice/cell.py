@@ -88,9 +88,9 @@ class Cell():
         La = np.linalg.norm(self.mat[0])
         Lb = np.linalg.norm(self.mat[1])
         Lc = np.linalg.norm(self.mat[2])
-        alpha = acos((self.mat[1] @ self.mat[2]) / (Lb * Lc)) * 180 / pi
-        beta = acos((self.mat[2] @ self.mat[0]) / (Lc * La)) * 180 / pi
-        gamma = acos((self.mat[0] @ self.mat[1]) / (La * Lb)) * 180 / pi
+        alpha = acos(np.dot(self.mat[1], self.mat[2]) / (Lb * Lc)) * 180 / pi
+        beta = acos(np.dot(self.mat[2], self.mat[0]) / (Lc * La)) * 180 / pi
+        gamma = acos(np.dot(self.mat[0], self.mat[1]) / (La * Lb)) * 180 / pi
         logging.info("Cell dimension:")
         logging.info("  a = {0}".format(La))
         logging.info("  b = {0}".format(Lb))
