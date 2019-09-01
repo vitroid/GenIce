@@ -190,31 +190,31 @@ class AnalIce(GenIce):
         self.stage1(noise)
 
         if 1 in hooks:
-            hooks[1](self)
-            if maxstage < 2:
+            abort = hooks[1](self)
+            if maxstage < 2 or abort:
                 return
 
         if self.rotmatrices is None:
             res = self.stage2()
 
         if 2 in hooks:
-            hooks[2](self)
-            if maxstage < 3:
+            abort = hooks[2](self)
+            if maxstage < 3 or abort:
                 return
 
         if self.rotmatrices is None:
             self.stage3()
 
         if 3 in hooks:
-            hooks[3](self)
-            if maxstage < 4:
+            abort = hooks[3](self)
+            if maxstage < 4 or abort:
                 return
 
         self.stage4()
 
         if 4 in hooks:
-            hooks[4](self)
-            if maxstage < 5:
+            abort = hooks[4](self)
+            if maxstage < 5 or abort:
                 return
 
         # molecular orientation should be given in the loader.
@@ -222,15 +222,15 @@ class AnalIce(GenIce):
             self.stage5()
 
         if 5 in hooks:
-            hooks[5](self)
-            if maxstage < 6:
+            abort = hooks[5](self)
+            if maxstage < 6 or abort:
                 return
 
         self.stage6(water_type)
 
         if 6 in hooks:
-            hooks[6](self)
-            if maxstage < 7:
+            abort = hooks[6](self)
+            if maxstage < 7 or abort:
                 return
 
         # self.stage7_analice(guests)
