@@ -1,6 +1,6 @@
 all: README.md
 	echo Hello.
-%: temp_% Utilities/replacer.py genice/__main__.py
+%: temp_% Utilities/replacer.py genice/__init__.py
 	python Utilities/replacer.py < $< > $@
 	-fgrep '%%' $@
 

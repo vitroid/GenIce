@@ -1,0 +1,5 @@
+---
+title: manual
+---
+
+Hi there!
