@@ -7,6 +7,15 @@ Usage:
     genice III -f rings[5] > output.yap    # up to 5-membered rings.
 """
 
+desc = { "ref": { "MBO2007": "Matsumoto, M., Baba, A. & Ohmine, I. Topological building blocks of hydrogen bond network in water. J. Chem. Phys. 127, 134504 (2007).",
+                  "CountRings": "https://github.com/vitroid/CountRings",
+                  "Yaplot":     "https://github.com/vitroid/Yaplot" },
+         "brief": "Show rings in Yaplot.",
+         "usage": __doc__
+         }
+         
+
+
 import sys
 from collections import defaultdict
 import numpy as np

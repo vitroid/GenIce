@@ -1,7 +1,14 @@
 # coding: utf-8
-"""
-Povray format.
-"""
+
+desc={"ref": {},
+      "brief": "Povray.",
+      "usage": """
+Usage: genice icename -f povray
+
+options:
+    No options available.
+"""}
+
 
 from collections import defaultdict
 import numpy as np

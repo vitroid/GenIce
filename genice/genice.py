@@ -68,15 +68,12 @@ def descriptions(category):
         table = [fill(line, width=55, drop_whitespace=False, expand_tabs=True, tabsize=16, subsequent_indent=" "*16) for line in table.splitlines()]
         table = "\n".join(table)+"\n"
         undesc = " ".join(undesc)
+        if undesc != "":
+            undesc = "(Undocumented) " + undesc
         catalog += table + "----\n" + undesc + "\n \n \n"
     return catalog
 
 
-# it is a kind of hacking.
-# I want the help string to be evaluated only when needed.
-class MyParser(ap.ArgumentParser):
-    def __init__(self, **kwarg):
-        super(MyParser, self).__init__(**kwarg)
         
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
@@ -87,8 +84,7 @@ def help_format():
     return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format")
 
 def getoptions():
-    
-    parser = MyParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',

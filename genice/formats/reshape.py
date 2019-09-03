@@ -1,7 +1,24 @@
 # coding: utf-8
-"""
-re-make python module for GenIce
-"""
+
+desc = { "ref": {},
+         "brief": "Cell-reshaper.",
+         "usage": """
+A formatter plugin for GenIce to produce a python lattice plugin.
+
+Usage:
+    genice ice5 -f reshape[1,0,0,1,1,0,0,0,1] > reshaped_ice5.py
+
+Options:
+    i,j,k,l,m,n,o,p,q  Nine integers separated by commas.
+
+    Cell vectors of the reshaped cell, a', b' and c' is calculated by linear combinations of the original cell vectors, a, b, and c, as
+
+        a' = i a + j b + k c
+        b' = l a + m b + n c
+        c' = o a + p b + q c
+
+    Water molecules are relocated appropriately.
+""" }
 
 import numpy as np
 import itertools as it

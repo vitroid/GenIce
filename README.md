@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.1
+version 1.0.2
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.1)
+    (version 1.0.2)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -73,32 +73,32 @@ Install with pip3.
                             A15, Struct33   Cubic Structure I of clathrate hydrate.
                             B, iceB         Hypothetical ice B.
                             ----
-                            1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 CS4 DOH EMT FAU 
-                            FK6layers FK9layers HS1 HS2 HS3 Hcomp Kcomp LTA MEP RHO
-                             SOD Struct01 Struct02 Struct03 Struct04 Struct05 
-                            Struct06 Struct07 Struct08 Struct09 Struct10 Struct11 
-                            Struct12 Struct13 Struct14 Struct15 Struct16 Struct17 
-                            Struct18 Struct19 Struct20 Struct21 Struct22 Struct23 
-                            Struct24 Struct25 Struct26 Struct27 Struct28 Struct29 
-                            Struct30 Struct31 Struct32 Struct34 Struct35 Struct36 
-                            Struct37 Struct38 Struct39 Struct40 Struct41 Struct42 
-                            Struct43 Struct44 Struct45 Struct46 Struct47 Struct48 
-                            Struct49 Struct50 Struct51 Struct52 Struct53 Struct54 
-                            Struct55 Struct56 Struct57 Struct58 Struct59 Struct60 
-                            Struct61 Struct62 Struct63 Struct64 Struct65 Struct66 
-                            Struct67 Struct68 Struct69 Struct70 Struct71 Struct72 
-                            Struct73 Struct74 Struct75 Struct76 Struct77 Struct78 
-                            Struct79 Struct80 Struct81 Struct82 Struct83 Struct84 T
-                             TS1 Z delta dtc i ice1h_unit iceR iceT iceT2 mu prism 
-                            psigma sH sI sIII sIV sTprime sV sVII sigma xFAU xFAU2 
-                            zra-d
+                            (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
+                            CS4 DOH EMT FAU FK6layers FK9layers HS1 HS2 HS3 Hcomp 
+                            Kcomp LTA MEP RHO SOD Struct01 Struct02 Struct03 
+                            Struct04 Struct05 Struct06 Struct07 Struct08 Struct09 
+                            Struct10 Struct11 Struct12 Struct13 Struct14 Struct15 
+                            Struct16 Struct17 Struct18 Struct19 Struct20 Struct21 
+                            Struct22 Struct23 Struct24 Struct25 Struct26 Struct27 
+                            Struct28 Struct29 Struct30 Struct31 Struct32 Struct34 
+                            Struct35 Struct36 Struct37 Struct38 Struct39 Struct40 
+                            Struct41 Struct42 Struct43 Struct44 Struct45 Struct46 
+                            Struct47 Struct48 Struct49 Struct50 Struct51 Struct52 
+                            Struct53 Struct54 Struct55 Struct56 Struct57 Struct58 
+                            Struct59 Struct60 Struct61 Struct62 Struct63 Struct64 
+                            Struct65 Struct66 Struct67 Struct68 Struct69 Struct70 
+                            Struct71 Struct72 Struct73 Struct74 Struct75 Struct76 
+                            Struct77 Struct78 Struct79 Struct80 Struct81 Struct82 
+                            Struct83 Struct84 T TS1 Z delta dtc i ice1h_unit iceR 
+                            iceT iceT2 mu prism psigma sH sI sIII sIV sTprime sV 
+                            sVII sigma xFAU xFAU2 zra-d
                              
                              
                             2. Lattice structures served by plugins
                              
-                            (None)
+                            cif             Read a CIF file.
+                            zeolite         Obtain from IZA Zeolite DB.
                             ----
-                            cif  zeolite 
                              
                              
                             3. Lattice structures served locally
@@ -128,17 +128,20 @@ Install with pip3.
                             1. Formatters served with GenIce
                              
                             _KG             Kirkworrd G factor.
+                            _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
                             o, openscad     OpenSCAD.
+                            p, python, reshape              Cell-reshaper.
+                            povray          Povray.
+                            rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            _ringstat bdl c cif cif2 com e euler exyz exyz2 p 
-                            povray python q quaternion r rcom reshape rings towhee 
-                            xyz
+                            (Undocumented) bdl c cif cif2 com e euler exyz exyz2 q 
+                            quaternion r rcom towhee xyz
                              
                              
                             2. Formatters served by plugins
@@ -342,7 +345,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.1)
+    (version 1.0.2)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -358,7 +361,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             mdv             MDView file (in Angdtrom).
                             mdva            MDView file (in au).
                             ----
-                            ar3r nx3a
+                            (Undocumented) ar3r nx3a
                              
                              
                             2. File types served by plugins
@@ -386,17 +389,20 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             1. Formatters served with GenIce
                              
                             _KG             Kirkworrd G factor.
+                            _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
                             o, openscad     OpenSCAD.
+                            p, python, reshape              Cell-reshaper.
+                            povray          Povray.
+                            rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            _ringstat bdl c cif cif2 com e euler exyz exyz2 p 
-                            povray python q quaternion r rcom reshape rings towhee 
-                            xyz
+                            (Undocumented) bdl c cif cif2 com e euler exyz exyz2 q 
+                            quaternion r rcom towhee xyz
                              
                              
                             2. Formatters served by plugins

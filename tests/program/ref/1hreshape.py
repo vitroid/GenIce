@@ -1,7 +1,5 @@
 """
 
-Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
-
 Reshaping the unit cell.
   i:[ 1  1 -2]
   j:[ 1 -1  0]

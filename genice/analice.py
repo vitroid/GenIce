@@ -6,17 +6,17 @@ import numpy as np
 import pairlist as pl
 
 from genice.cell   import Cell
-from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, descriptions
+from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, descriptions, help_format
 from genice.valueparsers import parse_pairs
 from genice import digraph as dg
 from genice import __version__
 import genice.plugins
 
+def help_file():
+    return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
+
 
 def getoptions():
-    lcatalog = descriptions("loader")
-    fcatalog = descriptions("format")
-
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
@@ -27,7 +27,7 @@ def getoptions():
                         dest='format',
                         default="gromacs",
                         metavar="name",
-                        help='R|Specify the output file format. [gromacs]\n\n'+fcatalog)
+                        help=help_format)
     parser.add_argument('--output',
                         '-o',
                         dest='output',
@@ -90,7 +90,7 @@ def getoptions():
                         metavar='1',
                         help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
     parser.add_argument('File',
-                        help='R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n'+lcatalog)
+                        help=help_file)
     return parser.parse_args()
 
 

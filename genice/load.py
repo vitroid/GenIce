@@ -1,5 +1,6 @@
 from logging import getLogger
 import re
+import os
 from pathlib import Path
 from genice.importer import safe_import
 from genice.cell import rel_wrap

@@ -1,9 +1,53 @@
 # coding: utf-8
 """
-Test suite: ring direction statistics
+A formatter plugin to show the bond orientation statistics along the rings in an ice strucure.
 
-Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964).
+Usage:
+    genice 5 -f _ringstat
+
+_ringstat plugin makes the statistics of bond orientations along each
+HB ring and compare the distribution with that of an ideal (isolated
+random) ring. The difference in the distribution is evaluated by
+Kullback-Leibler divergence, d_{KL}.
+
+A typical dKL is zero for hydrogen-disordered ices, while it is
+larger than 1 for hydrogen-ordered ones like ices 2 and 9.
+
+Ringstat analysis validates the ring-scale randomness. GenIce tool
+also certifies the zero net dipole moment and Bernal-Fowler-Pauling
+ice rule in terms of the validity in global and local structures.
+
+Columns in the output:
+  ring size
+  code (decimal) indicating the orientations of the bonds along a cycle.
+  code (binary)
+  expectation (fractional) for an isolated random ring
+  expectation (numerical)
+  observation (fractional) in the given structure
+  observation (numerical)
+
+Finally, dKL between expectiations and observations is also shown.
+    
+% genice 1h -r 2 2 3 -f _ringstat
+
+6 0 000000 64/365 0.17534 66/384 0.17188 
+6 1 000001 96/365 0.26301 92/384 0.23958 
+6 3 000011 96/365 0.26301 105/384 0.27344 
+6 5 000101 24/365 0.06575 21/384 0.05469 
+6 7 000111 48/365 0.13151 59/384 0.15365 
+6 9 001001 12/365 0.03288 14/384 0.03646 
+6 11 001011 24/365 0.06575 23/384 0.05990 
+6 21 010101 1/365 0.00274 4/384 0.01042 
+0.015526521932221845 6 dKL[6-ring]
+
+
 """
+
+desc = { "ref": { "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)." },
+         "brief": "Bond direction statistics.",
+         "usage": __doc__ }
+                  
+
 
 # A directed cycle is expressed as an array of True and False.
 # For example,
