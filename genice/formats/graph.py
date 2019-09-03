@@ -1,7 +1,10 @@
 # coding: utf-8
-"""
-Hydrogen bond network in @NGPH format.
-"""
+desc={"ref": {"NGPH": "https://vitroid.github.io/@NGPH"},
+      "brief": "Undirected graph of HBs.",
+      "usage": "No options available."
+      }
+
+
 
 import numpy as np
 

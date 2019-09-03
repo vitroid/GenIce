@@ -1,9 +1,10 @@
 # coding: utf-8
-"""
-Metastable ice "0".
 
-Data source: Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733-739 (2014).
-"""
+desc={"ref": {"0": "Russo, J., Romano, F. & Tanaka, H. New metastable form of ice and its role in the homogeneous crystallization of water. Nat Mater 13, 733-739 (2014).",
+              },
+      "usage": "No options available.",
+      "brief": 'Metastable ice "0".'
+      }
 
 # Keep this file as simple as possible for compatibility
 density = 0.92     #default density

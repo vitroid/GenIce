@@ -1,9 +1,10 @@
 # coding: utf-8
-"""
-Data sources
-[12] C. Lobban, J. L. Finney, W. F. Kuhs, Nature, 1998, DOI:10.1038/34622.
-[12] Koza, M M et al. "Ice XII in Its Second Regime of Metastability." Physical Review Letters 84.18 (2000): 4112-4115.
-"""
+
+desc={"ref": {"12(1)": "C. Lobban, J. L. Finney, W. F. Kuhs, Nature, 1998, DOI:10.1038/34622.",
+              "12(2)": 'Koza, M M et al. "Ice XII in Its Second Regime of Metastability." Physical Review Letters 84.18 (2000): 4112-4115.'},
+      "usage": "No options available.",
+      "brief": "Ice XII."
+      }
 
 bondlen = 3      #bond threshold	 
 

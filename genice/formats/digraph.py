@@ -1,9 +1,9 @@
 # coding: utf-8
-"""
-Hydrogen bond network in @NGPH format.
-"""
 
-import numpy as np
+desc={"ref": {"NGPH": "https://vitroid.github.io/@NGPH"},
+      "brief": "Directed graph of HBs.",
+      "usage": "No options available."
+      }
 
 
 def hook4(lattice):

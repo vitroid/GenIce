@@ -1,3 +1,9 @@
+desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
+      "brief": "Gromacs .gro file.",
+      "usage": "No options available."
+      }
+
+
 import logging
 import re
 

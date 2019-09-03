@@ -1,8 +1,9 @@
 # coding: utf-8
-"""
-Gro file format
-defined in http://manual.gromacs.org/current/online/gro.html
-"""
+
+desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
+      "brief": "Gromacs .gro file.",
+      "usage": "No options available."
+      }
 
 
 def hook7(lattice):

@@ -1,9 +1,10 @@
 #!/usr/bin/python
-"""
-Crystallographic data of ice VIII
+# coding: utf-8
 
-Kuhs, W. F., Finney, J. L., Vettier, C. & Bliss, D. V. Structure and hydrogen ordering in ices VI, VII, and VIII by neutron powder diffraction. J. Chem. Phys. 81, 3612–3623 (1998).
-"""
+desc={"ref": {"VIII": 'Kuhs, W. F., Finney, J. L., Vettier, C. & Bliss, D. V. Structure and hydrogen ordering in ices VI, VII, and VIII by neutron powder diffraction. J. Chem. Phys. 81, 3612–3623 (1998).'},
+      "usage": "No options available.",
+      "brief": "Ice VIII."
+      }
 
 atoms="""
 O 0   0.25       0.1071(12)

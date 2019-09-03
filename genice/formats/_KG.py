@@ -1,7 +1,9 @@
 # coding: utf-8
-"""
-Test suite: Kirkwood G factor
-"""
+
+desc = { "ref": { "K1939": 'J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939).'},
+         "brief": "Kirkworrd G factor.",
+         "usage": "Kirkwood G is a convenient index for testing the long-range order.",
+         }
 
 import numpy as np
 

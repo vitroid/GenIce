@@ -1,9 +1,11 @@
 # coding: utf-8
-"""
-Data source:
 
-Petrenko and Whitworth, Physics of Ice, Table 11.2
-"""
+desc={"ref": {"VI": 'Petrenko and Whitworth, Physics of Ice, Table 11.2'},
+      "usage": "No options available.",
+      "brief": "Ice VI."
+      }
+
+
 density = 1.373     #default density
 
 

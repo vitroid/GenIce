@@ -1,8 +1,15 @@
 # coding: utf-8
-"""
-Yaplot format.
-defined in https://github.com/vitroid/Yaplot
-"""
+
+desc={"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
+      "brief": "Yaplot.",
+      "usage": """
+Usage: genice icename -f yaplot[options]
+
+options:
+    H=x   Set the radius of H to be x.
+"""}
+
+
 
 from collections import defaultdict
 import numpy as np

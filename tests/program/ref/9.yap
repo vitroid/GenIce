@@ -171,10 +171,6 @@ s 0.0852 0.5384 0.2434 0.1310 0.4094 0.3801
 s 0.2251 0.4123 0.3735 0.3989 0.3989 0.3485 
 s 0.1046 0.3378 0.3202 0.0759 0.2025 0.2058 
 #
-#Data Source
-#
-#[9] Londono, D., Kuhs, W. F. & Finney, J. L. Neutron diffraction studies of ices III and IX on under-pressure and recovered samples. J. Chem. Phys. 98, 4878–4888 (1993).
-#
 y 4
 a 1
 

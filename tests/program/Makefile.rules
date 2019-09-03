@@ -37,16 +37,16 @@ all: 12.scad.test HS3.rings.yap.test
 %.yap: $(FMT)/yaplot.py
 	$(GENICE) $* -f yaplot | fgrep -v "Command line:" > $@
 test1.done: $(FMT)/gromacs.py
-	$(GENICE) test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	$(GENICE) __test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test1.done
 test2.done: $(FMT)/gromacs.py
-	$(GENICE) test2 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	$(GENICE) __test2 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test2.done
 test3.done: $(FMT)/gromacs.py
-	$(GENICE) test3 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	$(GENICE) __test3 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test3.done
 test4.done: $(FMT)/gromacs.py
-	$(GENICE) test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
+	$(GENICE) __test4 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test4.done
 2d.gro: $(FMT)/gromacs.py
 	$(GENICE) 2d --rep 2 2 3 | fgrep -v "Command line:" > $@                                   

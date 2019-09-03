@@ -173,10 +173,6 @@ s 0.6163 0.4501 0.5506 0.6358 0.2733 0.5382
 s 0.6022 0.2008 0.4852 0.5452 0.0667 0.3815 
 s 0.4425 0.3060 0.0673 0.4426 0.4399 0.1870 
 #
-#Data source
-#
-#BÁEZ, L. A. & CLANCY, P. Phase equilibria in extended simple point charge ice‐water systems. J. Chem. Phys. 103, 9744–9755 (1998).
-#
 y 4
 a 1
 

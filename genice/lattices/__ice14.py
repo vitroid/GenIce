@@ -1,9 +1,9 @@
 #!/usr/bin/python
-"""
-Crystallographic data of ice XIII
-Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).
 
-"""
+desc={"ref": {"14": 'Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).'},
+      "usage": "No options available.",
+      "brief": "Ice XIV. (EXPERIMENTAL)"
+      }
 
 assert False, "IT DOES NOT WORK."
 

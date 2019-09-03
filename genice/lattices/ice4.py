@@ -1,8 +1,11 @@
-"""
-Data source:
 
-Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif
-"""
+desc={"ref": {"IV": 'Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif'},
+      "usage": "No options available.",
+      "brief": "Ice IV."
+      }
+
+
+
 cell = """
 15.070097094562836 0 0
 5.129552870714296 14.170233370911644 0

@@ -1,6 +1,7 @@
-"""
-For TSL
-"""
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Trilayer honeycomb ice."
+      }
 
 import numpy as np
 

@@ -31,6 +31,12 @@ def import_extra(category, name):
 def safe_import(category, name):
     logger = logging.getLogger()
     assert category in ("lattice", "format", "molecule", "loader")
+
+    usage = False
+    if name[-1:] == "?":
+        usage = True
+        name = name[:-1]
+
     # name may contain arguments
     left = name.find("[")
     right = name.rfind("]")
@@ -62,6 +68,11 @@ def safe_import(category, name):
     logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     module.logger = logger
     module.arg    = arg
+    if usage:
+        if "desc" in module.__dict__:
+            logger.info("Usage for '{0}' plugin".format(name))
+            print(module.desc["usage"])
+            sys.exit(0)
 
     if category == "format":
         return module

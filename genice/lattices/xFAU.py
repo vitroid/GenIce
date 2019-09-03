@@ -19,12 +19,12 @@ def tune_angles(sixvecs, pivot):
     sixangles = []
     for i in range(len(sixvecs)):
         vec = sixvecs[i]
-        cosine = np.dot(sixvecs[0],vec)
+        cosine = sixvecs[0] @ vec
         if cosine > 1.0:
             cosine = 1.0
         angle = acos(cosine)
         sine   = np.cross(sixvecs[0], vec)
-        if np.dot(sine, pivot) < 0:
+        if sine @ pivot < 0:
             angle = -angle
         sixangles.append(angle)
     offset = 0
@@ -64,7 +64,7 @@ class decorate():
         i,j = pair
         dij = self.atoms[j] - self.atoms[i]
         dij -= np.floor(dij + 0.5)
-        dij = np.dot(dij, self.cell)
+        dij = dij @ self.cell
         scale = np.linalg.norm(dij) 
         dij /= scale
         sixpairs = []
@@ -81,9 +81,9 @@ class decorate():
         for j,k in sixpairs:
             vec = self.atoms[j] - self.atoms[k]
             vec -= np.floor(vec + 0.5)
-            vec = np.dot(vec, self.cell)
+            vec = vec @ self.cell
             #orthogonalize
-            shadow = np.dot(dij, vec)
+            shadow = dij @ vec
             vec -= shadow*dij
             vec /= np.linalg.norm(vec)
             #print(np.dot(vec,dij))
@@ -103,13 +103,14 @@ class decorate():
         r = 1/L     #edge len = radius of cyl
         rp = (3/2)**0.5 / L  # = radius of polyhed
         #
-        a = np.dot(self.atoms[i],self.cell)
+        icell = np.linalg.inv(self.cell)
+        a = self.atoms[i] @ self.cell
         s = ""
         for j in range(0, self.Ncyl+1):
             vec0 = dij*(rp + j*r)*scale + a
             for vec in sixvecs:
                 rpos = vec0 + vec*r*scale
-                pos = np.dot(rpos, np.linalg.inv(self.cell))
+                pos = rpos @ icell
                 self.vertices.append(pos)
             first = len(self.vertices)-6
             if j % 2 == 0:

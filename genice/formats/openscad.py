@@ -1,11 +1,19 @@
 # coding: utf-8
-#Minimal implementation for genice.
-#openjscad-like postmodifier style
-"""
-cell is in nm
 
-openscad2 comes up with OO style
+desc={"ref": {},
+      "brief": "OpenSCAD.",
+      "usage": """
+Usage: genice icename -f openscad[options]
+
+Options:
+    scale=50
+    rnode=0.07
+    rbond=0.06
+    fn=20
 """
+      }
+
+
 
 import numpy as np
 

@@ -1,13 +1,11 @@
-"""
-Data Source
+# coding: utf-8
 
-[9] Londono, D., Kuhs, W. F. & Finney, J. L. Neutron diffraction studies of ices III and IX on under-pressure and recovered samples. J. Chem. Phys. 98, 4878–4888 (1993).
-"""
+desc={"ref": {"[9]":'Londono, D., Kuhs, W. F. & Finney, J. L. Neutron diffraction studies of ices III and IX on under-pressure and recovered samples. J. Chem. Phys. 98, 4878–4888 (1993).'},
+      "usage": "No options available.",
+      "brief": "Ice IX."
+      }
 
 
-cell = """
-6.67 6.67 6.97
-"""
 waters = """
 0.895 0.105 0.750
 0.105 0.895 0.250

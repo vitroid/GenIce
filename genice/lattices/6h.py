@@ -1,9 +1,12 @@
-"""
-Modified from ice6.py
-"""
+
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Half lattice of ice VI."
+      }
+
+
 bondlen=2.3681227356441177
 coord='relative'
-cell='4.87672629 4.87385128 4.49131038'
 density=1.373/2
 waters="""
     0.2200    0.5000    0.3800

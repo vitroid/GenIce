@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.0
+version 1.0.1
 
 ## Requirements
 
@@ -26,35 +26,138 @@ Install with pip3.
 ## Usage
 
     usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
-                  [--add_noise percent] [--seed SEED] [--format gmeqdypoc]
+                  [--add_noise percent] [--seed SEED] [--format name]
                   [--water model] [--guest D=empty] [--Guest 13=me]
                   [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na]
                   [--visual visual] [--nodep] [--asis] [--debug] [--quiet]
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.0)
+    (version 1.0.1)
     
     positional arguments:
-      Type                  Crystal type (1c,1h,etc. See
-                            https://github.com/vitroid/GenIce for available ice
+      Type                  Crystal type (1c, 1h, etc. See 
+                            https://github.com/vitroid/GenIce for available ice 
                             structures.)
+                            If you want to analyze your own structures, please try 
+                            analice tool.
+                             
+                             
+                            [Available lattice structures]
+                             
+                            1. Lattice structures served with GenIce
+                             
+                            0, ice0         Metastable ice "0".
+                            11              Ice XI.
+                            12, XII, ice12  Ice XII.
+                            13, XIII, ice13 Ice XIII.
+                            16, CS2, MTN, XVI, ice16, sII   Ice XVI.
+                            17, C0-II, C0, XVII, ice17      Ice XVII.
+                            1c, C2, Ic, ice1c               Ice Ic.
+                            1h, Ih, ice1h   Ice Ih.
+                            2, C1, II, ice2 Ice II.
+                            2D3             Trilayer honeycomb ice.
+                            2d, ice2d       A hydrogen-disordered counterpart of 
+                                            ice II.
+                            3, III, ice3    Ice III.
+                            4, IV, ice4     Ice IV.
+                            4R              Rectified ice IV.
+                            5, V, ice5      Ice V.
+                            5R              Rectified ice V.
+                            6, VI, ice6     Ice VI.
+                            6h              Half lattice of ice VI.
+                            7, VII, ice7    Ice VII.
+                            8, VIII, ice8   Ice VIII.
+                            9, IX, ice9     Ice IX.
+                            A, iceA         Hypothetical ice A.
+                            A15, Struct33   Cubic Structure I of clathrate hydrate.
+                            B, iceB         Hypothetical ice B.
+                            ----
+                            1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 CS4 DOH EMT FAU 
+                            FK6layers FK9layers HS1 HS2 HS3 Hcomp Kcomp LTA MEP RHO
+                             SOD Struct01 Struct02 Struct03 Struct04 Struct05 
+                            Struct06 Struct07 Struct08 Struct09 Struct10 Struct11 
+                            Struct12 Struct13 Struct14 Struct15 Struct16 Struct17 
+                            Struct18 Struct19 Struct20 Struct21 Struct22 Struct23 
+                            Struct24 Struct25 Struct26 Struct27 Struct28 Struct29 
+                            Struct30 Struct31 Struct32 Struct34 Struct35 Struct36 
+                            Struct37 Struct38 Struct39 Struct40 Struct41 Struct42 
+                            Struct43 Struct44 Struct45 Struct46 Struct47 Struct48 
+                            Struct49 Struct50 Struct51 Struct52 Struct53 Struct54 
+                            Struct55 Struct56 Struct57 Struct58 Struct59 Struct60 
+                            Struct61 Struct62 Struct63 Struct64 Struct65 Struct66 
+                            Struct67 Struct68 Struct69 Struct70 Struct71 Struct72 
+                            Struct73 Struct74 Struct75 Struct76 Struct77 Struct78 
+                            Struct79 Struct80 Struct81 Struct82 Struct83 Struct84 T
+                             TS1 Z delta dtc i ice1h_unit iceR iceT iceT2 mu prism 
+                            psigma sH sI sIII sIV sTprime sV sVII sigma xFAU xFAU2 
+                            zra-d
+                             
+                             
+                            2. Lattice structures served by plugins
+                             
+                            (None)
+                            ----
+                            cif  zeolite 
+                             
+                             
+                            3. Lattice structures served locally
+                             
+                            (None)
+                            ----
+                             
+                             
     
     optional arguments:
       -h, --help            show this help message and exit
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
-                            Repeat the unit cell in x,y, and z directions. [1,1,1]
-      --dens DENS, -d DENS  Specify the ice density in g/cm3
+                            Repeat the unit cell along a, b, and c axes. [1,1,1]
+      --dens DENS, -d DENS  Specify the ice density in g/cm3 (Guests are not
+                            included.)
       --add_noise percent   Add a Gauss noise with given width (SD) to the
                             molecular positions of water. The value 1 corresponds
                             to 1 percent of the molecular diameter of water.
       --seed SEED, -s SEED  Random seed [1000]
-      --format gmeqdypoc, -f gmeqdypoc
-                            Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
-                            rnion)|d(igraph)|y(aplot)|p(ython
-                            module)|o(penScad)|c(entersofmass)|r(elative com)]
-                            [gromacs]
+      --format name, -f name
+                            Specify the output file format. [gromacs]
+                             
+                             
+                            [Available formatters]
+                             
+                            1. Formatters served with GenIce
+                             
+                            _KG             Kirkworrd G factor.
+                            d, digraph      Directed graph of HBs.
+                            g, gromacs      Gromacs .gro file.
+                            graph           Undirected graph of HBs.
+                            m, mdview       MDView file (in Angdtrom).
+                            mdv_au          MDView file (in au).
+                            o, openscad     OpenSCAD.
+                            y, yaplot       Yaplot.
+                            ----
+                            _ringstat bdl c cif cif2 com e euler exyz exyz2 p 
+                            povray python q quaternion r rcom reshape rings towhee 
+                            xyz
+                             
+                             
+                            2. Formatters served by plugins
+                             
+                            _RDF            Radial Distribution Functions.
+                            cage            Cage analysis.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
+                            twist           Twist order parameter.
+                            vpython         Visualize in the browser.
+                            ----
+                             
+                             
+                            3. Formatters served locally
+                             
+                            (None)
+                            ----
+                             
+                             
       --water model, -w model
                             Specify water model. (tip3p, tip4p, etc.) [tip3p]
       --guest D=empty, -g D=empty
@@ -239,24 +342,80 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.0)
+    (version 1.0.1)
     
     positional arguments:
-      File                  Input file(s). Analice accepts `.gro` (Gromacs),
-                            `.mdv` (mdview), and `.nx3a` (rigid rotors) files as
-                            input file formats by default. File type is estimated
-                            from the suffix. Files of different types cannot be
-                            read at a time. File type can be specified explicitly
-                            with -s option.
+      File                  Input file(s). File type is estimated from the suffix. 
+                            Files of different types cannot be read at a time. File
+                             type can be specified explicitly with -s option.
+                             
+                             
+                            [Available input file types]
+                             
+                            1. File types served with GenIce
+                             
+                            gro             Gromacs .gro file.
+                            mdv             MDView file (in Angdtrom).
+                            mdva            MDView file (in au).
+                            ----
+                            ar3r nx3a
+                             
+                             
+                            2. File types served by plugins
+                             
+                            (None)
+                            ----
+                             
+                             
+                            3. File types served locally
+                             
+                            (None)
+                            ----
+                             
+                             
     
     optional arguments:
       -h, --help            show this help message and exit
       --version, -V         show program's version number and exit
-      --format gmeqdypoc, -f gmeqdypoc
-                            Specify file format [g(romacs)|m(dview)|e(uler)|q(uate
-                            rnion)|d(igraph)|y(aplot)|p(ython
-                            module)|o(penScad)|c(entersofmass)|r(elative com)]
-                            [gromacs]
+      --format name, -f name
+                            Specify the output file format. [gromacs]
+                             
+                             
+                            [Available formatters]
+                             
+                            1. Formatters served with GenIce
+                             
+                            _KG             Kirkworrd G factor.
+                            d, digraph      Directed graph of HBs.
+                            g, gromacs      Gromacs .gro file.
+                            graph           Undirected graph of HBs.
+                            m, mdview       MDView file (in Angdtrom).
+                            mdv_au          MDView file (in au).
+                            o, openscad     OpenSCAD.
+                            y, yaplot       Yaplot.
+                            ----
+                            _ringstat bdl c cif cif2 com e euler exyz exyz2 p 
+                            povray python q quaternion r rcom reshape rings towhee 
+                            xyz
+                             
+                             
+                            2. Formatters served by plugins
+                             
+                            _RDF            Radial Distribution Functions.
+                            cage            Cage analysis.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
+                            twist           Twist order parameter.
+                            vpython         Visualize in the browser.
+                            ----
+                             
+                             
+                            3. Formatters served locally
+                             
+                            (None)
+                            ----
+                             
+                             
       --output %04d.gro, -o %04d.gro
                             Output in separate files.
       --water model, -w model

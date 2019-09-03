@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- python -*-
 
-import os
 import sys
-import argparse as ap
 import logging
 from genice.importer import safe_import
 from genice import genice, analice, __version__, load
@@ -11,190 +9,8 @@ import random
 import numpy as np
 
 
-def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice')
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--rep',
-                        '-r',
-                        nargs=3,
-                        type=int,
-                        dest='rep',
-                        default=[1, 1, 1],
-                        help='Repeat the unit cell in x,y, and z directions. [1,1,1]')
-    parser.add_argument('--dens',
-                        '-d',
-                        type=float,
-                        dest='dens',
-                        default=-1,
-                        help='Specify the ice density in g/cm3')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--seed',
-                        '-s',
-                        type=int,
-                        dest='seed',
-                        default=1000,
-                        help='Random seed [1000]')
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="gmeqdypoc",
-                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--guest',
-                        '-g',
-                        nargs=1,
-                        dest='guests',
-                        metavar="D=empty",
-                        action="append",
-                        help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
-    parser.add_argument('--Guest',
-                        '-G',
-                        nargs=1,
-                        dest='spot_guests',
-                        metavar="13=me",
-                        action="append",
-                        help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
-    parser.add_argument('--Group',
-                        '-H',
-                        nargs=1,
-                        dest='groups',
-                        metavar="13=bu-:0",
-                        action="append",
-                        help='Specify the group. (-H 13=bu-:0, etc.)')
-    parser.add_argument('--anion',
-                        '-a',
-                        nargs=1,
-                        dest='anions',
-                        metavar="3=Cl",
-                        action="append",
-                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
-    parser.add_argument('--cation',
-                        '-c',
-                        nargs=1,
-                        dest='cations',
-                        metavar="3=Na",
-                        action="append",
-                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
-    parser.add_argument('--visual',
-                        dest='visual',
-                        default="",
-                        metavar="visual",
-                        help='Specify the yaplot file to store the depolarization paths. [""]')
-    parser.add_argument('--nodep',
-                        action='store_true',
-                        dest='nodep',
-                        default=False,
-                        help='No depolarization.')
-    parser.add_argument('--asis',
-                        action='store_true',
-                        dest='asis',
-                        default=False,
-                        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='store_true',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('Type',
-                        help='Crystal type (1c,1h,etc. See https://github.com/vitroid/GenIce for available ice structures.)')
-    return parser.parse_args()
 
 
-def getoptions_analice():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]')
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="gmeqdypoc",
-                        help='Specify file format [g(romacs)|m(dview)|e(uler)|q(uaternion)|d(igraph)|y(aplot)|p(ython module)|o(penScad)|c(entersofmass)|r(elative com)] [gromacs]')
-    parser.add_argument('--output',
-                        '-o',
-                        dest='output',
-                        metavar="%04d.gro",
-                        help='Output in separate files.')
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--oxygen',
-                        '-O',
-                        dest='oatom',
-                        metavar="OW",
-                        default="O",
-                        help='Specify atom name of oxygen in input Gromacs file. ("O")')
-    parser.add_argument('--hydrogen',
-                        '-H',
-                        dest='hatom',
-                        metavar="HW[12]",
-                        default="H",
-                        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")')
-    parser.add_argument('--suffix',
-                        '-s',
-                        dest='suffix',
-                        metavar="gro",
-                        default=None,
-                        help='Specify the file suffix explicitly. ((None)')
-    parser.add_argument('--filerange',
-                        dest='filerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input filename. ("0:1000000")')
-    parser.add_argument('--framerange',
-                        dest='framerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input frames. ("0:1000000")')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='count',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--avgspan', '-v',
-                        type=float,
-                        dest='avgspan',
-                        default=0,
-                        metavar='1',
-                        help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
-    parser.add_argument('File',
-                        help='Input file(s). Analice accepts `.gro` (Gromacs), `.mdv` (mdview), and `.nx3a` (rigid rotors) files as input file formats by default. File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.')
-    return parser.parse_args()
 
 
 def main():
@@ -204,10 +20,10 @@ def main():
 
     # Parse options
     if sys.argv[0].find("analice") >= 0:
-        options = getoptions_analice()
+        options = analice.getoptions()
         mode = "analice"
     else:
-        options = getoptions()
+        options = genice.getoptions()
         mode = "genice"
 
     # Set verbosity level
@@ -263,14 +79,15 @@ def main():
 
         # Initialize the Lattice class with arguments which are required for plugins.
         lat = genice.GenIce(safe_import("lattice", lattice_type),
-                              density=density,
-                              rep=rep,
-                              cations=cations,
-                              anions=anions,
-                              spot_guests=spot_guests,
-                              spot_groups=groups,
-                              asis=asis,
-                              )
+                            sys.argv,
+                            density=density,
+                            rep=rep,
+                            cations=cations,
+                            anions=anions,
+                            spot_guests=spot_guests,
+                            spot_groups=groups,
+                            asis=asis,
+        )
 
         water_type = options.water
         guests = options.guests
@@ -330,7 +147,7 @@ def main():
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-            lat = analice.AnalIce(lattice_info)
+            lat = analice.AnalIce(lattice_info, sys.argv)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,

@@ -1,18 +1,17 @@
 """
-Rectified ice IV.
-
-Data source:
-
-Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif
-
 Command line: ./genice.x 4 -f reshape[1,1,1,1,-1,0,1,1,-2]
 Reshaping the unit cell.
   i:[1 1 1]
   j:[ 1 -1  0]
   k:[ 1  1 -2]
 
-The result lattice is too large. We halve it.
 """
+
+desc={"ref": {"IV": 'Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif'},
+      "usage": "No options available.",
+      "brief": "Rectified ice IV."
+      }
+
 bondlen=3.0000000000000004
 coord='relative'
 cell='33.83992669 17.30924416 29.98049032'

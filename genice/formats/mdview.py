@@ -1,11 +1,12 @@
 # coding: utf-8
-"""
-MDView file format
 
-Usage:
-    genice III -f mdview > 3.rings.mdv
-    mdview -format- rings.mdv
-"""
+desc={"ref": {},
+      "brief": "MDView file (in Angdtrom).",
+      "usage": "No options available."
+      }
+
+if __name__[-6:] == 'mdv_au':
+    desc["brief"] = "MDView file (in au)."
 
 import numpy as np
 

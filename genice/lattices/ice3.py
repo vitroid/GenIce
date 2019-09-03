@@ -1,9 +1,10 @@
-"""
-Data Source:
-Petrenko and Whitworth, Physics of Ice, Table 11.2
 
 
-"""
+desc={"ref": {"III": 'Petrenko and Whitworth, Physics of Ice, Table 11.2'},
+      "usage": "No options available.",
+      "brief": "Ice III."
+      }
+
 bondlen=3.0
 coord='relative'
 cell='6.666 6.666 6.936'

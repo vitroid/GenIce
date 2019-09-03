@@ -1,3 +1,13 @@
+
+desc={"ref": {},
+      "brief": "MDView file (in Angdtrom).",
+      "usage": "No options available."
+      }
+
+if __name__[-4:] == 'mdva':
+    desc["brief"] = "MDView file (in au)."
+
+
 import logging
 import re
 

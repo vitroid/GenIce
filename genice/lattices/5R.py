@@ -6,6 +6,14 @@ Reshaping the unit cell.
   j:[0 1 0]
   k:[1 0 1]
 """
+
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Rectified ice V."
+      }
+
+
+
 bondlen=3.00000000000215
 coord='relative'
 cell='9.19977813 0.00000000 0.00000000 0.00000000 7.52346281 0.00000000 0  0.00000000 29.25857353 '

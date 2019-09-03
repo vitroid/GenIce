@@ -1,5 +1,10 @@
 # coding: utf-8
 
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Ice V."
+      }
+
 from genice.cell import cellvectors
 cell = cellvectors(a=9.19977812589,
                    b=7.52346280577,

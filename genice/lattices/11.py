@@ -1,7 +1,10 @@
 # coding: utf-8
-"""
-Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
-"""
+
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Ice XI."
+      }
+
 density = 0.92     #default density
 
 bondlen = 3        #bond threshold	 
