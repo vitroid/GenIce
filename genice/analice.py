@@ -6,11 +6,11 @@ import numpy as np
 import pairlist as pl
 
 from genice.cell   import Cell
-from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, descriptions, help_format
+from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, help_format
 from genice.valueparsers import parse_pairs
 from genice import digraph as dg
 from genice import __version__
-import genice.plugins
+from genice.plugin import descriptions
 
 def help_file():
     return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")

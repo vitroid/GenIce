@@ -4,11 +4,10 @@ desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
       }
 
 
-import logging
+from logging import getLogger
 import re
 
 import numpy as np
-import pairlist as pl
 
 from genice.cell import rel_wrap
 
@@ -26,7 +25,7 @@ def readaline(file):
 
 
 def load_iter(file, oname="O", hname=None):
-    logger = logging.getLogger()
+    logger = getLogger()
     while True:
         line = readaline(file)
         if len(line) == 0:

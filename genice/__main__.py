@@ -3,7 +3,7 @@
 
 import sys
 import logging
-from genice.importer import safe_import
+from genice.plugin import safe_import
 from genice import genice, analice, __version__, load
 import random
 import numpy as np

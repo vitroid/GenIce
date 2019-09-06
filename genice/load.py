@@ -2,7 +2,7 @@ from logging import getLogger
 import re
 import os
 from pathlib import Path
-from genice.importer import safe_import
+from genice.plugin import safe_import
 from genice.cell import rel_wrap
 import numpy as np
 from types import SimpleNamespace
