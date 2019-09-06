@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.2
+version 1.0.3
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.2)
+    (version 1.0.3)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -147,12 +147,12 @@ Install with pip3.
                             2. Formatters served by plugins
                              
                             _RDF            Radial Distribution Functions.
-                            cage            Cage analysis.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
                             twist           Twist order parameter.
                             vpython         Visualize in the browser.
                             ----
+                            (Undocumented) cage 
                              
                              
                             3. Formatters served locally
@@ -345,7 +345,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.2)
+    (version 1.0.3)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -408,12 +408,12 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             2. Formatters served by plugins
                              
                             _RDF            Radial Distribution Functions.
-                            cage            Cage analysis.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
                             twist           Twist order parameter.
                             vpython         Visualize in the browser.
                             ----
+                            (Undocumented) cage 
                              
                              
                             3. Formatters served locally

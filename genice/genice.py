@@ -1,4 +1,4 @@
-import logging
+from logging import getLogger
 import argparse as ap
 from collections import defaultdict
 import random
@@ -235,7 +235,7 @@ def orientations(coord, graph, cell):
     Does not work when two OHs are colinear
     """
 
-    logger = logging.getLogger()
+    logger = getLogger()
     rotmatrices = []
     assert len(coord) == graph.number_of_nodes()  # just for a test of pure water
 
@@ -259,11 +259,16 @@ def orientations(coord, graph, cell):
 
             logger.debug("Node {0} vsucc {1}".format(node, vsucc))
             assert 2 <= len(vsucc), "Probably a wrong ice network."
+            # normalize vsucc
+            vsucc[0] /= np.linalg.norm(vsucc[0])
+            vsucc[1] /= np.linalg.norm(vsucc[1])
             y = vsucc[1] - vsucc[0]
             y /= np.linalg.norm(y)
             z = (vsucc[0] + vsucc[1]) / 2
             z /= np.linalg.norm(z)
             x = np.cross(y, z)
+            # orthogonality check
+            # logger.debug((x@x,y@y,z@z,x@y,y@z,z@x))
             rotmat = np.vstack([x, y, z])
 
         rotmatrices.append(rotmat)
@@ -272,6 +277,7 @@ def orientations(coord, graph, cell):
 
 
 def arrange_atoms(coord, cell, rotmatrices, intra, labels, name, ignores=set()):
+    logger = getLogger()
     atoms = []
 
     if len(intra) == 0:
@@ -286,6 +292,7 @@ def arrange_atoms(coord, cell, rotmatrices, intra, labels, name, ignores=set()):
 
         for i in range(len(labels)):
             atoms.append([i, name, labels[i], rotated[i, :] + abscom, order])
+        # logger.debug((np.linalg.norm(rotated[0] - rotated[1])))
 
     return atoms
 
@@ -312,7 +319,7 @@ def replicate_groups(groups, waters, cagepos, rep):
     """
     This is not that easy.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     # Storage for replicated groups
     newgroups = defaultdict(dict)
 
@@ -433,7 +440,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     """
     Just shows the environments of the dopants
     """
-    #logger = logging.getLogger()
+    #logger = getLogger()
     dnei = defaultdict(set)
 
     for site, name in dopants.items():
@@ -506,7 +513,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
     """
     put a normal-alkyl group rooted at root toward cpos.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     # logger.info("  Put butyl at {0}".format(molname))
     v1abs = cell.rel2abs(rel_wrap(cpos - root))
     v1 = v1abs / np.linalg.norm(v1abs)
@@ -537,7 +544,7 @@ class GenIce():
                  asis=False,
                  ):
 
-        self.logger = logging.getLogger()
+        self.logger = getLogger()
         self.rep = rep
         self.asis = asis
         self.cations = cations
@@ -1040,7 +1047,7 @@ class GenIce():
 
                 # process the -g option
                 for arg in guests:
-                    logging.debug(arg[0])
+                    self.logger.debug(arg[0])
                     cagetype, spec = arg[0].split("=")
                     assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(cagetype)
                     resident = dict()

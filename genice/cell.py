@@ -28,7 +28,7 @@ def cellvectors(a,b,c,A=90,B=90,C=90):
     """
     Generate cell vectors from a,b,c and alpha, beta, gamma.
     """
-
+    # probably same as six2nine in rigid.py
     logger = logging.getLogger()
     A *= pi/180
     B *= pi/180
