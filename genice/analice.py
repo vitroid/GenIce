@@ -176,8 +176,9 @@ class AnalIce(GenIce):
             self.logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
-            grid = pl.determine_grid(self.cell.mat, rc)
-            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
+            p = pl.pairs_iter(self.waters, rc=rc,
+                              cell=self.cell.mat,
+                              distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
