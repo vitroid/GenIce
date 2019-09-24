@@ -139,21 +139,24 @@ class IceGraph(networkx.DiGraph):
             self[i][j]['fixed'] = True
         self.ignores.add(which)
 
-    def invert_edge(self, from_, to_):
+    def invert_edge(self, from_, to_, force=False):
         """
         also invert the attribute vector
         """
-        if not self.has_edge(from_, to_):
-            logging.getLogger().error("No edge ({0},{1}).".format(from_, to_))
-        assert not self[from_][to_]['fixed']
+        assert self.has_edge(from_, to_)
+        assert force or not self[from_][to_]['fixed']
         self.remove_edge(from_, to_)
         self.add_edge(to_, from_, fixed=False)
 
-    def invert_path(self, path):
-        for i in range(len(path) - 1):
-            f = path[i]
-            t = path[i + 1]
-            self.invert_edge(f, t)  # also invert the attribute vector
+    def invert_path(self, path, cyclic=False, force=False):
+        if cyclic:
+            first = 0
+        else:
+            first = 1
+        for i in range(first, len(path)):
+            f = path[i - 1]
+            t = path[i]
+            self.invert_edge(f, t, force)  # also invert the attribute vector
 
     def _goahead(self, node, marks, order):
         while node not in marks:
