@@ -728,7 +728,8 @@ class GenIce():
         hooks = formatter.hooks
         arg   = formatter.arg
         maxstage = max(0, *hooks.keys())
-
+        logger = getLogger()
+        
         if 0 in hooks:
             hooks[0](self, arg)
         elif arg != "":

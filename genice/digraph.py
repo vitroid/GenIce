@@ -267,9 +267,13 @@ class IceGraph(networkx.DiGraph):
         # TSL
         # assert set(defects) == self.ignores, "Some water molecules do not obey the ice rule. {0} {1}".format(defects, self.ignores)
 
-    def is_homodromic(self, path):
-        for i in range(len(path) - 1):
-            if not self.has_edge(path[i], path[i + 1]):
+    def is_homodromic(self, path, cyclic=False):
+        if cyclic:
+            first = 0
+        else:
+            first = 1
+        for i in range(first, len(path)):
+            if not self.has_edge(path[i-1], path[i]):
                 return False
         return True
 
