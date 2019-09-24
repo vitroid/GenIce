@@ -1,7 +1,9 @@
 # coding: utf-8
-"""
-Rigid water molecule 
-"""
+
+desc = { "ref": { },
+         "brief": "Rigid rotor (Euler angle).",
+         "usage": "No options.",
+         }
 
 import numpy as np
 from genice import rigid

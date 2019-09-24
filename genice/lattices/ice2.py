@@ -3,7 +3,7 @@
 desc={"ref": {"C1": "D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0.",
               },
       "usage": "No options available.",
-      "brief": "Ice II."
+      "brief": "Ice II; Hydrogen hydrate C1."
       }
 
 bondlen = 3     #bond threshold	 

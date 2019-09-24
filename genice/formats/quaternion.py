@@ -1,7 +1,8 @@
 # coding: utf-8
-"""
-Rigid water molecule 
-"""
+desc = { "ref": { },
+         "brief": "Rigid rotor (Quaternion).",
+         "usage": "No options.",
+         }
 
 import numpy as np
 
