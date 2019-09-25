@@ -139,27 +139,27 @@ class IceGraph(networkx.DiGraph):
             self[i][j]['fixed'] = True
         self.ignores.add(which)
 
-    def invert_edge(self, from_, to_, force=False):
+    def invert_edge(self, from_, to_, forced=False):
         """
         also invert the attribute vector
         """
         assert self.has_edge(from_, to_)
-        assert force or not self[from_][to_]['fixed']
+        assert forced or not self[from_][to_]['fixed']
         fix = self[from_][to_]['fixed']
         self.remove_edge(from_, to_)
         self.add_edge(to_, from_, fixed=fix)
 
-    def invert_path(self, path, force=False):
+    def invert_path(self, path, forced=False):
         for i in range(1, len(path)):
             f = path[i - 1]
             t = path[i]
-            self.invert_edge(f, t, force)  # also invert the attribute vector
+            self.invert_edge(f, t, forced)  # also invert the attribute vector
 
-    def invert_cycle(self,path, force=False):
+    def invert_cycle(self,path, forced=False):
         p = path + [path[0],]
         if not self.has_edge(p[0], p[1]):
             p = list(reversed(p))
-        self.invert_path(p, force=force)
+        self.invert_path(p, forced=forced)
                              
     def _goahead(self, node, marks, order):
         while node not in marks:
@@ -320,17 +320,16 @@ class SpaceIceGraph(IceGraph):
             delta += self.get_edge_data(order[i], order[i + 1])["vector"]
         return delta
 
-    def invert_edge(self, from_, to_):
+    def invert_edge(self, from_, to_, forced=False):
         """
         also invert the attribute vector
         """
-        if not self.has_edge(from_, to_):
-            logging.getLogger().error("No edge ({0},{1}).".format(from_, to_))
+        assert self.has_edge(from_, to_)
         v = self.get_edge_data(from_, to_)["vector"]
         fixed = self.get_edge_data(from_, to_)["fixed"]
-        assert not fixed
+        assert forced or not fixed
         self.remove_edge(from_, to_)
-        self.add_edge(to_, from_, vector=-v, fixed=False)
+        self.add_edge(to_, from_, vector=-v, fixed=fixed)
 
     def net_polarization(self):
         dipole = np.zeros(3)

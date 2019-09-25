@@ -3,12 +3,12 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.3
+version 1.0.4
 
 ## Requirements
 
 * networkx>=2
-* countrings>=0.1.5
+* countrings>=0.1.7
 * pairlist>=0.2.3
 * yaplotlib>=0.1
 * numpy
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.3)
+    (version 1.0.4)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -55,7 +55,7 @@ Install with pip3.
                             17, C0-II, C0, XVII, ice17      Ice XVII.
                             1c, C2, Ic, ice1c               Ice Ic.
                             1h, Ih, ice1h   Ice Ih.
-                            2, C1, II, ice2 Ice II.
+                            2, C1, II, ice2 Ice II; Hydrogen hydrate C1.
                             2D3             Trilayer honeycomb ice.
                             2d, ice2d       A hydrogen-disordered counterpart of 
                                             ice II.
@@ -96,8 +96,7 @@ Install with pip3.
                              
                             2. Lattice structures served by plugins
                              
-                            cif             Read a CIF file.
-                            zeolite         Obtain from IZA Zeolite DB.
+                            (None)
                             ----
                              
                              
@@ -130,6 +129,7 @@ Install with pip3.
                             _KG             Kirkworrd G factor.
                             _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
+                            e, euler        Rigid rotor (Euler angle).
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
@@ -137,22 +137,18 @@ Install with pip3.
                             o, openscad     OpenSCAD.
                             p, python, reshape              Cell-reshaper.
                             povray          Povray.
+                            q, quaternion   Rigid rotor (Quaternion).
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com e euler exyz exyz2 q 
-                            quaternion r rcom towhee xyz
+                            (Undocumented) bdl c cif cif2 com exyz exyz2 r rcom 
+                            towhee xyz
                              
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
-                            twist           Twist order parameter.
-                            vpython         Visualize in the browser.
+                            (None)
                             ----
-                            (Undocumented) cage 
                              
                              
                             3. Formatters served locally
@@ -345,7 +341,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.3)
+    (version 1.0.4)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -391,6 +387,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             _KG             Kirkworrd G factor.
                             _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
+                            e, euler        Rigid rotor (Euler angle).
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
@@ -398,22 +395,18 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             o, openscad     OpenSCAD.
                             p, python, reshape              Cell-reshaper.
                             povray          Povray.
+                            q, quaternion   Rigid rotor (Quaternion).
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com e euler exyz exyz2 q 
-                            quaternion r rcom towhee xyz
+                            (Undocumented) bdl c cif cif2 com exyz exyz2 r rcom 
+                            towhee xyz
                              
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
-                            twist           Twist order parameter.
-                            vpython         Visualize in the browser.
+                            (None)
                             ----
-                            (Undocumented) cage 
                              
                              
                             3. Formatters served locally

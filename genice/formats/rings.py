@@ -21,6 +21,7 @@ from collections import defaultdict
 import numpy as np
 import networkx as nx
 import yaplotlib as yp
+from logging import getLogger
 
 from genice import rigid
 from countrings import countrings_nx as cr
@@ -38,7 +39,8 @@ def face(center, rpos):
 
 
 def hook2(lattice):
-    lattice.logger.info("Hook2: Show rings in Yaplot format.")
+    logger = getLogger()
+    logger.info("Hook2: Show rings in Yaplot format.")
     # copied from svg_poly
     graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
@@ -50,28 +52,23 @@ def hook2(lattice):
         d = pj - pi
         d -= np.floor(d+0.5)
         s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
-    for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
+    for ring in cr.CountRings(graph, pos=lattice.reppositions).rings_iter(lattice.largestring):
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)
         for k,i in enumerate(ring):
             d = lattice.reppositions[i] - lattice.reppositions[ring[0]]
             d -= np.floor(d+0.5)
             deltas[k] = d
-            dd = lattice.reppositions[ring[k]] - lattice.reppositions[ring[k-1]]
-            dd -= np.floor(dd+0.5)
-            d2 += dd
-        # d2 must be zeros
-        if np.all(np.absolute(d2) < 1e-5):
-            comofs = np.sum(deltas, axis=0) / len(ring)
-            deltas -= comofs
-            com = lattice.reppositions[ring[0]] + comofs
-            com -= np.floor(com)
-            # rel to abs
-            com    = np.dot(com,    cellmat)
-            deltas = np.dot(deltas, cellmat)
-            s += face(com,deltas)
+        comofs = np.sum(deltas, axis=0) / len(ring)
+        deltas -= comofs
+        com = lattice.reppositions[ring[0]] + comofs
+        com -= np.floor(com)
+        # rel to abs
+        com    = np.dot(com,    cellmat)
+        deltas = np.dot(deltas, cellmat)
+        s += face(com,deltas)
     print(s)
-    lattice.logger.info("Hook2: end.")
+    logger.info("Hook2: end.")
 
 
     

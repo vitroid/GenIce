@@ -155,18 +155,6 @@ def orientations(members, digraph):
     return [digraph.has_edge(members[i-1], members[i]) for i in range(len(members))]
 
 
-def spanning(ring, rpos):
-    dsum = np.zeros(3)
-
-    for k in range(len(ring)):
-        d = rpos[ring[k-1]] - rpos[ring[k]]
-        d -= np.floor(d+0.5)
-        dsum += d
-
-    return not np.all(np.absolute(dsum) < 1e-5)
-    
-
-
 
 def hook4(lattice):
     lattice.logger.info("Hook4: Statistics on the HBs along a ring.")
@@ -179,12 +167,11 @@ def hook4(lattice):
         prob[n] = probabilities(n)
         stat[n] = defaultdict(int)
 
-    for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
-        if not spanning(ring, lattice.reppositions):
-            ori = orientations(ring, lattice.spacegraph)
-            c   = encode(ori)
-            n   = len(ring)
-            stat[n][c] += 1
+    for ring in cr.CountRings(graph, pos=lattice.reppositions).rings_iter(lattice.largestring):
+        ori = orientations(ring, lattice.spacegraph)
+        c   = encode(ori)
+        n   = len(ring)
+        stat[n][c] += 1
 
     #size code code(binary) Approx. Stat.
     lattice.logger.info("""
