@@ -21,6 +21,7 @@ from collections import defaultdict
 import numpy as np
 import networkx as nx
 import yaplotlib as yp
+from logging import getLogger
 
 from genice import rigid
 from countrings import countrings_nx as cr
@@ -38,7 +39,8 @@ def face(center, rpos):
 
 
 def hook2(lattice):
-    lattice.logger.info("Hook2: Show rings in Yaplot format.")
+    logger = getLogger()
+    logger.info("Hook2: Show rings in Yaplot format.")
     # copied from svg_poly
     graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
@@ -51,6 +53,13 @@ def hook2(lattice):
         d -= np.floor(d+0.5)
         s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
     for ring in cr.CountRings(graph).rings_iter(lattice.largestring):
+        if 47 in ring and 44 in ring and 50 in ring:
+            logger.debug("Found")
+            logger.debug(lattice.graph.is_cyclic_homodromic(ring))
+            for i in range(0, len(ring)):
+                logger.debug(lattice.graph.has_edge(ring[i-1], ring[i]))
+        if not lattice.graph.is_cyclic_homodromic(ring):
+            continue
         deltas = np.zeros((len(ring),3))
         d2 = np.zeros(3)
         for k,i in enumerate(ring):
@@ -70,8 +79,11 @@ def hook2(lattice):
             com    = np.dot(com,    cellmat)
             deltas = np.dot(deltas, cellmat)
             s += face(com,deltas)
+        else:
+            logger.debug("Delta {0}".format(d2))
+            logger.debug(ring)
     print(s)
-    lattice.logger.info("Hook2: end.")
+    logger.info("Hook2: end.")
 
 
     
