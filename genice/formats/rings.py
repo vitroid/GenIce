@@ -21,6 +21,7 @@ from collections import defaultdict
 import numpy as np
 import networkx as nx
 import yaplotlib as yp
+from logging import getLogger
 
 from genice import rigid
 from countrings import countrings_nx as cr
@@ -38,7 +39,8 @@ def face(center, rpos):
 
 
 def hook2(lattice):
-    lattice.logger.info("Hook2: Show rings in Yaplot format.")
+    logger = getLogger()
+    logger.info("Hook2: Show rings in Yaplot format.")
     # copied from svg_poly
     graph = nx.Graph(lattice.graph) #undirected
     cellmat = lattice.repcell.mat
@@ -70,8 +72,11 @@ def hook2(lattice):
             com    = np.dot(com,    cellmat)
             deltas = np.dot(deltas, cellmat)
             s += face(com,deltas)
+        else:
+            logger.debug("Delta {0}".format(d2))
+            logger.debug(ring)
     print(s)
-    lattice.logger.info("Hook2: end.")
+    logger.info("Hook2: end.")
 
 
     
