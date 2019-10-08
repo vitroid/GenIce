@@ -3,17 +3,16 @@ import argparse as ap
 from collections import defaultdict
 import random
 import itertools as it
-from textwrap import wrap, fill
+from textwrap import wrap
 
 import numpy as np
 import pairlist as pl
 
-from genice.importer import safe_import
+from genice.plugin import safe_import, descriptions
 from genice import digraph as dg
 from genice import __version__
 from genice.cell import rel_wrap, Cell
 from genice.valueparsers import parse_cages, parse_pairs, put_in_array, flatten
-import genice.plugins
 
 # for alkyl groups (Experimental)
 from genice import alkyl
@@ -32,56 +31,16 @@ class SmartFormatter(ap.HelpFormatter):
         return action.help
 
 
-def descriptions(category):
-    titles={ "lattice": {"system": "1. Lattice structures served with GenIce",
-                         "extra":  "2. Lattice structures served by plugins",
-                         "local":  "3. Lattice structures served locally",
-                         "title":  "[Available lattice structures]"},
-             "format": {"system": "1. Formatters served with GenIce",
-                        "extra":  "2. Formatters served by plugins",
-                        "local":  "3. Formatters served locally",
-                        "title":  "[Available formatters]"},
-             "loader": {"system": "1. File types served with GenIce",
-                        "extra":  "2. File types served by plugins",
-                        "local":  "3. File types served locally",
-                        "title":  "[Available input file types]"},
-             }
-    mods = genice.plugins.scan(category)
-    catalog = " \n \n{0}\n \n".format(titles[category]["title"])
-    desc = mods["desc"]
-    for group in ("system", "extra", "local"):
-        desced = defaultdict(list)
-        undesc = []
-        for L in mods[group]:
-            if L in desc:
-                desced[desc[L]].append(L)
-            else:
-                undesc.append(L)
-        for dd in desced:
-            desced[dd] = ", ".join(desced[dd])
-        catalog += "{0}\n \n".format(titles[category][group])
-        table = ""
-        for dd in sorted(desced, key=lambda x: desced[x]):
-            table += "{0}\t{1}\n".format(desced[dd], dd)
-        if table == "":
-            table = "(None)\n"
-        table = [fill(line, width=55, drop_whitespace=False, expand_tabs=True, tabsize=16, subsequent_indent=" "*16) for line in table.splitlines()]
-        table = "\n".join(table)+"\n"
-        undesc = " ".join(undesc)
-        if undesc != "":
-            undesc = "(Undocumented) " + undesc
-        catalog += table + "----\n" + undesc + "\n \n \n"
-    return catalog
 
 
         
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 def help_type():
-    return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice")
+    return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice", width=55)
 
 def help_format():
-    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format")
+    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format", width=55)
 
 def getoptions():
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
@@ -621,8 +580,9 @@ class GenIce():
             self.logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
-            grid = pl.determine_grid(self.cell.mat, rc)
-            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
+            p = pl.pairs_iter(self.waters, rc=rc,
+                              cell=self.cell.mat,
+                              distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
@@ -1154,7 +1114,7 @@ class GenIce():
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
             assert np.product(grid) > 0, "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            self.pairs = pl.pairs_fine(self.waters, self.bondlen, self.cell.mat, grid, distance=False)
+            self.pairs = pl.pairs_iter(self.waters, rc=self.bondlen, cell=self.cell.mat, grid=grid, distance=False)
 
             # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.

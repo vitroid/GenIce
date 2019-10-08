@@ -8,14 +8,13 @@ if __name__[-4:] == 'mdva':
     desc["brief"] = "MDView file (in au)."
 
 
-import logging
+from logging import getLogger
 import re
 
 import numpy as np
-import pairlist as pl
 
 def load_iter(file, oname, hname=None):
-    logger = logging.getLogger()
+    logger = getLogger()
     if __name__[-4:] == "mdva":
         conv = 0.052917721067  # au in nm
     else:

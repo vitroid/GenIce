@@ -117,16 +117,19 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
 
     oh = defaultdict(list)
     parent = dict()
-    grid = pl.determine_grid(cell, 0.15)
     # find covalent OH bonds
-    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.15, cell, grid, distance=False):
+    for i,j in pl.pairs_iter(oxygens, rc=0.15, cell=cell,
+                             pos2=hydrogens,
+                             distance=False):
         oh[i].append(j)
         parent[j] = i
     
-    grid = pl.determine_grid(cell, 0.20)
     pairs = []
     # find HBs
-    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.20, cell, grid, distance=False):
+    for i,j in pl.pairs_iter(oxygens, 
+                             rc=0.20, cell=cell,
+                             pos2=hydrogens,
+                             distance=False):
         if j not in oh[i]:
             # H is on a different water molecule
             p = parent[j]

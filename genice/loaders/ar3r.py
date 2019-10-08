@@ -1,10 +1,10 @@
-import logging
+from logging import getLogger
 
 import numpy as np
 
 
 def load_iter(file, **kwargs):
-    logger = logging.getLogger()
+    logger = getLogger()
     logger.info("  Loading AR3Rs...")
     cellmat = None
     while True:

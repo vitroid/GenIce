@@ -38,6 +38,28 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
+## Help
+
+    genice -h
+
+shows the usage.
+
+    genice \?
+
+shows the list of available lattices.
+
+    genice ice2?
+
+shows the options for ice2 (if any).
+
+    genice ice2 -f \?
+
+shows the list of available formats.
+
+    genice ice2 -f yaplot\?
+
+shows the options for yaplot plugin (if any).
+
 
 ## Basics
 

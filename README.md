@@ -96,7 +96,7 @@ Install with pip3.
                             sVII sigma xFAU xFAU2 zra-d
                              
                              
-                            2. Lattice structures served by plugins
+                            2. Lattice structures served by external plugins
                              
                             (None)
                             ----
@@ -147,7 +147,7 @@ Install with pip3.
                             towhee xyz
                              
                              
-                            2. Formatters served by plugins
+                            2. Formatters served by external plugins
                              
                             cage            Cage analysis.
                             png             PNG (Portable Network Graphics).
@@ -199,6 +199,28 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
         genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+
+## Help
+
+    genice -h
+
+shows the usage.
+
+    genice \?
+
+shows the list of available lattices.
+
+    genice ice2?
+
+shows the options for ice2 (if any).
+
+    genice ice2 -f \?
+
+shows the list of available formats.
+
+    genice ice2 -f yaplot\?
+
+shows the options for yaplot plugin (if any).
 
 
 ## Basics
@@ -364,7 +386,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             (Undocumented) ar3r nx3a
                              
                              
-                            2. File types served by plugins
+                            2. File types served by external eplugins
                              
                             (None)
                             ----
@@ -407,7 +429,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             towhee xyz
                              
                              
-                            2. Formatters served by plugins
+                            2. Formatters served by external plugins
                              
                             cage            Cage analysis.
                             png             PNG (Portable Network Graphics).

@@ -6,11 +6,11 @@ import numpy as np
 import pairlist as pl
 
 from genice.cell   import Cell
-from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, descriptions, help_format
+from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, help_format
 from genice.valueparsers import parse_pairs
 from genice import digraph as dg
 from genice import __version__
-import genice.plugins
+from genice.plugin import descriptions
 
 def help_file():
     return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
@@ -176,8 +176,9 @@ class AnalIce(GenIce):
             self.logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
-            grid = pl.determine_grid(self.cell.mat, rc)
-            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
+            p = pl.pairs_iter(self.waters, rc=rc,
+                              cell=self.cell.mat,
+                              distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
 

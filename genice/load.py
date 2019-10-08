@@ -2,7 +2,7 @@ from logging import getLogger
 import re
 import os
 from pathlib import Path
-from genice.importer import safe_import
+from genice.plugin import safe_import
 from genice.cell import rel_wrap
 import numpy as np
 from types import SimpleNamespace
@@ -122,12 +122,11 @@ def make_lattice_info(oatoms, hatoms, cellmat):
         rotmat[i] = np.vstack([x, y, z])
         # 重心位置を補正。
         oatoms[i] += (rdh0 + rdh1) * 1. / 18.
-    grid = pl.determine_grid(cellmat, 0.245)
     # remove intramolecular OHs
     # 水素結合は原子の平均位置で定義している。
     pairs = []
     logger.debug("  Make pair list.")
-    for o, h in pl.pairs_fine_hetero(oatoms, hatoms, 0.245, cellmat, grid, distance=False):
+    for o, h in pl.pairs_iter(oatoms, rc=0.245, cell=cellmat, pos2=hatoms, distance=False):
         if not (h == o * 2 or h == o * 2 + 1):
             # hとoは別の分子の上にあって近い。
             # register a new intermolecular pair
