@@ -241,6 +241,7 @@ Symbol | Description
 7, ice7, VII    | Conventional high-pressure ice VII.[Lobban 1998]
 8, ice8, VIII   | Ice VIII, a hydrogen-ordered counterpart of ice VII.[Kuhs 1998]
 9, ice9, IX     | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
+ice11_19        | A candidate for an antiferroelectric ice 11; ice 11 type 19 in Ref. [Fan 2010]
 12, ice12, XII  | Metastable high-pressure ice XII.[Lobban 1998]
 13, ice13, XIII | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
 16, ice16, XVI  | Negative-pressure ice XVI.[Falenty 2014]
@@ -381,6 +382,8 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 * A. Falenty, T. C. Hansen, W. F. Kuhs, 
   Nature 2014, 516, 231.
   [DOI: 10.1038/nature14014](http://doi.org/10.1038/nature14014)
+* Xiaofeng Fan, Dan Bing, Jingyun Zhang, Zexiang Shen, Jer-Lai Kuo,
+  Computational Materials Science 49 (2010) S170–S175.
 * C. J. Fennell, J. D. Gezelter, 
   J. Chem. Theory Comput. 2005, 1, 662.
   [DOI: 10.1021/ct050005s](http://doi.org/10.1021/ct050005s)
