@@ -943,11 +943,7 @@ class GenIce():
                                                ignores=self.graph.ignores)
         else:
             if self.double_network:
-                if (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0):
-                    pass
-                else:
-                    self.logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
-                    sys.exit(1)
+                assert (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0), "In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even."
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,
                                                ignores=self.graph.ignores)

@@ -15,6 +15,7 @@ def hook1(lattice):
         s += "{0} {1} {2}\n".format(cellmat[0,0]*10,cellmat[1,1]*10,cellmat[2,2]*10)
     else:
         s += "@BOX9\n"
+        # Transposing the matrix. @BOX9 consists of vertical vectors.
         for d in range(3):
             s += "{0} {1} {2}\n".format(cellmat[0,d]*10,cellmat[1,d]*10,cellmat[2,d]*10)
     s += "@AR3R\n"
