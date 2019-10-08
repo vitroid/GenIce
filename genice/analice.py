@@ -322,8 +322,8 @@ class AnalIce(GenIce):
                 return
 
         # self.stage7_analice(guests)
-        #if 7 in hooks:
-        #    hooks[7](self)
+        if 7 in hooks:
+            hooks[7](self)
 
     def stage1(self,
                noise=0.):
