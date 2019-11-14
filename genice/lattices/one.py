@@ -1,7 +1,7 @@
 # coding: utf-8
 desc={"ref": {},
       "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h".',
-      "brief": "Ice XI w/ stacking faults."
+      "brief": "Ice I w/ stacking faults."
       }
 
 import logging
