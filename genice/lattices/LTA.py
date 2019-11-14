@@ -1,3 +1,11 @@
+
+
+desc={"ref": {"LTA": "http://www.iza-structure.org/databases/"},
+      "usage": "No options available.",
+      "brief": "Zeolite LTA."
+      }
+
+
 cell = """
 10.705511333378356 10.705511333378356 10.705511333378356
 """

@@ -1,4 +1,11 @@
 # coding: utf-8
+
+desc={"ref": {},
+      "usage": "No options available.",
+      "brief": "Clathrate type H."
+      }
+
+
 cell = """
 12.4212113964 0 0
 -6.21060569818 10.757084615 0

@@ -505,3 +505,9 @@ cell = cellvectors(a=12.74668553361935,
                    b=12.746685533619349,
                    c=47.17811308564729,
                    C=119.99999999999999)
+
+desc={"ref": {"Struct17": 'Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.'},
+      "usage": "No options available.",
+      "brief": "Clathrate structure classified by Dutour Sikirić."
+      }
+

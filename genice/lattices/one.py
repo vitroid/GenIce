@@ -36,7 +36,6 @@ def argparser(arg):
     assert layer == 0 and dir == 1, "Incompatible number of layers."
     waters = np.array(L) / np.array([4.0, 6.0, height])
     coord = "relative"
-    logger.info(waters.shape)
     LHB = 0.276
     bondlen = 0.3
     y = LHB* (8**0.5 / 3)*3

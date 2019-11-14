@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+desc={"ref": {"Aeroice": "Matsui, T., Hirata, M., Yagasaki, T., Matsumoto, M. & Tanaka, H.; Communication: Hypothetical ultralow-density ice polymorphs. J. Chem. Phys. 147, 091101 (2017)."},
+      "usage": "genice xFAU[n]; an integer n is the length of the hexagonal prisms.",
+      "brief": "Aeroice NxFAU."
+      }
+
 #FAU Decoration of a 4-network
 #読みこんだAR3Rの座標を、FAU構造における多面体vertexの位置とみなし、
 #それらを連結するネットワークを六角柱で修飾して大きなネットワークを作る。

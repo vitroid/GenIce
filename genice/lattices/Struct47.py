@@ -718,3 +718,9 @@ from genice.cell import cellvectors
 cell = cellvectors(a=37.36747284102742,
                    b=23.04994154000335,
                    c=13.980823734079763)
+
+desc={"ref": {"Struct47": 'Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.'},
+      "usage": "No options available.",
+      "brief": "Clathrate structure classified by Dutour Sikirić."
+      }
+

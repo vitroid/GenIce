@@ -1,3 +1,9 @@
+desc={"ref": {"EMT": "http://www.iza-structure.org/databases/"},
+      "usage": "No options available.",
+      "brief": "Zeolite EMT."
+      }
+
+
 from genice.cell import cellvectors
 cell = cellvectors(a=15.621810598341442,
                    b=15.621810598341442,

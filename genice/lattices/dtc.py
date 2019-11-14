@@ -1,3 +1,10 @@
+desc={"ref": {"dtc": "http://rcsr.net/nets/dtc",
+              "dtc ice": "Takuma Yagasaki, Masaru Yamasaki, Masakazu Matsumoto, and Hideki Tanaka; Formation of Hot Ice Caused by Carbon Nanobrushes. J. Chem. Phys. 151, 064702 (2019)."},
+      "usage": "No options available.",
+      "brief": "Hypothetical porous ice dtc."
+      }
+
+
 waters = """
 0.5048 0.7524 0.4343
 0.2476 0.7524 0.4343

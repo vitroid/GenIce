@@ -6,6 +6,11 @@ Reshaping the unit cell.
   j:[0 1 0]
   k:[0 0 1]
 """
+desc={"ref": {"ice T": "Yagasaki, T., Matsumoto, M. & Tanaka, H.; Phase Diagrams of TIP4P/2005, SPC/E, and TIP5P Water at High Pressure. J. Phys. Chem. B 122, 7718-7725 (2018)."},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice T2."
+      }
+
 bondlen=2.8577528998751287
 coord='relative'
 cell='19.91215483 19.91215483 7.57505890'
