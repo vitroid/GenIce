@@ -1,6 +1,6 @@
 # coding: utf-8
 desc={"ref": {},
-      "usage": "one[hcchchcc] last layer type is determined automatically.",
+      "usage": 'genice one[hcchchcc]; Specify layer types with "c" or "h".',
       "brief": "Ice I w/ stacking faults."
       }
 
@@ -20,24 +20,19 @@ def argparser(arg):
     height = 0
     dir = 1
     L = []
-    L.append(layers[layer] + np.array([0.0, 0.0, height]))
-    layer = (layer+dir+3) % 3
-    height += 1
-    L.append(layers[layer] + np.array([0.0, 0.0, height]))
-    height += 3
     for ch in arg:
-        if ch in "Hh":
-            # hexagonal = alternative
-            dir = -dir
-        else:
-            #cubic = progressive
-            pass
         L.append(layers[layer] + np.array([0.0, 0.0, height]))
         layer = (layer+dir+3) % 3
         height += 1
         L.append(layers[layer] + np.array([0.0, 0.0, height]))
         height += 3
-    assert layer == 0, "Incompatible number of layers."
+        assert ch in "CcHh"
+        if ch in "Hh":
+            # hexagonal = alternative
+            dir = -dir
+            #cubic = progressive
+            
+    assert layer == 0 and dir == 1, "Incompatible number of layers."
     L = L / np.array([1.0, 1.0, height])
     waters = L.reshape(L.shape[0]*4, 3)
     logger.info(waters.shape)
@@ -51,4 +46,4 @@ def argparser(arg):
     density=0.92
 
 # default.
-argparser("hhcc")
+argparser("hh")
