@@ -23,6 +23,7 @@ all: 2d.gro.test
 all: 4.ngph.test
 all: test1.done   test2.done   test3.done   test4.done
 all: 12.scad.test HS3.rings.yap.test
+all: Ihhccc.nx4a.test
 
 %.test: $(REFD)/% % 
 	diff $^ && touch $@
@@ -123,6 +124,11 @@ prism7.ringtest: $(FMT)/_ringstat.py
 	$(ANALICE) $< -O O -H H | fgrep -v "Command line:" > $@
 %.nx3a_gro: %.nx3a $(LDR)/nx3a.py
 	$(ANALICE) $< --debug | fgrep -v "Command line:" > $@
+
+# ice one with stacking faults.
+Ihhccc.nx4a:
+	$(GENICE) one[hhccc] -r 2 2 1 -f q > $@
+
 
 # reshape debug
 5x3R.py:
