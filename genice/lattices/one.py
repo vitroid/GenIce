@@ -1,7 +1,7 @@
 # coding: utf-8
 desc={"ref": {},
-      "usage": 'genice one[hcchchcc]; Specify layer types with "c" or "h".',
-      "brief": "Ice I w/ stacking faults."
+      "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h".',
+      "brief": "Ice XI w/ stacking faults."
       }
 
 import logging
@@ -9,39 +9,39 @@ from genice.cell import cellvectors
 import numpy as np
 
     
-layers = np.array([[[1/4, 0, 0], [3/4, 0, 0], [0, 1/2, 0], [1/2, 1/2, 0]],
-                   [[0, 5/6, 0], [1/2, 5/6, 0], [1/4, 1/3, 0], [3/4, 1/3, 0]],
-                   [[1/4, 2/3, 0], [3/4, 2/3, 0], [0,1/6, 0], [1/2, 1/6, 0]]])
+lat = [[[0,0], [2,0], [1,3], [3,3]],
+       [[0,2], [2,2], [1,5], [3,5]],
+       [[0,4], [2,4], [1,1], [3,1]]]
 
 def argparser(arg):
     logger = logging.getLogger()
-    global sides, rows, bondlen, density, cell, waters, coord
+    global bondlen, density, cell, waters, coord
     layer = 0
     height = 0
     dir = 1
     L = []
     for ch in arg:
-        L.append(layers[layer] + np.array([0.0, 0.0, height]))
+        for x,y in lat[layer]:
+            L.append([x, y, height])
         layer = (layer+dir+3) % 3
         height += 1
-        L.append(layers[layer] + np.array([0.0, 0.0, height]))
+        for x,y in lat[layer]:
+            L.append([x, y, height])
         height += 3
         assert ch in "CcHh"
         if ch in "Hh":
             # hexagonal = alternative
             dir = -dir
             #cubic = progressive
-            
     assert layer == 0 and dir == 1, "Incompatible number of layers."
-    L = L / np.array([1.0, 1.0, height])
-    waters = L.reshape(L.shape[0]*4, 3)
+    waters = np.array(L) / np.array([4.0, 6.0, height])
+    coord = "relative"
     logger.info(waters.shape)
     LHB = 0.276
     bondlen = 0.3
     y = LHB* (8**0.5 / 3)*3
     x = y * 2 / 3**0.5
     z = LHB*height/3
-    coord = "relative"
     cell = cellvectors(x,y,z)
     density=0.92
 
