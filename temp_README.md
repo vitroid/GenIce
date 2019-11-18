@@ -63,7 +63,7 @@ shows the options for yaplot plugin (if any).
 
 ## Basics
 
-The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero (except the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
+The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero (except the case you specify `--nodep` option).  
 
 * To get a large repetition of ice Ih in XYZ format,
 
@@ -76,6 +76,8 @@ The program generates various ice lattice with proton disorder and without defec
 * To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
         genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
+
+The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
 
 GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options.
 
