@@ -1,4 +1,10 @@
 # coding: utf-8
+desc={"ref": {"FAU": "http://www.iza-structure.org/databases/"},
+      "usage": "No options available.",
+      "brief": "Zeolite FAU."
+      }
+
+
 cell = """
 22.0521436845 22.0521436845 22.0521436845
 """

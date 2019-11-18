@@ -1,6 +1,6 @@
 # coding: utf-8
 desc={"ref": {},
-      "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h".',
+      "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h". Note: this is not guaranteed as the most stable structure.',
       "brief": "Ice XI w/ stacking faults."
       }
 
@@ -79,7 +79,6 @@ def argparser(arg):
     pairs = fixed.copy()
     waters = np.array(L) / np.array([4.0, 6.0, height])
     coord = "relative"
-    logger.info(waters.shape)
     LHB = 0.276
     bondlen = 0.3
     y = LHB* (8**0.5 / 3)*3

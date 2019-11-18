@@ -1,9 +1,8 @@
 # coding: utf-8
-"""
-Hypothetical ice "i".
-
-Data source: Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005).
-"""
+desc={"ref": {"i": "Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005)."},
+      "usage": "No options available.",
+      "brief": 'Hypothetical ice "i"'
+      }
 
 density = 0.92     #default density
 

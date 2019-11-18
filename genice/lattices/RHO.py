@@ -3,6 +3,11 @@
 Data source:
 Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
 """
+desc={"ref": {"RHO": "http://www.iza-structure.org/databases/",
+              "S-III": "Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010."},
+      "usage": "No options available.",
+      "brief": "Zeolite RHO."
+      }
 
 cell = """
 13.339813507 13.339813507 13.339813507

@@ -5,6 +5,12 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (3,2,2,0,)
 """
+desc={"ref": {"Z": "Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.",
+              "sIV": "Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.",
+              "HS1": "Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245."},
+      "usage": "No options available.",
+      "brief": "Clathrate type IV."
+      }
 
 pairs="""
 9 20
@@ -161,4 +167,4 @@ from genice.cell import cellvectors
 cell = cellvectors(a=12.747893943706936,
                    b=12.747893943706938,
                    c=13.065056338344617,
-                   C=119.99999999999999)
+                   C=120)

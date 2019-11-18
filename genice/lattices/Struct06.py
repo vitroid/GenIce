@@ -5,6 +5,10 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (40,20,8,12,)
 """
+desc={"ref": {"Struct06": 'Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.'},
+      "usage": "No options available.",
+      "brief": "Clathrate structure classified by Dutour Sikirić."
+      }
 
 pairs="""
 2 323
