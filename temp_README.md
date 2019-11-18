@@ -104,27 +104,27 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
 
 Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example for the ethlene oxide molecule.
 
-`eo.py`
+```python
+import numpy as np
+# United-atom EO model with a dummy site
+LOC = 0.1436 # nm
+LCC = 0.1472 # nm
 
-    import numpy as np
-    # United-atom EO model with a dummy site
-    LOC = 0.1436 # nm
-    LCC = 0.1472 # nm
-    
-    Y = (LOC**2 - (LCC/2)**2)**0.5
-    
-    sites = np.array([[ 0.,    0., 0. ],
-                      [-LCC/2, Y,  0. ],
-                      [+LCC/2, Y,  0. ],])
+Y = (LOC**2 - (LCC/2)**2)**0.5
 
-    mass = np.array([16,14,14])
-    # center of mass
-    CoM = np.dot(mass, sites) / np.sum(mass)
-    sites -= CoM
-    
-    atoms = ["O","C","C"]
-    labels = ["Oe","Ce","Ce"]
-    name = "EO"
+sites = np.array([[ 0.,    0., 0. ],
+                  [-LCC/2, Y,  0. ],
+                  [+LCC/2, Y,  0. ],])
+
+mass = np.array([16,14,14])
+# center of mass
+CoM = np.dot(mass, sites) / np.sum(mass)
+sites -= CoM
+
+atoms = ["O","C","C"]
+labels = ["Oe","Ce","Ce"]
+name = "EO"
+```
 
 Write the code in eo.py. Make a folder named `molecules` in the current working directory and put it in.
 
@@ -136,7 +136,9 @@ Small ions may replace the host molecules.  In that case, you can use `-a` and `
 
 The following example replaces the `0`th water molecule (in the replicated lattice) with Na cation and `1`st water molecule with Cl anion.  The hydrogen bonds around the ions are organized appropriately.
 
-    genice CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+```bash
+genice CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+```
 
 *Note 1*: The numbers of cations and anions must be the same.  Otherwise, ice rule is never satisfied and the program does not stop.  
 
@@ -148,25 +150,32 @@ The following example replaces the `0`th water molecule (in the replicated latti
 
 ### Placement of a tetrabutylammonium ion
 
-Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counterion Br.
+Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as 3.  Place the nitrogen as a cation and also replace the water 19 by the counterion Br.
 
-    genice HS1 -c 0=N -a 2=Br --nodep > HS1.gro
+    genice HS1 -c 3=N -a 19=Br --nodep > HS1.gro
 
 Then you will see the following info.
 
-    INFO   Hints:
-    INFO     Cage types: ['12', '14', '15']
-    INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-    INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-    INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-    INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-    INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+```
+INFO   Hints:
+INFO     Cage types: ['12', '14', '15']
+INFO     Cage type 12: {0, 1, 2, 3, 4, 5}
+INFO     Cage type 14: {8, 9, 6, 7}
+INFO     Cage type 15: {10, 11, 12, 13}
+...
+INFO Stage7: Atomic positions of the guest.
+INFO     Cages adjacent to dopant 19: {9, 11, 13, 7}
+INFO     Cages adjacent to dopant 3: {9, 11, 13, 7}
+INFO Stage7: end.
+```
 
-It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
+It indicates that the nitrogen is surrounded by cages with ids 9, 11, 13, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 3.
 
-    genice HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+```
+genice HS1 -c 3=N -a 19=Br -H 9=Bu-:3 -H 11=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --nodep > HS1.gro
+```
 
-Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option.
+Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option. For example, `-H 7=Bu-:3` reads "Cage #7 is filled with a butyl group which has a root at the position of water #3".
  
  
 ### Placement of TBAB in the lattice module

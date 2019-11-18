@@ -9,7 +9,7 @@ version 1.0.4
 
 * networkx>=2
 * countrings>=0.1.7
-* pairlist>=0.2.3
+* pairlist>=0.2.9
 * yaplotlib>=0.1
 * numpy
 
@@ -51,7 +51,8 @@ Install with pip3.
                             11              Ice XI.
                             12, XII, ice12  Ice XII.
                             13, XIII, ice13 Ice XIII.
-                            16, CS2, MTN, XVI, ice16, sII   Ice XVI.
+                            16, C15, CS2, MTN, Struct19, XVI, ice16, sII    Ice XVI
+                                             and clathrate type II.
                             17, C0-II, C0, XVII, ice17      Ice XVII.
                             1c, C2, Ic, ice1c               Ice Ic.
                             1h, Ih, ice1h   Ice Ih.
@@ -70,30 +71,58 @@ Install with pip3.
                             8, VIII, ice8   Ice VIII.
                             9, IX, ice9     Ice IX.
                             A, iceA         Hypothetical ice A.
-                            A15, Struct33   Cubic Structure I of clathrate hydrate.
+                            A15, CS1, MEP, Struct33, sI     Clathrate type I.
                             B, iceB         Hypothetical ice B.
+                            C14, HS2, Struct68, sV          Clathrate type V.
+                            C36, FK6layers, FK9layers, Hcomp, Struct01, Struct02, 
+                                            Struct03, Struct04, Struct05, Struct06,
+                                             Struct07, Struct08, Struct09, 
+                                            Struct10, Struct11, Struct12, Struct13,
+                                             Struct14, Struct15, Struct16, 
+                                            Struct17, Struct18, Struct20, Struct21,
+                                             Struct22, Struct23, Struct24, 
+                                            Struct25, Struct26, Struct27, Struct28,
+                                             Struct29, Struct30, Struct31, 
+                                            Struct32, Struct34, Struct35, Struct36,
+                                             Struct37, Struct39, Struct40, 
+                                            Struct41, Struct42, Struct43, Struct44,
+                                             Struct45, Struct46, Struct47, 
+                                            Struct48, Struct49, Struct50, Struct51,
+                                             Struct52, Struct53, Struct55, 
+                                            Struct56, Struct57, Struct58, Struct59,
+                                             Struct60, Struct61, Struct62, 
+                                            Struct63, Struct64, Struct65, Struct66,
+                                             Struct67, Struct69, Struct70, 
+                                            Struct71, Struct72, Struct73, Struct74,
+                                             Struct75, Struct76, Struct77, 
+                                            Struct78, Struct79, Struct80, Struct81,
+                                             Struct82, Struct83, Struct84, delta, 
+                                            mu, psigma, zra-d                
+                                            Clathrate structure classified by 
+                                            Dutour Sikirić.
+                            CRN1, CRN2, CRN3                Continuous Random 
+                                            Network.
+                            CS4, SOD, sVII  Clathrate type VII.
+                            DOH, HS3, sH    Clathrate type H.
+                            EMT             Zeolite EMT.
+                            FAU             Zeolite FAU.
+                            HS1, Struct54, Z, sIV           Clathrate type IV.
+                            LTA             Zeolite LTA.
+                            RHO             Zeolite RHO.
+                            Struct38, TS1, sIII, sigma      Clathrate type III.
+                            dtc             Hypothetical porous ice dtc.
+                            eleven          Ice XI w/ stacking faults.
+                            i               Hypothetical ice "i"
                             ice11_19        A candidate for an antiferroelectric 
                                             Ice XI #19.
+                            iceR            Hypothetical ice R.
+                            iceT            Hypothetical ice T.
+                            iceT2           Hypothetical ice T2.
+                            one             Ice I w/ stacking faults.
+                            xFAU            Aeroice NxFAU.
+                            xFAU2           Aeroice NxFAU (hydrogen-ordered).
                             ----
-                            (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
-                            CS4 DOH EMT FAU FK6layers FK9layers HS1 HS2 HS3 Hcomp 
-                            Kcomp LTA MEP RHO SOD Struct01 Struct02 Struct03 
-                            Struct04 Struct05 Struct06 Struct07 Struct08 Struct09 
-                            Struct10 Struct11 Struct12 Struct13 Struct14 Struct15 
-                            Struct16 Struct17 Struct18 Struct19 Struct20 Struct21 
-                            Struct22 Struct23 Struct24 Struct25 Struct26 Struct27 
-                            Struct28 Struct29 Struct30 Struct31 Struct32 Struct34 
-                            Struct35 Struct36 Struct37 Struct38 Struct39 Struct40 
-                            Struct41 Struct42 Struct43 Struct44 Struct45 Struct46 
-                            Struct47 Struct48 Struct49 Struct50 Struct51 Struct52 
-                            Struct53 Struct54 Struct55 Struct56 Struct57 Struct58 
-                            Struct59 Struct60 Struct61 Struct62 Struct63 Struct64 
-                            Struct65 Struct66 Struct67 Struct68 Struct69 Struct70 
-                            Struct71 Struct72 Struct73 Struct74 Struct75 Struct76 
-                            Struct77 Struct78 Struct79 Struct80 Struct81 Struct82 
-                            Struct83 Struct84 T TS1 Z delta dtc i ice1h_unit iceR 
-                            iceT iceT2 mu prism psigma sH sI sIII sIV sTprime sV 
-                            sVII sigma xFAU xFAU2 zra-d
+                            (Undocumented) 1h_unit Kcomp T ice1h_unit prism sTprime
                              
                              
                             2. Lattice structures served by external plugins
@@ -149,9 +178,7 @@ Install with pip3.
                              
                             2. Formatters served by external plugins
                              
-                            cage            Cage analysis.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              
@@ -266,27 +293,27 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
 
 Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example for the ethlene oxide molecule.
 
-`eo.py`
+```python
+import numpy as np
+# United-atom EO model with a dummy site
+LOC = 0.1436 # nm
+LCC = 0.1472 # nm
 
-    import numpy as np
-    # United-atom EO model with a dummy site
-    LOC = 0.1436 # nm
-    LCC = 0.1472 # nm
-    
-    Y = (LOC**2 - (LCC/2)**2)**0.5
-    
-    sites = np.array([[ 0.,    0., 0. ],
-                      [-LCC/2, Y,  0. ],
-                      [+LCC/2, Y,  0. ],])
+Y = (LOC**2 - (LCC/2)**2)**0.5
 
-    mass = np.array([16,14,14])
-    # center of mass
-    CoM = np.dot(mass, sites) / np.sum(mass)
-    sites -= CoM
-    
-    atoms = ["O","C","C"]
-    labels = ["Oe","Ce","Ce"]
-    name = "EO"
+sites = np.array([[ 0.,    0., 0. ],
+                  [-LCC/2, Y,  0. ],
+                  [+LCC/2, Y,  0. ],])
+
+mass = np.array([16,14,14])
+# center of mass
+CoM = np.dot(mass, sites) / np.sum(mass)
+sites -= CoM
+
+atoms = ["O","C","C"]
+labels = ["Oe","Ce","Ce"]
+name = "EO"
+```
 
 Write the code in eo.py. Make a folder named `molecules` in the current working directory and put it in.
 
@@ -298,7 +325,9 @@ Small ions may replace the host molecules.  In that case, you can use `-a` and `
 
 The following example replaces the `0`th water molecule (in the replicated lattice) with Na cation and `1`st water molecule with Cl anion.  The hydrogen bonds around the ions are organized appropriately.
 
-    genice CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+```bash
+genice CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+```
 
 *Note 1*: The numbers of cations and anions must be the same.  Otherwise, ice rule is never satisfied and the program does not stop.  
 
@@ -310,25 +339,32 @@ The following example replaces the `0`th water molecule (in the replicated latti
 
 ### Placement of a tetrabutylammonium ion
 
-Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counterion Br.
+Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as 3.  Place the nitrogen as a cation and also replace the water 19 by the counterion Br.
 
-    genice HS1 -c 0=N -a 2=Br --nodep > HS1.gro
+    genice HS1 -c 3=N -a 19=Br --nodep > HS1.gro
 
 Then you will see the following info.
 
-    INFO   Hints:
-    INFO     Cage types: ['12', '14', '15']
-    INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-    INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-    INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-    INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-    INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+```
+INFO   Hints:
+INFO     Cage types: ['12', '14', '15']
+INFO     Cage type 12: {0, 1, 2, 3, 4, 5}
+INFO     Cage type 14: {8, 9, 6, 7}
+INFO     Cage type 15: {10, 11, 12, 13}
+...
+INFO Stage7: Atomic positions of the guest.
+INFO     Cages adjacent to dopant 19: {9, 11, 13, 7}
+INFO     Cages adjacent to dopant 3: {9, 11, 13, 7}
+INFO Stage7: end.
+```
 
-It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
+It indicates that the nitrogen is surrounded by cages with ids 9, 11, 13, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 3.
 
-    genice HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+```
+genice HS1 -c 3=N -a 19=Br -H 9=Bu-:3 -H 11=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --nodep > HS1.gro
+```
 
-Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option.
+Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option. For example, `-H 7=Bu-:3` reads "Cage #7 is filled with a butyl group which has a root at the position of water #3".
  
  
 ### Placement of TBAB in the lattice module
@@ -431,9 +467,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by external plugins
                              
-                            cage            Cage analysis.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              
