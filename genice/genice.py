@@ -1103,7 +1103,7 @@ class GenIce():
 
         self.logger.info("Stage7: end.")
 
-    def prepare_random_graph(self, fixed):
+    def prepare_random_graph(self, fixed=None, shuffle=True):
 
         if self.pairs is None:
             self.logger.info("  Pairs are not given explicitly.")
@@ -1143,15 +1143,20 @@ class GenIce():
             if graph.has_edge(i, j) or graph.has_edge(j, i):
                 pass
             else:
-                if random.randint(0, 1) == 0:
-                    graph.add_edge(i, j, fixed=False)
+                if shuffle:
+                    if random.randint(0, 1) == 0:
+                        graph.add_edge(i, j, fixed=False)
+                    else:
+                        graph.add_edge(j, i, fixed=False)
                 else:
-                    graph.add_edge(j, i, fixed=False)
+                    graph.add_edge(i, j, fixed=False)
 
         self.logger.info("  Number of water nodes: {0}".format(graph.number_of_nodes()))
 
         return graph
 
+
+    
     def test_undirected_graph(self, graph):
         # Test
 

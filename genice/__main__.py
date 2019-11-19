@@ -126,6 +126,17 @@ def main():
         filerange = options.filerange
         framerange = options.framerange
         suffix = options.suffix
+        anions = dict()
+        if options.anions is not None:
+            logger.info(options.anions)
+            for v in options.anions:
+                key, value = v[0].split("=")
+                anions[int(key)] = value
+        cations = dict()
+        if options.cations is not None:
+            for v in options.cations:
+                key, value = v[0].split("=")
+                cations[int(key)] = value
         if options.output is None:
             output = None
             stdout = None
@@ -147,7 +158,7 @@ def main():
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-            lat = analice.AnalIce(lattice_info, sys.argv)
+            lat = analice.AnalIce(lattice_info, sys.argv, cations=cations, anions=anions)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water_type=water_type,

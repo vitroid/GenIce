@@ -11,6 +11,8 @@ from genice.valueparsers import parse_pairs
 from genice import digraph as dg
 from genice import __version__
 from genice.plugin import descriptions
+from genice.dope import bipartile_self_avoiding_shortest_twin_paths
+
 
 def help_file():
     return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
@@ -57,6 +59,20 @@ def getoptions():
                         metavar="gro",
                         default=None,
                         help='Specify the file suffix explicitly. ((None)')
+    parser.add_argument('--anion',
+                        '-a',
+                        nargs=1,
+                        dest='anions',
+                        metavar="3=Cl",
+                        action="append",
+                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
+    parser.add_argument('--cation',
+                        '-c',
+                        nargs=1,
+                        dest='cations',
+                        metavar="3=Na",
+                        action="append",
+                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
     parser.add_argument('--filerange',
                         dest='filerange',
                         metavar="[from:]below[:interval]",
@@ -96,7 +112,7 @@ def getoptions():
 
 
 class AnalIce(GenIce):
-    def __init__(self, lat, argv):
+    def __init__(self, lat, argv, cations=dict(), anions=dict()):
 
         self.logger = logging.getLogger()
         self.rep = (1,1,1)
@@ -105,7 +121,9 @@ class AnalIce(GenIce):
         #         anions=dict(),
         #         spot_guests=dict(),
         #         spot_groups=dict(),
-        self.asis = False
+        self.cations = cations
+        self.anions = anions
+        self.asis = True  # False
         # Show the document of the module
 
         try:
@@ -243,7 +261,7 @@ class AnalIce(GenIce):
             pass
 
         self.dopeIonsToUnitCell = None
-        self.dopants = set()
+        self.dopants = dict()
 
         # if asis, make pairs to be fixed.
         if self.asis and len(self.fixed) == 0:
@@ -282,7 +300,7 @@ class AnalIce(GenIce):
             if maxstage < 2 or abort:
                 return
 
-        if self.rotmatrices is None:
+        if self.rotmatrices is None or len(self.anions) > 0 or len(self.cations) > 0:
             res = self.stage2()
 
         if 2 in hooks:
@@ -321,7 +339,8 @@ class AnalIce(GenIce):
             if maxstage < 7 or abort:
                 return
 
-        # self.stage7_analice(guests)
+        self.stage7(guests=dict())
+        
         if 7 in hooks:
             hooks[7](self)
 
@@ -342,7 +361,8 @@ class AnalIce(GenIce):
         self.logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
 
         # self.graph = self.prepare_random_graph(self.fixed)
-        self.graph = self.prepare_random_graph(self.pairs)
+        # all bonds are fixed
+        self.graph = self.prepare_random_graph(fixed=self.pairs)
 
         # scale the cell
         self.repcell = Cell(self.cell.mat)
@@ -355,8 +375,62 @@ class AnalIce(GenIce):
                                        scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
-
         self.logger.info("Stage1: end.")
+
+    def stage2(self):
+        """
+        Make a random graph.
+        Put dopants by request.
+
+        Provided variables:
+        dopants:
+        graph:   replicated network topology (bond orientation may be random)
+        """
+
+        self.logger.info("Stage2: Graph preparation.")
+
+        # Dope ions by options.
+        if len(self.anions) > 0 or len(self.cations) > 0:
+            self.logger.info("  Anionize: {0}.".format(self.anions))
+
+            for site, name in self.anions.items():
+                # self.graph.anionize(site)
+                self.dopants[site] = name
+
+            self.logger.info("  Cationize: {0}.".format(self.cations))
+
+            for site, name in self.cations.items():
+                # self.graph.cationize(site)
+                self.dopants[site] = name
+
+            paths = bipartile_self_avoiding_shortest_twin_paths(self.graph, [x for x in self.anions], [x for x in self.cations])
+            s = 0
+            for path in paths:
+                self.graph.invert_path(path, forced=True)
+                s += len(path)-1
+            self.logger.info("  Number of inverted bonds by forced doping: {0}".format(s))
+
+            self.rotmatrices = None
+
+        # Count bonds
+        nrandom = 0
+        nfixed = 0
+        for i, j, data in self.graph.edges(data=True):
+            if self.graph[i][j]['fixed']:  # fixed pair
+                nfixed += 1
+            else:
+                nrandom += 1
+        self.logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
+        self.logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
+        self.logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
+
+        # test2==True means it is a z=4 graph.
+        self.test2 = self.test_undirected_graph(self.graph)
+        if not self.test2:
+            self.logger.warn("Test2 failed.")
+
+        self.logger.info("Stage2: end.")
+        return self.test2
 
     def stage4(self):
         """
