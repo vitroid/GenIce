@@ -9,7 +9,7 @@ import math
 import networkx
 import random
 import numpy as np
-import logging
+from logging import getLogger, DEBUG, basicConfig
 import yaplotlib as yp
 
 # Dijkstra
@@ -29,6 +29,12 @@ def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
 
 
 def shortest_path(G, start, ends):
+    """
+    Find a shortest path from the start to one of the ends.
+
+    Returns:
+    list of nodes on the shortest path from the start to one of the ends.
+    """
     q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
     visited = set()       # Visited vertices.
     while True:
@@ -45,6 +51,38 @@ def shortest_path(G, start, ends):
             for v2 in G[v1]:
                 if v2 not in visited and not G[v1][v2]['fixed']:
                     heapq.heappush(q, (cost + 1, v2, path))
+
+
+def shortest_paths(G, start, ends, allowfixed=False):
+    """
+    Find all shortests paths from the start to one of the ends.
+
+    Returns:
+    list of shortest paths from the start to one of the ends.
+    """
+    logger = getLogger()
+    q = [(0, [start,])]  # Heap of (cost, path)
+    visited = set()       # Visited vertices.
+    cheapest = 999999
+    paths = []
+    while len(q):
+        # logger.debug(q)
+        (cost, path) = heapq.heappop(q)
+        if cost > cheapest:
+            break
+        v0 = path[-1]
+        if v0 in ends:
+            cheapest = cost  # first arrived
+            paths.append(path)
+        else:
+            if v0 in visited:
+                continue
+            visited.add(v0)
+            for v1 in G[v0]:
+                if v1 not in visited:
+                    if allowfixed or not G[v0][v1]['fixed']:
+                        heapq.heappush(q, (cost + 1, path+[v1]))
+    return paths
 
 
 class YaplotDraw(networkx.DiGraph):
@@ -197,7 +235,7 @@ class IceGraph(networkx.DiGraph):
 
     def purgedefects(self, defects):
         d = defects[0]
-        logger = logging.getLogger()
+        logger = getLogger()
         # logger.debug(self.ignores)
         if d in self.ignores:
             defects.pop(0)
@@ -232,7 +270,7 @@ class IceGraph(networkx.DiGraph):
 
         It also counts the "ignore_ice_rules" sites.
         """
-        logger = logging.getLogger()
+        logger = getLogger()
         defects = []
         for i in range(self.number_of_nodes()):
             if self.in_degree(i) != 2 or self.out_degree(i) != 2:
@@ -256,7 +294,7 @@ class IceGraph(networkx.DiGraph):
                 yield i
 
     def purge_ice_defects(self):
-        logger = logging.getLogger()
+        logger = getLogger()
         # TSL
         # if not self.isZ4():
         #    logger.error("Some water molecules do not have four HBs.")
@@ -338,14 +376,14 @@ class SpaceIceGraph(IceGraph):
         return dipole
 
     def vector_check(self):
-        logger = logging.getLogger()
+        logger = getLogger()
         for i, j, k in self.edges(data=True):
             if k is None:
                 logger.error("The edge ({0},{1}) has no vector.".format(i, j))
 
 
 def find_apsis(coord, cell, distance, vertex, axis):
-    logger = logging.getLogger()
+    logger = getLogger()
     # for Z case
     apsis = coord[vertex] + axis * 0.5
     # find the atoms near the apsis
@@ -363,7 +401,7 @@ def find_apsis(coord, cell, distance, vertex, axis):
 
 
 def estimate_edge_length(spaceicegraph, cell, vertex):
-    logger = logging.getLogger()
+    logger = getLogger()
     # In case an anion is selected by bad fortune.
     if len(spaceicegraph.adj[vertex]) == 0:
         return 0
@@ -381,7 +419,7 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
     Find a farthest atom from the given atom, and
     make the shortest paths between them.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
 
     distance = 0
     while distance == 0:
@@ -393,6 +431,8 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis, ])
         logger.debug("Path1: {0}".format(path1))
+        paths = shortest_paths(spaceicegraph, vertex, [apsis, ])
+        logger.debug("paths1: {0}".format(paths))
         if path1 is None:
             # No path found, probably because of the double networks
             continue
@@ -425,7 +465,7 @@ def depolarize(spaceicegraph, cell, draw=None):
 
     It works much better than depolarize()
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
     logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
@@ -522,7 +562,7 @@ def purge_ice_defects(icegraph):
     This is faster than the method in icegraph, but
     it also polarizes the graph in the course of purging.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     while len(icegraph.bernal_fowler_defects()) > 0:
         logger.info("# of defects: {0}".format(len(icegraph.bernal_fowler_defects())))
         ins = set(icegraph.excess_in_defects())
@@ -537,3 +577,20 @@ def purge_ice_defects(icegraph):
                         ins.remove(end)
                 # logger.debug("IN:{0}".format(len(set(icegraph.excess_in_defects()))))
                 # logger.debug("OUT:{0}".format(len(set(icegraph.excess_out_defects()))))
+
+
+
+def test():
+    # logger
+    basicConfig(level=DEBUG, format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
+    logger = getLogger(__name__)
+    logger.setLevel(DEBUG)
+    g = networkx.Graph()
+    # 6-cycle
+    for i in range(5):
+        g.add_edge(i,i+1)
+    g.add_edge(0,5)
+    print(shortest_paths(g,0,[3,],allowfixed=True))
+    
+if __name__ == "__main__":
+    test()
