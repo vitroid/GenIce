@@ -33,7 +33,7 @@ def shortest_path(G, start, end, occupied_edges, forbidden_vertices):
     q = [(0, [start,])]  # Heap of (cost, path)
     visited = set()
     while len(q):
-        logger.debug(q)
+        # logger.debug(q)
         (cost, path) = heapq.heappop(q)
         v0 = path[-1]
         visited.add(v0)
@@ -65,28 +65,34 @@ def bipartile_self_avoiding_shortest_twin_paths(g, anions, cations):
     
     cheapest=999999
     best=None
-    for cat in it.permutations(cations):
-        occupied_edges = set()
-        forbidden_vertices = set(anions+cations)
-        paths = []
-        cost = 0
-        for a,c in zip(anions, cat):
-            for j in range(2): # two paths are required
-                path = shortest_path(g, a, c, occupied_edges, forbidden_vertices)
-                print(path)
-                print(a,c)
-                if path is None:
-                    # This may happen when ions are too close each other. Some ion may block the path.
-                    cost = 999999
-                else:
-                    paths.append(path)
-                    cost += len(path)-1
-                    for k in range(len(path)-1):
-                        occupied_edges.add((path[k], path[k+1]))
-        if cost < cheapest:
-            best = paths
-            cheapest = cost
-            print(cost)
+    forbidden_vertices = frozenset(anions+cations)
+
+    processed = set()
+    for cat1 in it.permutations(cations):
+        for cat2 in it.permutations(cations):
+            occupied_edges = set()
+            paths = []
+            cost = 0
+            ac = tuple([(a,c) for a,c in zip(anions+anions, cat1+cat2)])
+            if ac not in processed:
+                processed.add(ac)
+                #print(ac)
+                for a,c in ac:
+                    path = shortest_path(g, a, c, occupied_edges, forbidden_vertices)
+                    #print(path)
+                    #print(a,c)
+                    if path is None:
+                        # This may happen when ions are too close each other. Some ion may block the path.
+                        cost = 999999
+                    else:
+                        paths.append(path)
+                        cost += len(path)-1
+                        for k in range(len(path)-1):
+                            occupied_edges.add((path[k], path[k+1]))
+            if cost < cheapest:
+                best = paths
+                cheapest = cost
+                print(cost)
     return best
 
 if __name__ == "__main__":
