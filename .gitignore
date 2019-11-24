@@ -11,6 +11,7 @@ GenIce.egg*
 Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
+cages.py
 
 /*.svg
 /*.yap
@@ -24,6 +25,17 @@ Utilities/*.yap
 /*.nx3a
 
 benchmark\.txt
+
+docs/*.svg
+docs/*.png
+docs/*.cif
+docs/*.gro
+docs/ja
+
+lattices/*
+lattices (1)/*
+
+molecules/*
 
 Prepare/
 tests/*.done

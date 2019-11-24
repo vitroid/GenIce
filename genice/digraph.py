@@ -203,7 +203,7 @@ class IceGraph(networkx.DiGraph):
             defects.pop(0)
             return
         if self.degree(d) != 4:  # TSL
-            assert self.degree(d) < 4
+            assert self.degree(d) < 4, "Degree {0} should be <4.".format(self.degree(d))
             # logger.warn("  Defect {0} {1} >>{2} <<{3}".format(d,self.degree(d),self.in_degree(d),self.out_degree(d)))
             if self.in_degree(d) <= 2 and self.out_degree(d) <= 2:  # acceptable
                 defects.pop(0)

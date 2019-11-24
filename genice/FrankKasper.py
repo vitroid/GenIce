@@ -94,9 +94,13 @@ def tetrahedra(pairs, rc, coord, cell):
                         yield (v, vi, vj, vk), (coord[v], di, dj, dk)
 
 
-def toWater(coord, cell):
+def toWater(coord, cell, tolerance=1.4):
+    """
+    cell: cell matrix (first row == a)
+    coord: relative coord of the cage position
+    """
     logger = logging.getLogger()
-    dmin = shortest_distance(coord, cell) * 1.4
+    dmin = shortest_distance(coord, cell) * tolerance
     grid = pl.determine_grid(cell, dmin)
     pairs = pl.pairs_fine(coord, dmin, cell, grid, distance=False)
     for vtet, dtet in tetrahedra(pairs, dmin, coord, cell):
