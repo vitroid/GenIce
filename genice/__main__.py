@@ -46,6 +46,7 @@ def main():
         lattice_type = options.Type
         seed = options.seed
         rep = options.rep
+        sh  = options.shift
         density = options.dens
         asis = options.asis
         anions = dict()
@@ -87,6 +88,7 @@ def main():
                             spot_guests=spot_guests,
                             spot_groups=groups,
                             asis=asis,
+                            shift=sh,
         )
 
         water_type = options.water

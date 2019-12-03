@@ -55,6 +55,13 @@ def getoptions():
                         dest='rep',
                         default=[1, 1, 1],
                         help='Repeat the unit cell along a, b, and c axes. [1,1,1]')
+    parser.add_argument('--shift',
+                        '-S',
+                        nargs=3,
+                        type=float,
+                        dest='shift',
+                        default=[0., 0., 0.],
+                        help='Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]')
     parser.add_argument('--dens',
                         '-d',
                         type=float,
@@ -501,6 +508,7 @@ class GenIce():
                  spot_guests=dict(),
                  spot_groups=dict(),
                  asis=False,
+                 shift=(0.,0.,0.),
                  ):
 
         self.logger = getLogger()
@@ -550,7 +558,8 @@ class GenIce():
         if lat.coord == "absolute":
             self.waters = self.cell.abs2rel(self.waters)
 
-        self.waters = np.array([w - np.floor(w) for w in self.waters])
+        self.waters = np.array(self.waters) + np.array(shift)
+        self.waters -= np.floor(self.waters)
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
@@ -636,6 +645,8 @@ class GenIce():
 
         if "cages" in lat.__dict__:
             self.cagepos, self.cagetype = parse_cages(lat.cages)
+        self.cagepos = np.array(self.cagepos) + np.array(shift)
+        self.cagepos -= np.floor(self.cagepos)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
