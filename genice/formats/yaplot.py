@@ -15,7 +15,6 @@ from collections import defaultdict
 import numpy as np
 import yaplotlib as yp
 import pairlist as pl
-from colorsys import hsv_to_rgb
 
 def hook0(lattice, args):
     lattice.logger.info("Hook0: ArgParser.")
