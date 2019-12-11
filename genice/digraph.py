@@ -147,35 +147,53 @@ class IceGraph(networkx.DiGraph):
         # is added automatically in cationize/anionize
         self.ignores = set()
 
-    def cationize(self, which):
+    def cationize(self, target):
         invert = set()
         fix = set()
-        for i, j, data in self.edges(data=True):
-            if j == which:
-                invert.add((i, j))
-                fix.add((j, i))
-            elif i == which:
-                fix.add((i, j))
+        for i, j in self.in_edges(target):
+            assert j == target
+            invert.add((i, j))
+            fix.add((j, i))
+        for i, j in self.out_edges(target):
+            assert i == target
+            fix.add((i, j))
         for i, j in invert:
             self.invert_edge(i, j)
         for i, j in fix:
             self[i][j]['fixed'] = True
-        self.ignores.add(which)
+        self.ignores.add(target)
 
-    def anionize(self, which):
+    def anionize(self, target):
         invert = set()
         fix = set()
-        for i, j, data in self.edges(data=True):
-            if i == which:
-                invert.add((i, j))
-                fix.add((j, i))
-            elif j == which:
-                fix.add((i, j))
+        for i, j in self.out_edges(target):
+            assert i == target
+            invert.add((i, j))
+            fix.add((j, i))
+        for i, j in self.in_edges(target):
+            assert j == target
+            fix.add((i, j))
         for i, j in invert:
             self.invert_edge(i, j)
         for i, j in fix:
             self[i][j]['fixed'] = True
-        self.ignores.add(which)
+        self.ignores.add(target)
+
+    def cationizable(self, target):
+        for i, j in self.in_edges(target):
+            assert j == target
+            # if HB is pointing to the target and is fixed,
+            if self[i][j]['fixed']:
+                return False
+        return True
+
+    def anionizable(self, target):
+        for i, j in self.out_edges(target):
+            assert i == target
+            # if HB is pointing to the target and is fixed,
+            if self[i][j]['fixed']:
+                return False
+        return True
 
     def invert_edge(self, from_, to_, forced=False):
         """

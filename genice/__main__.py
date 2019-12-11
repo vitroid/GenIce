@@ -53,12 +53,12 @@ def main():
             logger.info(options.anions)
             for v in options.anions:
                 key, value = v[0].split("=")
-                anions[int(key)] = value
+                anions[key] = value
         cations = dict()
         if options.cations is not None:
             for v in options.cations:
                 key, value = v[0].split("=")
-                cations[int(key)] = value
+                cations[key] = value
         spot_guests = dict()
         if options.spot_guests is not None:
             for v in options.spot_guests:
@@ -131,12 +131,12 @@ def main():
             logger.info(options.anions)
             for v in options.anions:
                 key, value = v[0].split("=")
-                anions[int(key)] = value
+                anions[key] = value
         cations = dict()
         if options.cations is not None:
             for v in options.cations:
                 key, value = v[0].split("=")
-                cations[int(key)] = value
+                cations[key] = value
         if options.output is None:
             output = None
             stdout = None

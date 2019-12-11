@@ -112,14 +112,16 @@ def getoptions():
                         dest='anions',
                         metavar="3=Cl",
                         action="append",
-                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
+                        help='Specify the label of a water molecule to be replaced with an (monatomic) anion (3=Cl, 39=F, etc.)\n'
+                        +'or percentage of water molecules to be replaced with an anion (3%=Cl, etc).' )
     parser.add_argument('--cation',
                         '-c',
                         nargs=1,
                         dest='cations',
                         metavar="3=Na",
                         action="append",
-                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
+                        help='Specify the label of a water molecule to be replaced with a (monatomic) cation (3=Na, 39=NH4, etc.)\n'
+                        +'or percentage of water molecules to be replaced with a cation (3%=Na, etc).' )
     parser.add_argument('--visual',
                         dest='visual',
                         default="",
@@ -833,19 +835,56 @@ class GenIce():
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
 
         # Dope ions by options.
+        Nwaters = len(self.reppositions)
         if len(self.anions) > 0:
             self.logger.info("  Anionize: {0}.".format(self.anions))
 
-            for site, name in self.anions.items():
-                self.graph.anionize(site)
-                self.dopants[site] = name
+            for sites, name in self.anions.items():
+                if '%' in sites:
+                    # ratio is specified
+                    assert sites[-1] == '%'
+                    nions = int(Nwaters*float(sites[:-1])/100)
+                    self.logger.info("  Number of {0} anions: {1}.".format(name, nions))
+                    ions = set()
+                    while nions > 0:
+                        site = random.randint(0,Nwaters-1)
+                        if self.graph.anionizable(site):
+                            self.graph.anionize(site)
+                            self.dopants[site] = name
+                            nions -= 1
+                            ions.add(site)
+                    self.logger.info("  Anions that replace water molecules at {0}.".format([x for x in sorted(ions)]))
+                else:
+                    for site in sites.split(","):
+                        site = int(site)
+                        assert self.graph.anionizable(site), "Ions cannot be placed too close to each other due to the ice rule."
+                        self.graph.anionize(site)
+                        self.dopants[site] = name
 
         if len(self.cations) > 0:
             self.logger.info("  Cationize: {0}.".format(self.cations))
 
-            for site, name in self.cations.items():
-                self.graph.cationize(site)
-                self.dopants[site] = name
+            for sites, name in self.cations.items():
+                if '%' in sites:
+                    # ratio is specified
+                    assert sites[-1] == '%'
+                    nions = int(Nwaters*float(sites[:-1])/100)
+                    self.logger.info("  Number of {0} cations: {1}.".format(name, nions))
+                    ions = set()
+                    while nions > 0:
+                        site = random.randint(0,Nwaters-1)
+                        if self.graph.cationizable(site):
+                            self.graph.cationize(site)
+                            self.dopants[site] = name
+                            nions -= 1
+                            ions.add(site)
+                    self.logger.info("  Cations that replace water molecules at {0}.".format([x for x in sorted(ions)]))
+                else:
+                    for site in sites.split(","):
+                        site = int(site)
+                        assert self.graph.cationizable(site), "Ions cannot be placed too close to each other due to the ice rule."
+                        self.graph.cationize(site)
+                        self.dopants[site] = name
 
         # Count bonds
         nrandom = 0
@@ -896,7 +935,7 @@ class GenIce():
         self.logger.info("Stage4: Depolarization.")
 
         if not depolarize or self.asis:
-            self.logger.info("  Skip depolarization by request. {0} {1}".format(depolarize, self.asis))
+            self.logger.info("  Skip depolarization by request.") # {0} {1}".format(depolarize, self.asis))
             self.yapresult = ""
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,
