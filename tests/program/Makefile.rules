@@ -24,6 +24,7 @@ all: 4.ngph.test
 all: test1.done   test2.done   test3.done   test4.done
 all: 12.scad.test HS3.rings.yap.test
 all: Ihhccc.nx4a.test
+all: 2.gro.test doped2.gro.test
 
 %.test: $(REFD)/% % 
 	diff $^ && touch $@
@@ -138,3 +139,10 @@ lattices/5x3R.py: 5x3R.py
 	cp $< lattices
 5x3R.yap: lattices/5x3R.py
 	$(GENICE) 5x3R -f y | fgrep -v "Command line:" > $@
+
+# doped hydrogen-ordered ice
+2.gro: $(FMT)/python.py
+	$(GENICE) 2 > $@
+doped2.gro: 2.gro
+	$(ANALICE) 2.gro -c 0=NH4 -a 5=F > $@
+
