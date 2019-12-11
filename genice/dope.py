@@ -53,7 +53,7 @@ def shortest_path(G, start, end, occupied_edges, forbidden_vertices):
 
 
 
-def bipartile_self_avoiding_shortest_twin_paths(g, anions, cations):
+def bipartile_self_avoiding_shortest_path_group(g, anions, cations):
     """
     Find a simplest way to embed pairs of ions in the ice lattice.
 

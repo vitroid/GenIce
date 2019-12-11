@@ -11,7 +11,7 @@ from genice.valueparsers import parse_pairs
 from genice import digraph as dg
 from genice import __version__
 from genice.plugin import descriptions
-from genice.dope import bipartile_self_avoiding_shortest_twin_paths
+from genice.dope import bipartile_self_avoiding_shortest_path_group
 
 
 def help_file():
@@ -403,7 +403,7 @@ class AnalIce(GenIce):
                 # self.graph.cationize(site)
                 self.dopants[site] = name
 
-            paths = bipartile_self_avoiding_shortest_twin_paths(self.graph, [x for x in self.anions], [x for x in self.cations])
+            paths = bipartile_self_avoiding_shortest_path_group(self.graph, [x for x in self.anions], [x for x in self.cations])
             s = 0
             for path in paths:
                 self.graph.invert_path(path, forced=True)
