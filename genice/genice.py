@@ -645,8 +645,8 @@ class GenIce():
 
         if "cages" in lat.__dict__:
             self.cagepos, self.cagetype = parse_cages(lat.cages)
-        self.cagepos = np.array(self.cagepos) + np.array(shift)
-        self.cagepos -= np.floor(self.cagepos)
+            self.cagepos = np.array(self.cagepos) + np.array(shift)
+            self.cagepos -= np.floor(self.cagepos)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.

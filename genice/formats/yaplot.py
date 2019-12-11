@@ -126,10 +126,6 @@ def hook7(lattice):
     gatoms = lattice.atoms[nwateratoms:]
     palettes = dict()
     s = ""
-    phii = 2 / (1 + 5**0.5)
-    for i in range(20):
-        r,g,b = hsv_to_rgb((i*phii) % 1, 1, 1)
-        s += yp.SetPalette(i+4, int(r*255), int(g*255), int(b*255))
     s += yp.Layer(4)
     s += yp.ArrowType(1)
     H = []
