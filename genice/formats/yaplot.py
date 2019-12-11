@@ -14,7 +14,8 @@ options:
 from collections import defaultdict
 import numpy as np
 import yaplotlib as yp
-
+import pairlist as pl
+from colorsys import hsv_to_rgb
 
 def hook0(lattice, args):
     lattice.logger.info("Hook0: ArgParser.")
@@ -129,6 +130,7 @@ def hook7(lattice):
     s += yp.ArrowType(1)
     H = []
     O  = ""
+    pos = []
     for atom in gatoms:
         resno, resname, atomname, position, order = atom
         if atomname in palettes:
@@ -139,6 +141,16 @@ def hook7(lattice):
         s += yp.Color(pal)
         s += yp.Size(0.04)
         s += yp.Circle(position)
+        pos.append(position)
+    # covalent bonds
+    if len(pos):
+        pos = np.array(pos)
+        rpos = pos @ np.linalg.inv(lattice.repcell.mat)
+        s += yp.Color(0)
+        for i,j,d in pl.pairs_iter(rpos, 0.20, lattice.repcell.mat):
+            v = rpos[j] - rpos[i]
+            v -= np.floor( v+0.5 )
+            s += yp.Line(rpos[i] @ lattice.repcell.mat, (rpos[i]+v) @ lattice.repcell.mat)
     s = '#' + "\n#".join(lattice.doc) + "\n" + s
     print(s)
     lattice.logger.info("Hook7: end.")

@@ -112,6 +112,9 @@ def hook1(lattice):
     b = (regcell < torr)
     c = a & b
     regcell[c] = 0.0
+    lattice.logger.info("    a:{0}".format(regcell[0]))
+    lattice.logger.info("    b:{0}".format(regcell[1]))
+    lattice.logger.info("    c:{0}".format(regcell[2]))
 
     # header
     s = ""
@@ -123,16 +126,16 @@ def hook1(lattice):
     s += "  k:{0}\n".format(lattice.ijk[2])
     s += '"""\n'
     
-    s += "bondlen={0}\n".format(lattice.bondlen*10)
+    s += "bondlen={0}\n".format(lattice.bondlen)
     s += "coord='relative'\n"
     if isZero(regcell[1,0]) and isZero(regcell[2,0]) and isZero(regcell[2,1]):
         s += "from genice.cell import cellvectors\n"
-        s += "cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(regcell[0,0]*10,regcell[1,1]*10,regcell[2,2]*10)
+        s += "cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(regcell[0,0],regcell[1,1],regcell[2,2])
     else:
         s += "\nimport numpy as np\n"
         s += "cell=np.array(["
         for d in range(3):
-            s += "[{0:.8f}, {1:.8f}, {2:.8f}], ".format(regcell[d,0]*10,regcell[d,1]*10,regcell[d,2]*10)
+            s += "[{0:.8f}, {1:.8f}, {2:.8f}], ".format(regcell[d,0],regcell[d,1],regcell[d,2])
         s += "])\n"
     # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
     s += "density={0}\n".format(lattice.density)
