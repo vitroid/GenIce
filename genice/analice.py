@@ -393,17 +393,25 @@ class AnalIce(GenIce):
         if len(self.anions) > 0 or len(self.cations) > 0:
             self.logger.info("  Anionize: {0}.".format(self.anions))
 
-            for site, name in self.anions.items():
+            anions = []
+            
+            for sites, name in self.anions.items():
                 # self.graph.anionize(site)
-                self.dopants[site] = name
+                for site in sites.split(","):
+                    self.dopants[int(site)] = name
+                    anions.append(int(site))
 
             self.logger.info("  Cationize: {0}.".format(self.cations))
 
-            for site, name in self.cations.items():
+            cations = []
+            
+            for sites, name in self.cations.items():
                 # self.graph.cationize(site)
-                self.dopants[site] = name
+                for site in sites.split(","):
+                    self.dopants[int(site)] = name
+                    cations.append(int(site))
 
-            paths = bipartile_self_avoiding_shortest_path_group(self.graph, [x for x in self.anions], [x for x in self.cations])
+            paths = bipartile_self_avoiding_shortest_path_group(self.graph, anions, cations)
             s = 0
             for path in paths:
                 self.graph.invert_path(path, forced=True)

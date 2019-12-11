@@ -1,5 +1,6 @@
 all:
-	echo Try \"make test_installed\".
+	touch ref/*
+	make -f Makefile.develop -j 8 -k
 test_installed:
 	make -f Makefile.installed -j 8
 test_develop:

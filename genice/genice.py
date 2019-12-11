@@ -112,7 +112,7 @@ def getoptions():
                         dest='groups',
                         metavar="13=bu-:0",
                         action="append",
-                        help='Specify the group. (-H 13=bu-:0, etc.)')
+                        help='Specify the group. (-H 0,1,2,6=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
                         nargs=1,

@@ -68,8 +68,9 @@ def main():
         groups = dict()
         if options.groups is not None:
             for v in options.groups:
-                key, value = v[0].split("=")
-                groups[int(key)] = value
+                keys, value = v[0].split("=")
+                for key in keys.split(","):
+                    groups[int(key)] = value
 
         # Set random seeds
         random.seed(seed)
