@@ -120,7 +120,7 @@ def getoptions():
                         metavar="3=Cl",
                         action="append",
                         help='Specify the label of a water molecule to be replaced with an (monatomic) anion (3=Cl, 39=F, etc.)\n'
-                        +'or percentage of water molecules to be replaced with an anion (3%=Cl, etc).' )
+                        +'or percentage of water molecules to be replaced with an anion (3%%=Cl, etc).' )
     parser.add_argument('--cation',
                         '-c',
                         nargs=1,
@@ -128,7 +128,7 @@ def getoptions():
                         metavar="3=Na",
                         action="append",
                         help='Specify the label of a water molecule to be replaced with a (monatomic) cation (3=Na, 39=NH4, etc.)\n'
-                        +'or percentage of water molecules to be replaced with a cation (3%=Na, etc).' )
+                        +'or percentage of water molecules to be replaced with a cation (3%%=Na, etc).' )
     parser.add_argument('--visual',
                         dest='visual',
                         default="",
