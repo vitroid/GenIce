@@ -3,7 +3,7 @@ import argparse as ap
 import logging
 from genice.plugin import safe_import
 from genice import __version__
-from genice.cli import SmartFormatter, help_format
+from genice.cli import SmartFormatter, help_format, logger_setup
 from genice.genice import GenIce
 from genice.plugin import descriptions
 
@@ -144,17 +144,7 @@ def main():
     options = getoptions()
 
     # Set verbosity level
-    if options.debug:
-        logging.basicConfig(level=logging.DEBUG,
-                            format="%(asctime)s %(levelname)s %(message)s")
-    elif options.quiet:
-        logging.basicConfig(level=logging.WARN,
-                            format="%(levelname)s %(message)s")
-    else:
-        # normal
-        logging.basicConfig(level=logging.INFO,
-                            format="%(levelname)s %(message)s")
-    logger = logging.getLogger()
+    logger = logger_setup(options.debug, options.quiet)
     logger.debug("Debug mode.")
 
     logger.debug(options.Type)
@@ -190,18 +180,20 @@ def main():
     logger.debug("Lattice: {0}".format(lattice_type))
     assert lattice_type is not None
 
+    signature = "Command line: {0}".format(" ".join(sys.argv))
+
     # Initialize the Lattice class with arguments which are required for plugins.
     lat = GenIce(safe_import("lattice", lattice_type),
-                        sys.argv,
-                        density=density,
-                        rep=rep,
-                        cations=cations,
-                        anions=anions,
-                        spot_guests=spot_guests,
-                        spot_groups=groups,
-                        asis=asis,
-                        shift=sh,
-                        seed=seed,
+                signature=signature,
+                density=density,
+                rep=rep,
+                cations=cations,
+                anions=anions,
+                spot_guests=spot_guests,
+                spot_groups=groups,
+                asis=asis,
+                shift=sh,
+                seed=seed,
     )
 
     water_type = options.water

@@ -14,7 +14,7 @@ from genice import digraph as dg
 #from genice.plugin import descriptions
 
 class AnalIce(GenIce):
-    def __init__(self, lat, argv):
+    def __init__(self, lat, signature=""):
 
         self.logger = logging.getLogger()
         self.rep = (1,1,1)
@@ -32,7 +32,7 @@ class AnalIce(GenIce):
             self.doc = []
 
         self.doc.append("")
-        self.doc.append("Command line: {0}".format(" ".join(argv)))
+        self.doc.append(signature)
 
         for line in self.doc:
             self.logger.info("  "+line)

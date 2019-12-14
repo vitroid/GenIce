@@ -1,7 +1,7 @@
 import sys
 import logging
 import argparse as ap
-from genice.cli import SmartFormatter, help_format
+from genice.cli import SmartFormatter, help_format, logger_setup
 from genice import __version__, load, analice
 from genice.plugin import descriptions
 from genice.plugin import safe_import
@@ -97,18 +97,7 @@ def main():
     # Parse options
     options = getoptions()
 
-    # Set verbosity level
-    if options.debug:
-        logging.basicConfig(level=logging.DEBUG,
-                            format="%(asctime)s %(levelname)s %(message)s")
-    elif options.quiet:
-        logging.basicConfig(level=logging.WARN,
-                            format="%(levelname)s %(message)s")
-    else:
-        # normal
-        logging.basicConfig(level=logging.INFO,
-                            format="%(levelname)s %(message)s")
-    logger = logging.getLogger()
+    logger = logger_setup(options.debug, options.quiet)
     logger.debug("Debug mode.")
 
     logger.debug(options.File)
@@ -129,6 +118,7 @@ def main():
     else:
         output = options.output
         stdout = sys.stdout
+    signature = "Command line: {0}".format(" ".join(sys.argv))
 
     logger.debug(filerange)
     logger.debug(framerange)
@@ -144,7 +134,8 @@ def main():
         logger.debug("Output file format: {0}".format(file_format))
         formatter = safe_import("format", file_format)
         lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-        lat = analice.AnalIce(lattice_info, sys.argv)
+
+        lat = analice.AnalIce(lattice_info, signature=signature)
         if output is not None:
             sys.stdout = open(output % i, "w")
         lat.analyze_ice(water_type=water_type,

@@ -359,7 +359,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
 class GenIce():
     def __init__(self,
                  lat,
-                 argv,
+                 signature="",
                  density=0,
                  rep=(1, 1, 1),
                  cations=dict(),
@@ -390,7 +390,7 @@ class GenIce():
             self.doc = []
 
         self.doc.append("")
-        self.doc.append("Command line: {0}".format(" ".join(argv)))
+        self.doc.append(signature)
 
         for line in self.doc:
             self.logger.info("  "+line)

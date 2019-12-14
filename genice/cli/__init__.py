@@ -3,6 +3,7 @@
 import argparse as ap
 from textwrap import wrap
 from genice.plugin import descriptions
+import logging
 
 class SmartFormatter(ap.HelpFormatter):
     def _split_lines(self, text, width):
@@ -18,3 +19,17 @@ class SmartFormatter(ap.HelpFormatter):
 
 def help_format():
     return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format", width=55)
+
+def logger_setup(debug=False, quiet=False):
+    # Set verbosity level
+    if debug:
+        logging.basicConfig(level=logging.DEBUG,
+                            format="%(asctime)s %(levelname)s %(message)s")
+    elif quiet:
+        logging.basicConfig(level=logging.WARN,
+                            format="%(levelname)s %(message)s")
+    else:
+        # normal
+        logging.basicConfig(level=logging.INFO,
+                            format="%(levelname)s %(message)s")
+    return logging.getLogger()
