@@ -1,3 +1,4 @@
+# all ########################
 __pycache__/
 */__pycache__/
 */*/__pycache__/
@@ -12,7 +13,9 @@ Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
 cages.py
+*.old
 
+# root #######################
 /*.svg
 /*.yap
 /*.scad
@@ -23,9 +26,14 @@ cages.py
 /*.gro
 /*.ar3r
 /*.nx3a
-
+/*.eps
+/*.log
+/*.voro
+/*.db
 benchmark\.txt
+README\.md\.1
 
+# folders ####################
 docs/*.svg
 docs/*.png
 docs/*.cif
@@ -42,12 +50,3 @@ tests/*.done
 tests/sort_tmp/*
 tests/trash/*
 tests-local/
-
-
-*.eps
-*.log
-*.old
-*.voro
-*.db
-
-README\.md\.1

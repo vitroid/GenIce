@@ -16,7 +16,7 @@ def usage():
     logger.info("prism[5] prepares pentagonal prism of 10 rows.")
     logger.info("prism[8,5] prepares octagonal prism of 5 rows.")
     logger.info("------------------")
-    
+
 
 
 def argparser(arg):

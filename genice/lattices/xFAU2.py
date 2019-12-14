@@ -42,9 +42,9 @@ def tune_angles(sixvecs, pivot):
         if abs(doffset) < 1e-6:
             return offset
         offset += doffset
-    
 
-    
+
+
 class decorate():
     def __init__(self, atoms, cell, pairs, Ncyl):
         """
@@ -70,7 +70,7 @@ class decorate():
         dij = self.atoms[j] - self.atoms[i]
         dij -= np.floor(dij + 0.5)
         dij = dij @ self.cell
-        scale = np.linalg.norm(dij) 
+        scale = np.linalg.norm(dij)
         dij /= scale
         rests = self.nei[i].copy()
         rests.remove(j)

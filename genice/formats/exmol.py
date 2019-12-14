@@ -1,16 +1,16 @@
 # coding: utf-8
-"""
-extended XMol file format (.exyz)
+desc={"ref": {"exmol": "http://libatoms.github.io/QUIP/io.html#extendedxyz"},
+      "brief": "Extended XMol file format.",
+      "usage": "No options available."
+      }
 
-http://libatoms.github.io/QUIP/io.html#extendedxyz
-"""
 
 import numpy as np
 
 from genice import rigid
 
 def hook7(lattice):
-    lattice.logger.info("Hook7: Output in extended XYZ format.")
+    lattice.logger.info("Hook7: Output in extended XMol file format.")
     s = ""
     s += "{0}\n".format(len(lattice.atoms))
     s += 'Lattice="{0:.3f} {1:.3f} {2:.3f} {3:.3f} {4:.3f} {5:.3f} {6:.3f} {7:.3f} {8:.3f}"\n'.format(*lattice.repcell.mat.reshape((9,))*10)
