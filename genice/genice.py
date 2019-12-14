@@ -1,160 +1,18 @@
 from logging import getLogger
-import argparse as ap
 from collections import defaultdict
 import random
 import itertools as it
-from textwrap import wrap
 
 import numpy as np
 import pairlist as pl
 
 from genice.plugin import safe_import, descriptions
 from genice import digraph as dg
-from genice import __version__
 from genice.cell import rel_wrap, Cell
 from genice.valueparsers import parse_cages, parse_pairs, put_in_array, flatten
 
 # for alkyl groups (Experimental)
 from genice import alkyl
-
-
-class SmartFormatter(ap.HelpFormatter):
-    def _split_lines(self, text, width):
-        if text.startswith('R|'):
-            # return text[2:].splitlines()
-            return [line for L in text[2:].splitlines() for line in wrap(L, width=55, drop_whitespace=False) ]
-        # this is the RawTextHelpFormatter._split_lines
-        return ap.HelpFormatter._split_lines(self, text, width)
-    def _get_help_string(self, action):
-        if callable(action.help):
-            return action.help()
-        return action.help
-
-
-
-
-        
-
-# 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
-def help_type():
-    return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice", width=55)
-
-def help_format():
-    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format", width=55)
-
-def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--rep',
-                        '-r',
-                        nargs=3,
-                        type=int,
-                        dest='rep',
-                        default=[1, 1, 1],
-                        help='Repeat the unit cell along a, b, and c axes. [1,1,1]')
-    parser.add_argument('--shift',
-                        '-S',
-                        nargs=3,
-                        type=float,
-                        dest='shift',
-                        default=[0., 0., 0.],
-                        help='Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]')
-    parser.add_argument('--dens',
-                        '-d',
-                        type=float,
-                        dest='dens',
-                        default=-1,
-                        help='Specify the ice density in g/cm3 (Guests are not included.)')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--seed',
-                        '-s',
-                        type=int,
-                        dest='seed',
-                        default=1000,
-                        help='Random seed [1000]')
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="name",
-                        help=help_format)
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--guest',
-                        '-g',
-                        nargs=1,
-                        dest='guests',
-                        metavar="D=empty",
-                        action="append",
-                        help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
-    parser.add_argument('--Guest',
-                        '-G',
-                        nargs=1,
-                        dest='spot_guests',
-                        metavar="13=me",
-                        action="append",
-                        help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
-    parser.add_argument('--Group',
-                        '-H',
-                        nargs=1,
-                        dest='groups',
-                        metavar="13=bu-:0",
-                        action="append",
-                        help='Specify the group. (-H 13=bu-:0, etc.)')
-    parser.add_argument('--anion',
-                        '-a',
-                        nargs=1,
-                        dest='anions',
-                        metavar="3=Cl",
-                        action="append",
-                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
-    parser.add_argument('--cation',
-                        '-c',
-                        nargs=1,
-                        dest='cations',
-                        metavar="3=Na",
-                        action="append",
-                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
-    parser.add_argument('--visual',
-                        dest='visual',
-                        default="",
-                        metavar="visual",
-                        help='Specify the yaplot file to store the depolarization paths. [""]')
-    parser.add_argument('--nodep',
-                        action='store_true',
-                        dest='nodep',
-                        default=False,
-                        help='No depolarization.')
-    parser.add_argument('--asis',
-                        action='store_true',
-                        dest='asis',
-                        default=False,
-                        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='store_true',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('Type',
-                        help=help_type)
-    return parser.parse_args()
 
 
 def assume_tetrahedral_vectors(v):
@@ -497,6 +355,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
     return atoms
 
 
+
 class GenIce():
     def __init__(self,
                  lat,
@@ -509,6 +368,7 @@ class GenIce():
                  spot_groups=dict(),
                  asis=False,
                  shift=(0.,0.,0.),
+                 seed=1000,
                  ):
 
         self.logger = getLogger()
@@ -519,6 +379,10 @@ class GenIce():
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
         # Show the document of the module
+
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
 
         try:
             self.doc = lat.__doc__.splitlines()
@@ -700,7 +564,7 @@ class GenIce():
         arg   = formatter.arg
         maxstage = max(0, *hooks.keys())
         logger = getLogger()
-        
+
         if 0 in hooks:
             hooks[0](self, arg)
         elif arg != "":
@@ -1226,4 +1090,3 @@ class GenIce():
 
     def __del__(self):
         self.logger.info("Completed.")
-

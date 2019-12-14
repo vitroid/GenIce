@@ -42,7 +42,7 @@ def scan(category):
                 desc[mod] = module.desc["brief"]
         except:
             pass
-    
+
     logger.debug("Extra {0}s".format(category))
     groupname = 'genice_{0}'.format(category)
     mods = []
@@ -86,7 +86,7 @@ def descriptions(category, width=72):
                         "local":  "3. File types served locally",
                         "title":  "[Available input file types]"},
              "molecule": {"system": "1. Molecules served with GenIce",
-                        "extra":  "2. Molecules served by extternal plugins",
+                        "extra":  "2. Molecules served by external plugins",
                         "local":  "3. Molecules served locally",
                         "title":  "[Available molecules]"},
              }
@@ -152,7 +152,7 @@ def safe_import(category, name):
         usage = True
         name = name[:-1]
 
-        
+
     # name may contain arguments
     left = name.find("[")
     right = name.rfind("]")
@@ -180,7 +180,7 @@ def safe_import(category, name):
             pass
     if module is None:
         module = import_extra(category, name)
-        
+
     logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     module.arg    = arg
     if usage:
@@ -217,5 +217,3 @@ if __name__ == "__main__":
         cats = argv[1:]
     modules = {cat: scan(cat) for cat in cats}
     print(modules)
-
-    

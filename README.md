@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.5
+version 1.1.0
 
 ## Requirements
 
@@ -25,15 +25,16 @@ Install with pip3.
     
 ## Usage
 
-    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
-                  [--add_noise percent] [--seed SEED] [--format name]
-                  [--water model] [--guest D=empty] [--Guest 13=me]
-                  [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na]
-                  [--visual visual] [--nodep] [--asis] [--debug] [--quiet]
+    usage: genice [-h] [--version] [--rep REP REP REP] [--shift SHIFT SHIFT SHIFT]
+                  [--dens DENS] [--add_noise percent] [--seed SEED]
+                  [--format name] [--water model] [--guest D=empty]
+                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
+                  [--cation 3=Na] [--visual visual] [--nodep] [--asis] [--debug]
+                  [--quiet]
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.5)
+    (version 1.1.0)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -143,6 +144,9 @@ Install with pip3.
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell along a, b, and c axes. [1,1,1]
+      --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
+                            Shift the unit cell along a, b, and c axes. (0.5==half
+                            cell) [0,0,0]
       --dens DENS, -d DENS  Specify the ice density in g/cm3 (Guests are not
                             included.)
       --add_noise percent   Add a Gauss noise with given width (SD) to the
@@ -174,7 +178,7 @@ Install with pip3.
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
+                            (Undocumented) bdl c cif cif2 com r rcom towhee
                              
                              
                             2. Formatters served by external plugins
@@ -407,7 +411,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.5)
+    (version 1.1.0)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -468,7 +472,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
+                            (Undocumented) bdl c cif cif2 com r rcom towhee
                              
                              
                             2. Formatters served by external plugins

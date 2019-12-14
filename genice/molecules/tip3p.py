@@ -1,4 +1,10 @@
 # coding: utf-8
+
+desc={"ref": {"TIP3P": "Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983)."},
+      "brief": "A typical three-site water model.",
+      "usage": "No options available."
+      }
+
 import math
 import numpy as np
 

@@ -38,13 +38,13 @@ setup(name='GenIce',
                 'genice.lattices',
                 'genice.formats',
                 'genice.loaders',
+                'genice.cli',
                 ],
       install_requires=['networkx>=2', 'countrings>=0.1.7', 'pairlist>=0.2.9', 'yaplotlib>=0.1', 'numpy', ],
       entry_points = {
               'console_scripts': [
-                  'genice = genice.__main__:main',
-                  'analice = genice.__main__:main'
+                  'genice = genice.cli.genice:main',
+                  'analice = genice.cli.analice:main'
               ]
           }
       )
-

@@ -1,99 +1,17 @@
 import logging
-import argparse as ap
+#import argparse as ap
 from collections import defaultdict
 
 import numpy as np
 import pairlist as pl
 
 from genice.cell   import Cell
-from genice.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, help_format
-from genice.valueparsers import parse_pairs
+from genice.genice import GenIce, shortest_distance
+#, put_in_array, SmartFormatter, help_format
+from genice.valueparsers import parse_pairs, put_in_array
 from genice import digraph as dg
-from genice import __version__
-from genice.plugin import descriptions
-
-def help_file():
-    return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
-
-
-def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]', formatter_class=SmartFormatter)
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="name",
-                        help=help_format)
-    parser.add_argument('--output',
-                        '-o',
-                        dest='output',
-                        metavar="%04d.gro",
-                        help='Output in separate files.')
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--oxygen',
-                        '-O',
-                        dest='oatom',
-                        metavar="OW",
-                        default="O",
-                        help='Specify atom name of oxygen in input Gromacs file. ("O")')
-    parser.add_argument('--hydrogen',
-                        '-H',
-                        dest='hatom',
-                        metavar="HW[12]",
-                        default="H",
-                        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")')
-    parser.add_argument('--suffix',
-                        '-s',
-                        dest='suffix',
-                        metavar="gro",
-                        default=None,
-                        help='Specify the file suffix explicitly. ((None)')
-    parser.add_argument('--filerange',
-                        dest='filerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input filename. ("0:1000000")')
-    parser.add_argument('--framerange',
-                        dest='framerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input frames. ("0:1000000")')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='count',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--avgspan', '-v',
-                        type=float,
-                        dest='avgspan',
-                        default=0,
-                        metavar='1',
-                        help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
-    parser.add_argument('File',
-                        help=help_file)
-    return parser.parse_args()
-
-
+#from genice import __version__
+#from genice.plugin import descriptions
 
 class AnalIce(GenIce):
     def __init__(self, lat, argv):
@@ -255,7 +173,7 @@ class AnalIce(GenIce):
         # groups info
         self.groups = defaultdict(dict)
 
-        
+
     def analyze_ice(self, water_type, formatter, noise=0.):
         """
         Protocol for analice

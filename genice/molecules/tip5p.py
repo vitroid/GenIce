@@ -1,4 +1,11 @@
 # coding: utf-8
+"""
+[1] """
+desc={"ref": {"TIP5P": "M. W. Mahoney and W. L. Jorgensen, A five-site model for liquid water and the reproduction of the density anomaly by rigid, nonpolarizable potential functions, J. Chem. Phys. 112 (2000) 8910-8922."},
+      "brief": "A typical five-site water model.",
+      "usage": "No options available."
+      }
+
 import math
 import numpy as np
 
