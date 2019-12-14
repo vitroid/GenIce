@@ -1,9 +1,8 @@
 # coding: utf-8
-"""
-extended XMol file format (.exyz)
-
-http://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html
-"""
+desc={"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
+      "brief": "Extended XYZ format.",
+      "usage": "No options available."
+      }
 
 import numpy as np
 

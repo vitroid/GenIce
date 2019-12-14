@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.4
+version 1.0.5
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.4)
+    (version 1.0.5)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -161,6 +161,8 @@ Install with pip3.
                             _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
                             e, euler        Rigid rotor (Euler angle).
+                            exmol           Extended XMol file format.
+                            exyz            Extended XYZ format.
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
@@ -172,13 +174,12 @@ Install with pip3.
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com exyz exyz2 r rcom 
-                            towhee xyz
+                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
                              
                              
                             2. Formatters served by external plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            (None)
                             ----
                              
                              
@@ -406,7 +407,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.4)
+    (version 1.0.5)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -418,6 +419,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             1. File types served with GenIce
                              
+                            exyz            Extended XYZ format.
                             gro             Gromacs .gro file.
                             mdv             MDView file (in Angdtrom).
                             mdva            MDView file (in au).
@@ -453,6 +455,8 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
                             e, euler        Rigid rotor (Euler angle).
+                            exmol           Extended XMol file format.
+                            exyz            Extended XYZ format.
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
@@ -464,13 +468,12 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com exyz exyz2 r rcom 
-                            towhee xyz
+                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
                              
                              
                             2. Formatters served by external plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            (None)
                             ----
                              
                              

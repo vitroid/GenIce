@@ -1,3 +1,4 @@
+# all ########################
 __pycache__/
 */__pycache__/
 */*/__pycache__/
@@ -11,7 +12,10 @@ GenIce.egg*
 Utilities/*.log
 Utilities/*.yap
 \.yapviewstack
+cages.py
+*.old
 
+# root #######################
 /*.svg
 /*.yap
 /*.scad
@@ -22,20 +26,27 @@ Utilities/*.yap
 /*.gro
 /*.ar3r
 /*.nx3a
-
+/*.eps
+/*.log
+/*.voro
+/*.db
 benchmark\.txt
+README\.md\.1
+
+# folders ####################
+docs/*.svg
+docs/*.png
+docs/*.cif
+docs/*.gro
+docs/ja
+
+lattices/*
+lattices (1)/*
+
+molecules/*
 
 Prepare/
 tests/*.done
 tests/sort_tmp/*
 tests/trash/*
 tests-local/
-
-
-*.eps
-*.log
-*.old
-*.voro
-*.db
-
-README\.md\.1
