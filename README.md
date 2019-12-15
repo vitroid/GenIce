@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.5
+version 1.0.6
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.5)
+    (version 1.0.6)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -344,7 +344,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.5)
+    (version 1.0.6)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 

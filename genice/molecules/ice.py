@@ -19,11 +19,9 @@ sites = np.array([[0.0, 0.0, 0.0],
                   [0.0, hy,  hz],
                   [0.0,-hy,  hz],
                   [0.0, 0.0, mz]])
-sites -= (sites[1]+sites[2]+sites[0]*16)/18
+sites -= (sites[1]+sites[2]+sites[0]*0)/18
 
-                  
+
 atoms = ["O","H","H","."]
 labels = ["OW","HW1","HW2","MW"]
 name = "ICE"
-
-
