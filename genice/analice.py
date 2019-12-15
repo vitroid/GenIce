@@ -1,5 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+AnalIce class
+"""
+
 import logging
-#import argparse as ap
 from collections import defaultdict
 
 import numpy as np
@@ -7,11 +13,9 @@ import pairlist as pl
 
 from genice.cell   import Cell
 from genice.genice import GenIce, shortest_distance
-#, put_in_array, SmartFormatter, help_format
 from genice.valueparsers import parse_pairs, put_in_array
 from genice import digraph as dg
-#from genice import __version__
-#from genice.plugin import descriptions
+
 
 class AnalIce(GenIce):
     def __init__(self, lat, signature=""):

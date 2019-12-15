@@ -1,5 +1,9 @@
-# parallelepiped cell
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+"""
+Parallelepiped cell
+"""
 
 import numpy as np
 import sys

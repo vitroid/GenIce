@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-# from Frank-Kasper (Tetrahedrally close-packed) alloy to its dual.
+"""
+Making a dual from a Frank-Kasper (Tetrahedrally close-packed) alloy structure.
+"""
 
 # Standard libs
 import itertools as it

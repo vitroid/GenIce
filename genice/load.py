@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Iterative file loader for analice.
+"""
+
 from logging import getLogger
 import re
 import os
@@ -94,7 +101,7 @@ def average(load_iter, span=0):
 
 
 # def history(load_iter, span=0):
-    
+
 
 def make_lattice_info(oatoms, hatoms, cellmat):
     logger = getLogger()
@@ -132,7 +139,5 @@ def make_lattice_info(oatoms, hatoms, cellmat):
             # register a new intermolecular pair
             pairs.append((h // 2, o))
     logger.debug("  # of pairs: {0} {1}".format(len(pairs), oatoms.shape[0]))
-        
-    return SimpleNamespace(waters=oatoms, coord=coord, density=density, pairs=pairs, rotmat=rotmat, cell=cellmat, __doc__=None)
 
-    
+    return SimpleNamespace(waters=oatoms, coord=coord, density=density, pairs=pairs, rotmat=rotmat, cell=cellmat, __doc__=None)

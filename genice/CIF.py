@@ -1,4 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 Helpers for lattice plugin.
 
@@ -95,7 +97,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     assert len(oxygens)*2 == len(hydrogens) or len(hydrogens) == 0, "{0}:{1}".format(len(oxygens)*2,len(hydrogens))
 
     cell *= np.array(rep)
-    
+
     oo = [[o[0]+x, o[1]+y, o[2]+z]
            for o in oxygens
            for x in range(rep[0])
@@ -123,10 +125,10 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
                              distance=False):
         oh[i].append(j)
         parent[j] = i
-    
+
     pairs = []
     # find HBs
-    for i,j in pl.pairs_iter(oxygens, 
+    for i,j in pl.pairs_iter(oxygens,
                              rc=0.20, cell=cell,
                              pos2=hydrogens,
                              distance=False):

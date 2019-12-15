@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
+
+"""
+Rigid-body geometry.
+"""
+
 from __future__ import print_function
 from math import *
 import sys

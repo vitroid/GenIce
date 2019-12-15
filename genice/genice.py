@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+GenIce class
+"""
+
 from logging import getLogger
 from collections import defaultdict
 import random

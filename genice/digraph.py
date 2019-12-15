@@ -1,7 +1,10 @@
 #!/usr/bin/env python
-#coding: utf-8
-# input: coordinate of the nodes, the digraph obeying the ice rule.
-# output: the digraph with zero net dipole.
+# -*- coding: utf-8 -*-
+
+"""
+Graph variants with geometrical information
+"""
+
 
 from __future__ import print_function
 import sys
@@ -198,7 +201,7 @@ class IceGraph(networkx.DiGraph):
         if not self.has_edge(p[0], p[1]):
             p = list(reversed(p))
         self.invert_path(p, forced=forced)
-                             
+
     def _goahead(self, node, marks, order):
         while node not in marks:
             marks[node] = len(order)
@@ -591,6 +594,6 @@ def test():
         g.add_edge(i,i+1)
     g.add_edge(0,5)
     print(shortest_paths(g,0,[3,],allowfixed=True))
-    
+
 if __name__ == "__main__":
     test()

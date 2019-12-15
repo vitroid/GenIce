@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Plugin handler.
+"""
+
 
 # standard plugins
 from logging import getLogger, basicConfig, INFO, DEBUG

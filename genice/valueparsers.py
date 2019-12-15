@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Helper functions to read various value types.
+"""
+
 import numpy as np
 import logging
 from collections import Iterable

@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Tools for common use.
+(Should be moved out of GenIce.)
+"""
+
 from logging import getLogger
 
 def line_replacer(line, d):
@@ -16,4 +24,3 @@ def line_replacer(line, d):
                     s += indent + newline + "\n"
             return s
     return line
-
