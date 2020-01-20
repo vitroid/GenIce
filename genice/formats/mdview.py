@@ -28,7 +28,7 @@ def hook7(lattice):
     s += "{0}\n".format(len(lattice.atoms))
     for atom in lattice.atoms:
         molorder, resname, atomname, position, order = atom
-        s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,*(position[:3]*conv))
+        s += "{0:5} {1:9.7f} {2:9.7f} {3:9.7f}\n".format(atomname,*(position[:3]*conv))
     print(s,end="")
     lattice.logger.info("Hook7: end.")
 

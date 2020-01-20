@@ -35,7 +35,7 @@ def load_iter(file, oname, hname=None):
             line = file.readline()
             if line[0] != "-":
                 break
-        
+
         natom = int(line)
         hatoms = []
         oatoms = []

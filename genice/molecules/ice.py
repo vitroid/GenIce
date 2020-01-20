@@ -7,7 +7,7 @@ import numpy as np
 from math import pi,sin,cos
 
 L1 = 0.9572 / 10
-L2 = 0.1577 / 10
+L2 = 0.1577 / 10 # reconfirmed
 theta=104.52 * pi/180
 
 

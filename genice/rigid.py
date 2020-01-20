@@ -43,34 +43,35 @@ def op(i, j, check=True):
     return a
 
 
+EX = np.array((1.0, 0.0, 0.0))
+EY = np.array((0.0, 1.0, 0.0))
+EZ = np.array((0.0, 0.0, 1.0))
+
 # calculate quaternions from a rotation matrix (three orthogonal unit vectors)
 def rotmat2quat0(i, j, k):
     # print sqlen(i),sqlen(j),sqlen(k)
-    ex = np.array((1.0, 0.0, 0.0))
-    ey = np.array((0.0, 1.0, 0.0))
-    ez = np.array((0.0, 0.0, 1.0))
 
     # i軸をx軸に移す回転の軸は、iとxの2分面上にある。
     # j軸をy軸に移す回転の軸は、jとyの2分面上にある。
     # そして、それらを同時にみたす回転の軸は、2つの2分面の交線である。
     # 交線は、2つの面の法線のいずれとも直交する=外積である。*/
 
-    a = op(i - ex, j - ey)
+    a = op(i - EX, j - EY)
     if a is None:
-        a = op(i - ex, k - ez)
+        a = op(i - EX, k - EZ)
         if a is None:
-            a = op(k - ez, j - ey)
+            a = op(k - EZ, j - EY)
             if a is None:
                 #sys.stderr.write("outer prod warning\n")
                 # //全く回転しないケース
                 return 1.0, 0.0, 0.0, 0.0
     a /= np.linalg.norm(a)
     # /*回転軸aが求まったので、x軸をi軸に重ねる回転の大きさを求める。。*/
-    x0 = ex - a[0] * a
+    x0 = EX - a[0] * a
     i0 = i - a[0] * a
     if np.linalg.norm(i0) < 0.1:
         i0 = j - a[1] * a
-        x0 = ey - a[1] * a
+        x0 = EY - a[1] * a
 
     i0 /= np.linalg.norm(i0)
     x0 /= np.linalg.norm(x0)
@@ -92,7 +93,7 @@ def rotmat2quat(m):
     # print "rotmat2quat is not reliable yet."
     # sys.exit(1)
     n = m.transpose()
-    return rotmat2quat0(np.array(n[0]), np.array(n[1]), np.array(n[2]))
+    return rotmat2quat0(n[0], n[1], n[2])
 
 
 def quat2rotmat(q):
@@ -211,15 +212,15 @@ def test_rotation():
 
 
 def six2nine(a, b, c, alpha, beta, gamma):
+    """
+    deprecated.
+    """
     # convert from angles to matrix
-    x = np.array([1.0, 0.0, 0.0])
-    y = np.array([0.0, 1.0, 0.0])
-    z = np.array([0.0, 0.0, 1.0])
     alpha *= pi / 180
     beta *= pi / 180
     gamma *= pi / 180
-    A = a * x
-    eb = x * cos(gamma) + y * sin(gamma)
+    A = a * EX
+    eb = EX * cos(gamma) + EY * sin(gamma)
     B = b * eb
     # ec.x = cos(beta)
     # ec.eb = cos(alpha)
@@ -241,6 +242,51 @@ def six2nine(a, b, c, alpha, beta, gamma):
     # print(alpha, beta, gamma)
     # print(p,q,r)
     return np.vstack([A, B, C])
+
+
+# http://blog.lostinmyterminal.com/python/2015/05/12/random-rotation-matrix.html
+def rand_rotation_matrix(deflection=1.0, randnums=None):
+    """
+    Creates a random rotation matrix.
+
+    deflection: the magnitude of the rotation. For 0, no rotation; for 1, competely random
+    rotation. Small deflection => small perturbation.
+    randnums: 3 random numbers in the range [0, 1]. If `None`, they will be auto-generated.
+    """
+    # from http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
+
+    if randnums is None:
+        randnums = np.random.uniform(size=(3,))
+
+    theta, phi, z = randnums
+
+    theta = theta * 2.0 * deflection * np.pi  # Rotation about the pole (Z).
+    phi = phi * 2.0 * np.pi  # For direction of pole deflection.
+    z = z * 2.0 * deflection  # For magnitude of pole deflection.
+
+    # Compute a vector V used for distributing points over the sphere
+    # via the reflection I - V Transpose(V).  This formulation of V
+    # will guarantee that if x[1] and x[2] are uniformly distributed,
+    # the reflected points will be uniform on the sphere.  Note that V
+    # has length sqrt(2) to eliminate the 2 in the Householder matrix.
+
+    r = np.sqrt(z)
+    Vx, Vy, Vz = V = (
+        np.sin(phi) * r,
+        np.cos(phi) * r,
+        np.sqrt(2.0 - z)
+    )
+
+    st = np.sin(theta)
+    ct = np.cos(theta)
+
+    R = np.array(((ct, st, 0), (-st, ct, 0), (0, 0, 1)))
+
+    # Construct the rotation matrix  ( V Transpose(V) - I ) R.
+
+    M = (np.outer(V, V) - np.eye(3)).dot(R)
+    return M
+
 
 
 def test():
@@ -304,8 +350,8 @@ def test():
     print()
 
     print("test 3c: euler addition via quat")
-    e1 = np.array([0.0, 0.0, 0.1])
-    e2 = np.array([0.0, 0.0, 0.2])
+    e1 = np.array([0.1, 0.0, 0.0])
+    e2 = np.array([0.2, 0.0, 0.0])
     print("e1", e1)
     print("e2", e2)
     q1 = euler2quat(e1)
@@ -321,8 +367,8 @@ def test():
     print()
 
     print("test 4a: euler addition via rotmat")
-    e1 = np.array([0.0, 0.0, 0.1])
-    e2 = np.array([0.0, 0.0, 0.2])
+    e1 = np.array([0.1, 0.0, 0.0])
+    e2 = np.array([0.2, 0.0, 0.0])
     print("e1", e1)
     print("e2", e2)
     r1 = euler2rotmat(e1)
@@ -356,49 +402,26 @@ def test():
     qe4 = euler2quat(e4)
     print(qe4)
 
+    print("test 6: array handling")
+    e = np.array([[0.01, 0.0, 0.3],[0.4, 0.5, 0.6]])
+    q = QfromE(e)
+    print("q", q)
+    print(quat2euler(q[0]))
+    print(quat2euler(q[1]))
+    e1 = EfromQ(q)
+    print("e", e1)
+    r = tRMfromQ(q)
+    print(euler2rotmat(e[0]))
+    print(euler2rotmat(e[1]))
+    print(r)
+    q = QfromtRM(r)
+    print(q)
+    print(EfromQ(QfromtRM(tRMfromQ(QfromE(e)))))
+    m = tRMfromQ(QfromE(e))
+    print(m)
+    print(tRMfromQ(QfromE(EfromQ(QfromtRM(m)))))
 
-# http://blog.lostinmyterminal.com/python/2015/05/12/random-rotation-matrix.html
-def rand_rotation_matrix(deflection=1.0, randnums=None):
-    """
-    Creates a random rotation matrix.
 
-    deflection: the magnitude of the rotation. For 0, no rotation; for 1, competely random
-    rotation. Small deflection => small perturbation.
-    randnums: 3 random numbers in the range [0, 1]. If `None`, they will be auto-generated.
-    """
-    # from http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
-
-    if randnums is None:
-        randnums = np.random.uniform(size=(3,))
-
-    theta, phi, z = randnums
-
-    theta = theta * 2.0 * deflection * np.pi  # Rotation about the pole (Z).
-    phi = phi * 2.0 * np.pi  # For direction of pole deflection.
-    z = z * 2.0 * deflection  # For magnitude of pole deflection.
-
-    # Compute a vector V used for distributing points over the sphere
-    # via the reflection I - V Transpose(V).  This formulation of V
-    # will guarantee that if x[1] and x[2] are uniformly distributed,
-    # the reflected points will be uniform on the sphere.  Note that V
-    # has length sqrt(2) to eliminate the 2 in the Householder matrix.
-
-    r = np.sqrt(z)
-    Vx, Vy, Vz = V = (
-        np.sin(phi) * r,
-        np.cos(phi) * r,
-        np.sqrt(2.0 - z)
-    )
-
-    st = np.sin(theta)
-    ct = np.cos(theta)
-
-    R = np.array(((ct, st, 0), (-st, ct, 0), (0, 0, 1)))
-
-    # Construct the rotation matrix  ( V Transpose(V) - I ) R.
-
-    M = (np.outer(V, V) - np.eye(3)).dot(R)
-    return M
 
 
 if __name__ == "__main__":
