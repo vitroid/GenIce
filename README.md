@@ -63,9 +63,9 @@ Install with pip3.
                                             ice II.
                             3, III, ice3    Ice III.
                             4, IV, ice4     Ice IV.
-                            4R              Rectified ice IV.
+                            4R              Orthogonalized ice IV.
                             5, V, ice5      Ice V.
-                            5R              Rectified ice V.
+                            5R              Orthogonalized ice V.
                             6, VI, ice6     Ice VI.
                             6h              Half lattice of ice VI.
                             7, VII, ice7    Ice VII.
@@ -183,7 +183,7 @@ Install with pip3.
                              
                             2. Formatters served by external plugins
                              
-                            (None)
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              
@@ -477,7 +477,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by external plugins
                              
-                            (None)
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              

@@ -9,12 +9,11 @@ Reshaping the unit cell.
 
 desc={"ref": {"IV": 'Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif'},
       "usage": "No options available.",
-      "brief": "Rectified ice IV."
+      "brief": "Orthogonalized ice IV."
       }
 
 bondlen=3.0000000000000004
 coord='relative'
-cell='33.83992669 17.30924416 29.98049032'
 density=1.3072141048893433
 waters="""
     0.2927    0.0000    1.0000
@@ -797,11 +796,6 @@ for w in waters:
     if np.all(w < 0.5):
         halfwater.append(w)
 waters = np.array(halfwater)*2
-
-cell = np.fromstring(cell, dtype='float', sep=' ') / 2
-# Backward compatibility
-cell = "{0} {1} {2}".format(*cell)
-
 
 
 

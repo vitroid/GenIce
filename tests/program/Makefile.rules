@@ -6,7 +6,8 @@ all: 3.ar3a.test   0.nx3a.test  5.gro.test   7.mdv.test
 # loader2 test
 all: 5.gro_gro.test 7.mdva_gro.test 0.nx3a_gro.test 7.mdv_gro.test
 all: 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
-all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro 7.mdva.test
+all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro 
+all: 7.mdva.test
 #all: test19.done
 all: 1hreshape.py.test 2D3.ringtest.test prism7.ringtest.test
 all: 3xFAU.yap.test
@@ -96,7 +97,7 @@ TS1.yap: $(FMT)/yaplot.py
 T.pov: $(FMT)/povray.py
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray | fgrep -v "Command line:" > $@
 2dL.gro: $(FMT)/gromacs.py
-	$(GENICE) 2d --rep 8 8 8 | fgrep -v "Command line:" > $@
+	$(GENICE) 2d --rep 6 6 6 | fgrep -v "Command line:" > $@
 1hreshape.py: $(FMT)/reshape.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@
 2D3.ringtest: $(FMT)/_ringstat.py

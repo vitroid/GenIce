@@ -468,9 +468,9 @@ def depolarize(spaceicegraph, cell, draw=None):
 
     It works much better than depolarize()
     """
-    logger = getLogger()
-    logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
+    logger = logging.getLogger()
+    #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
+    #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
     s = ""  # for yaplot
 
@@ -555,8 +555,8 @@ def depolarize(spaceicegraph, cell, draw=None):
                 spaceicegraph.invert_path(cycle)
                 spaceicegraph.vector_check()
 
-    logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
+    #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
+    #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     return s
 
 
