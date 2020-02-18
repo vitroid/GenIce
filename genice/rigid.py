@@ -96,6 +96,17 @@ def rotmat2quat(m):
     return rotmat2quat0(n[0], n[1], n[2])
 
 
+# Must be vectorized.
+def QfromtRM(m):
+    """
+    Quaternion from a transposed Rotation Matrix.
+
+    Transposed Rotation Matrix: A rotation matrix to be applied after a
+    (horizontal) vector.
+    """
+    return np.array([rotmat2quat(x) for x in m])
+
+
 def quat2rotmat(q):
     a, b, c, d = q
     sp11 = (a * a + b * b - (c * c + d * d))
@@ -109,6 +120,34 @@ def quat2rotmat(q):
     sp33 = a * a + d * d - (b * b + c * c)
     return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23], [sp31, sp32, sp33]]).transpose()
 
+# Vector function
+def tRMfromQ(q):
+    """
+    transposed Rotation matrix from Quaternion, multiple bodies at a time.
+    """
+    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
+    aa = a*a
+    bb = b*b
+    cc = c*c
+    dd = d*d
+    ab = a*b
+    ac = a*c
+    ad = a*d
+    bc = b*c
+    bd = b*d
+    cd = c*d
+    t = np.zeros([q.shape[0],3,3])
+    t[:,0,0] = (aa + bb - (cc + dd))
+    t[:,0,1] = -2 * (ad + bc)
+    t[:,0,2] = 2 * (bd - ac)
+    t[:,1,0] = 2 * (ad - bc)
+    t[:,1,1] = aa + cc - (bb + dd)
+    t[:,1,2] = -2 * (ab + cd)
+    t[:,2,0] = 2 * (ac + bd)
+    t[:,2,1] = 2 * (ab - cd)
+    t[:,2,2] = aa + dd - (bb + cc)
+    return t
+
 
 def euler2quat(e):
     ea, eb, ec = e
@@ -117,6 +156,31 @@ def euler2quat(e):
     c = sin(ea / 2) * sin((ec - eb) / 2)
     d = cos(ea / 2) * sin((ec + eb) / 2)
     return np.array((a, b, c, d))
+
+
+# Vector function
+def QfromE(e):
+    ea, eb, ec = e[:,0], e[:,1], e[:,2]
+    q = np.zeros([e.shape[0],4])
+    q[:,0] = np.cos(ea / 2) * np.cos((ec + eb) / 2)
+    q[:,1] = np.sin(ea / 2) * np.cos((ec - eb) / 2)
+    q[:,2] = np.sin(ea / 2) * np.sin((ec - eb) / 2)
+    q[:,3] = np.cos(ea / 2) * np.sin((ec + eb) / 2)
+    return q
+
+
+# Vector function
+def EfromQ(q):
+    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
+    P = np.arctan2(c,b)
+    Q = np.arctan2(d,a)
+    e = np.zeros([a.shape[0],3])
+    e[:,2] = P+Q
+    e[:,1] = Q-P
+    ac = a/np.cos(Q)
+    bc = b/np.cos(P)
+    e[:,0] = np.arctan2(bc,ac)*2
+    return e
 
 
 def euler2rotmat(e):
