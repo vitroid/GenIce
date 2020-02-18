@@ -21,13 +21,11 @@ def fullatoms(atomd, sops):
     # the variables to be evaluated by eval() must be global (?)
     full = []
     names = []
-    for name, pos in atomd.items():
-        x,y,z = pos
-        X,Y,Z = x,y,z # alias
-        for sop in sops:
+    for sop in sops:
+        for name, pos in atomd.items():
+            x,y,z = pos
             # print(x,sop)
-            p = np.array([eval(s) for s in sop])
-            p -= np.floor(p)
+            p = sop(x,y,z)
             tooclose = False
             for f in full:
                 d = f - p
@@ -65,8 +63,15 @@ def atomdic(atoms):
     return atomd
 
 
+
 def symmetry_operators(symops):
-    sops = []
+    """
+    Generator of symmetry operations.
+    """
+    def _wrap(x):
+        return x - np.floor(x+0.5)
+
+    symops = symops.translate(str.maketrans("XYZ", "xyz"))
     for symop in symops.split("\n"):
         cols = symop.split()
         if len(cols) == 0:
@@ -76,8 +81,7 @@ def symmetry_operators(symops):
             if col[-1] == ",":
                 col = col[:-1]
             ops.append(col)
-        sops.append(ops)
-    return sops
+        yield lambda x,y,z: _wrap(np.array([eval(op) for op in ops]))
 
 
 def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
@@ -95,7 +99,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     assert len(oxygens)*2 == len(hydrogens) or len(hydrogens) == 0, "{0}:{1}".format(len(oxygens)*2,len(hydrogens))
 
     cell *= np.array(rep)
-    
+
     oo = [[o[0]+x, o[1]+y, o[2]+z]
            for o in oxygens
            for x in range(rep[0])
@@ -117,16 +121,13 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
 
     oh = defaultdict(list)
     parent = dict()
-    grid = pl.determine_grid(cell, 0.15)
     # find covalent OH bonds
-    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.15, cell, grid, distance=False):
+    for i,j,d in pl.pairs_fine_hetero(oxygens, hydrogens, 0.12, cell):
         oh[i].append(j)
         parent[j] = i
-    
-    grid = pl.determine_grid(cell, 0.20)
     pairs = []
     # find HBs
-    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.20, cell, grid, distance=False):
+    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.20, cell, distance=False):
         if j not in oh[i]:
             # H is on a different water molecule
             p = parent[j]

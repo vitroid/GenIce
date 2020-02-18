@@ -160,7 +160,7 @@ class IceGraph(networkx.DiGraph):
         if not self.has_edge(p[0], p[1]):
             p = list(reversed(p))
         self.invert_path(p, forced=forced)
-                             
+
     def _goahead(self, node, marks, order):
         while node not in marks:
             marks[node] = len(order)
@@ -426,8 +426,8 @@ def depolarize(spaceicegraph, cell, draw=None):
     It works much better than depolarize()
     """
     logger = logging.getLogger()
-    logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
+    #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
+    #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
     s = ""  # for yaplot
 
@@ -512,8 +512,8 @@ def depolarize(spaceicegraph, cell, draw=None):
                 spaceicegraph.invert_path(cycle)
                 spaceicegraph.vector_check()
 
-    logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
-    logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
+    #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
+    #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     return s
 
 
