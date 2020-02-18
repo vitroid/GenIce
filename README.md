@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.6
+version 1.0.7
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.6)
+    (version 1.0.7)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -61,9 +61,9 @@ Install with pip3.
                                             ice II.
                             3, III, ice3    Ice III.
                             4, IV, ice4     Ice IV.
-                            4R              Rectified ice IV.
+                            4R              Orthogonalized ice IV.
                             5, V, ice5      Ice V.
-                            5R              Rectified ice V.
+                            5R              Orthogonalized ice V.
                             6, VI, ice6     Ice VI.
                             6h              Half lattice of ice VI.
                             7, VII, ice7    Ice VII.
@@ -74,6 +74,7 @@ Install with pip3.
                             B, iceB         Hypothetical ice B.
                             ice11_19        A candidate for an antiferroelectric 
                                             Ice XI #19.
+                            ice2rect        Orthogonalized Ice II.
                             ----
                             (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
                             CS4 DOH EMT FAU FK6layers FK9layers HS1 HS2 HS3 Hcomp 
@@ -150,7 +151,7 @@ Install with pip3.
                              
                             2. Formatters served by plugins
                              
-                            (None)
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              
@@ -344,7 +345,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.6)
+    (version 1.0.7)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -410,7 +411,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by plugins
                              
-                            (None)
+                            _RDF            Radial Distribution Functions.
                             ----
                              
                              
