@@ -10,9 +10,6 @@ density = 1.2     #default density
 
 bondlen = 3     #bond threshold	 
 
-cell="""
-13.25 22.9496665056 6.19244244367
-"""
 coord = "absolute"
 
 waters="""

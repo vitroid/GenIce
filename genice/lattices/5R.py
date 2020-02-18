@@ -9,14 +9,13 @@ Reshaping the unit cell.
 
 desc={"ref": {},
       "usage": "No options available.",
-      "brief": "Rectified ice V."
+      "brief": "Orthogonalized ice V."
       }
 
 
 
 bondlen=3.00000000000215
 coord='relative'
-cell='9.19977813 0.00000000 0.00000000 0.00000000 7.52346281 0.00000000 0  0.00000000 29.25857353 '
 density=1.23983176668
 waters="""
     0.7375    0.1404    0.1618
