@@ -783,6 +783,8 @@ class GenIce():
             self.spacegraph = dg.SpaceIceGraph(self.graph,
                                                coord=self.reppositions,
                                                ignores=self.graph.ignores)
+            moment = self.spacegraph.net_polarization()
+            self.logger.info("  Net polarization: {0}".format(moment))
         else:
             if self.double_network:
                 assert (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0), "In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even."
