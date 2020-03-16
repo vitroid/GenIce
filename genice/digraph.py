@@ -468,7 +468,7 @@ def depolarize(spaceicegraph, cell, draw=None):
 
     It works much better than depolarize()
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
