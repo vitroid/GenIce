@@ -376,19 +376,21 @@ def estimate_edge_length(spaceicegraph, cell, vertex):
     return distance
 
 
-def traversing_cycle(spaceicegraph, cell, axis, draw=None):
+def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
     """
     Find a farthest atom from the given atom, and
     make the shortest paths between them.
     """
     logger = logging.getLogger()
 
+    Nnode = spaceicegraph.number_of_nodes()
+    # 近傍の定義のために結合距離が必要。
     distance = 0
     while distance == 0:
-        vertex = random.randint(0, spaceicegraph.number_of_nodes() - 1)
+        vertex = random.randint(0, Nnode - 1)
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
-    while True:
-        vertex = random.randint(0, spaceicegraph.number_of_nodes() - 1)
+    # すべての頂点を順番にあたる。
+    for vertex in random.sample(range(Nnode), Nnode):
         apsis = find_apsis(spaceicegraph.coord, cell, distance * 1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis, ])
@@ -413,10 +415,34 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         logger.debug("Axis: {0} {1}".format(axis, spaceicegraph.dipole_moment(cycle)))
         rr = np.dot(d, d)
         if rr < 0.1:
-            break
-    logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle)))
-    return cycle
+            logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle)))
+            yield cycle
 
+def depolarization_axis(spaceicegraph):
+    if np.dot(net_polar, net_polar) < 0.2**2:
+        return None
+    if -1 <= net_polar[0] <= 1 and -1 <= net_polar[1] <= 1 and -1 <= net_polar[2] <= 1:
+        logger.info("  Gave up eliminating the polarization. (2)")
+        return None
+    if net_polar[0] > 1.0:
+        logger.debug("Depolarize +X")
+        axis = np.array([+1.0, 0.0, 0.0])
+    elif net_polar[0] < -1.0:
+        logger.debug("Depolarize -X")
+        axis = np.array([-1.0, 0.0, 0.0])
+    elif net_polar[1] > 1.0:
+        logger.debug("Depolarize +Y")
+        axis = np.array([0.0, +1.0, 0.0])
+    elif net_polar[1] < -1.0:
+        logger.debug("Depolarize -Y")
+        axis = np.array([0.0, -1.0, 0.0])
+    elif net_polar[2] > 1.0:
+        logger.debug("Depolarize +Z")
+        axis = np.array([0.0, 0.0, +1.0])
+    elif net_polar[2] < -1.0:
+        logger.debug("Depolarize -Z")
+        axis = np.array([0.0, 0.0, -1.0])
+    return axis
 
 def depolarize(spaceicegraph, cell, draw=None):
     """
@@ -472,45 +498,33 @@ def depolarize(spaceicegraph, cell, draw=None):
                 logger.debug("  Reject inversion")
                 reject_count -= 1
 
-    while True:
+    for axis_ in ([1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]):
         net_polar = spaceicegraph.net_polarization()
-        logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
-        if np.dot(net_polar, net_polar) < 0.2**2:
-            break  # without problem
-        if -1 <= net_polar[0] <= 1 and -1 <= net_polar[1] <= 1 and -1 <= net_polar[2] <= 1:
-            logger.info("  Gave up eliminating the polarization. (2)")
-            break
-        if net_polar[0] > 1.0:
-            logger.debug("Depolarize +X")
-            axis = np.array([+1.0, 0.0, 0.0])
-        elif net_polar[0] < -1.0:
-            logger.debug("Depolarize -X")
-            axis = np.array([-1.0, 0.0, 0.0])
-        elif net_polar[1] > 1.0:
-            logger.debug("Depolarize +Y")
-            axis = np.array([0.0, +1.0, 0.0])
-        elif net_polar[1] < -1.0:
-            logger.debug("Depolarize -Y")
-            axis = np.array([0.0, -1.0, 0.0])
-        elif net_polar[2] > 1.0:
-            logger.debug("Depolarize +Z")
-            axis = np.array([0.0, 0.0, +1.0])
-        elif net_polar[2] < -1.0:
-            logger.debug("Depolarize -Z")
-            axis = np.array([0.0, 0.0, -1.0])
-        cycle = traversing_cycle(spaceicegraph, cell, axis, draw)
-        if cycle is not None:
-            edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
-            if len(edges) != len(set(edges)):
-                logger.debug("The cycle is entangled.")
-            else:
-                if draw is not None:
-                    s += yp.Size(0.03)
-                    s += draw.draw_cell()
-                    s += draw.draw_path(cycle)
-                    s += yp.NewPage()
-                spaceicegraph.invert_path(cycle)
-                spaceicegraph.vector_check()
+        axis = np.array(axis_, dtype=float)
+        L1 = (net_polar**2).sum()
+        L2 = ((net_polar-axis*2)**2).sum()
+        if L2 < L1:
+            logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+            for cycle in traversing_cycles_iter(spaceicegraph, cell, axis, draw):
+                if cycle is not None:
+                    edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
+                    if len(edges) != len(set(edges)):
+                        logger.debug("The cycle is entangled.")
+                    else:
+                        if draw is not None:
+                            s += yp.Size(0.03)
+                            s += draw.draw_cell()
+                            s += draw.draw_path(cycle)
+                            s += yp.NewPage()
+                        spaceicegraph.invert_path(cycle)
+                        spaceicegraph.vector_check()
+                        net_polar = spaceicegraph.net_polarization()
+                        logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                        L1 = (net_polar**2).sum()
+                        L2 = ((net_polar-axis*2)**2).sum()
+                        if L2 > L1:
+                            break
+            # break this for-loop
 
     #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
