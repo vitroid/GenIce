@@ -135,17 +135,6 @@ class AnalIce(GenIce):
         self.logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
 
         # ================================================================
-        # double_network: True or False
-        #   This is a special option for ices VI and VII that have
-        #   interpenetrating double network.
-        #   GenIce's fast depolarization algorithm fails in some case.
-        #
-        try:
-            self.double_network = lat.double_network
-        except AttributeError:
-            self.double_network = False
-
-        # ================================================================
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #

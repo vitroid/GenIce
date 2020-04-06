@@ -102,11 +102,10 @@ def getoptions():
                         default="",
                         metavar="visual",
                         help='Specify the yaplot file to store the depolarization paths. [""]')
-    parser.add_argument('--nodep',
-                        action='store_true',
-                        dest='nodep',
-                        default=False,
-                        help='No depolarization.')
+    parser.add_argument('--depol',
+                        dest='depol',
+                        default="strict",
+                        help='Depolarization. (strict, optimal, or none) ["strict"]')
     parser.add_argument('--asis',
                         action='store_true',
                         dest='asis',
@@ -199,7 +198,7 @@ def main():
     water_type = options.water
     guests = options.guests
     noise = options.noise
-    depolarize = not options.nodep
+    depol = options.depol
     file_format = options.format
 
     # Main part of the program is contained in th Formatter object. (See formats/)
@@ -218,7 +217,7 @@ def main():
                      formatter=formatter,
                      record_depolarization_path=record_depolarization_path,
                      noise=noise,
-                     depolarize=depolarize,
+                     depol=depol,
                      )
 
 

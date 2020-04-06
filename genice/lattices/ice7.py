@@ -31,7 +31,6 @@ waters = """
 0.75 0.75 0.75
 """
 coord = "relative"
-double_network = True  #It is necessary only for ices 6 and 7
 
 pairs = """
 0 4

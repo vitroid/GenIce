@@ -9,12 +9,10 @@ desc={"ref": {"VI": 'Petrenko and Whitworth, Physics of Ice, Table 11.2'},
 density = 1.373     #default density
 
 
-bondlen = 3     #bond threshold	 
+bondlen = 3     #bond threshold
 cell = """
 6.181 6.181 5.698
 """
-
-double_network = True  #It is necessary only for ices 6 and 7
 
 coord = "relative"
 

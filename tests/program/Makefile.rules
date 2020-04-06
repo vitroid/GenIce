@@ -44,8 +44,8 @@ helps: 7.gro
 	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py
 	$(GENICE) $* -f _ringstat -r 2 2 2 | fgrep -v "Command line:" > $@
-%.kg: $(FMT)/_KG.py
-	$(GENICE) $* -f _KG | fgrep -v "Command line:" > $@
+iceT2.kg: $(FMT)/_KG.py
+	$(GENICE) iceT2 -f _KG --depol=optimal | fgrep -v "Command line:" > $@
 %.dep.yap:
 	$(GENICE) $* --visual $@ -r 2 2 2 > /dev/null
 %.yap: $(FMT)/yaplot.py
@@ -87,11 +87,11 @@ test4.done: $(FMT)/gromacs.py
 CS1.cif: $(FMT)/cif.py
 	$(GENICE) CS1 --guest 14=g14*0.5 -G 0=me --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
 CS2.cif: $(FMT)/cif2.py
-	$(GENICE) CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
+	$(GENICE) CS2 --depol=none -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
 #;$(UTIL)/cifdiff.sh $(REFD)/$@ $@
 HS1.xyz: $(FMT)/exyz.py
 #test for spot semiclathrate (TBAB)
-	$(GENICE) HS1 --nodep -c 3=N -a 1=Br -H 6=Bu-:3 -H 0=Bu-:3 -H 1=Bu-:3 -H 2=Bu-:3 --rep 1 1 2 --format exyz | fgrep -v "Command line:" > $@
+	$(GENICE) HS1 --depol=none -c 3=N -a 1=Br -H 6=Bu-:3 -H 0=Bu-:3 -H 1=Bu-:3 -H 2=Bu-:3 --rep 1 1 2 --format exyz | fgrep -v "Command line:" > $@
 TS1.yap: $(FMT)/yaplot.py
 	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
 T.pov: $(FMT)/povray.py
@@ -101,9 +101,9 @@ T.pov: $(FMT)/povray.py
 1hreshape.py: $(FMT)/reshape.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@
 2D3.ringtest: $(FMT)/_ringstat.py
-	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat | fgrep -v "Command line:" > $@
+	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 prism7.ringtest: $(FMT)/_ringstat.py
-	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat | fgrep -v "Command line:" > $@
+	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 3xFAU.yap: $(FMT)/yaplot.py
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@
 7.gro: $(FMT)/gromacs.py
@@ -120,7 +120,7 @@ prism7.ringtest: $(FMT)/_ringstat.py
 7.analice.yap: 7.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot --debug | fgrep -v "Command line:" > $@
 2D3.gro: $(FMT)/gromacs.py
-	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
+	$(GENICE) 2D3 -r 4 4 1 --depol=optimal | fgrep -v "Command line:" > $@
 2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@
 

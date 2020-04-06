@@ -497,17 +497,6 @@ class GenIce():
         self.logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
 
         # ================================================================
-        # double_network: True or False
-        #   This is a special option for ices VI and VII that have
-        #   interpenetrating double network.
-        #   GenIce's fast depolarization algorithm fails in some case.
-        #
-        try:
-            self.double_network = lat.double_network
-        except AttributeError:
-            self.double_network = False
-
-        # ================================================================
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #
@@ -564,7 +553,7 @@ class GenIce():
                      guests,
                      formatter,
                      record_depolarization_path=None,
-                     depolarize=True,
+                     depol="strict",
                      noise=0.):
 
         hooks = formatter.hooks
@@ -603,7 +592,7 @@ class GenIce():
             if maxstage < 4 or abort:
                 return
 
-        self.stage4(depolarize=depolarize,
+        self.stage4(depol=depol,
                     record_depolarization_path=record_depolarization_path)
 
         if 4 in hooks:
@@ -766,37 +755,28 @@ class GenIce():
 
         self.logger.info("Stage3: end.")
 
-    def stage4(self, depolarize=True, record_depolarization_path=None):
+    def stage4(self, depol="strict", record_depolarization_path=None):
         """
         Depolarize.
 
         Provided variables:
         spacegraph: depolarized network with node positions.
-        yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
         self.logger.info("Stage4: Depolarization.")
 
-        if not depolarize or self.asis:
-            self.logger.info("  Skip depolarization by request. {0} {1}".format(depolarize, self.asis))
-            self.yapresult = ""
-            self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                               coord=self.reppositions,
-                                               ignores=self.graph.ignores)
-            moment = self.spacegraph.net_polarization()
-            self.logger.info("  Net polarization: {0}".format(moment))
+        if self.asis:
+            depol = "none"
+
+        self.spacegraph = dg.SpaceIceGraph(self.graph,
+                                           coord=self.reppositions,
+                                           ignores=self.graph.ignores)
+        if record_depolarization_path is not None:
+            draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
+            yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw, depol=depol)
+            record_depolarization_path.write(yapresult)
         else:
-            if self.double_network:
-                assert (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0), "In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even."
-            self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                               coord=self.reppositions,
-                                               ignores=self.graph.ignores)
-            if record_depolarization_path is not None:
-                draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
-                yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw)
-                record_depolarization_path.write(yapresult)
-            else:
-                dg.depolarize(self.spacegraph, self.repcell.mat, draw=None)
+            dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
         self.logger.info("Stage4: end.")
 
     def stage5(self):

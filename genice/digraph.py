@@ -461,44 +461,27 @@ def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
             logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle)))
             yield cycle
 
-def depolarization_axis(spaceicegraph):
-    if np.dot(net_polar, net_polar) < 0.2**2:
-        return None
-    if -1 <= net_polar[0] <= 1 and -1 <= net_polar[1] <= 1 and -1 <= net_polar[2] <= 1:
-        logger.info("  Gave up eliminating the polarization. (2)")
-        return None
-    if net_polar[0] > 1.0:
-        logger.debug("Depolarize +X")
-        axis = np.array([+1.0, 0.0, 0.0])
-    elif net_polar[0] < -1.0:
-        logger.debug("Depolarize -X")
-        axis = np.array([-1.0, 0.0, 0.0])
-    elif net_polar[1] > 1.0:
-        logger.debug("Depolarize +Y")
-        axis = np.array([0.0, +1.0, 0.0])
-    elif net_polar[1] < -1.0:
-        logger.debug("Depolarize -Y")
-        axis = np.array([0.0, -1.0, 0.0])
-    elif net_polar[2] > 1.0:
-        logger.debug("Depolarize +Z")
-        axis = np.array([0.0, 0.0, +1.0])
-    elif net_polar[2] < -1.0:
-        logger.debug("Depolarize -Z")
-        axis = np.array([0.0, 0.0, -1.0])
-    return axis
 
-def depolarize(spaceicegraph, cell, draw=None):
+def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
     """
     Find a farthest atom (apsis) from the given atom, and
     make the shortest paths between them.
 
-    It works much better than depolarize()
+    [depol]
+        strict:  die if pol is non-zero
+        optimal: make pol smallest
+        none:    do nothing
+
     """
     logger = getLogger()
     #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
     s = ""  # for yaplot
+
+    if depol == "none":
+        logger.info("  Skip depolarization by request.")
+        return s
 
     # TSL
     # defect-defect chains
@@ -569,6 +552,14 @@ def depolarize(spaceicegraph, cell, draw=None):
                             break
             # break this for-loop
 
+    if depol == "strict":
+        if not np.allclose(net_polar, np.zeros(3)):
+            logger.error("  Gave up on depolarization. Perhaps because they contain ions,"
+                         " or the cells are very small, or have a double network structure."
+                         " When creating an ice structure with a double network "
+                         "(e.g., ice 6 and 7), all repetition numbers (--rep) must be even."
+                         " Use --depol=optimal or --depol=none instead.")
+            sys.exit(1)
     #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     return s
