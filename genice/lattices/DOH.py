@@ -98,7 +98,6 @@ waters="""
 """
 
 
-
 from genice.cell import cellvectors
 cell = cellvectors(a=12.4212113964,
                    b=12.421211396338748,
