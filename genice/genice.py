@@ -676,6 +676,9 @@ class GenIce():
 
         if "cages" in lat.__dict__:
             self.cagepos, self.cagetype = parse_cages(lat.cages)
+        elif "cagepos" in lat.__dict__:
+            # pre-parsed data
+            self.cagepos, self.cagetype = lat.cagepos, lat.cagetype
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
