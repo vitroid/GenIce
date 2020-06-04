@@ -1,8 +1,10 @@
 #!/usr/bin/python
 """
-Usage: genice two
+Usage: genice c0te
 """
+
 from logging import getLogger
+import numpy as np
 
 def usage():
     logger = getLogger()
@@ -11,13 +13,13 @@ def usage():
 desc={"ref": {"C0": "Page 11 of the Supplemenrary Material of P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371",
 },
       "usage": usage(),
-      "brief": "Filled ice C0 by Teeratchanan (Hydrogen-disordered.)"
+      "brief": "Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.)"
       }
 
 
 
 def argparser(arg):
-    global pairs, fixed, waters, coord, density, cell, cages
+    global pairs, fixed, waters, coord, density, cell, cagetype, cagepos
     logger = getLogger()
 
     # Ref. 2atom
@@ -47,14 +49,16 @@ def argparser(arg):
     from genice import CIF
     atomd = CIF.atomdic(atoms)
     atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
-    cages = ""
+
+    cagetype = []
+    cagepos  = []
     for atomname, pos in atoms:
         if atomname == "Ne1":
-            cages += "{0} {1} {2} {3}\n".format(atomname, *pos)
+            cagetype.append(atomname)
+            cagepos.append(pos)
+            
     waters, pairs = CIF.waters_and_pairs(cell, atomd, CIF.symmetry_operators(symops))
 
-    
-    import numpy as np
     density = 18*len(waters)/6.022e23 / (np.linalg.det(cell)*1e-21)
 
     coord = "relative"

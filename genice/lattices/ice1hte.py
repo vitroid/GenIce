@@ -12,7 +12,7 @@ def usage():
 desc={"ref": {"Ih": "Page 11 of the Supplemenrary Material of P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371",
 },
       "usage": usage(),
-      "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered)."
+      "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.)"
       }
 
 def pick_atoms(atoms, names, repeat=(1,1,1)):
@@ -70,7 +70,6 @@ Ne1 0.0000 0.0013 0.7539
     
     waters, pairs = CIF.waters_and_pairs(cell, atomd, CIF.symmetry_operators(symops), rep=(2,1,1))
 
-    import numpy as np
     density = 18*len(waters)/6.022e23 / (np.linalg.det(cell)*1e-21)
 
     coord = "relative"

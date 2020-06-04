@@ -73,8 +73,13 @@ Install with pip3.
                             A15, Struct33   Cubic Structure I of clathrate hydrate.
                             B, iceB         Hypothetical ice B.
                             DOH, HS3, sH    Clathrate type H.
+                            c0te            Filled ice C0 by Teeratchanan 
+                                            (Hydrogen-disordered.)
+                            c1te            Hydrogen-ordered hydrogen hydrate C1.
                             ice11_19        A candidate for an antiferroelectric 
                                             Ice XI #19.
+                            ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
+                                             disordered).
                             ice2rect        Orthogonalized Ice II.
                             ----
                             (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
@@ -152,7 +157,8 @@ Install with pip3.
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              
@@ -412,7 +418,8 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              

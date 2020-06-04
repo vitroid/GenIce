@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Usage: genice two
+Usage: genice c1te
 """
 from logging import getLogger
 import numpy as np
@@ -11,7 +11,7 @@ def usage():
 
 desc={"ref": {"C1": "Page 12 of the Supplemenrary Material of P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371"},
       "usage": usage(),
-      "brief": "Hydrogen-ordered hydrogen hydrate C1."
+      "brief": "Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.)"
       }
 
 def pick_atoms(atoms, names, repeat=(1,1,1)):
@@ -93,7 +93,6 @@ Ne1 0.0000 0.0000 0.7361
     # set pairs in this way for hydrogen-ordered ices.
     pairs = fixed
 
-    import numpy as np
     density = 18*len(waters)/6.022e23 / (np.linalg.det(cell)*1e-21)
 
     coord = "relative"

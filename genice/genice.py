@@ -679,7 +679,7 @@ class GenIce():
             self.logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
         elif "cagepos" in lat.__dict__:
             # pre-parsed data
-            self.cagepos, self.cagetype = lat.cagepos, lat.cagetype
+            self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
