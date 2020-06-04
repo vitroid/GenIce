@@ -9,26 +9,24 @@ def usage():
     logger = getLogger()
     logger.info(__doc__)
 
-desc={"ref": {"Ih": "P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371",
+desc={"ref": {"Ih": "Page 11 of the Supplemenrary Material of P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371",
 },
       "usage": usage(),
-      "brief": "Filled ice Ih by Teeratchanan."
+      "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered)."
       }
 
 def pick_atoms(atoms, names, repeat=(1,1,1)):
     nrep = np.array(repeat)
-    picked = []
     for atomname, fracpos in atoms:
         if atomname in names:
             for x in range(repeat[0]):
                 for y in range(repeat[1]):
                     for z in range(repeat[2]):
-                        picked.append((atomname, (fracpos+np.array([x,y,z]))/nrep))
-    return picked
+                        yield atomname, (fracpos+np.array([x,y,z]))/nrep
     
 
 def argparser(arg):
-    global pairs, fixed, waters, coord, density, cell, cages
+    global pairs, fixed, waters, coord, density, cell, cagetype, cagepos
     logger = getLogger()
 
     # Ref. Ih
@@ -63,9 +61,12 @@ Ne1 0.0000 0.0013 0.7539
     from genice import CIF
     atomd = CIF.atomdic(atoms)
     atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
-    cages = ""
-    for cage in pick_atoms(atoms, ("Ne1",), repeat=(2,1,1)):
-        cages += "{0} {1} {2} {3}\n".format(cage[0], *(cage[1]))
+
+    cagetype = []
+    cagepos  = []
+    for name, pos in pick_atoms(atoms, ("Ne1",), repeat=(2,1,1)):
+        cagetype.append(name)
+        cagepos.append(pos)
     
     waters, pairs = CIF.waters_and_pairs(cell, atomd, CIF.symmetry_operators(symops), rep=(2,1,1))
 
