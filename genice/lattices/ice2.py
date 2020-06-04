@@ -12,7 +12,7 @@ desc={"ref": {"2atom": "Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. 
               "2cell": "Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437–1449 (1964).",
               "C1": "D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0."},
       "usage": usage(),
-      "brief": "Ice II; Hydrogen hydrate C1."
+      "brief": "Hydrogen-ordered ice II."
       }
 
 
