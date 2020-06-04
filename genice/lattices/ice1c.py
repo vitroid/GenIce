@@ -4,7 +4,7 @@ Data sources
 
 """
 
-desc={"ref": {"C2": 'W. L. Vos, L. W. Finger, R. J. Hemley, H.-K. Mao, Phys. Rev. Lett., 1993, DOI:10.1103/PhysRevLett.71.3150.'},
+desc={"ref": {"Ic": 'W. L. Vos, L. W. Finger, R. J. Hemley, H.-K. Mao, Phys. Rev. Lett., 1993, DOI:10.1103/PhysRevLett.71.3150.'},
       "usage": "No options available.",
       "brief": "Ice Ic."
       }
