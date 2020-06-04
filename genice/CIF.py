@@ -19,15 +19,14 @@ def fullatoms(atomd, sops):
     global x,y,z
     logger = getLogger()
     # the variables to be evaluated by eval() must be global (?)
-    full = []
-    names = []
+    atoms = []
     for sop in sops:
         for name, pos in atomd.items():
             x,y,z = pos
             # print(x,sop)
             p = sop(x,y,z)
             tooclose = False
-            for f in full:
+            for n,f in atoms:
                 d = f - p
                 d -= np.floor(d+0.5)
                 L2 = np.dot(d,d)
@@ -38,9 +37,8 @@ def fullatoms(atomd, sops):
                     break
             if not tooclose:
                 # print(p, (x,y,z), sop)
-                yield name, p
-                full.append(p)
-                names.append(name)
+                atoms.append((name, p))
+    return atoms
 
 
 
@@ -66,12 +64,13 @@ def atomdic(atoms):
 
 def symmetry_operators(symops):
     """
-    Generator of symmetry operations.
+    Array of symmetry operations.
     """
     def _wrap(x):
         return x - np.floor(x+0.5)
 
     symops = symops.translate(str.maketrans("XYZ", "xyz"))
+    #symfuncs = []
     for symop in symops.split("\n"):
         cols = symop.split()
         if len(cols) == 0:
@@ -81,7 +80,9 @@ def symmetry_operators(symops):
             if col[-1] == ",":
                 col = col[:-1]
             ops.append(col)
+        #symfuncs.append(lambda x,y,z: _wrap(np.array([eval(op) for op in ops])))
         yield lambda x,y,z: _wrap(np.array([eval(op) for op in ops]))
+    #return symfuncs
 
 
 def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):

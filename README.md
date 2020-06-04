@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.9
+version 1.0.10
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.9)
+    (version 1.0.10)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -52,10 +52,10 @@ Install with pip3.
                             12, XII, ice12  Ice XII.
                             13, XIII, ice13 Ice XIII.
                             16, CS2, MTN, XVI, ice16, sII   Ice XVI.
-                            17, C0-II, C0, XVII, ice17      Ice XVII.
-                            1c, C2, Ic, ice1c               Ice Ic.
+                            17, XVII, ice17 Ice XVII.
+                            1c, Ic, ice1c   Ice Ic.
                             1h, Ih, ice1h   Ice Ih.
-                            2, C1, II, ice2 Ice II; Hydrogen hydrate C1.
+                            2, II, ice2     Hydrogen-ordered ice II.
                             2D3             Trilayer honeycomb ice.
                             2d, ice2d       A hydrogen-disordered counterpart of 
                                             ice II.
@@ -73,8 +73,20 @@ Install with pip3.
                             A15, Struct33   Cubic Structure I of clathrate hydrate.
                             B, iceB         Hypothetical ice B.
                             DOH, HS3, sH    Clathrate type H.
+                            c0te            Filled ice C0 by Teeratchanan 
+                                            (Hydrogen-disordered.) (Positions of 
+                                            guests are supplied.)
+                            c1te            Hydrogen-ordered hydrogen hydrate C1 by
+                                             Teeratchanan. (Positions of guests are
+                                             supplied.)
+                            c2te            Filled ice C2 (cubic ice) by 
+                                            Teeratchanan (Hydrogen disordered). 
+                                            (Positions of guests are supplied.)
                             ice11_19        A candidate for an antiferroelectric 
                                             Ice XI #19.
+                            ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
+                                             disordered). (Positions of guests are 
+                                            supplied.)
                             ice2rect        Orthogonalized Ice II.
                             ----
                             (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
@@ -152,7 +164,8 @@ Install with pip3.
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              
@@ -346,7 +359,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.9)
+    (version 1.0.10)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -412,7 +425,8 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              
