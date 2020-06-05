@@ -505,6 +505,10 @@ class GenIce():
 
         if "cages" in lat.__dict__:
             self.cagepos, self.cagetype = parse_cages(lat.cages)
+            self.logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
+        elif "cagepos" in lat.__dict__:
+            # pre-parsed data
+            self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
             self.cagepos = np.array(self.cagepos) + np.array(shift)
             self.cagepos -= np.floor(self.cagepos)
 

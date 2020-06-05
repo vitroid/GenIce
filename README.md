@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.1.0
+version 1.1.1
 
 ## Requirements
 
@@ -29,12 +29,12 @@ Install with pip3.
                   [--dens DENS] [--add_noise percent] [--seed SEED]
                   [--format name] [--water model] [--guest D=empty]
                   [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                  [--cation 3=Na] [--visual visual] [--nodep] [--asis] [--debug]
-                  [--quiet]
+                  [--cation 3=Na] [--visual visual] [--depol DEPOL] [--asis]
+                  [--debug] [--quiet]
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.1.0)
+    (version 1.1.1)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -54,10 +54,10 @@ Install with pip3.
                             13, XIII, ice13 Ice XIII.
                             16, C15, CS2, MTN, Struct19, XVI, ice16, sII    Ice XVI
                                              and clathrate type II.
-                            17, C0-II, C0, XVII, ice17      Ice XVII.
-                            1c, C2, Ic, ice1c               Ice Ic.
+                            17, XVII, ice17 Ice XVII.
+                            1c, Ic, ice1c   Ice Ic.
                             1h, Ih, ice1h   Ice Ih.
-                            2, C1, II, ice2 Ice II; Hydrogen hydrate C1.
+                            2, II, ice2     Hydrogen-ordered ice II.
                             2D3             Trilayer honeycomb ice.
                             2d, ice2d       A hydrogen-disordered counterpart of 
                                             ice II.
@@ -111,11 +111,24 @@ Install with pip3.
                             LTA             Zeolite LTA.
                             RHO             Zeolite RHO.
                             Struct38, TS1, sIII, sigma      Clathrate type III.
+                            c0te            Filled ice C0 by Teeratchanan 
+                                            (Hydrogen-disordered.) (Positions of 
+                                            guests are supplied.)
+                            c1te            Hydrogen-ordered hydrogen hydrate C1 by
+                                             Teeratchanan. (Positions of guests are
+                                             supplied.)
+                            c2te            Filled ice C2 (cubic ice) by 
+                                            Teeratchanan (Hydrogen disordered). 
+                                            (Positions of guests are supplied.)
                             dtc             Hypothetical porous ice dtc.
                             eleven          Ice XI w/ stacking faults.
                             i               Hypothetical ice "i"
                             ice11_19        A candidate for an antiferroelectric 
                                             Ice XI #19.
+                            ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
+                                             disordered). (Positions of guests are 
+                                            supplied.)
+                            ice2rect        Orthogonalized Ice II.
                             iceR            Hypothetical ice R.
                             iceT            Hypothetical ice T.
                             iceT2           Hypothetical ice T2.
@@ -183,7 +196,8 @@ Install with pip3.
                              
                             2. Formatters served by external plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              
@@ -211,7 +225,7 @@ Install with pip3.
                             molecule. (3=Na, 39=NH4, etc.)
       --visual visual       Specify the yaplot file to store the depolarization
                             paths. [""]
-      --nodep               No depolarization.
+      --depol DEPOL         Depolarization. (strict, optimal, or none) ["strict"]
       --asis                Assumes all given HB pairs to be fixed. No shuffle and
                             no depolarization.
       --debug, -D           Output debugging info.
@@ -411,7 +425,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.1.0)
+    (version 1.1.1)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -428,7 +442,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
                             mdv             MDView file (in Angdtrom).
                             mdva            MDView file (in au).
                             ----
-                            (Undocumented) ar3r nx3a
+                            (Undocumented) ar3r nx3a nx4a
                              
                              
                             2. File types served by external eplugins
@@ -477,7 +491,8 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by external plugins
                              
-                            _RDF            Radial Distribution Functions.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
                              
                              

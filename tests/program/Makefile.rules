@@ -26,6 +26,7 @@ all: test1.done   test2.done   test3.done   test4.done
 all: 12.scad.test HS3.rings.yap.test
 all: Ihhccc.nx4a.test
 all: helps
+all: c0te.yap.test c1te.yap.test ice1hte.yap.test
 
 helps: 7.gro
 	$(GENICE) \?
@@ -93,7 +94,13 @@ HS1.xyz: $(FMT)/exyz.py
 #test for spot semiclathrate (TBAB)
 	$(GENICE) HS1 --depol=none -c 3=N -a 1=Br -H 6=Bu-:3 -H 0=Bu-:3 -H 1=Bu-:3 -H 2=Bu-:3 --rep 1 1 2 --format exyz | fgrep -v "Command line:" > $@
 TS1.yap: $(FMT)/yaplot.py
-	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
+	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@ 
+c0te.yap: $(FMT)/yaplot.py
+	$(GENICE) c0te --guest Ne1=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@ 
+c1te.yap: $(FMT)/yaplot.py
+	$(GENICE) c1te --guest Ne1=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@ 
+ice1hte.yap: $(FMT)/yaplot.py
+	$(GENICE) ice1hte --guest Ne1=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@ 
 T.pov: $(FMT)/povray.py
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray | fgrep -v "Command line:" > $@
 2dL.gro: $(FMT)/gromacs.py
