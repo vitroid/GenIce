@@ -509,6 +509,7 @@ class GenIce():
         elif "cagepos" in lat.__dict__:
             # pre-parsed data
             self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
+        if self.cagepos is not None:
             self.cagepos = np.array(self.cagepos) + np.array(shift)
             self.cagepos -= np.floor(self.cagepos)
 
