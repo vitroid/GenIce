@@ -19,11 +19,13 @@ def import_extra(category, name):
     logger = logging.getLogger()
     logger.info("Extra {0} plugin: {1}".format(category,name))
     groupname = 'genice_{0}'.format(category)
+    module = None
     for ep in pr.iter_entry_points(group=groupname):
         logger.debug("    Entry point: {0}".format(ep))
         if ep.name == name:
             logger.debug("      Loading {0}...".format(name))
             module = ep.load()
+    assert module is not None
     return module
 
 
@@ -64,7 +66,7 @@ def safe_import(category, name):
             pass
     if module is None:
         module = import_extra(category, name)
-        
+
     logger.info("Load {0} module '{1}', arguments [{2}]".format(category, name, arg))
     module.logger = logger
     module.arg    = arg
