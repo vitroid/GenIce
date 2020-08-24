@@ -39,7 +39,7 @@ setup(name='GenIce',
                 'genice.formats',
                 'genice.loaders',
                 ],
-      install_requires=['networkx>=2', 'countrings>=0.1.7', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy', ],
+      install_requires=['networkx>=2', 'countrings>=0.1.7', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', ],
       entry_points = {
               'console_scripts': [
                   'genice = genice.__main__:main',

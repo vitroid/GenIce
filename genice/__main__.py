@@ -95,6 +95,8 @@ def main():
         depolarize = not options.nodep
         file_format = options.format
 
+        logger.debug("Water type: {0}".format(water_type))
+        water = safe_import("molecule", water_type)
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Output file format: {0}".format(file_format))
         formatter = safe_import("format", file_format)
@@ -106,7 +108,7 @@ def main():
 
         del options  # Dispose for safety.
 
-        lat.generate_ice(water_type=water_type,
+        lat.generate_ice(water=water,
                          guests=guests,
                          formatter=formatter,
                          record_depolarization_path=record_depolarization_path,
@@ -143,6 +145,8 @@ def main():
         del options  # Dispose for safety.
 
         for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
+            logger.debug("Water type: {0}".format(water_type))
+            water = safe_import("molecule", water_type)
             # Main part of the program is contained in th Formatter object. (See formats/)
             logger.debug("Output file format: {0}".format(file_format))
             formatter = safe_import("format", file_format)
@@ -150,7 +154,7 @@ def main():
             lat = analice.AnalIce(lattice_info, sys.argv)
             if output is not None:
                 sys.stdout = open(output % i, "w")
-            lat.analyze_ice(water_type=water_type,
+            lat.analyze_ice(water=water,
                             formatter=formatter,
                             noise=noise,
                             )

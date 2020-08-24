@@ -74,7 +74,7 @@ def descriptions(category):
     return catalog
 
 
-        
+
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 def help_type():
@@ -534,7 +534,7 @@ def Alkyl(cpos, root, cell, molname, backbone):
 class GenIce():
     def __init__(self,
                  lat,
-                 argv,
+                 argv=None,
                  density=0,
                  rep=(1, 1, 1),
                  cations=dict(),
@@ -558,8 +558,9 @@ class GenIce():
         except BaseException:
             self.doc = []
 
-        self.doc.append("")
-        self.doc.append("Command line: {0}".format(" ".join(argv)))
+        if argv is not None:
+            self.doc.append("")
+            self.doc.append("Command line: {0}".format(" ".join(argv)))
 
         for line in self.doc:
             self.logger.info("  "+line)
@@ -722,9 +723,9 @@ class GenIce():
                               "Ethyl-": ethyl}
 
     def generate_ice(self,
-                     water_type,
-                     guests,
+                     water,
                      formatter,
+                     guests=[],
                      record_depolarization_path=None,
                      depolarize=True,
                      noise=0.):
@@ -733,7 +734,7 @@ class GenIce():
         arg   = formatter.arg
         maxstage = max(0, *hooks.keys())
         logger = getLogger()
-        
+
         if 0 in hooks:
             hooks[0](self, arg)
         elif arg != "":
@@ -780,7 +781,7 @@ class GenIce():
             if maxstage < 6 or abort:
                 return
 
-        self.stage6(water_type)
+        self.stage6(water)
 
         if 6 in hooks:
             abort = hooks[6](self)
@@ -984,7 +985,7 @@ class GenIce():
         # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
         self.logger.info("Stage5: end.")
 
-    def stage6(self, water_type):
+    def stage6(self, water):
         """
         Arrange water atoms and replacements
 
@@ -996,7 +997,7 @@ class GenIce():
 
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
         # water = importlib.import_module("genice.molecules."+water_type)
-        water = safe_import("molecule", water_type)
+        # water = safe_import("molecule", water_type)
 
         try:
             mdoc = water.__doc__.splitlines()
@@ -1263,4 +1264,3 @@ class GenIce():
 
     def __del__(self):
         self.logger.info("Completed.")
-

@@ -96,7 +96,7 @@ def getoptions():
 
 
 class AnalIce(GenIce):
-    def __init__(self, lat, argv):
+    def __init__(self, lat, argv=None):
 
         self.logger = logging.getLogger()
         self.rep = (1,1,1)
@@ -113,8 +113,9 @@ class AnalIce(GenIce):
         except BaseException:
             self.doc = []
 
-        self.doc.append("")
-        self.doc.append("Command line: {0}".format(" ".join(argv)))
+        if argv is not None:
+            self.doc.append("")
+            self.doc.append("Command line: {0}".format(" ".join(argv)))
 
         for line in self.doc:
             self.logger.info("  "+line)
@@ -254,8 +255,8 @@ class AnalIce(GenIce):
         # groups info
         self.groups = defaultdict(dict)
 
-        
-    def analyze_ice(self, water_type, formatter, noise=0.):
+
+    def analyze_ice(self, water, formatter, noise=0.):
         """
         Protocol for analice
         """
@@ -313,7 +314,7 @@ class AnalIce(GenIce):
             if maxstage < 6 or abort:
                 return
 
-        self.stage6(water_type)
+        self.stage6(water)
 
         if 6 in hooks:
             abort = hooks[6](self)
