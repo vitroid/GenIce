@@ -6,17 +6,28 @@ desc={"ref": {"NGPH": "https://vitroid.github.io/@NGPH"},
       }
 
 
-def hook4(lattice):
-    lattice.logger.info("Hook4: Output the hydrogen bond network.")
+from logging import getLogger
+import genice.formats
 
-    s = ""
-    s += "@NGPH\n"
-    s += "{0}\n".format(len(lattice.reppositions))
-    for i,j,k in lattice.spacegraph.edges(data=True):
-        s += "{0} {1}\n".format(i,j)
-    s += "-1 -1\n"
-    s = "\n".join(lattice.doc) + "\n" + s
-    print(s,end="")
-    lattice.logger.info("Hook4: end.")
+class Format(genice.formats.Format):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
-hooks = {4:hook4}
+
+    def hooks(self):
+        return {4:self.hook4}
+
+
+    def hook4(self, lattice):
+        logger = getLogger()
+        logger.info("Hook4: Output the hydrogen bond network.")
+
+        s = ""
+        s += "@NGPH\n"
+        s += "{0}\n".format(len(lattice.reppositions))
+        for i,j,k in lattice.spacegraph.edges(data=True):
+            s += "{0} {1}\n".format(i,j)
+        s += "-1 -1\n"
+        s = "\n".join(lattice.doc) + "\n" + s
+        print(s,end="")
+        logger.info("Hook4: end.")

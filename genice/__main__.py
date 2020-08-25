@@ -5,6 +5,7 @@ import sys
 import logging
 from genice.importer import safe_import
 from genice import genice, analice, __version__, load
+from genice.tool import plugin_option_parser
 import random
 import numpy as np
 
@@ -93,13 +94,14 @@ def main():
         guests = options.guests
         noise = options.noise
         depolarize = not options.nodep
-        file_format = options.format
+        file_format, format_options = plugin_option_parser(options.format)
 
         logger.debug("Water type: {0}".format(water_type))
         water = safe_import("molecule", water_type)
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Output file format: {0}".format(file_format))
-        formatter = safe_import("format", file_format)
+        formatter_module = safe_import("format", file_format)
+        formatter = formatter_module.Format(**format_options)
 
         if options.visual != "":
             record_depolarization_path = open(options.visual, "w")
@@ -119,7 +121,11 @@ def main():
         logger.debug(options.File)
 
         water_type = options.water
-        file_format = options.format
+        file_format, format_options = plugin_option_parser(options.format)
+        logger.debug("Output file format: {0}".format(file_format))
+        formatter_module = safe_import("format", file_format)
+        formatter = formatter_module.Format(**format_options)
+
         oname = options.oatom
         hname = options.hatom
         filename = options.File
@@ -148,8 +154,8 @@ def main():
             logger.debug("Water type: {0}".format(water_type))
             water = safe_import("molecule", water_type)
             # Main part of the program is contained in th Formatter object. (See formats/)
-            logger.debug("Output file format: {0}".format(file_format))
-            formatter = safe_import("format", file_format)
+            #logger.debug("Output file format: {0}".format(file_format))
+            #formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
             lat = analice.AnalIce(lattice_info, sys.argv)
             if output is not None:

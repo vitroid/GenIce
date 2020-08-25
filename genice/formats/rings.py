@@ -13,7 +13,7 @@ desc = { "ref": { "MBO2007": "Matsumoto, M., Baba, A. & Ohmine, I. Topological b
          "brief": "Show rings in Yaplot.",
          "usage": __doc__
          }
-         
+
 
 
 import sys
@@ -24,6 +24,7 @@ import yaplotlib as yp
 from logging import getLogger
 
 from genice import rigid
+import genice.formats
 from countrings import countrings_nx as cr
 
 
@@ -37,57 +38,54 @@ def face(center, rpos):
     return s
 
 
+class Format(genice.formats.Format):
+    largestring=8
 
-def hook2(lattice):
-    logger = getLogger()
-    logger.info("Hook2: Show rings in Yaplot format.")
-    # copied from svg_poly
-    graph = nx.Graph(lattice.graph) #undirected
-    cellmat = lattice.repcell.mat
-    s = ""
-    s += yp.Layer(2)
-    s += yp.Color(0)
-    for i,j in graph.edges():
-        pi, pj = lattice.reppositions[i], lattice.reppositions[j]
-        d = pj - pi
-        d -= np.floor(d+0.5)
-        s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
-    for ring in cr.CountRings(graph, pos=lattice.reppositions).rings_iter(lattice.largestring):
-        deltas = np.zeros((len(ring),3))
-        d2 = np.zeros(3)
-        for k,i in enumerate(ring):
-            d = lattice.reppositions[i] - lattice.reppositions[ring[0]]
+    def __init__(self, **kwargs):
+        logger = getLogger()
+        unknown = dict()
+        for k, v in kwargs.items():
+            try:
+                self.largestring=int(k)
+            except:
+                logger.error("Argument must be a positive integer.")
+                sys.exit(1)
+        logger.info("  Largest ring: {0}.".format(self.largestring))
+        super().__init__()
+
+
+    def hooks(self):
+        return {2:self.hook2}
+
+
+    def hook2(self, lattice):
+        logger = getLogger()
+        logger.info("Hook2: Show rings in Yaplot format.")
+        # copied from svg_poly
+        graph = nx.Graph(lattice.graph) #undirected
+        cellmat = lattice.repcell.mat
+        s = ""
+        s += yp.Layer(2)
+        s += yp.Color(0)
+        for i,j in graph.edges():
+            pi, pj = lattice.reppositions[i], lattice.reppositions[j]
+            d = pj - pi
             d -= np.floor(d+0.5)
-            deltas[k] = d
-        comofs = np.sum(deltas, axis=0) / len(ring)
-        deltas -= comofs
-        com = lattice.reppositions[ring[0]] + comofs
-        com -= np.floor(com)
-        # rel to abs
-        com    = np.dot(com,    cellmat)
-        deltas = np.dot(deltas, cellmat)
-        s += face(com,deltas)
-    print(s)
-    logger.info("Hook2: end.")
-
-
-    
-# argparser
-def hook0(lattice, arg):
-    lattice.logger.info("Hook0: ArgParser.")
-
-    if arg == "":
-        lattice.largestring=8
-    else:
-        try:
-            lattice.largestring=int(arg)
-        except:
-            lattice.logger.error("Argument must be a positive integer.")
-            sys.exit(1)
-
-    lattice.logger.info("  Largest ring: {0}.".format(lattice.largestring))
-    lattice.logger.info("Hook0: end.")
-
-
-
-hooks = {2:hook2, 0:hook0}
+            s += yp.Line(pi @ cellmat, (pi+d) @ cellmat)
+        for ring in cr.CountRings(graph, pos=lattice.reppositions).rings_iter(self.largestring):
+            deltas = np.zeros((len(ring),3))
+            d2 = np.zeros(3)
+            for k,i in enumerate(ring):
+                d = lattice.reppositions[i] - lattice.reppositions[ring[0]]
+                d -= np.floor(d+0.5)
+                deltas[k] = d
+            comofs = np.sum(deltas, axis=0) / len(ring)
+            deltas -= comofs
+            com = lattice.reppositions[ring[0]] + comofs
+            com -= np.floor(com)
+            # rel to abs
+            com    = np.dot(com,    cellmat)
+            deltas = np.dot(deltas, cellmat)
+            s += face(com,deltas)
+        print(s)
+        logger.info("Hook2: end.")

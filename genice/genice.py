@@ -730,20 +730,14 @@ class GenIce():
                      depolarize=True,
                      noise=0.):
 
-        hooks = formatter.hooks
-        arg   = formatter.arg
+        hooks = formatter.hooks()
         maxstage = max(0, *hooks.keys())
         logger = getLogger()
 
         if 0 in hooks:
-            hooks[0](self, arg)
-        elif arg != "":
-            logger.info("Arguments are given but the module does not accept them.")
-            if "usage" in formatter.__dict__:
-                formatter.usage()
-            else:
-                for line in formatter.__doc__.splitlines():
-                    logger.info("  "+line)
+            abort = hooks[0](self)
+            if maxstage < 1 or abort:
+                return
 
         self.stage1(noise)
 

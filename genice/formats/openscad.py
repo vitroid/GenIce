@@ -16,7 +16,8 @@ Options:
 
 
 import numpy as np
-
+from logging import getLogger
+import genice.formats
 
 bondfunc="""
 module bond(p1=[0,0,0],p2=[1,1,1],r=1)
@@ -40,7 +41,7 @@ class OpenScad():
 
     def encode(self, *codes): #Stored value as a string
         return "".join([code.__str__() for code in codes])
-    
+
     def use(self, f):
         return OpenScad("use <{0}>;\n".format(f))
 
@@ -64,7 +65,7 @@ class OpenScad():
 
     def union(self, *values):
         return self.add(*values)
-    
+
     def subtract(self, *values):
         return OpenScad("difference(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //difference\n")
 
@@ -74,17 +75,17 @@ class OpenScad():
     #aliases for backward compat
     def difference(self, *values):
         return self.subtract(*values)
-    
+
     def intersection(self, *values):
         return self.intersect(*values)
 
     #operators
     def __or__(self, value):
         return self.add(value)
-                
+
     def __and__(self, value):
         return self.intersect(value)
-                
+
     def __sub__(self, value):
         return self.subtract(value)
 
@@ -111,7 +112,7 @@ class OpenScad():
 
     def __str__(self):
         return self.string
-    
+
 def test():
     o = OpenScad()
     print(o.sphere(r=5).translate([1,2,3]))
@@ -120,80 +121,81 @@ def test():
     print(o.sphere(r=2) | o.sphere(r=3) | o.sphere(r=4)) #another way
 
 
+class Format(genice.formats.Format):
+    options=dict(scale=50, rnode=0.07, rbond=0.06, fn=20)
 
-def argparser(lattice, arg):
-    global options
-    lattice.logger.info("Hook0: Preprocess.")
-    options={'scale':50, 'rnode':0.07, 'rbond':0.06, 'fn':20}
-    if arg != "":
-        for a in arg.split(","):
-            kw,value = a.split("=")
-            if kw in ("scale", "rnode", "rbond", 'fn'):
-                options[kw] = float(value)
-    for d in range(3):
-        lattice.rep[d] += 2  #Extend the size,then cut off later.
-    lattice.logger.info("Hook0: end.")
+    def __init__(self, **kwargs):
+        unknown = dict()
+        for k, v in kwargs.items():
+            if k in ("scale", "rnode", "rbond", 'fn'):
+                self.options[k] = float(v)
+            else:
+                unknown[k] = v
+        super().__init__(**unknown)
 
 
-#def hook0(lattice, arg):
-#    lattice.logger.info("Hook0: Preprocess.")
-#    if arg != "":
-#        lattice.logger.warn("  openscad plugin does not accept options.")
-#    for d in range(3):
-#        lattice.rep[d] += 2  #Extend the size,then cut off later.
-#    lattice.logger.info("Hook0: end.")
+    def hooks(self):
+        return {0:self.hook0, 2:self.hook2}
 
-def hook2(lattice):
-    global options
-    scale = options["scale"]
-    rnode = options["rnode"]
-    rbond = options["rbond"]
-    fn    = options["fn"]
-    lattice.logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
-    cellmat = lattice.repcell.mat
-    rep = np.array(lattice.rep)
-    trimbox    = lattice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
-    trimoffset = lattice.cell.mat[0]+lattice.cell.mat[1]+lattice.cell.mat[2]
-    #lattice.logger.info(lattice.repcell.mat)
-    #lattice.logger.info(lattice.cell.mat)
 
-    margin = 0.2 # expansion relative to the cell size
-    lower = (1.0 - margin) / rep
-    upper = (rep - 1.0 + margin) / rep
+    def hook0(self, lattice):
+        logger = getLogger()
+        logger.info("Hook0: Preprocess.")
+        for d in range(3):
+            lattice.rep[d] += 2  #Extend the size,then cut off later.
+        logger.info("Hook0: end.")
 
-    bonds = []
-    if rbond > 0.0:
-        for i,j in lattice.graph.edges(data=False):
-            s1 =lattice.reppositions[i]
-            s2 =lattice.reppositions[j]
-            d = s2-s1
-            d -= np.floor( d + 0.5 )
-            lattice.logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
-            s2 = s1 + d
-            if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-              (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
-                bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
 
-    nodes = []
-    if rnode > 0.0:
-        for s1 in lattice.reppositions:
-            if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-                nodes.append( np.dot(s1, cellmat) )
+    def hook2(self, lattice):
+        logger = getLogger()
+        scale = self.options["scale"]
+        rnode = self.options["rnode"]
+        rbond = self.options["rbond"]
+        fn    = self.options["fn"]
+        logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
+        cellmat = lattice.repcell.mat
+        rep = np.array(lattice.rep)
+        trimbox    = lattice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
+        trimoffset = lattice.cell.mat[0]+lattice.cell.mat[1]+lattice.cell.mat[2]
+        #logger.info(lattice.repcell.mat)
+        #logger.info(lattice.cell.mat)
 
-    o = OpenScad()
-    objs = [o.sphere(r="Rnode").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
-    #operations
-    ops = [bondfunc,
-        o.defvar("$fn", fn),
-        o.defvar("Rnode", rnode),
-        o.defvar("Rbond", rbond),
-        ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
-    s = o.encode(*ops)
-    s = '//' + "\n//".join(lattice.doc) + "\n" + s
-    print(s,end="")
-    lattice.logger.info("Hook2: end.")
+        margin = 0.2 # expansion relative to the cell size
+        lower = (1.0 - margin) / rep
+        upper = (rep - 1.0 + margin) / rep
 
-hooks = {0:argparser, 2:hook2}
+        bonds = []
+        if rbond > 0.0:
+            for i,j in lattice.graph.edges(data=False):
+                s1 =lattice.reppositions[i]
+                s2 =lattice.reppositions[j]
+                d = s2-s1
+                d -= np.floor( d + 0.5 )
+                logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
+                s2 = s1 + d
+                if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
+                  (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+                    bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
+
+        nodes = []
+        if rnode > 0.0:
+            for s1 in lattice.reppositions:
+                if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+                    nodes.append( np.dot(s1, cellmat) )
+
+        o = OpenScad()
+        objs = [o.sphere(r="Rnode").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
+        #operations
+        ops = [bondfunc,
+            o.defvar("$fn", fn),
+            o.defvar("Rnode", rnode),
+            o.defvar("Rbond", rbond),
+            ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
+        s = o.encode(*ops)
+        s = '//' + "\n//".join(lattice.doc) + "\n" + s
+        print(s,end="")
+        logger.info("Hook2: end.")
+
 
 
 if __name__ == "__main__":
