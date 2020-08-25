@@ -2,18 +2,23 @@
 import math
 import numpy as np
 
+from logging import getLogger
+import genice.molecules
 
-oh = 0.10000
-hangle = 109.47 * math.pi / 180 / 2
-mass=18
-ohz = oh * math.cos(hangle)
-ohy = oh * math.sin(hangle)
-oz  = -ohz*2/mass
+class Molecule(genice.molecules.Molecule):
 
 
-sites = np.array([[0, 0,oz],
-                  [0, ohy,ohz+oz],
-                  [0,-ohy,ohz+oz]]) # nm
+    def __init__(self):
+        oh = 0.10000
+        hangle = 109.47 * math.pi / 180 / 2
+        mass=18
+        ohz = oh * math.cos(hangle)
+        ohy = oh * math.sin(hangle)
+        oz  = -ohz*2/mass
 
-labels = ["Ow","Hw","Hw"]
-name = "SOL"
+        self.sites = np.array([[0, 0,oz],
+                          [0, ohy,ohz+oz],
+                          [0,-ohy,ohz+oz]]) # nm
+
+        self.labels = ["Ow","Hw","Hw"]
+        self.name = "SOL"

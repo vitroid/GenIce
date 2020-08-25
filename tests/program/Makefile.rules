@@ -28,6 +28,7 @@ all: c0te.yap.test c1te.yap.test ice1hte.yap.test
 all: i.graph.test
 all: 0.exyz.test
 all: 2.exmol.test
+all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 
 %.test: $(REFD)/% %
 	diff $^ && touch $@
@@ -64,11 +65,11 @@ test4.done: $(FMT)/gromacs.py
 %.exyz: $(FMT)/exyz.py
 	$(GENICE) $*  --rep 2 2 2 --format exyz | fgrep -v "Command line:" > $@
 %.exmol: $(FMT)/exyz.py
-	$(GENICE) $*  --rep 2 2 2 --format exmol | fgrep -v "Command line:" > $@
+	$(GENICE) $*  --rep 2 2 2 --format exmol --water 6site | fgrep -v "Command line:" > $@
 %.nx3a:  $(FMT)/euler.py
 	$(GENICE) $* --rep 2 2 3 --format e | fgrep -v "Command line:" > $@
 5.gro: $(FMT)/gromacs.py
-	$(GENICE) 5  --rep 2 2 4 --format g | fgrep -v "Command line:" > $@
+	$(GENICE) 5  --rep 2 2 4 --format g --water physical_water | fgrep -v "Command line:" > $@
 7.mdv: $(FMT)/mdview.py
 	$(GENICE) 7  --rep 2 2 4 --format m | fgrep -v "Command line:" > $@
 7.mdva: $(FMT)/mdv_au.py
@@ -82,10 +83,19 @@ test4.done: $(FMT)/gromacs.py
 1c.ar3r: $(FMT)/rcom.py
 	$(GENICE) 1c --rep 1 1 2 --format r | fgrep -v "Command line:" > $@
 CS1.cif: $(FMT)/cif.py
-	$(GENICE) CS1 --guest 14=g14*0.5 -G 0=me --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
+	$(GENICE) CS1 --guest 14=uathf*0.5 -G 0=me --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
 CS2.cif: $(FMT)/cif2.py
 	$(GENICE) CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
 #;$(UTIL)/cifdiff.sh $(REFD)/$@ $@
+
+#tests for molecules
+CS2A.gro: $(FMT)/gromacs.py
+	$(GENICE) CS2 --nodep -g 12=me -g 16=uathf6 --rep 1 1 2 --water spce | fgrep -v "Command line:" > $@
+CS2B.gro: $(FMT)/gromacs.py
+	$(GENICE) CS2 --nodep -g 12=co2 -g 16=uathf --rep 1 1 2 --water 5site  | fgrep -v "Command line:" > $@
+CS2C.gro: $(FMT)/gromacs.py
+	$(GENICE) CS2 --nodep -g 12=H2 -g 16=ch4 --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
+
 HS1.xyz: $(FMT)/xyz.py
 #test for spot semiclathrate (TBAB)
 	$(GENICE) HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@

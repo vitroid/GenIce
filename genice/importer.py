@@ -85,7 +85,7 @@ def safe_import(category, name, **kwargs):
             print(module.desc["usage"])
             sys.exit(0)
 
-    if category == "format":
+    if category in ("format", "molecule"):
         return module
     # 最終的には、この先のオプションチェックはすべて省く。
     logger.debug(category)

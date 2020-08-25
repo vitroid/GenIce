@@ -97,7 +97,7 @@ def main():
         file_format, format_options = plugin_option_parser(options.format)
 
         logger.debug("Water type: {0}".format(water_type))
-        water = safe_import("molecule", water_type)
+        water = safe_import("molecule", water_type).Molecule()
         # Main part of the program is contained in th Formatter object. (See formats/)
         logger.debug("Output file format: {0}".format(file_format))
         formatter_module = safe_import("format", file_format)
@@ -125,6 +125,8 @@ def main():
         logger.debug("Output file format: {0}".format(file_format))
         formatter_module = safe_import("format", file_format)
         formatter = formatter_module.Format(**format_options)
+        logger.debug("Water type: {0}".format(water_type))
+        water_module = safe_import("molecule", water_type)
 
         oname = options.oatom
         hname = options.hatom
@@ -151,8 +153,7 @@ def main():
         del options  # Dispose for safety.
 
         for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
-            logger.debug("Water type: {0}".format(water_type))
-            water = safe_import("molecule", water_type)
+            water = water_module.Molecule()
             # Main part of the program is contained in th Formatter object. (See formats/)
             #logger.debug("Output file format: {0}".format(file_format))
             #formatter = safe_import("format", file_format)

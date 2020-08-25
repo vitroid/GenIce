@@ -1,8 +1,9 @@
 # coding: utf-8
 import numpy as np
 
-#united-atom methane.
+from logging import getLogger
+import genice.molecules.one
 
-sites = np.array([[0,0,0]])
-labels = ["Me"]
-name = "Me"
+class Molecule(genice.molecules.one.Molecule):
+    def __init__(self):
+        super().__init__(label="Me", name="Me")

@@ -67,8 +67,8 @@ def run(lattice, water_type="TIP3P", guests=[]):
         print("{0:06}    ".format(i+1) + line)
 
 #
-#limitations:            
+#limitations:
 #1)It is a structure file and force field inf should not be included.
-#however, BDL requests the partial carge info in it.
+#however, BDL requests the partial charge info in it.
 #2)Atomic naming rule is always a problem.
 #

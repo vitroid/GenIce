@@ -4,12 +4,13 @@ import numpy as np
 import pairlist as pl
 
 from genice import rigid
-from genice.molecules import tip4p
+import genice.molecules.tip4p
 
 
 def load_iter(file, **kwargs):
     logger = logging.getLogger()
     logger.info("  Loading NX3A assuming TIP4P water.")
+    tip4p = genice.molecules.tip4p.Molecule()
     while True:
         line = file.readline()
         if len(line) == 0:

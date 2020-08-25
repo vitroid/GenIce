@@ -5,23 +5,27 @@
 
 import numpy as np
 from math import pi,sin,cos
+from logging import getLogger
+import genice.molecules
 
-L1 = 0.9572 / 10
-L2 = 0.1577 / 10
-theta=104.52 * pi/180
+class Molecule(genice.molecules.Molecule):
 
-
-hy = L1*sin(theta/2)
-hz = L1*cos(theta/2)
-mz = L2
-
-sites = np.array([[0.0, 0.0, 0.0],
-                  [0.0, hy,  hz],
-                  [0.0,-hy,  hz],
-                  [0.0, 0.0, mz]])
-sites -= (sites[1]+sites[2]+sites[0]*0)/18
+    def __init__(self):
+        L1 = 0.9572 / 10
+        L2 = 0.1577 / 10
+        theta=104.52 * pi/180
 
 
-atoms = ["O","H","H","."]
-labels = ["OW","HW1","HW2","MW"]
-name = "ICE"
+        hy = L1*sin(theta/2)
+        hz = L1*cos(theta/2)
+        mz = L2
+        self.sites = np.array([[0.0, 0.0, 0.0],
+                          [0.0, hy,  hz],
+                          [0.0,-hy,  hz],
+                          [0.0, 0.0, mz]])
+        self.sites -= (self.sites[1]+self.sites[2]+self.sites[0]*0)/18
+
+
+        self.atoms = ["O","H","H","."]
+        self.labels = ["OW","HW1","HW2","MW"]
+        self.name = "ICE"

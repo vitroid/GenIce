@@ -1,8 +1,8 @@
 # coding: utf-8
 import numpy as np
+from logging import getLogger
+import genice.molecules.one
 
-#placeholder for 14-hedral cage
-
-sites = np.array([[0,0,0]])
-labels = ["G14"]
-name = "C14"
+class Molecule(genice.molecules.one.Molecule):
+    def __init__(self):
+        super().__init__(label="G14", name="C14")

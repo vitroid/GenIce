@@ -1116,7 +1116,7 @@ class GenIce():
 
             # molecular guests
             for molec, cages in molecules.items():
-                gmol = safe_import("molecule", molec)
+                gmol = safe_import("molecule", molec).Molecule()
 
                 try:
                     mdoc = gmol.__doc__.splitlines()

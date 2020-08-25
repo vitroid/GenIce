@@ -6,9 +6,13 @@ desc={"ref": {"H2": "https://www.britannica.com/science/hydrogen"},
       }
 
 import numpy as np
+from logging import getLogger
+import genice.molecules
 
-sites = np.array([[0,0,-0.037],
-                  [0,0,+0.037]])   # nm, HH
+class Molecule(genice.molecules.Molecule):
+    def __init__(self):
+        self.sites = np.array([[0,0,-0.037],
+                               [0,0,+0.037]])   # nm, HH
 
-labels = ["H","H"]
-name = "H2"
+        self.labels = ["H","H"]
+        self.name = "H2"
