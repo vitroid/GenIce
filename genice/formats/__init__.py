@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# base class?
+import sys
 
 class Format():
     """
@@ -11,3 +11,6 @@ class Format():
 
     def hooks():
         return {}
+
+    def dump(filename="", file=sys.stdout):
+        pass # reserved for future

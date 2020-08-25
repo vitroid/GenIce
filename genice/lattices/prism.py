@@ -4,11 +4,12 @@ Note: Due to the technical limitation in the GenIce algorithm, the minimum latti
 """
 
 from math import sin, pi, cos
-import logging
+from logging import getLogger
 from genice.cell import cellvectors
+import genice.lattices
 
 def usage():
-    logger = logging.getLogger()
+    logger = getLogger()
     logger.info("** prism module **")
     logger.info("prism module accepts two arguments.")
     logger.info("prism[sides,rows]")
@@ -18,32 +19,45 @@ def usage():
     logger.info("------------------")
 
 
+class Lattice(genice.lattices.Lattice):
+    def __init__(self, **kwargs):
+        logger = getLogger()
+        # global sides, rows, bondlen, density, cell, waters, coord
+        sides = 6
+        rows  = 10
 
-def argparser(arg):
-    global sides, rows, bondlen, density, cell, waters, coord
-    a = [int(x) for x in arg.split(",")]
-    if len(a)>0:
-        sides = a[0]
-    if len(a)>1:
-        rows = a[1]
-    L = 2.75
-    bondlen = 3
-    R = L/2/sin(pi/sides)
-    density = sides*rows / (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
+        for k, v in kwargs.items():
+            if k == "rows":
+                rows = int(v)
+            elif k == "sides":
+                sides = int(v)
+            elif v is True:
+                # unlabeled option
+                values = k.split(",")
+                if len(values) == 2:
+                    sides, rows = [int(x) for x in values]
+                elif len(values) == 1:
+                    sides = int(values[0])
+                else:
+                    sys.exit(1)
 
-    waters = []
-    for j in range(rows):
-        for i in range(sides):
-            x = R * cos(i*pi*2/sides)
-            y = R * sin(i*pi*2/sides)
-            z = j * L
-            waters.append([x,y,z])
+        logger.info("Prism ice with {0} sides and {1} rows.".format(sides, rows))
 
-    coord = "absolute"
+        L = 2.75
+        self.bondlen = 3
+        R = L/2/sin(pi/sides)
+        self.density = sides*rows / (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
 
-    cell = cellvectors(a=L*20,
-                       b=L*20,
-                       c=L*rows)
+        self.waters = []
+        for j in range(rows):
+            for i in range(sides):
+                x = R * cos(i*pi*2/sides)
+                y = R * sin(i*pi*2/sides)
+                z = j * L
+                self.waters.append([x,y,z])
 
-# default.
-argparser("6,10")
+        self.coord = "absolute"
+
+        self.cell = cellvectors(a=L*20,
+                                b=L*20,
+                                c=L*rows)

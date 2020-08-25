@@ -44,7 +44,6 @@ def main():
     if mode == "genice":
         logger.debug(options.Type)
 
-        lattice_type = options.Type
         seed = options.seed
         rep = options.rep
         density = options.dens
@@ -75,11 +74,12 @@ def main():
         random.seed(seed)
         np.random.seed(seed)
 
+        lattice_type, lattice_options = plugin_option_parser(options.Type)
         logger.debug("Lattice: {0}".format(lattice_type))
         assert lattice_type is not None
 
         # Initialize the Lattice class with arguments which are required for plugins.
-        lat = genice.GenIce(safe_import("lattice", lattice_type),
+        lat = genice.GenIce(safe_import("lattice", lattice_type).Lattice(**lattice_options),
                             sys.argv,
                             density=density,
                             rep=rep,
