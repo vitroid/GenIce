@@ -138,27 +138,27 @@ class Format(genice.formats.Format):
         return {0:self.hook0, 2:self.hook2}
 
 
-    def hook0(self, lattice):
+    def hook0(self, ice):
         logger = getLogger()
         logger.info("Hook0: Preprocess.")
         for d in range(3):
-            lattice.rep[d] += 2  #Extend the size,then cut off later.
+            ice.rep[d] += 2  #Extend the size,then cut off later.
         logger.info("Hook0: end.")
 
 
-    def hook2(self, lattice):
+    def hook2(self, ice):
         logger = getLogger()
         scale = self.options["scale"]
         rnode = self.options["rnode"]
         rbond = self.options["rbond"]
         fn    = self.options["fn"]
         logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
-        cellmat = lattice.repcell.mat
-        rep = np.array(lattice.rep)
-        trimbox    = lattice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
-        trimoffset = lattice.cell.mat[0]+lattice.cell.mat[1]+lattice.cell.mat[2]
-        #logger.info(lattice.repcell.mat)
-        #logger.info(lattice.cell.mat)
+        cellmat = ice.repcell.mat
+        rep = np.array(ice.rep)
+        trimbox    = ice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
+        trimoffset = ice.cell.mat[0]+ice.cell.mat[1]+ice.cell.mat[2]
+        #logger.info(ice.repcell.mat)
+        #logger.info(ice.cell.mat)
 
         margin = 0.2 # expansion relative to the cell size
         lower = (1.0 - margin) / rep
@@ -166,9 +166,9 @@ class Format(genice.formats.Format):
 
         bonds = []
         if rbond > 0.0:
-            for i,j in lattice.graph.edges(data=False):
-                s1 =lattice.reppositions[i]
-                s2 =lattice.reppositions[j]
+            for i,j in ice.graph.edges(data=False):
+                s1 =ice.reppositions[i]
+                s2 =ice.reppositions[j]
                 d = s2-s1
                 d -= np.floor( d + 0.5 )
                 logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
@@ -179,7 +179,7 @@ class Format(genice.formats.Format):
 
         nodes = []
         if rnode > 0.0:
-            for s1 in lattice.reppositions:
+            for s1 in ice.reppositions:
                 if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
                     nodes.append( np.dot(s1, cellmat) )
 
@@ -192,7 +192,7 @@ class Format(genice.formats.Format):
             o.defvar("Rbond", rbond),
             ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
         s = o.encode(*ops)
-        s = '//' + "\n//".join(lattice.doc) + "\n" + s
+        s = '//' + "\n//".join(ice.doc) + "\n" + s
         print(s,end="")
         logger.info("Hook2: end.")
 

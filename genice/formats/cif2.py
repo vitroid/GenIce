@@ -19,11 +19,11 @@ class Format(genice.formats.Format):
     def hooks(self):
         return {7:self.hook7}
 
-    def hook7(self, lattice):
+    def hook7(self, ice):
         logger = getLogger()
         logger.info("Hook7: Output in CIF format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
-        cellmat = lattice.repcell.mat
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        cellmat = ice.repcell.mat
 
         a = cellmat[0,:]
         b = cellmat[1,:]
@@ -39,7 +39,7 @@ class Format(genice.formats.Format):
         gamma = acos(ab/(aL*bL)) * 180 / pi
         s = ""
         s += "data_genice\n"
-        s += '#' + "\n#".join(lattice.doc) + "\n"
+        s += '#' + "\n#".join(ice.doc) + "\n"
         s += "_cell_length_a                {0}\n".format(aL*10)
         s += "_cell_length_b                {0}\n".format(bL*10)
         s += "_cell_length_c                {0}\n".format(cL*10)
@@ -65,9 +65,9 @@ _atom_site_fract_y
 _atom_site_fract_z
 _atom_site_type_symbol
 """
-        for i, atom in enumerate(lattice.atoms):
+        for i, atom in enumerate(ice.atoms):
             molorder, resname, atomname, position, order = atom
-            position = lattice.repcell.abs2rel(position)
+            position = ice.repcell.abs2rel(position)
             label = atomname+"{0}".format(i)
             s += "{4:>6}{1:10.4f}{2:10.4f}{3:10.4f}{0:>6}\n".format(atomname,position[0],position[1],position[2],label)
         s += "\n"

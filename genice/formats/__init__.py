@@ -7,7 +7,7 @@ class Format():
     Base class for Format()
     """
     def __init__(self, **kwargs):
-        assert len(kwargs) == 0
+        pass
 
     def hooks():
         return {}

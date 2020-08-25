@@ -24,21 +24,21 @@ class Format(genice.formats.Format):
         return {7:self.hook7}
 
 
-    def hook7(self, lattice):
+    def hook7(self, ice):
         logger = getLogger()
         logger.info("Hook7: Output in MDView format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         if __name__[-6:] == 'mdv_au':
             conv = 1.0 / au
         else:
             conv = 10.0
-        cellmat = lattice.repcell.mat
+        cellmat = ice.repcell.mat
         s = ""
         s += "# {0} {1} {2}\n".format(cellmat[0,0]*conv, cellmat[1,1]*conv, cellmat[2,2]*conv)
         s += "-center 0 0 0\n"
         s += "-fold\n"
-        s += "{0}\n".format(len(lattice.atoms))
-        for atom in lattice.atoms:
+        s += "{0}\n".format(len(ice.atoms))
+        for atom in ice.atoms:
             molorder, resname, atomname, position, order = atom
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,*(position[:3]*conv))
         print(s,end="")

@@ -96,7 +96,7 @@ def getoptions():
 
 
 class AnalIce(GenIce):
-    def __init__(self, lat, argv=None):
+    def __init__(self, lat, comment=""):
 
         self.logger = logging.getLogger()
         self.rep = (1,1,1)
@@ -113,9 +113,9 @@ class AnalIce(GenIce):
         except BaseException:
             self.doc = []
 
-        if argv is not None:
+        if len(comment) > 0:
             self.doc.append("")
-            self.doc.append("Command line: {0}".format(" ".join(argv)))
+            self.doc.append(comment)
 
         for line in self.doc:
             self.logger.info("  "+line)

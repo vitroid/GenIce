@@ -18,10 +18,10 @@ class Format(genice.formats.Format):
         return {5:self.hook5}
 
 
-    def hook5(self, lattice):
+    def hook5(self, ice):
         logger = getLogger()
         logger.info("Hook5: Output water molecules as rigid rotors (Quaternion).")
-        cellmat = lattice.repcell.mat
+        cellmat = ice.repcell.mat
         s = ""
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
             s += "@BOX3\n"
@@ -31,8 +31,8 @@ class Format(genice.formats.Format):
             for d in range(3):
                 s += "{0} {1} {2}\n".format(cellmat[0,d]*10,cellmat[1,d]*10,cellmat[2,d]*10)
         s += "@NX4A\n"
-        s += "{0}\n".format(len(lattice.reppositions))
-        for pos,rot in zip(lattice.reppositions, lattice.rotmatrices):
+        s += "{0}\n".format(len(ice.reppositions))
+        for pos,rot in zip(ice.reppositions, ice.rotmatrices):
             position = np.dot(pos, cellmat)*10   #in Angstrom
             quat     = rigid.rotmat2quat(rot.transpose())
             s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(position[0],
@@ -42,6 +42,6 @@ class Format(genice.formats.Format):
                                                                             quat[1],
                                                                             quat[2],
                                                                             quat[3])
-        s = "\n".join(lattice.doc) + "\n" + s
+        s = "\n".join(ice.doc) + "\n" + s
         print(s,end="")
         logger.info("Hook5: end.")

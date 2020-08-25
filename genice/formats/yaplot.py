@@ -39,11 +39,11 @@ class Format(genice.formats.Format):
                 7:self.hook7}
 
 
-    def hook1(self, lattice):
+    def hook1(self, ice):
         logger = getLogger()
         logger.info("Hook1: Draw the cell in Yaplot format.")
         s = yp.Layer(2)
-        x,y,z = lattice.repcell.mat
+        x,y,z = ice.repcell.mat
         for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
             for a in (np.zeros(3), p, q, p+q):
                 s += yp.Line(a,a+r)
@@ -51,14 +51,14 @@ class Format(genice.formats.Format):
         logger.info("Hook1: end.")
 
 
-    def hook2(self, lattice):
+    def hook2(self, ice):
         logger = getLogger()
         if self.size_H > 0:
             return
         logger.info("Hook2: Output CoM of water molecules in Yaplot format.")
         # prepare the reverse dict
         waters = defaultdict(dict)
-        pos = lattice.reppositions @ lattice.repcell.mat
+        pos = ice.reppositions @ ice.repcell.mat
         s = ""
         for p in pos:
             s += yp.Layer(4)
@@ -70,13 +70,13 @@ class Format(genice.formats.Format):
         return True
 
 
-    def hook6(self, lattice):
+    def hook6(self, ice):
         logger = getLogger()
         logger.info("Hook6: Output water molecules in Yaplot format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         # prepare the reverse dict
         waters = defaultdict(dict)
-        for atom in lattice.atoms:
+        for atom in ice.atoms:
             resno, resname, atomname, position, order = atom
             if "O" in atomname:
                 waters[order]["O"] = position
@@ -107,7 +107,7 @@ class Format(genice.formats.Format):
         s += yp.Color(4)
         s += yp.ArrowType(1)
         s += yp.Size(0.03)
-        for i,j in lattice.spacegraph.edges(data=False):
+        for i,j in ice.spacegraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -121,15 +121,15 @@ class Format(genice.formats.Format):
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += yp.Arrow(H1,O)
         print(s, end="")
-        self.nwateratoms = len(lattice.atoms)
+        self.nwateratoms = len(ice.atoms)
         logger.info("Hook6: end.")
 
 
-    def hook7(self, lattice):
+    def hook7(self, ice):
         logger = getLogger()
         logger.info("Hook7: Output water molecules in Yaplot format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
-        gatoms = lattice.atoms[self.nwateratoms:]
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        gatoms = ice.atoms[self.nwateratoms:]
         palettes = dict()
         s = ""
         s += yp.Layer(4)
@@ -146,6 +146,6 @@ class Format(genice.formats.Format):
             s += yp.Color(pal)
             s += yp.Size(0.04)
             s += yp.Circle(position)
-        s = '#' + "\n#".join(lattice.doc) + "\n" + s
+        s = '#' + "\n#".join(ice.doc) + "\n" + s
         print(s)
         logger.info("Hook7: end.")

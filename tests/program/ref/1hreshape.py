@@ -5,13 +5,16 @@ Reshaping the unit cell.
   j:[ 1 -1  0]
   k:[1 1 1]
 """
-bondlen=2.9903306849378937
-coord='relative'
+import genice.lattices
+class Lattice(genice.lattices.Lattice):
+    def __init__(self):
+        self.bondlen=2.9903306849378937
+        self.coord='relative'
 
-import numpy as np
-cell=np.array([[21.02157236, 0.00000000, 0.00000000], [0.33878416, 10.73112586, 0.00000000], [-2.28553297, 0.73581077, -13.82625855], ])
-density=0.92
-waters="""
+        import numpy as np
+        self.cell=np.array([        [21.02157236, 0.00000000, 0.00000000],         [0.33878416, 10.73112586, 0.00000000],         [-2.28553297, 0.73581077, -13.82625855],         ])
+        self.density=0.92
+        self.waters="""
     0.9446    0.9625    0.2621
     0.1733    0.0289    0.4689
     0.1390    0.0504    0.6491

@@ -531,10 +531,26 @@ def Alkyl(cpos, root, cell, molname, backbone):
     return atoms
 
 
+
 class GenIce():
+    """
+    The core of GenIce.
+
+    lat:     An instance of a Lattice class.
+    density: Density of target ice in g/cm3.
+    rep:     Repetition of the cell. A tuple of three integers.
+    anions, cations:
+             The locations of monovalent anions and cations that replace
+             the water molecules.
+    spot_guests:
+             The locations of guest molecules that occupy the specified cages.
+    spot_group: (EXPERIMENTAL)
+             The locations of functional groups that occupy the cages.
+    as_is:   Avoids shuffling of the orientations of water molecules.
+    comment: A comment text that is inserted in the output.
+    """
     def __init__(self,
                  lat,
-                 argv=None,
                  density=0,
                  rep=(1, 1, 1),
                  cations=dict(),
@@ -542,6 +558,7 @@ class GenIce():
                  spot_guests=dict(),
                  spot_groups=dict(),
                  asis=False,
+                 comment="",
                  ):
 
         self.logger = getLogger()
@@ -558,9 +575,9 @@ class GenIce():
         except BaseException:
             self.doc = []
 
-        if argv is not None:
+        if len(comment) > 0:
             self.doc.append("")
-            self.doc.append("Command line: {0}".format(" ".join(argv)))
+            self.doc.append(comment)
 
         for line in self.doc:
             self.logger.info("  "+line)

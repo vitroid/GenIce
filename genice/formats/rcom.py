@@ -15,10 +15,10 @@ class Format(genice.formats.Format):
     def hooks(self):
         return {1:self.hook1}
 
-    def hook1(self, lattice):
+    def hook1(self, ice):
         logger = getLogger()
         logger.info("Hook1: Output centers of mass of water molecules.")
-        cellmat = lattice.repcell.mat
+        cellmat = ice.repcell.mat
         s = ""
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
             s += "@BOX3\n"
@@ -28,11 +28,11 @@ class Format(genice.formats.Format):
             for d in range(3):
                 s += "{0} {1} {2}\n".format(cellmat[0,d]*10,cellmat[1,d]*10,cellmat[2,d]*10)
         s += "@AR3R\n"
-        s += "{0}\n".format(len(lattice.reppositions))
-        for rpos in lattice.reppositions:
+        s += "{0}\n".format(len(ice.reppositions))
+        for rpos in ice.reppositions:
             s += "{0:9.4f} {1:9.4f} {2:9.4f}\n".format(rpos[0],
                                                        rpos[1],
                                                        rpos[2])
-        s = "\n".join(lattice.doc) + "\n" + s
+        s = "\n".join(ice.doc) + "\n" + s
         print(s,end="")
         logger.info("Hook1: end.")

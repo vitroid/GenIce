@@ -18,47 +18,49 @@ desc={"ref": {"C0": "Page 11 of the Supplemenrary Material of P. Teeratchanan an
 
 
 
-def argparser(arg):
-    global pairs, fixed, waters, coord, density, cell, cagetype, cagepos
-    logger = getLogger()
 
-    # Ref. 2atom
-    atoms="""
-    O1 0.2342 0.4721 0.8019
-    O2 0.7648 0.5306 0.2941
-    Ne1 -0.0647 0.7868 0.7669
-    """
+from genice.cell import cellvectors
+import genice.lattices
 
-    # Ref. 
-    # space group: P3_2
-    symops="""
-      x,            y,            z
--y,x-y,z+2/3
--x+y,-x,z+1/3
-    """.replace(',', ' ')
+class Lattice(genice.lattices.Lattice):
+    def __init__(self):
+        logger = getLogger()
 
-    # Ref. 2cell
-    a=6.177 / 10.0 #nm
-    c=6.054 / 10.0 #nm
-    C=120.0
+        # Ref. 2atom
+        atoms="""
+        O1 0.2342 0.4721 0.8019
+        O2 0.7648 0.5306 0.2941
+        Ne1 -0.0647 0.7868 0.7669
+        """
 
-    from genice.cell import cellvectors
-    cell  = cellvectors(a,a,c,C=C)
+        # Ref.
+        # space group: P3_2
+        symops="""
+          x,            y,            z
+         -y,x-y,z+2/3
+         -x+y,-x,z+1/3
+        """.replace(',', ' ')
 
-    # helper routines to make from CIF-like data
-    from genice import CIF
-    atomd = CIF.atomdic(atoms)
-    atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
+        # Ref. 2cell
+        a=6.177 / 10.0 #nm
+        c=6.054 / 10.0 #nm
+        C=120.0
 
-    cagetype = []
-    cagepos  = []
-    for atomname, pos in atoms:
-        if atomname == "Ne1":
-            cagetype.append(atomname)
-            cagepos.append(pos)
-            
-    waters, pairs = CIF.waters_and_pairs(cell, atomd, CIF.symmetry_operators(symops))
+        self.cell  = cellvectors(a,a,c,C=C)
 
-    density = 18*len(waters)/6.022e23 / (np.linalg.det(cell)*1e-21)
+        # helper routines to make from CIF-like data
+        from genice import CIF
+        atomd = CIF.atomdic(atoms)
+        atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
 
-    coord = "relative"
+        self.cagetype = []
+        self.cagepos  = []
+        for atomname, pos in atoms:
+            if atomname == "Ne1":
+                self.cagetype.append(atomname)
+                self.cagepos.append(pos)
+
+        self.waters, self.pairs = CIF.waters_and_pairs(self.cell, atomd, CIF.symmetry_operators(symops))
+
+        self.density = 18*len(self.waters)/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.coord = "relative"

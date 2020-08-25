@@ -78,9 +78,10 @@ def main():
         logger.debug("Lattice: {0}".format(lattice_type))
         assert lattice_type is not None
 
+        comment = "Command line: {0}".format(" ".join(sys.argv))
+
         # Initialize the Lattice class with arguments which are required for plugins.
         lat = genice.GenIce(safe_import("lattice", lattice_type).Lattice(**lattice_options),
-                            sys.argv,
                             density=density,
                             rep=rep,
                             cations=cations,
@@ -88,6 +89,7 @@ def main():
                             spot_guests=spot_guests,
                             spot_groups=groups,
                             asis=asis,
+                            comment=comment,
         )
 
         water_type = options.water
@@ -136,6 +138,7 @@ def main():
         filerange = options.filerange
         framerange = options.framerange
         suffix = options.suffix
+        comment = "Command line: {0}".format(" ".join(sys.argv))
         if options.output is None:
             output = None
             stdout = None
@@ -158,7 +161,7 @@ def main():
             #logger.debug("Output file format: {0}".format(file_format))
             #formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-            lat = analice.AnalIce(lattice_info, sys.argv)
+            lat = analice.AnalIce(lattice_info, comment=comment)
             if output is not None:
                 sys.stdout = open(output % i, "w")
             lat.analyze_ice(water=water,

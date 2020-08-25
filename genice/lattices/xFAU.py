@@ -38,9 +38,9 @@ def tune_angles(sixvecs, pivot):
         if abs(doffset) < 1e-6:
             return offset
         offset += doffset
-    
 
-    
+
+
 class decorate():
     def __init__(self, atoms, cell, pairs, Ncyl):
         """
@@ -65,7 +65,7 @@ class decorate():
         dij = self.atoms[j] - self.atoms[i]
         dij -= np.floor(dij + 0.5)
         dij = dij @ self.cell
-        scale = np.linalg.norm(dij) 
+        scale = np.linalg.norm(dij)
         dij /= scale
         sixpairs = []
         for k in self.nei[i]:
@@ -129,27 +129,30 @@ class decorate():
                         self.fixedEdges.append((first+k-6, first+k))
 
 
-logger = logging.getLogger()
-from genice.lattices import ice1c # base topology
-cell1c = ice1c.cell
-waters1c = np.fromstring(ice1c.waters, sep=" ")
-waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
-pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
-pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
+import genice.lattices
+from genice.lattices import ice1c as ic # base topology
 
+class Lattice(genice.lattices.Lattice):
+    def __init__(self, **kwargs):
+        logger = logging.getLogger()
+        ice1c = ic.Lattice()
+        cell1c = ice1c.cell
+        waters1c = np.fromstring(ice1c.waters, sep=" ")
+        waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
+        pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
+        pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
 
-def argparser(arg):
-    global Ncyl, coord, cell, waters, fixed
-    assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
-    Ncyl = int(arg)
-    logger.info("Superlattice {0}xFAU".format(Ncyl))
-    dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
-    coord='relative'
-    cell = cellvectors(a=dec.cell[0,0],
-                       b=dec.cell[1,1],
-                       c=dec.cell[2,2])
-    waters = dec.vertices
-    fixed = dec.fixedEdges
+        for k, v in kwargs.items():
+            if re.match("^[0-9]+$", k) is not None and v is True:
+                Ncyl = int(k)
+            elif k == "rep":
+                Ncyl = int(v)
+        logger.info("Superlattice {0}xFAU".format(Ncyl))
+        dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
 
-# default.
-argparser("1")
+        self.coord='relative'
+        self.cell = cellvectors(a=dec.cell[0,0],
+                           b=dec.cell[1,1],
+                           c=dec.cell[2,2])
+        self.waters = dec.vertices
+        self.fixed = dec.fixedEdges

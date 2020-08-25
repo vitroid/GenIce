@@ -18,12 +18,12 @@ class Format(genice.formats.Format):
         return {7:self.hook7}
 
 
-    def hook7(self, lattice):
+    def hook7(self, ice):
         logger = getLogger()
         logger.info("Hook7: Output in TowHee format.")
-        cellmat = lattice.repcell.mat
+        cellmat = ice.repcell.mat
         s = ""
-        for i,atom in enumerate(lattice.atoms):
+        for i,atom in enumerate(ice.atoms):
             molorder, resname, atomname, position, order = atom
             s += "{0:20.15f}{1:20.15f}{2:20.15f}   {3:6}{4:3}{5:6}{6:6}\n".format(position[0]*10,position[1]*10,position[2]*10,atomname,resname,order+1,i+1)
         print(s,end="")

@@ -20,11 +20,11 @@ class Format(genice.formats.Format):
         return {5:self.hook5}
 
 
-    def hook5(self, lattice):
+    def hook5(self, ice):
         logger = getLogger()
         logger.info("Hook5: Kirkwood G.")
         zvec = np.array([0.,0.,1.])
-        dipoles = np.dot(zvec, lattice.rotmatrices)
+        dipoles = np.dot(zvec, ice.rotmatrices)
         n = dipoles.shape[0]
         logger.info("  Inner products of the dipoles.")
         # inner products of dipole pairs
@@ -36,7 +36,7 @@ class Format(genice.formats.Format):
         ip = np.sum(ip, axis=2).reshape(n*n)
         logger.info("  Pair distances.")
         # pair distances
-        coord = lattice.reppositions
+        coord = ice.reppositions
         delta = np.zeros((n,n,3))
         for i in (0,1,2):
             x = coord[:,i]
@@ -44,13 +44,13 @@ class Format(genice.formats.Format):
             d = x - xT
             d -= np.floor( d + 0.5 )  #wrap
             delta[:,:,i] = d
-        delta = np.dot(delta, lattice.repcell.mat)
+        delta = np.dot(delta, ice.repcell.mat)
         delta = delta*delta
         delta = np.sum(delta, axis=2)
         delta = np.sqrt(delta).reshape(n*n)
         # print(ip)
         # print(delta)
-        # print(lattice.repcell.mat)
+        # print(ice.repcell.mat)
         logger.info("  G(r)")
         mx = np.max(delta)
         x = 0.04

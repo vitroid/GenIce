@@ -48,13 +48,13 @@ class Format(genice.formats.Format):
         return {7:self.hook7, 6:self.hook6}
 
 
-    def hook6(self, lattice):
+    def hook6(self, ice):
         logger = getLogger()
         logger.info("Hook6: Output water molecules in Povray format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         # prepare the reverse dict
         waters = defaultdict(dict)
-        for atom in lattice.atoms:
+        for atom in ice.atoms:
             resno, resname, atomname, position, order = atom
             if "O" in atomname:
                 waters[order]["O"] = position
@@ -74,7 +74,7 @@ class Format(genice.formats.Format):
             s += Atom("H",H1)
             s += Bond("OH",O,H0)
             s += Bond("OH",O,H1)
-        for i,j in lattice.spacegraph.edges(data=False):
+        for i,j in ice.spacegraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -88,23 +88,23 @@ class Format(genice.formats.Format):
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += Bond("HB",H1,O)
         print(s, end="")
-        self.nwateratoms = len(lattice.atoms)
+        self.nwateratoms = len(ice.atoms)
         logger.info("Hook6: end.")
 
 
-    def hook7(self, lattice):
+    def hook7(self, ice):
         logger = getLogger()
         logger.info("Hook7: Output water molecules in Povray format.")
-        logger.info("  Total number of atoms: {0}".format(len(lattice.atoms)))
-        cellmat = lattice.repcell.mat
-        gatoms = lattice.atoms[self.nwateratoms:]
+        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        cellmat = ice.repcell.mat
+        gatoms = ice.atoms[self.nwateratoms:]
         s = ""
         H = []
         O  = ""
         for atom in gatoms:
             resno, resname, atomname, position, order = atom
             s += Atom(atomname,position)
-        s = '//' + "\n//".join(lattice.doc) + "\n" + s
+        s = '//' + "\n//".join(ice.doc) + "\n" + s
         s += "  translate " + Vector( -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2 ) + "\n}\n"
         print(s)
         logger.info("Hook7: end.")

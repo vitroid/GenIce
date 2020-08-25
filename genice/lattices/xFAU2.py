@@ -133,27 +133,31 @@ class decorate():
                         self.fixedEdges.append((first+k-6, first+k))
 
 
-logger = logging.getLogger()
+import genice.lattices
 from genice.lattices import ice1c # base topology
-cell1c = ice1c.cell
-waters1c = np.fromstring(ice1c.waters, sep=" ")
-waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
-pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
-pairs1c = pairs1c.reshape((pairs1c.shape[0]//2,2))
-#
-#0..3を黒、4..7を白とする。もともと二部グラフになっているようだ。
-#
+
+class Lattice(genice.lattices.Lattice):
+    def __init__(self):
+        logger = logging.getLogger()
+        self.cell1c = ice1c.self.cell
+        self.waters1c = np.fromstring(ice1c.self.waters, sep=" ")
+        self.waters1c = self.waters1c.reshape((self.waters1c.shape[0]//3,3))
+        self.pairs1c = np.fromstring(ice1c.self.pairs, sep=" ", dtype=int)
+        self.pairs1c = self.pairs1c.reshape((self.pairs1c.shape[0]//2,2))
+        #
+        #0..3を黒、4..7を白とする。もともと二部グラフになっているようだ。
+        #
 
 
-def argparser(arg):
-    assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
-    Ncyl = int(arg)
-    logger.info("Superlattice {0}xFAU".format(Ncyl))
-    dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
-    coord='relative'
-    cell = "{0} {1} {2}".format(dec.cell[0,0],dec.cell[1,1],dec.cell[2,2])
-    waters = dec.vertices
-    fixed = dec.fixedEdges
+        def argparser(arg):
+            assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
+            Ncyl = int(arg)
+            logger.info("Superlattice {0}xFAU".format(Ncyl))
+            dec = decorate(self.waters1c, self.cell1c, self.pairs1c, Ncyl)
+            self.coord='relative'
+            self.cell = "{0} {1} {2}".format(dec.self.cell[0,0],dec.self.cell[1,1],dec.self.cell[2,2])
+            self.waters = dec.vertices
+            self.fixed = dec.self.fixedEdges
 
-# default.
-argparser("1")
+        # default.
+        argparser("1")

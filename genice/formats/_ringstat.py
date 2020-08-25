@@ -177,10 +177,10 @@ class Format(genice.formats.Format):
         return {4:self.hook4}
 
 
-    def hook4(self, lattice):
+    def hook4(self, ice):
         logger = getLogger()
         logger.info("Hook4: Statistics on the HBs along a ring.")
-        graph = nx.Graph(lattice.spacegraph) #undirected
+        graph = nx.Graph(ice.spacegraph) #undirected
         stat = dict()
         prob = defaultdict(int)
 
@@ -189,8 +189,8 @@ class Format(genice.formats.Format):
             prob[n] = probabilities(n)
             stat[n] = defaultdict(int)
 
-        for ring in cr.CountRings(graph, pos=lattice.reppositions).rings_iter(self.largestring):
-            ori = orientations(ring, lattice.spacegraph)
+        for ring in cr.CountRings(graph, pos=ice.reppositions).rings_iter(self.largestring):
+            ori = orientations(ring, ice.spacegraph)
             c   = encode(ori)
             n   = len(ring)
             stat[n][c] += 1

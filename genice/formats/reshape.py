@@ -102,11 +102,11 @@ class Format(genice.formats.Format):
         return {1:self.hook1}
 
 
-    def hook1(self, lattice):
+    def hook1(self, ice):
         logger = getLogger()
         logger.info("Hook1: Output as a python module.")
         # Original cell matrix.
-        cellmat = lattice.repcell.mat
+        cellmat = ice.repcell.mat
         logger.info("  Reshaping the unit cell.")
         logger.info("    i:{0}".format(self.ijk[0]))
         logger.info("    j:{0}".format(self.ijk[1]))
@@ -136,37 +136,40 @@ class Format(genice.formats.Format):
         # header
         s = ""
         s += '"""\n'
-        s += "\n".join(lattice.doc) + "\n"
+        s += "\n".join(ice.doc) + "\n"
         s += "Reshaping the unit cell.\n"
         s += "  i:{0}\n".format(self.ijk[0])
         s += "  j:{0}\n".format(self.ijk[1])
         s += "  k:{0}\n".format(self.ijk[2])
         s += '"""\n'
+        s += "import genice.lattices\n"
 
-        s += "bondlen={0}\n".format(lattice.bondlen*10)
-        s += "coord='relative'\n"
+        s += "class Lattice(genice.lattices.Lattice):\n"
+        s += "    def __init__(self):\n"
+        s += "        self.bondlen={0}\n".format(ice.bondlen*10)
+        s += "        self.coord='relative'\n"
         if isZero(regcell[1,0]) and isZero(regcell[2,0]) and isZero(regcell[2,1]):
-            s += "from genice.cell import cellvectors\n"
-            s += "cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(regcell[0,0]*10,regcell[1,1]*10,regcell[2,2]*10)
+            s += "        from genice.cell import cellvectors\n"
+            s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(regcell[0,0]*10,regcell[1,1]*10,regcell[2,2]*10)
         else:
-            s += "\nimport numpy as np\n"
-            s += "cell=np.array(["
+            s += "\n        import numpy as np\n"
+            s += "        self.cell=np.array(["
             for d in range(3):
-                s += "[{0:.8f}, {1:.8f}, {2:.8f}], ".format(regcell[d,0]*10,regcell[d,1]*10,regcell[d,2]*10)
-            s += "])\n"
+                s += "        [{0:.8f}, {1:.8f}, {2:.8f}], ".format(regcell[d,0]*10,regcell[d,1]*10,regcell[d,2]*10)
+            s += "        ])\n"
         # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
-        s += "density={0}\n".format(lattice.density)
-        s += 'waters="""'+"\n"
-        logger.info("  Total number of molecules: {0}".format(vol*len(lattice.reppositions)))
+        s += "        self.density={0}\n".format(ice.density)
+        s += '        self.waters="""'+"\n"
+        logger.info("  Total number of molecules: {0}".format(vol*len(ice.reppositions)))
 
-        ncell, ss = FindEmptyCells(cellmat, self.ijk, lattice.reppositions)
+        ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.reppositions)
         assert vol == ncell
 
         s += ss + '"""' + "\n\n"
 
-        if lattice.cagepos is not None:
-            s += 'cages="""'+"\n"
-            ncell, ss = FindEmptyCells(cellmat, self.ijk, lattice.repcagepos, labels=lattice.repcagetype)
+        if ice.cagepos is not None:
+            s += '        self.cages="""'+"\n"
+            ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
             s += ss + '"""'+"\n\n"
 
         print(s,end="")
