@@ -50,3 +50,7 @@ tests/*.done
 tests/sort_tmp/*
 tests/trash/*
 tests-local/
+
+*.egg-info/
+genice2/*
+.ipynb_checkpoints/*
