@@ -19,7 +19,7 @@ def scan(category):
     modules["desc"] = desc
 
     logger.info("\nPredefined {0}s".format(category))
-    module = importlib.import_module("genice.{0}s".format(category))
+    module = importlib.import_module("genice2.{0}s".format(category))
     mods = []
     for path in module.__path__:
         for mod in sorted(glob.glob(path+"/*.py")):
@@ -31,7 +31,7 @@ def scan(category):
 
     for mod in modules["system"]:
         try:
-            module = importlib.import_module("genice.{0}s.{1}".format(category, mod))
+            module = importlib.import_module("genice2.{0}s.{1}".format(category, mod))
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
         except:

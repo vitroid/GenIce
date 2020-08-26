@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-from genice.tool import line_replacer
+from genice2.tool import line_replacer
 import distutils.core
 
 setup = distutils.core.run_setup("setup.py")
