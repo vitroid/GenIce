@@ -51,6 +51,7 @@ tests/sort_tmp/*
 tests/trash/*
 tests-local/
 
-genice/lattices/_original
+genice2/*/_original
+genice2/*/_original2
 
 .ipynb_checkpoints/

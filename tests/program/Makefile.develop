@@ -1,7 +1,7 @@
 BASE=../..
 GENICE=$(BASE)/genice.x
 ANALICE=$(BASE)/analice.x
-LIB=$(BASE)/genice
+LIB=$(BASE)/genice2
 FMT=$(LIB)/formats
 LTC=$(LIB)/lattices
 LDR=$(LIB)/loaders

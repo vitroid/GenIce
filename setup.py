@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 import codecs
 import re
@@ -10,7 +10,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 #README = codecs.open(os.path.join(here, 'README.txt'), encoding='utf8').read()
 #CHANGES = codecs.open(os.path.join(here, 'CHANGES.txt'), encoding='utf8').read()
 
-with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'),
+with codecs.open(os.path.join(os.path.dirname(__file__), 'genice2', '__init__.py'),
                  encoding='utf8') as version_file:
     metadata = dict(re.findall(r"""__([a-z]+)__ = "([^"]+)""", version_file.read()))
 
@@ -33,17 +33,12 @@ setup(name='GenIce2',
       url='https://github.com/vitroid/GenIce/',
       keywords=['genice2',],
       license='MIT',
-      packages=['genice',
-                'genice.molecules',
-                'genice.lattices',
-                'genice.formats',
-                'genice.loaders',
-                ],
+      packages=find_packages(),
       install_requires=['networkx>=2', 'countrings>=0.1.7', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', ],
       entry_points = {
               'console_scripts': [
-                  'genice = genice.__main__:main',
-                  'analice = genice.__main__:main'
+                  'genice = genice2.__main__:main',
+                  'analice = genice2.__main__:main'
               ]
           }
       )

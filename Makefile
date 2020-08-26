@@ -1,6 +1,6 @@
 all: README.md
 	echo Hello.
-%: temp_% Utilities/replacer.py genice/__init__.py
+%: temp_% Utilities/replacer.py genice2/__init__.py
 	python Utilities/replacer.py < $< > $@
 	-fgrep '%%' $@
 
@@ -12,14 +12,14 @@ test-deploy: build
 	twine upload -r pypitest dist/*
 test-install:
 	pip install networkx numpy pairlist countrings yaplotlib
-	pip install --index-url https://test.pypi.org/simple/ genice
+	pip install --index-url https://test.pypi.org/simple/ genice2
 
 
 install: README.md
 	./setup.py install
 uninstall:
-	-pip uninstall -y genice
-build: README.md $(wildcard genice/*.py genice/formats/*.py genice/lattices/*.py genice/molecules/*.py)
+	-pip uninstall -y genice2
+build: README.md $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
 	./setup.py sdist bdist_wheel
 
 
@@ -28,14 +28,14 @@ deploy: build
 check:
 	./setup.py check
 %.png: %.pov
-	povray +I$< +W1000 +H1000 +D +FN +O$@ 
+	povray +I$< +W1000 +H1000 +D +FN +O$@
 clean:
 	-rm -rf build dist
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist
-	-rm -rf GenIce.egg-info
+	-rm -rf *.egg-info
 	-rm .DS_Store
-	find . -name __pycache__ | xargs rm -rf 
+	find . -name __pycache__ | xargs rm -rf
 	find . -name \*.pyc      | xargs rm -rf
 	find . -name \*~         | xargs rm -rf

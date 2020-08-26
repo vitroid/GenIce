@@ -5,8 +5,8 @@ Reshaping the unit cell.
   j:[ 1 -1  0]
   k:[1 1 1]
 """
-import genice.lattices
-class Lattice(genice.lattices.Lattice):
+import genice2.lattices
+class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.bondlen=2.9903306849378937
         self.coord='relative'
