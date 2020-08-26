@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 1.0.11
+version 2.0.0
 
 ## Requirements
 
@@ -12,6 +12,7 @@ version 1.0.11
 * pairlist>=0.2.3
 * yaplotlib>=0.1
 * numpy
+* wheel
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
@@ -33,7 +34,7 @@ Install with pip3.
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.11)
+    (version 2.0.0)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -48,7 +49,6 @@ Install with pip3.
                             1. Lattice structures served with GenIce
                              
                             0, ice0         Metastable ice "0".
-                            11              Ice XI.
                             12, XII, ice12  Ice XII.
                             13, XIII, ice13 Ice XIII.
                             16, CS2, MTN, XVI, ice16, sII   Ice XVI.
@@ -164,8 +164,10 @@ Install with pip3.
                              
                             2. Formatters served by plugins
                              
+                            _RDF            Radial Distribution Functions.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
+                            twist           Twist order parameter.
                             ----
                              
                              
@@ -359,7 +361,7 @@ Make V-structures (removal of quick librational motion of water) from the given 
     usage: analice [options]
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 1.0.11)
+    (version 2.0.0)
     
     positional arguments:
       File                  Input file(s). File type is estimated from the suffix. 
@@ -425,8 +427,10 @@ Make V-structures (removal of quick librational motion of water) from the given 
                              
                             2. Formatters served by plugins
                              
+                            _RDF            Radial Distribution Functions.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
+                            twist           Twist order parameter.
                             ----
                              
                              

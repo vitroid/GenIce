@@ -7,7 +7,7 @@ __pycache__/
 @*
 build/
 dist/
-GenIce.egg*
+*.egg-info/*
 *.rst
 Utilities/*.log
 Utilities/*.yap
