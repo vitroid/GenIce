@@ -54,8 +54,10 @@ class Format(genice.formats.Format):
         logger.info("  G(r)")
         mx = np.max(delta)
         x = 0.04
+        s = ""
         while x < mx:
             filter = ip[delta<x]
-            print("{0:.5f} {1:.5f}".format(x, np.sum(filter)/n))
+            s += "{0:.5f} {1:.5f}\n".format(x, np.sum(filter)/n)
             x += 0.08
+        self.output = s
         logger.info("Hook5: end.")

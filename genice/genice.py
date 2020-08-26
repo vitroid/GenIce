@@ -4,6 +4,7 @@ from collections import defaultdict
 import random
 import itertools as it
 from textwrap import wrap, fill
+import sys
 
 import numpy as np
 import pairlist as pl
@@ -745,64 +746,83 @@ class GenIce():
                      guests=[],
                      record_depolarization_path=None,
                      depolarize=True,
-                     noise=0.):
+                     noise=0.,
+                     seed=1000,
+                     ):
+        """
+        Generate an ice structure and dump it with the aid of a formatter plugin.
 
-        hooks = formatter.hooks()
-        maxstage = max(0, *hooks.keys())
+        water:     genice.molecules.Molecule() class
+        formatter: genice.format.Format() class
+        """
+
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
+
         logger = getLogger()
 
-        if 0 in hooks:
-            abort = hooks[0](self)
-            if maxstage < 1 or abort:
-                return
+        def stages():
+            hooks = formatter.hooks()
+            maxstage = max(0, *hooks.keys())
 
-        self.stage1(noise)
+            if 0 in hooks:
+                abort = hooks[0](self)
+                if maxstage < 1 or abort:
+                    return
 
-        if 1 in hooks:
-            abort = hooks[1](self)
-            if maxstage < 2 or abort:
-                return
+            self.stage1(noise)
 
-        res = self.stage2()
+            if 1 in hooks:
+                abort = hooks[1](self)
+                if maxstage < 2 or abort:
+                    return
 
-        if 2 in hooks:
-            abort = hooks[2](self)
-            if maxstage < 3 or abort:
-                return
+            res = self.stage2()
 
-        self.stage3()
+            if 2 in hooks:
+                abort = hooks[2](self)
+                if maxstage < 3 or abort:
+                    return
 
-        if 3 in hooks:
-            abort = hooks[3](self)
-            if maxstage < 4 or abort:
-                return
+            self.stage3()
 
-        self.stage4(depolarize=depolarize,
-                    record_depolarization_path=record_depolarization_path)
+            if 3 in hooks:
+                abort = hooks[3](self)
+                if maxstage < 4 or abort:
+                    return
 
-        if 4 in hooks:
-            abort = hooks[4](self)
-            if maxstage < 5 or abort:
-                return
+            self.stage4(depolarize=depolarize,
+                        record_depolarization_path=record_depolarization_path)
 
-        self.stage5()
+            if 4 in hooks:
+                abort = hooks[4](self)
+                if maxstage < 5 or abort:
+                    return
 
-        if 5 in hooks:
-            abort = hooks[5](self)
-            if maxstage < 6 or abort:
-                return
+            self.stage5()
 
-        self.stage6(water)
+            if 5 in hooks:
+                abort = hooks[5](self)
+                if maxstage < 6 or abort:
+                    return
 
-        if 6 in hooks:
-            abort = hooks[6](self)
-            if maxstage < 7 or abort:
-                return
+            self.stage6(water)
 
-        self.stage7(guests)
+            if 6 in hooks:
+                abort = hooks[6](self)
+                if maxstage < 7 or abort:
+                    return
 
-        if 7 in hooks:
-            hooks[7](self)
+            self.stage7(guests)
+
+            if 7 in hooks:
+                hooks[7](self)
+
+        abort = stages()
+        if not abort:
+            return formatter.dump()
+
 
 
     def stage1(self,

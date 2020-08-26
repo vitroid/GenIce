@@ -7,10 +7,13 @@ class Format():
     Base class for Format()
     """
     def __init__(self, **kwargs):
-        pass
+        self.output = ""
 
-    def hooks():
+    def hooks(self):
         return {}
 
-    def dump(filename="", file=sys.stdout):
-        pass # reserved for future
+    def dump(self):
+        """
+        This mothod returns self.output.
+        """
+        return self.output

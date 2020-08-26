@@ -29,5 +29,5 @@ class Format(genice.formats.Format):
             molorder, resname, atomname, position, order = atom
             s += "{0:>4}{1:15.5f}{2:15.5f}{3:15.5f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
-        print(s,end="")
+        self.output = s
         logger.info("Hook7: end.")

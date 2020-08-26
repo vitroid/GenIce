@@ -33,5 +33,5 @@ class Format(genice.formats.Format):
         s += "Vector2 {0:15.5f}{1:15.5f}{2:15.5f}\n".format(*ice.repcell.mat[1]*10)
         s += "Vector3 {0:15.5f}{1:15.5f}{2:15.5f}\n".format(*ice.repcell.mat[2]*10)
         s += "Offset  {0:15.5f}{1:15.5f}{2:15.5f}\n".format(0.,0.,0.)
-        print(s,end="")
+        self.output = s
         logger.info("Hook7: end.")

@@ -47,7 +47,7 @@ class Format(genice.formats.Format):
         for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
             for a in (np.zeros(3), p, q, p+q):
                 s += yp.Line(a,a+r)
-        print(s,end="")
+        self.output = s
         logger.info("Hook1: end.")
 
 
@@ -65,7 +65,7 @@ class Format(genice.formats.Format):
             s += yp.Color(3)
             s += yp.Size(0.03)
             s += yp.Circle(p)
-        print(s, end="")
+        self.output += s + yp.NewPage()
         logger.info("Hook2: end.")
         return True
 
@@ -120,7 +120,7 @@ class Format(genice.formats.Format):
                     s += yp.Arrow(H0,O)
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += yp.Arrow(H1,O)
-        print(s, end="")
+        self.output += s
         self.nwateratoms = len(ice.atoms)
         logger.info("Hook6: end.")
 
@@ -147,5 +147,6 @@ class Format(genice.formats.Format):
             s += yp.Size(0.04)
             s += yp.Circle(position)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
-        print(s)
+        s += yp.NewPage()
+        self.output += s
         logger.info("Hook7: end.")

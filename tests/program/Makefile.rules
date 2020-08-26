@@ -30,8 +30,8 @@ all: 0.exyz.test
 all: 2.exmol.test
 all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 
-%.test: $(REFD)/% %
-	diff -I '^#' $^ && touch $@
+%.test: %
+	diff -I '^#' $(REFD)/$< $<  && touch $@
 %.rings.yap: $(FMT)/rings.py
 	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py

@@ -172,7 +172,7 @@ class Format(genice.formats.Format):
             ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
             s += ss + '"""'+"\n\n"
 
-        print(s,end="")
+        self.output = s
 
         logger.info("Hook1: end.")
 

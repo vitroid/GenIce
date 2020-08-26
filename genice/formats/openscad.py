@@ -193,7 +193,7 @@ class Format(genice.formats.Format):
             ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
         s = o.encode(*ops)
         s = '//' + "\n//".join(ice.doc) + "\n" + s
-        print(s,end="")
+        self.output = s
         logger.info("Hook2: end.")
 
 

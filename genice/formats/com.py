@@ -36,5 +36,5 @@ class Format(genice.formats.Format):
                                                        position[1],
                                                        position[2])
         s = "\n".join(ice.doc) + "\n" + s
-        print(s,end="")
+        self.output = s
         logger.info("Hook1: end.")

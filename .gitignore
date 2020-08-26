@@ -52,3 +52,5 @@ tests/trash/*
 tests-local/
 
 genice/lattices/_original
+
+.ipynb_checkpoints/

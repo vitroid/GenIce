@@ -87,5 +87,5 @@ class Format(genice.formats.Format):
             com    = np.dot(com,    cellmat)
             deltas = np.dot(deltas, cellmat)
             s += face(com,deltas)
-        print(s)
+        self.output = s + yp.NewPage()
         logger.info("Hook2: end.")

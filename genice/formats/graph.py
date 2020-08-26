@@ -30,5 +30,5 @@ class Format(genice.formats.Format):
             s += "{0} {1}\n".format(i,j)
         s += "-1 -1\n"
         s = "\n".join(ice.doc) + "\n" + s
-        print(s,end="")
+        self.output = s
         logger.info("Hook2: end.")

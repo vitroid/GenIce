@@ -74,5 +74,5 @@ _atom_site_fract_z
             label = atomname+"{0}".format(i)
             s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(atomname,position[0],position[1],position[2],label)
         s += "\n"
-        print(s,end="")
+        self.output = s
         logger.info("Hook7: end.")

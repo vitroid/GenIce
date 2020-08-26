@@ -51,5 +51,5 @@ class Format(genice.formats.Format):
                                                                     cellmat[2,1],
                                                                     )
         s += '#' + "\n#".join(ice.doc) + "\n"
-        print(s,end="")
+        self.output = s
         logger.info("Hook7: end.")

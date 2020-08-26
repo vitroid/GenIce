@@ -6,7 +6,6 @@ import logging
 from genice.importer import safe_import
 from genice import genice, analice, __version__, load
 from genice.tool import plugin_option_parser
-import random
 import numpy as np
 
 
@@ -70,10 +69,6 @@ def main():
                 key, value = v[0].split("=")
                 groups[int(key)] = value
 
-        # Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-
         lattice_type, lattice_options = plugin_option_parser(options.Type)
         logger.debug("Lattice: {0}".format(lattice_type))
         assert lattice_type is not None
@@ -112,13 +107,16 @@ def main():
 
         del options  # Dispose for safety.
 
-        lat.generate_ice(water=water,
+        ice = lat.generate_ice(water=water,
                          guests=guests,
                          formatter=formatter,
                          record_depolarization_path=record_depolarization_path,
                          noise=noise,
                          depolarize=depolarize,
+                         seed=seed
                          )
+        sys.stdout.write(ice)
+
     else:  # analice
         logger.debug(options.File)
 
@@ -161,13 +159,14 @@ def main():
             #logger.debug("Output file format: {0}".format(file_format))
             #formatter = safe_import("format", file_format)
             lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
-            lat = analice.AnalIce(lattice_info, comment=comment)
+            ice = analice.AnalIce(lattice_info,
+                                  comment=comment).analyze_ice(water=water,
+                                                               formatter=formatter,
+                                                               noise=noise,
+                                                               )
             if output is not None:
                 sys.stdout = open(output % i, "w")
-            lat.analyze_ice(water=water,
-                            formatter=formatter,
-                            noise=noise,
-                            )
+            sys.stdout.write(ice)
         if stdout is not None:
             # recover stdout
             sys.stdout = stdout

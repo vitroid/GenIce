@@ -1,6 +1,7 @@
 import logging
 import argparse as ap
 from collections import defaultdict
+import random
 
 import numpy as np
 import pairlist as pl
@@ -256,68 +257,79 @@ class AnalIce(GenIce):
         self.groups = defaultdict(dict)
 
 
-    def analyze_ice(self, water, formatter, noise=0.):
+    def analyze_ice(self, water, formatter, noise=0., seed=1000):
         """
         Protocol for analice
         """
-        hooks = formatter.hooks()
 
-        maxstage = max(0, *hooks.keys())
+        def stages():
+            hooks = formatter.hooks()
 
-        if 0 in hooks:
-            abort = hooks[0](self)
-            if maxstage < 1 or abort:
-                return
+            maxstage = max(0, *hooks.keys())
 
-        self.stage1(noise)
+            if 0 in hooks:
+                abort = hooks[0](self)
+                if maxstage < 1 or abort:
+                    return
 
-        if 1 in hooks:
-            abort = hooks[1](self)
-            if maxstage < 2 or abort:
-                return
+            self.stage1(noise)
 
-        if self.rotmatrices is None:
-            res = self.stage2()
+            if 1 in hooks:
+                abort = hooks[1](self)
+                if maxstage < 2 or abort:
+                    return
 
-        if 2 in hooks:
-            abort = hooks[2](self)
-            if maxstage < 3 or abort:
-                return
+            if self.rotmatrices is None:
+                res = self.stage2()
 
-        if self.rotmatrices is None:
-            self.stage3()
+            if 2 in hooks:
+                abort = hooks[2](self)
+                if maxstage < 3 or abort:
+                    return
 
-        if 3 in hooks:
-            abort = hooks[3](self)
-            if maxstage < 4 or abort:
-                return
+            if self.rotmatrices is None:
+                self.stage3()
 
-        self.stage4()
+            if 3 in hooks:
+                abort = hooks[3](self)
+                if maxstage < 4 or abort:
+                    return
 
-        if 4 in hooks:
-            abort = hooks[4](self)
-            if maxstage < 5 or abort:
-                return
+            self.stage4()
 
-        # molecular orientation should be given in the loader.
-        if self.rotmatrices is None:
-            self.stage5()
+            if 4 in hooks:
+                abort = hooks[4](self)
+                if maxstage < 5 or abort:
+                    return
 
-        if 5 in hooks:
-            abort = hooks[5](self)
-            if maxstage < 6 or abort:
-                return
+            # molecular orientation should be given in the loader.
+            if self.rotmatrices is None:
+                self.stage5()
 
-        self.stage6(water)
+            if 5 in hooks:
+                abort = hooks[5](self)
+                if maxstage < 6 or abort:
+                    return
 
-        if 6 in hooks:
-            abort = hooks[6](self)
-            if maxstage < 7 or abort:
-                return
+            self.stage6(water)
 
-        # self.stage7_analice(guests)
-        if 7 in hooks:
-            hooks[7](self)
+            if 6 in hooks:
+                abort = hooks[6](self)
+                if maxstage < 7 or abort:
+                    return
+
+            # self.stage7_analice(guests)
+            if 7 in hooks:
+                hooks[7](self)
+
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
+
+        abort = stages()
+        if not abort:
+            return formatter.dump()
+
 
     def stage1(self,
                noise=0.):

@@ -87,7 +87,7 @@ class Format(genice.formats.Format):
                     s += Bond("HB",H0,O)
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += Bond("HB",H1,O)
-        print(s, end="")
+        self.output = s
         self.nwateratoms = len(ice.atoms)
         logger.info("Hook6: end.")
 
@@ -105,6 +105,6 @@ class Format(genice.formats.Format):
             resno, resname, atomname, position, order = atom
             s += Atom(atomname,position)
         s = '//' + "\n//".join(ice.doc) + "\n" + s
-        s += "  translate " + Vector( -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2 ) + "\n}\n"
-        print(s)
+        s += "  translate " + Vector( -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2 ) + "\n}\n\n"
+        self.output += s
         logger.info("Hook7: end.")

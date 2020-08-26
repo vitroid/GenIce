@@ -43,5 +43,5 @@ class Format(genice.formats.Format):
                                                                             quat[2],
                                                                             quat[3])
         s = "\n".join(ice.doc) + "\n" + s
-        print(s,end="")
+        self.output = s
         logger.info("Hook5: end.")

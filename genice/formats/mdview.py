@@ -41,5 +41,5 @@ class Format(genice.formats.Format):
         for atom in ice.atoms:
             molorder, resname, atomname, position, order = atom
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,*(position[:3]*conv))
-        print(s,end="")
+        self.output = s
         logger.info("Hook7: end.")

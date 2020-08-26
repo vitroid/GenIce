@@ -171,7 +171,8 @@ class Format(genice.formats.Format):
                 logger.error("Argument must be a positive integer.")
                 sys.exit(1)
         logger.info("  Largest ring: {0}.".format(self.largestring))
-        super().__init__()
+        super().__init__(**kwargs)
+
 
     def hooks(self):
         return {4:self.hook4}
@@ -219,6 +220,7 @@ class Format(genice.formats.Format):
 
         dKL between expectiations and observations is also calculated.
         """)
+        s = ""
         for n in range(3, self.largestring+1):
             fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(n)
             denom = 0
@@ -227,13 +229,13 @@ class Format(genice.formats.Format):
             if denom > 0:
                 dKL = 0.0
                 for c in prob[n]:
-                    print(fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom, stat[n][c], denom))
+                    s += fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom, stat[n][c], denom) + "\n"
                     q = stat[n][c]/denom
                     p = prob[n][c]
                     if q > 0.0:
                         dKL += q*(log(q) - log(p))
                 dKL /= log(2.0)  #bit
-                print("{1} {0} dKL[{0}-ring]".format(n,dKL))
+                s += "{1} {0} dKL[{0}-ring]\n".format(n,dKL)
                 logger.info("  dKL[{0}-ring]={1}".format(n,dKL))
-        #print(score)
+        self.output = s
         logger.info("Hook4: end.")
