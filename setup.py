@@ -16,7 +16,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice', '__init__.py'
 
 long_desc = "".join(open("README.md").readlines())
 
-setup(name='GenIce',
+setup(name='GenIce2',
       python_requires='>=3.5',
       version=metadata['version'],
       description='A Swiss army knife to generate hydrogen-disordered ice structures.',
@@ -31,7 +31,7 @@ setup(name='GenIce',
       author='Masakazu Matsumoto',
       author_email='vitroid@gmail.com',
       url='https://github.com/vitroid/GenIce/',
-      keywords=['genice',],
+      keywords=['genice2',],
       license='MIT',
       packages=['genice',
                 'genice.molecules',
@@ -47,4 +47,3 @@ setup(name='GenIce',
               ]
           }
       )
-

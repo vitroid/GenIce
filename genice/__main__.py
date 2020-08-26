@@ -115,7 +115,13 @@ def main():
                          depolarize=depolarize,
                          seed=seed
                          )
-        sys.stdout.write(ice)
+        # この方法の場合、データをそのままうけとれるので、jupyterなんかには適しているが、
+        # vpythonの場合にはどうしたらいいんだろう。
+        # 何も返却しない、ice==Noneというのが正しい動作か。
+        if type(ice) is bytes:
+            sys.stdout.buffer.write(ice)
+        else:
+            sys.stdout.write(ice)
 
     else:  # analice
         logger.debug(options.File)

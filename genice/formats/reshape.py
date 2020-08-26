@@ -85,10 +85,10 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
 
 
 class Format(genice.formats.Format):
-    ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
 
 
     def __init__(self, **kwargs):
+        self.ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         unknown = dict()
         for k, v in kwargs.items():
             if re.match("^[-+0-9,]+$", k) is not None and v is True:
