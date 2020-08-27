@@ -1,10 +1,14 @@
-# parallelepiped cell
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+"""
+Parallelepiped cell
+"""
 
 import numpy as np
 import sys
 import logging
-from genice2.valueparsers import put_in_array
+from genice2.valueparser import put_in_array
 from math import pi, sin, cos, sqrt, acos
 
 

@@ -9,6 +9,9 @@ from collections import defaultdict
 import numpy as np
 import logging
 import re
+from genice2.cell import cellvectors
+import genice2.lattices
+from genice2.lattices import ice1c as ic # base topology
 
 # Aeroiceの超格子の接点多面体で、きちんとorderするように設計する。
 # そのためには、超格子のもととなるdiamond latticeを白黒二部グラフとし、
@@ -133,31 +136,30 @@ class decorate():
                         self.fixedEdges.append((first+k-6, first+k))
 
 
-import genice2.lattices
-from genice2.lattices import ice1c # base topology
 
 class Lattice(genice2.lattices.Lattice):
-    def __init__(self):
+    def __init__(self, **kwargs):
         logger = logging.getLogger()
-        self.cell1c = ice1c.self.cell
-        self.waters1c = np.fromstring(ice1c.self.waters, sep=" ")
-        self.waters1c = self.waters1c.reshape((self.waters1c.shape[0]//3,3))
-        self.pairs1c = np.fromstring(ice1c.self.pairs, sep=" ", dtype=int)
-        self.pairs1c = self.pairs1c.reshape((self.pairs1c.shape[0]//2,2))
+        ice1c = ic.Lattice()
+        cell1c = ice1c.cell
+        waters1c = np.fromstring(ice1c.waters, sep=" ")
+        waters1c = waters1c.reshape((waters1c.shape[0]//3,3))
+        pairs1c  = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
+        pairs1c  = pairs1c.reshape((pairs1c.shape[0]//2,2))
         #
         #0..3を黒、4..7を白とする。もともと二部グラフになっているようだ。
         #
+        for k, v in kwargs.items():
+            if re.match("^[0-9]+$", k) is not None and v is True:
+                Ncyl = int(k)
+            elif k == "rep":
+                Ncyl = int(v)
+        logger.info("Superlattice {0}xFAU".format(Ncyl))
+        dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
 
-
-        def argparser(arg):
-            assert re.match("^[0-9]+$", arg) is not None, "Argument must be an integer."
-            Ncyl = int(arg)
-            logger.info("Superlattice {0}xFAU".format(Ncyl))
-            dec = decorate(self.waters1c, self.cell1c, self.pairs1c, Ncyl)
-            self.coord='relative'
-            self.cell = "{0} {1} {2}".format(dec.self.cell[0,0],dec.self.cell[1,1],dec.self.cell[2,2])
-            self.waters = dec.vertices
-            self.fixed = dec.self.fixedEdges
-
-        # default.
-        argparser("1")
+        self.coord='relative'
+        self.cell = cellvectors(a=dec.cell[0,0],
+                           b=dec.cell[1,1],
+                           c=dec.cell[2,2])
+        self.waters = dec.vertices
+        self.fixed = dec.fixedEdges

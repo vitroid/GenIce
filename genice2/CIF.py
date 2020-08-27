@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 """
 Helpers for lattice plugin.
 
@@ -123,12 +125,19 @@ def waters_and_pairs(cell, atomd, sops, rep=(1,1,1)):
     oh = defaultdict(list)
     parent = dict()
     # find covalent OH bonds
-    for i,j,d in pl.pairs_fine_hetero(oxygens, hydrogens, 0.12, cell):
+    for i,j in pl.pairs_iter(oxygens,
+                             rc=0.15,
+                             cell=cell,
+                             pos2=hydrogens,
+                             distance=False):
         oh[i].append(j)
         parent[j] = i
     pairs = []
     # find HBs
-    for i,j in pl.pairs_fine_hetero(oxygens, hydrogens, 0.20, cell, distance=False):
+    for i,j in pl.pairs_iter(oxygens,
+                             rc=0.20, cell=cell,
+                             pos2=hydrogens,
+                             distance=False):
         if j not in oh[i]:
             # H is on a different water molecule
             p = parent[j]

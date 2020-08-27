@@ -8,11 +8,11 @@ Reshaping the unit cell.
 import genice2.lattices
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=2.9903306849378937
+        self.bondlen=0.29903306849378936
         self.coord='relative'
 
         import numpy as np
-        self.cell=np.array([        [21.02157236, 0.00000000, 0.00000000],         [0.33878416, 10.73112586, 0.00000000],         [-2.28553297, 0.73581077, -13.82625855],         ])
+        self.cell=np.array([        [2.10215724, 0.00000000, 0.00000000],         [0.03387842, 1.07311259, 0.00000000],         [-0.22855330, 0.07358108, -1.38262585],         ])
         self.density=0.92
         self.waters="""
     0.9446    0.9625    0.2621

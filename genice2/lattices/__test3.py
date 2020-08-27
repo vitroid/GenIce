@@ -6,7 +6,7 @@ Test for generating water positions from cage positions
 
 import genice2.lattices
 from genice2         import FrankKasper
-from genice2.valueparsers import parse_cages
+from genice2.valueparser import parse_cages
 from genice2.cell    import cellvectors
 
 class Lattice(genice2.lattices.Lattice):
@@ -32,4 +32,3 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "relative"
         self.density = FrankKasper.estimate_density(self.waters, self.cell, 2.76)
         self.bondlen = 2.76 * 1.2
-

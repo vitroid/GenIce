@@ -17,7 +17,7 @@ all: T.pov.test
 all: 7.analice.yap.test
 all: 2D3.analice.yap.test
 all: 1h.ringstat.test
-all: iceT2.kg.test
+all: T.kg.test
 all: RHO.dep.yap.test
 all: 9.yap.test dtc.yap.test # 5R.yap.test iceR.yap.test
 all: 2d.gro.test
@@ -31,7 +31,8 @@ all: 2.exmol.test
 all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 
 %.test: %
-	diff -I '^#' $(REFD)/$< $<  && touch $@
+	diff -w -I '^#' $(REFD)/$< $<  && touch $@
+#	touch $@
 %.rings.yap: $(FMT)/rings.py
 	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py
@@ -85,24 +86,24 @@ test4.done: $(FMT)/gromacs.py
 CS1.cif: $(FMT)/cif.py
 	$(GENICE) CS1 --guest 14=uathf*0.5 -G 0=me --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
 CS2.cif: $(FMT)/cif2.py
-	$(GENICE) CS2 --nodep -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
+	$(GENICE) CS2 --depol=none -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
 #;$(UTIL)/cifdiff.sh $(REFD)/$@ $@
 
 #tests for molecules
 CS2A.gro: $(FMT)/gromacs.py
-	$(GENICE) CS2 --nodep -g 12=me -g 16=uathf6 --rep 1 1 2 --water spce | fgrep -v "Command line:" > $@
+	$(GENICE) CS2 --depol=none -g 12=me -g 16=uathf6 --rep 1 1 2 --water spce | fgrep -v "Command line:" > $@
 CS2B.gro: $(FMT)/gromacs.py
-	$(GENICE) CS2 --nodep -g 12=co2 -g 16=uathf --rep 1 1 2 --water 5site  | fgrep -v "Command line:" > $@
+	$(GENICE) CS2 --depol=none -g 12=co2 -g 16=uathf --rep 1 1 2 --water 5site  | fgrep -v "Command line:" > $@
 CS2C.gro: $(FMT)/gromacs.py
-	$(GENICE) CS2 --nodep -g 12=H2 -g 16=ch4 --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
+	$(GENICE) CS2 --depol=none -g 12=H2 -g 16=ch4 --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
 
 HS1.xyz: $(FMT)/xyz.py
 #test for spot semiclathrate (TBAB)
-	$(GENICE) HS1 --nodep -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@
+	$(GENICE) HS1 --depol=none -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@
 TS1.yap: $(FMT)/yaplot.py
 	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
 c0te.yap: $(FMT)/yaplot.py
-	$(GENICE) c0te --guest Ne1=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
+	$(GENICE) c0te --guest Ne1=g12 --rep 2 2 2 --format yaplot | fgrep -v "Command line:" > $@
 c1te.yap: $(FMT)/yaplot.py
 	$(GENICE) c1te --guest Ne1=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
 ice1hte.yap: $(FMT)/yaplot.py
@@ -114,9 +115,9 @@ T.pov: $(FMT)/povray.py
 1hreshape.py: $(FMT)/reshape.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@
 2D3.ringtest: $(FMT)/_ringstat.py
-	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat | fgrep -v "Command line:" > $@
+	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 prism7.ringtest: $(FMT)/_ringstat.py
-	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat | fgrep -v "Command line:" > $@
+	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 3xFAU.yap: $(FMT)/yaplot.py
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@
 7.gro: $(FMT)/gromacs.py
@@ -133,7 +134,7 @@ prism7.ringtest: $(FMT)/_ringstat.py
 7.analice.yap: 7.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot --debug | fgrep -v "Command line:" > $@
 2D3.gro: $(FMT)/gromacs.py
-	$(GENICE) 2D3 -r 4 4 1 | fgrep -v "Command line:" > $@
+	$(GENICE) 2D3 -r 4 4 1 --depol=optimal | fgrep -v "Command line:" > $@
 2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py
 	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@
 

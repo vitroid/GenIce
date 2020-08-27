@@ -10,6 +10,8 @@ import numpy as np
 import logging
 import re
 from genice2.cell import cellvectors
+import genice2.lattices
+from genice2.lattices import ice1c as ic # base topology
 
 
 def tune_angles(sixvecs, pivot):
@@ -129,8 +131,6 @@ class decorate():
                         self.fixedEdges.append((first+k-6, first+k))
 
 
-import genice2.lattices
-from genice2.lattices import ice1c as ic # base topology
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):

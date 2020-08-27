@@ -1,14 +1,18 @@
 #!/usr/bin/env python
-#coding: utf-8
-# input: coordinate of the nodes, the digraph obeying the ice rule.
-# output: the digraph with zero net dipole.
+# -*- coding: utf-8 -*-
 
+"""
+Graph variants with geometrical information
+"""
+
+
+from __future__ import print_function
 import sys
 import math
 import networkx
 import random
 import numpy as np
-import logging
+from logging import getLogger, DEBUG, basicConfig
 import yaplotlib as yp
 
 # Dijkstra
@@ -28,6 +32,12 @@ def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
 
 
 def shortest_path(G, start, ends):
+    """
+    Find a shortest path from the start to one of the ends.
+
+    Returns:
+    list of nodes on the shortest path from the start to one of the ends.
+    """
     q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
     visited = set()       # Visited vertices.
     while True:
@@ -44,6 +54,38 @@ def shortest_path(G, start, ends):
             for v2 in G[v1]:
                 if v2 not in visited and not G[v1][v2]['fixed']:
                     heapq.heappush(q, (cost + 1, v2, path))
+
+
+def shortest_paths(G, start, ends, allowfixed=False):
+    """
+    Find all shortests paths from the start to one of the ends.
+
+    Returns:
+    list of shortest paths from the start to one of the ends.
+    """
+    logger = getLogger()
+    q = [(0, [start,])]  # Heap of (cost, path)
+    visited = set()       # Visited vertices.
+    cheapest = 999999
+    paths = []
+    while len(q):
+        # logger.debug(q)
+        (cost, path) = heapq.heappop(q)
+        if cost > cheapest:
+            break
+        v0 = path[-1]
+        if v0 in ends:
+            cheapest = cost  # first arrived
+            paths.append(path)
+        else:
+            if v0 in visited:
+                continue
+            visited.add(v0)
+            for v1 in G[v0]:
+                if v1 not in visited:
+                    if allowfixed or not G[v0][v1]['fixed']:
+                        heapq.heappush(q, (cost + 1, path+[v1]))
+    return paths
 
 
 class YaplotDraw(networkx.DiGraph):
@@ -196,7 +238,7 @@ class IceGraph(networkx.DiGraph):
 
     def purgedefects(self, defects):
         d = defects[0]
-        logger = logging.getLogger()
+        logger = getLogger()
         # logger.debug(self.ignores)
         if d in self.ignores:
             defects.pop(0)
@@ -231,7 +273,7 @@ class IceGraph(networkx.DiGraph):
 
         It also counts the "ignore_ice_rules" sites.
         """
-        logger = logging.getLogger()
+        logger = getLogger()
         defects = []
         for i in range(self.number_of_nodes()):
             if self.in_degree(i) != 2 or self.out_degree(i) != 2:
@@ -255,7 +297,7 @@ class IceGraph(networkx.DiGraph):
                 yield i
 
     def purge_ice_defects(self):
-        logger = logging.getLogger()
+        logger = getLogger()
         # TSL
         # if not self.isZ4():
         #    logger.error("Some water molecules do not have four HBs.")
@@ -337,14 +379,14 @@ class SpaceIceGraph(IceGraph):
         return dipole
 
     def vector_check(self):
-        logger = logging.getLogger()
+        logger = getLogger()
         for i, j, k in self.edges(data=True):
             if k is None:
                 logger.error("The edge ({0},{1}) has no vector.".format(i, j))
 
 
 def find_apsis(coord, cell, distance, vertex, axis):
-    logger = logging.getLogger()
+    logger = getLogger()
     # for Z case
     apsis = coord[vertex] + axis * 0.5
     # find the atoms near the apsis
@@ -362,7 +404,7 @@ def find_apsis(coord, cell, distance, vertex, axis):
 
 
 def estimate_edge_length(spaceicegraph, cell, vertex):
-    logger = logging.getLogger()
+    logger = getLogger()
     # In case an anion is selected by bad fortune.
     if len(spaceicegraph.adj[vertex]) == 0:
         return 0
@@ -375,23 +417,27 @@ def estimate_edge_length(spaceicegraph, cell, vertex):
     return distance
 
 
-def traversing_cycle(spaceicegraph, cell, axis, draw=None):
+def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
     """
     Find a farthest atom from the given atom, and
     make the shortest paths between them.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
 
+    Nnode = spaceicegraph.number_of_nodes()
+    # 近傍の定義のために結合距離が必要。
     distance = 0
     while distance == 0:
-        vertex = random.randint(0, spaceicegraph.number_of_nodes() - 1)
+        vertex = random.randint(0, Nnode - 1)
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
-    while True:
-        vertex = random.randint(0, spaceicegraph.number_of_nodes() - 1)
+    # すべての頂点を順番にあたる。
+    for vertex in random.sample(range(Nnode), Nnode):
         apsis = find_apsis(spaceicegraph.coord, cell, distance * 1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis, ])
         logger.debug("Path1: {0}".format(path1))
+        paths = shortest_paths(spaceicegraph, vertex, [apsis, ])
+        logger.debug("paths1: {0}".format(paths))
         if path1 is None:
             # No path found, probably because of the double networks
             continue
@@ -412,23 +458,30 @@ def traversing_cycle(spaceicegraph, cell, axis, draw=None):
         logger.debug("Axis: {0} {1}".format(axis, spaceicegraph.dipole_moment(cycle)))
         rr = np.dot(d, d)
         if rr < 0.1:
-            break
-    logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle)))
-    return cycle
+            logger.debug("Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle)))
+            yield cycle
 
 
-def depolarize(spaceicegraph, cell, draw=None):
+def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
     """
     Find a farthest atom (apsis) from the given atom, and
     make the shortest paths between them.
 
-    It works much better than depolarize()
+    [depol]
+        strict:  die if pol is non-zero
+        optimal: make pol smallest
+        none:    do nothing
+
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     spaceicegraph.vector_check()
     s = ""  # for yaplot
+
+    if depol == "none":
+        logger.info("  Skip depolarization by request.")
+        return s
 
     # TSL
     # defect-defect chains
@@ -471,46 +524,42 @@ def depolarize(spaceicegraph, cell, draw=None):
                 logger.debug("  Reject inversion")
                 reject_count -= 1
 
-    while True:
+    for axis_ in ([1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]):
         net_polar = spaceicegraph.net_polarization()
-        logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
-        if np.dot(net_polar, net_polar) < 0.2**2:
-            break  # without problem
-        if -1 <= net_polar[0] <= 1 and -1 <= net_polar[1] <= 1 and -1 <= net_polar[2] <= 1:
-            logger.info("  Gave up eliminating the polarization. (2)")
-            break
-        if net_polar[0] > 1.0:
-            logger.debug("Depolarize +X")
-            axis = np.array([+1.0, 0.0, 0.0])
-        elif net_polar[0] < -1.0:
-            logger.debug("Depolarize -X")
-            axis = np.array([-1.0, 0.0, 0.0])
-        elif net_polar[1] > 1.0:
-            logger.debug("Depolarize +Y")
-            axis = np.array([0.0, +1.0, 0.0])
-        elif net_polar[1] < -1.0:
-            logger.debug("Depolarize -Y")
-            axis = np.array([0.0, -1.0, 0.0])
-        elif net_polar[2] > 1.0:
-            logger.debug("Depolarize +Z")
-            axis = np.array([0.0, 0.0, +1.0])
-        elif net_polar[2] < -1.0:
-            logger.debug("Depolarize -Z")
-            axis = np.array([0.0, 0.0, -1.0])
-        cycle = traversing_cycle(spaceicegraph, cell, axis, draw)
-        if cycle is not None:
-            edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
-            if len(edges) != len(set(edges)):
-                logger.debug("The cycle is entangled.")
-            else:
-                if draw is not None:
-                    s += yp.Size(0.03)
-                    s += draw.draw_cell()
-                    s += draw.draw_path(cycle)
-                    s += yp.NewPage()
-                spaceicegraph.invert_path(cycle)
-                spaceicegraph.vector_check()
+        axis = np.array(axis_, dtype=float)
+        L1 = (net_polar**2).sum()
+        L2 = ((net_polar-axis*2)**2).sum()
+        if L2 < L1:
+            logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+            for cycle in traversing_cycles_iter(spaceicegraph, cell, axis, draw):
+                if cycle is not None:
+                    edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
+                    if len(edges) != len(set(edges)):
+                        logger.debug("The cycle is entangled.")
+                    else:
+                        if draw is not None:
+                            s += yp.Size(0.03)
+                            s += draw.draw_cell()
+                            s += draw.draw_path(cycle)
+                            s += yp.NewPage()
+                        spaceicegraph.invert_path(cycle)
+                        spaceicegraph.vector_check()
+                        net_polar = spaceicegraph.net_polarization()
+                        logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                        L1 = (net_polar**2).sum()
+                        L2 = ((net_polar-axis*2)**2).sum()
+                        if L2 > L1:
+                            break
+            # break this for-loop
 
+    if depol == "strict":
+        if not np.allclose(net_polar, np.zeros(3)):
+            logger.error("  Gave up on depolarization. Perhaps because they contain ions,"
+                         " or the cells are very small, or have a double network structure."
+                         " When creating an ice structure with a double network "
+                         "(e.g., ice 6 and 7), all repetition numbers (--rep) must be even."
+                         " Use --depol=optimal or --depol=none instead.")
+            sys.exit(1)
     #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
     #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
     return s
@@ -521,7 +570,7 @@ def purge_ice_defects(icegraph):
     This is faster than the method in icegraph, but
     it also polarizes the graph in the course of purging.
     """
-    logger = logging.getLogger()
+    logger = getLogger()
     while len(icegraph.bernal_fowler_defects()) > 0:
         logger.info("# of defects: {0}".format(len(icegraph.bernal_fowler_defects())))
         ins = set(icegraph.excess_in_defects())
@@ -536,3 +585,20 @@ def purge_ice_defects(icegraph):
                         ins.remove(end)
                 # logger.debug("IN:{0}".format(len(set(icegraph.excess_in_defects()))))
                 # logger.debug("OUT:{0}".format(len(set(icegraph.excess_out_defects()))))
+
+
+
+def test():
+    # logger
+    basicConfig(level=DEBUG, format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
+    logger = getLogger(__name__)
+    logger.setLevel(DEBUG)
+    g = networkx.Graph()
+    # 6-cycle
+    for i in range(5):
+        g.add_edge(i,i+1)
+    g.add_edge(0,5)
+    print(shortest_paths(g,0,[3,],allowfixed=True))
+
+if __name__ == "__main__":
+    test()

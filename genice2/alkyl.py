@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+"""
+a sample for general alkyl group with methyls
+tree | branch: [root,branch1,branch2,branch3]
+or             [root,branch1,branch2]
+or             [root,branch1]
+or             [leaf]
+or             leaf
+3-methylbutyl : backbone=["Ma",["Mb",["Mc",["Md","Me"]]]]]
+v1 and v2 must be given as a unit vector.
+"""
 
 import numpy as np
 import logging
 from math import pi, sin, cos
 
-# a sample for general alkyl group with methyls
-# tree | branch: [root,branch1,branch2,branch3]
-# or             [root,branch1,branch2]
-# or             [root,branch1]
-# or             [leaf]
-# or             leaf
-# 3-methylbutyl : backbone=["Ma",["Mb",["Mc",["Md","Me"]]]]]
-# v1 and v2 must be given as a unit vector.
 
 
 def alkyl(direction, destination, tree, dest=None):

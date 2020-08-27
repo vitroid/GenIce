@@ -1,5 +1,4 @@
-import logging
-import argparse as ap
+from logging import getLogger
 from collections import defaultdict
 import random
 
@@ -7,99 +6,15 @@ import numpy as np
 import pairlist as pl
 
 from genice2.cell   import Cell
-from genice2.genice import GenIce, put_in_array, shortest_distance, SmartFormatter, descriptions, help_format
-from genice2.valueparsers import parse_pairs
+from genice2.genice import GenIce, put_in_array, shortest_distance
+from genice2.valueparser import parse_pairs
 from genice2 import digraph as dg
-from genice2 import __version__
-import genice2.plugins
-
-def help_file():
-    return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
-
-
-def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]', formatter_class=SmartFormatter)
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="name",
-                        help=help_format)
-    parser.add_argument('--output',
-                        '-o',
-                        dest='output',
-                        metavar="%04d.gro",
-                        help='Output in separate files.')
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--oxygen',
-                        '-O',
-                        dest='oatom',
-                        metavar="OW",
-                        default="O",
-                        help='Specify atom name of oxygen in input Gromacs file. ("O")')
-    parser.add_argument('--hydrogen',
-                        '-H',
-                        dest='hatom',
-                        metavar="HW[12]",
-                        default="H",
-                        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")')
-    parser.add_argument('--suffix',
-                        '-s',
-                        dest='suffix',
-                        metavar="gro",
-                        default=None,
-                        help='Specify the file suffix explicitly. ((None)')
-    parser.add_argument('--filerange',
-                        dest='filerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input filename. ("0:1000000")')
-    parser.add_argument('--framerange',
-                        dest='framerange',
-                        metavar="[from:]below[:interval]",
-                        default="0:1000000",
-                        help='Specify the number range for the input frames. ("0:1000000")')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='count',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--avgspan', '-v',
-                        type=float,
-                        dest='avgspan',
-                        default=0,
-                        metavar='1',
-                        help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
-    parser.add_argument('File',
-                        help=help_file)
-    return parser.parse_args()
-
 
 
 class AnalIce(GenIce):
-    def __init__(self, lat, comment=""):
+    def __init__(self, lat, signature="", seed=1000):
 
-        self.logger = logging.getLogger()
+        logger = getLogger()
         self.rep = (1,1,1)
         density = 0.0
         #         cations=dict(),
@@ -109,30 +24,34 @@ class AnalIce(GenIce):
         self.asis = False
         # Show the document of the module
 
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
+
         try:
             self.doc = lat.__doc__.splitlines()
         except BaseException:
             self.doc = []
 
-        if len(comment) > 0:
+        if len(signature) > 0:
             self.doc.append("")
-            self.doc.append(comment)
+            self.doc.append(signature)
 
         for line in self.doc:
-            self.logger.info("  "+line)
+            logger.info("  "+line)
         # ================================================================
         # rotmatrices (analice)
         #
         try:
             self.rotmatrices = lat.rotmat
         except BaseException:
-            self.logger.info("No rotmatrices in lattice")
+            logger.info("No rotmatrices in lattice")
             self.rotmatrices = None
         # ================================================================
         # waters: positions of water molecules
         #
         self.waters = put_in_array(lat.waters)
-        self.logger.debug("Waters: {0}".format(len(self.waters)))
+        logger.debug("Waters: {0}".format(len(self.waters)))
         self.waters = self.waters.reshape((self.waters.size // 3, 3))
 
         # ================================================================
@@ -160,7 +79,7 @@ class AnalIce(GenIce):
         try:
             self.pairs = parse_pairs(lat.pairs)
         except AttributeError:
-            self.logger.info("HB connectivity is not defined.")
+            logger.info("HB connectivity is not defined.")
 
         # ================================================================
         # bondlen: specify the bond length threshold.
@@ -173,15 +92,17 @@ class AnalIce(GenIce):
 
         try:
             self.bondlen = lat.bondlen
-            self.logger.info("Bond length (specified): {0}".format(self.bondlen))
+            logger.info("Bond length (specified): {0}".format(self.bondlen))
         except AttributeError:
-            self.logger.debug("  Estimating the bond threshold length...")
+            logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
-            grid = pl.determine_grid(self.cell.mat, rc)
-            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
+            p = pl.pairs_iter(self.waters,
+                              rc=rc,
+                              cell=self.cell.mat,
+                              distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
-            self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
+            logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
         mass = 18  # water
@@ -192,18 +113,18 @@ class AnalIce(GenIce):
             try:
                 self.density = lat.density
             except AttributeError:
-                self.logger.info(
+                logger.info(
                     "Density is not specified. Assume the density from lattice.")
                 dmin = shortest_distance(self.waters, self.cell)
-                self.logger.info(
+                logger.info(
                     "Closest pair distance: {0} (should be around 0.276 nm)".format(dmin))
                 self.density = density0 / (0.276 / dmin)**3
                 # self.density = density0
         else:
             self.density = density
 
-        self.logger.info("Target Density: {0}".format(self.density))
-        self.logger.info("Original Density: {0}".format(density0))
+        logger.info("Target Density: {0}".format(self.density))
+        logger.info("Original Density: {0}".format(density0))
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density)**(1.0 / 3.0)
@@ -211,18 +132,7 @@ class AnalIce(GenIce):
 
         if self.bondlen is not None:
             self.bondlen *= ratio
-        self.logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
-
-        # ================================================================
-        # double_network: True or False
-        #   This is a special option for ices VI and VII that have
-        #   interpenetrating double network.
-        #   GenIce's fast depolarization algorithm fails in some case.
-        #
-        try:
-            self.double_network = lat.double_network
-        except AttributeError:
-            self.double_network = False
+        logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
 
         # ================================================================
         # cages: positions of the centers of cages
@@ -239,7 +149,7 @@ class AnalIce(GenIce):
         self.fixed = []
         try:
             self.fixed = parse_pairs(lat.fixed)
-            self.logger.info("Orientations of some edges are fixed.")
+            logger.info("Orientations of some edges are fixed.")
         except AttributeError:
             pass
 
@@ -257,7 +167,7 @@ class AnalIce(GenIce):
         self.groups = defaultdict(dict)
 
 
-    def analyze_ice(self, water, formatter, noise=0., seed=1000):
+    def analyze_ice(self, water, formatter, noise=0.):
         """
         Protocol for analice
         """
@@ -322,10 +232,6 @@ class AnalIce(GenIce):
             if 7 in hooks:
                 hooks[7](self)
 
-        # Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-
         abort = stages()
         if not abort:
             return formatter.dump()
@@ -341,11 +247,12 @@ class AnalIce(GenIce):
         repcell:     replicated simulation cell shape matrix
         """
 
-        self.logger.info("Stage1: (...)")
+        logger = getLogger()
+        logger.info("Stage1: (...)")
         self.reppositions = self.waters
 
         # This must be done before the replication of the cell.
-        self.logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
+        logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
 
         # self.graph = self.prepare_random_graph(self.fixed)
         self.graph = self.prepare_random_graph(self.pairs)
@@ -356,13 +263,13 @@ class AnalIce(GenIce):
         # self.repcell.scale2(self.rep)
         # add small perturbations to the molecular positions.
         if noise > 0.0:
-            self.logger.info("  Add noise: {0}.".format(noise))
+            logger.info("  Add noise: {0}.".format(noise))
             perturb = np.random.normal(loc=0.0,
                                        scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 
-        self.logger.info("Stage1: end.")
+        logger.info("Stage1: end.")
 
     def stage4(self):
         """
@@ -373,9 +280,10 @@ class AnalIce(GenIce):
         yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
-        self.logger.info("Stage4: (...)")
+        logger = getLogger()
+        logger.info("Stage4: (...)")
         self.yapresult = ""
         self.spacegraph = dg.SpaceIceGraph(self.graph,
                                            coord=self.reppositions,
                                            ignores=self.graph.ignores)
-        self.logger.info("Stage4: end.")
+        logger.info("Stage4: end.")

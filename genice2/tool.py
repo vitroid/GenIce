@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Tools for common use.
+(Should be moved out of GenIce.)
+"""
+
 from logging import getLogger
 
 def line_replacer(line, d):
@@ -16,27 +24,3 @@ def line_replacer(line, d):
                     s += indent + newline + "\n"
             return s
     return line
-
-
-
-def plugin_option_parser(s):
-    """
-    Separate the plugin name and options
-    """
-
-    left = s.find("[")
-    right = s.find("]")
-    if 0 < left < len(s) and 0 < right < len(s) and left < right:
-        args = s[left+1:right]
-        name = s[:left]
-    else:
-        return s, {}
-
-    kwargs = dict()
-    for elem in args.split(":"):
-        if "=" in elem:
-            k, v = elem.split("=", 2)
-            kwargs[k] = v
-        else:
-            kwargs[elem] = True
-    return name, kwargs

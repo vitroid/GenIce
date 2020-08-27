@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-# from Frank-Kasper (Tetrahedrally close-packed) alloy to its dual.
+"""
+Making a dual from a Frank-Kasper (Tetrahedrally close-packed) alloy structure.
+"""
 
 # Standard libs
 import itertools as it
@@ -101,8 +104,8 @@ def toWater(coord, cell, tolerance=1.4):
     """
     logger = logging.getLogger()
     dmin = shortest_distance(coord, cell) * tolerance
-    grid = pl.determine_grid(cell, dmin)
-    pairs = pl.pairs_fine(coord, dmin, cell, grid, distance=False)
+    pairs = pl.pairs_iter(coord, rc=dmin, cell=cell,
+                          distance=False)
     for vtet, dtet in tetrahedra(pairs, dmin, coord, cell):
         p = dtet[0] + (dtet[1] + dtet[2] + dtet[3]) / 4
         p -= np.floor(p)

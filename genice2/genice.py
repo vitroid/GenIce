@@ -1,195 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+GenIce class
+"""
+
 from logging import getLogger
-import argparse as ap
 from collections import defaultdict
 import random
 import itertools as it
-from textwrap import wrap, fill
-import sys
 
 import numpy as np
 import pairlist as pl
 
-from genice2.importer import safe_import
 from genice2 import digraph as dg
-from genice2 import __version__
+from genice2.plugin import safe_import
 from genice2.cell import rel_wrap, Cell
-from genice2.valueparsers import parse_cages, parse_pairs, put_in_array, flatten
-import genice2.plugins
+from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten
 
 # for alkyl groups (Experimental)
 from genice2 import alkyl
-
-
-class SmartFormatter(ap.HelpFormatter):
-    def _split_lines(self, text, width):
-        if text.startswith('R|'):
-            # return text[2:].splitlines()
-            return [line for L in text[2:].splitlines() for line in wrap(L, width=55, drop_whitespace=False) ]
-        # this is the RawTextHelpFormatter._split_lines
-        return ap.HelpFormatter._split_lines(self, text, width)
-    def _get_help_string(self, action):
-        if callable(action.help):
-            return action.help()
-        return action.help
-
-
-def descriptions(category):
-    titles={ "lattice": {"system": "1. Lattice structures served with GenIce",
-                         "extra":  "2. Lattice structures served by plugins",
-                         "local":  "3. Lattice structures served locally",
-                         "title":  "[Available lattice structures]"},
-             "format": {"system": "1. Formatters served with GenIce",
-                        "extra":  "2. Formatters served by plugins",
-                        "local":  "3. Formatters served locally",
-                        "title":  "[Available formatters]"},
-             "loader": {"system": "1. File types served with GenIce",
-                        "extra":  "2. File types served by plugins",
-                        "local":  "3. File types served locally",
-                        "title":  "[Available input file types]"},
-             }
-    mods = genice2.plugins.scan(category)
-    catalog = " \n \n{0}\n \n".format(titles[category]["title"])
-    desc = mods["desc"]
-    for group in ("system", "extra", "local"):
-        desced = defaultdict(list)
-        undesc = []
-        for L in mods[group]:
-            if L in desc:
-                desced[desc[L]].append(L)
-            else:
-                undesc.append(L)
-        for dd in desced:
-            desced[dd] = ", ".join(desced[dd])
-        catalog += "{0}\n \n".format(titles[category][group])
-        table = ""
-        for dd in sorted(desced, key=lambda x: desced[x]):
-            table += "{0}\t{1}\n".format(desced[dd], dd)
-        if table == "":
-            table = "(None)\n"
-        table = [fill(line, width=55, drop_whitespace=False, expand_tabs=True, tabsize=16, subsequent_indent=" "*16) for line in table.splitlines()]
-        table = "\n".join(table)+"\n"
-        undesc = " ".join(undesc)
-        if undesc != "":
-            undesc = "(Undocumented) " + undesc
-        catalog += table + "----\n" + undesc + "\n \n \n"
-    return catalog
-
-
-
-
-# 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
-def help_type():
-    return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice")
-
-def help_format():
-    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format")
-
-def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--rep',
-                        '-r',
-                        nargs=3,
-                        type=int,
-                        dest='rep',
-                        default=[1, 1, 1],
-                        help='Repeat the unit cell along a, b, and c axes. [1,1,1]')
-    parser.add_argument('--dens',
-                        '-d',
-                        type=float,
-                        dest='dens',
-                        default=-1,
-                        help='Specify the ice density in g/cm3 (Guests are not included.)')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
-    parser.add_argument('--seed',
-                        '-s',
-                        type=int,
-                        dest='seed',
-                        default=1000,
-                        help='Random seed [1000]')
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="name",
-                        help=help_format)
-    parser.add_argument('--water',
-                        '-w',
-                        dest='water',
-                        default="tip3p",
-                        metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
-    parser.add_argument('--guest',
-                        '-g',
-                        nargs=1,
-                        dest='guests',
-                        metavar="D=empty",
-                        action="append",
-                        help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
-    parser.add_argument('--Guest',
-                        '-G',
-                        nargs=1,
-                        dest='spot_guests',
-                        metavar="13=me",
-                        action="append",
-                        help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
-    parser.add_argument('--Group',
-                        '-H',
-                        nargs=1,
-                        dest='groups',
-                        metavar="13=bu-:0",
-                        action="append",
-                        help='Specify the group. (-H 13=bu-:0, etc.)')
-    parser.add_argument('--anion',
-                        '-a',
-                        nargs=1,
-                        dest='anions',
-                        metavar="3=Cl",
-                        action="append",
-                        help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
-    parser.add_argument('--cation',
-                        '-c',
-                        nargs=1,
-                        dest='cations',
-                        metavar="3=Na",
-                        action="append",
-                        help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
-    parser.add_argument('--visual',
-                        dest='visual',
-                        default="",
-                        metavar="visual",
-                        help='Specify the yaplot file to store the depolarization paths. [""]')
-    parser.add_argument('--nodep',
-                        action='store_true',
-                        dest='nodep',
-                        default=False,
-                        help='No depolarization.')
-    parser.add_argument('--asis',
-                        action='store_true',
-                        dest='asis',
-                        default=False,
-                        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='store_true',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('Type',
-                        help=help_type)
-    return parser.parse_args()
 
 
 def assume_tetrahedral_vectors(v):
@@ -548,10 +378,11 @@ class GenIce():
     spot_group: (EXPERIMENTAL)
              The locations of functional groups that occupy the cages.
     as_is:   Avoids shuffling of the orientations of water molecules.
-    comment: A comment text that is inserted in the output.
+    signature: A text that is inserted in the output.
     """
     def __init__(self,
                  lat,
+                 signature="",
                  density=0,
                  rep=(1, 1, 1),
                  cations=dict(),
@@ -559,10 +390,11 @@ class GenIce():
                  spot_guests=dict(),
                  spot_groups=dict(),
                  asis=False,
-                 comment="",
+                 shift=(0.,0.,0.),
+                 seed=1000,
                  ):
 
-        self.logger = getLogger()
+        logger = getLogger()
         self.rep = rep
         self.asis = asis
         self.cations = cations
@@ -571,30 +403,34 @@ class GenIce():
         self.spot_groups = spot_groups
         # Show the document of the module
 
+        # Set random seeds
+        random.seed(seed)
+        np.random.seed(seed)
+
         try:
             self.doc = lat.__doc__.splitlines()
         except BaseException:
             self.doc = []
 
-        if len(comment) > 0:
+        if len(signature) > 0:
             self.doc.append("")
-            self.doc.append(comment)
+            self.doc.append(signature)
 
         for line in self.doc:
-            self.logger.info("  "+line)
+            logger.info("  "+line)
         # ================================================================
         # rotmatrices (analice)
         #
         try:
             self.rotmatrices = lat.rotmat
         except BaseException:
-            self.logger.info("No rotmatrices in lattice")
+            logger.info("No rotmatrices in lattice")
             self.rotmatrices = None
         # ================================================================
         # waters: positions of water molecules
         #
         self.waters = put_in_array(lat.waters)
-        self.logger.debug("Waters: {0}".format(len(self.waters)))
+        logger.debug("Waters: {0}".format(len(self.waters)))
         self.waters = self.waters.reshape((self.waters.size // 3, 3))
 
         # ================================================================
@@ -610,7 +446,8 @@ class GenIce():
         if lat.coord == "absolute":
             self.waters = self.cell.abs2rel(self.waters)
 
-        self.waters = np.array([w - np.floor(w) for w in self.waters])
+        self.waters = np.array(self.waters) + np.array(shift)
+        self.waters -= np.floor(self.waters)
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
@@ -622,7 +459,7 @@ class GenIce():
         try:
             self.pairs = parse_pairs(lat.pairs)
         except AttributeError:
-            self.logger.info("HB connectivity is not defined.")
+            logger.info("HB connectivity is not defined.")
 
         # ================================================================
         # bondlen: specify the bond length threshold.
@@ -635,15 +472,17 @@ class GenIce():
 
         try:
             self.bondlen = lat.bondlen
-            self.logger.info("Bond length (specified): {0}".format(self.bondlen))
+            logger.info("Bond length (specified): {0}".format(self.bondlen))
         except AttributeError:
-            self.logger.debug("  Estimating the bond threshold length...")
+            logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
-            grid = pl.determine_grid(self.cell.mat, rc)
-            p = pl.pairs_fine(self.waters, rc, self.cell.mat, grid, distance=False)
+            p = pl.pairs_iter(self.waters,
+                              rc=rc,
+                              cell=self.cell.mat,
+                              distance=False)
             self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
-            self.logger.info("Bond length (estim.): {0}".format(self.bondlen))
+            logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
         mass = 18  # water
@@ -654,18 +493,18 @@ class GenIce():
             try:
                 self.density = lat.density
             except AttributeError:
-                self.logger.info(
+                logger.info(
                     "Density is not specified. Assume the density from lattice.")
                 dmin = shortest_distance(self.waters, self.cell)
-                self.logger.info(
+                logger.info(
                     "Closest pair distance: {0} (should be around 0.276 nm)".format(dmin))
                 self.density = density0 / (0.276 / dmin)**3
                 # self.density = density0
         else:
             self.density = density
 
-        self.logger.info("Target Density: {0}".format(self.density))
-        self.logger.info("Original Density: {0}".format(density0))
+        logger.info("Target Density: {0}".format(self.density))
+        logger.info("Original Density: {0}".format(density0))
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density)**(1.0 / 3.0)
@@ -673,18 +512,7 @@ class GenIce():
 
         if self.bondlen is not None:
             self.bondlen *= ratio
-        self.logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
-
-        # ================================================================
-        # double_network: True or False
-        #   This is a special option for ices VI and VII that have
-        #   interpenetrating double network.
-        #   GenIce's fast depolarization algorithm fails in some case.
-        #
-        try:
-            self.double_network = lat.double_network
-        except AttributeError:
-            self.double_network = False
+        logger.info("Bond length (scaled, nm): {0}".format(self.bondlen))
 
         # ================================================================
         # cages: positions of the centers of cages
@@ -695,10 +523,13 @@ class GenIce():
 
         if "cages" in lat.__dict__:
             self.cagepos, self.cagetype = parse_cages(lat.cages)
-            self.logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
+            logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
         elif "cagepos" in lat.__dict__:
             # pre-parsed data
             self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
+        if self.cagepos is not None:
+            self.cagepos = np.array(self.cagepos) + np.array(shift)
+            self.cagepos -= np.floor(self.cagepos)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
@@ -708,7 +539,7 @@ class GenIce():
         self.fixed = []
         try:
             self.fixed = parse_pairs(lat.fixed)
-            self.logger.info("Orientations of some edges are fixed.")
+            logger.info("Orientations of some edges are fixed.")
         except AttributeError:
             pass
 
@@ -745,9 +576,8 @@ class GenIce():
                      formatter,
                      guests=[],
                      record_depolarization_path=None,
-                     depolarize=True,
+                     depol="strict",
                      noise=0.,
-                     seed=1000,
                      ):
         """
         Generate an ice structure and dump it with the aid of a formatter plugin.
@@ -755,10 +585,6 @@ class GenIce():
         water:     genice2.molecules.Molecule() class
         formatter: genice2.format.Format() class
         """
-
-        # Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
 
         logger = getLogger()
 
@@ -792,7 +618,7 @@ class GenIce():
                 if maxstage < 4 or abort:
                     return
 
-            self.stage4(depolarize=depolarize,
+            self.stage4(depol=depol,
                         record_depolarization_path=record_depolarization_path)
 
             if 4 in hooks:
@@ -838,11 +664,12 @@ class GenIce():
         cagetypes:   set of cage types
         """
 
-        self.logger.info("Stage1: Replication.")
+        logger = getLogger()
+        logger.info("Stage1: Replication.")
         self.reppositions = replicate_positions(self.waters, self.rep)
 
         # This must be done before the replication of the cell.
-        self.logger.info("  Number of water molecules: {0}".format(
+        logger.info("  Number of water molecules: {0}".format(
             len(self.reppositions)))
         self.graph = self.prepare_random_graph(self.fixed)
 
@@ -851,14 +678,14 @@ class GenIce():
         self.repcell.scale2(self.rep)
 
         if noise > 0.0:
-            self.logger.info("  Add noise: {0}.".format(noise))
+            logger.info("  Add noise: {0}.".format(noise))
             perturb = np.random.normal(loc=0.0,
                                        scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 
         if self.cagepos is not None:
-            self.logger.info("  Hints:")
+            logger.info("  Hints:")
             self.repcagepos = replicate_positions(self.cagepos, self.rep)
             nrepcages = self.repcagepos.shape[0]
             self.repcagetype = [self.cagetype[i % len(self.cagetype)]
@@ -869,17 +696,17 @@ class GenIce():
                 self.cagetypes[typ].add(i)
 
             # INFO for cage types
-            self.logger.info("    Cage types: {0}".format(list(self.cagetypes)))
+            logger.info("    Cage types: {0}".format(list(self.cagetypes)))
 
             for typ, cages in self.cagetypes.items():
-                self.logger.info("    Cage type {0}: {1}".format(typ, cages))
+                logger.info("    Cage type {0}: {1}".format(typ, cages))
             # Up here move to stage 1.
         else:
             self.repcagetype = None
             self.repcagepos  = None
             self.cagetypes   = None
 
-        self.logger.info("Stage1: end.")
+        logger.info("Stage1: end.")
 
     def stage2(self):
         """
@@ -892,7 +719,8 @@ class GenIce():
         graph:   replicated network topology (bond orientation may be random)
         """
 
-        self.logger.info("Stage2: Graph preparation.")
+        logger = getLogger()
+        logger.info("Stage2: Graph preparation.")
 
         # Some edges are directed when ions are doped.
         if self.dopeIonsToUnitCell is not None:
@@ -908,20 +736,20 @@ class GenIce():
         for root, cages in self.groups.items():
             self.filled_cages |= set(cages)
 
-        # self.logger.info(("filled",self.filled_cages))
+        # logger.info(("filled",self.filled_cages))
         # Replicate the graph
         self.graph = replicate_graph(self.graph, self.waters, self.rep)
 
         # Dope ions by options.
         if len(self.anions) > 0:
-            self.logger.info("  Anionize: {0}.".format(self.anions))
+            logger.info("  Anionize: {0}.".format(self.anions))
 
             for site, name in self.anions.items():
                 self.graph.anionize(site)
                 self.dopants[site] = name
 
         if len(self.cations) > 0:
-            self.logger.info("  Cationize: {0}.".format(self.cations))
+            logger.info("  Cationize: {0}.".format(self.cations))
 
             for site, name in self.cations.items():
                 self.graph.cationize(site)
@@ -935,16 +763,16 @@ class GenIce():
                 nfixed += 1
             else:
                 nrandom += 1
-        self.logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
-        self.logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
-        self.logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
+        logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
+        logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
+        logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
 
         # test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
-            self.logger.warn("Test2 failed.")
+            logger.warn("Test2 failed.")
 
-        self.logger.info("Stage2: end.")
+        logger.info("Stage2: end.")
         return self.test2
 
     def stage3(self):
@@ -955,16 +783,17 @@ class GenIce():
         graph: network obeying B-F rule.
         """
 
-        self.logger.info("Stage3: Bernal-Fowler rule.")
+        logger = getLogger()
+        logger.info("Stage3: Bernal-Fowler rule.")
 
         if self.asis:
-            self.logger.info("  Skip applying the ice rule by request.")
+            logger.info("  Skip applying the ice rule by request.")
         else:
             self.graph.purge_ice_defects()
 
-        self.logger.info("Stage3: end.")
+        logger.info("Stage3: end.")
 
-    def stage4(self, depolarize=True, record_depolarization_path=None):
+    def stage4(self, depol="strict", record_depolarization_path=None):
         """
         Depolarize.
 
@@ -973,31 +802,22 @@ class GenIce():
         yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
-        self.logger.info("Stage4: Depolarization.")
+        logger = getLogger()
+        logger.info("Stage4: Depolarization.")
 
-        if not depolarize or self.asis:
-            self.logger.info("  Skip depolarization by request. {0} {1}".format(depolarize, self.asis))
-            self.yapresult = ""
-            self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                               coord=self.reppositions,
-                                               ignores=self.graph.ignores)
+        if self.asis:
+            depol = "none"
+
+        self.spacegraph = dg.SpaceIceGraph(self.graph,
+                                           coord=self.reppositions,
+                                           ignores=self.graph.ignores)
+        if record_depolarization_path is not None:
+            draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
+            yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw, depol=depol)
+            record_depolarization_path.write(yapresult)
         else:
-            if self.double_network:
-                if (self.rep[0] % 2 == 0) and (self.rep[1] % 2 == 0) and (self.rep[2] % 2 == 0):
-                    pass
-                else:
-                    self.logger.error("In making the ice structure having the double network (e.g. ices 6 and 7), all the repetition numbers (--rep) must be even.")
-                    sys.exit(1)
-            self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                               coord=self.reppositions,
-                                               ignores=self.graph.ignores)
-            if record_depolarization_path is not None:
-                draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
-                yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw)
-                record_depolarization_path.write(yapresult)
-            else:
-                dg.depolarize(self.spacegraph, self.repcell.mat, draw=None)
-        self.logger.info("Stage4: end.")
+            dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
+        logger.info("Stage4: end.")
 
     def stage5(self):
         """
@@ -1008,7 +828,8 @@ class GenIce():
         rotmatrices:  rotation matrices for water molecules
         """
 
-        self.logger.info("Stage5: Orientation.")
+        logger = getLogger()
+        logger.info("Stage5: Orientation.")
 
         # determine the orientations of the water molecules based on edge
         # directions.
@@ -1018,7 +839,7 @@ class GenIce():
         # Activate it.
         # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
         # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
-        self.logger.info("Stage5: end.")
+        logger.info("Stage5: end.")
 
     def stage6(self, water):
         """
@@ -1028,7 +849,8 @@ class GenIce():
         atoms: atomic positions of water molecules. (absolute)
         """
 
-        self.logger.info("Stage6: Atomic positions of water.")
+        logger = getLogger()
+        logger.info("Stage6: Atomic positions of water.")
 
         # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
         # water = importlib.import_module("genice.molecules."+water_type)
@@ -1040,7 +862,7 @@ class GenIce():
             mdoc = []
 
         for line in mdoc:
-            self.logger.info("  "+line)
+            logger.info("  "+line)
 
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
@@ -1050,7 +872,7 @@ class GenIce():
                                    water.name,
                                    ignores=set(self.dopants))
 
-        self.logger.info("Stage6: end.")
+        logger.info("Stage6: end.")
 
     def stage7(self, guests):
         """
@@ -1060,7 +882,8 @@ class GenIce():
         atoms: atomic positions of all molecules.
         """
 
-        self.logger.info("Stage7: Atomic positions of the guest.")
+        logger = getLogger()
+        logger.info("Stage7: Atomic positions of the guest.")
 
         if self.cagepos is not None:
 
@@ -1088,7 +911,7 @@ class GenIce():
 
                 # process the -g option
                 for arg in guests:
-                    self.logger.debug(arg[0])
+                    logger.debug(arg[0])
                     cagetype, spec = arg[0].split("=")
                     assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(cagetype)
                     resident = dict()
@@ -1128,11 +951,11 @@ class GenIce():
 
             # Now ge got the address book of the molecules.
             if len(molecules):
-                self.logger.info("  Summary of guest placements:")
+                logger.info("  Summary of guest placements:")
                 self.guests_info(self.cagetypes, molecules)
 
             if len(self.spot_groups) > 0:
-                self.logger.info("  Summary of groups:")
+                logger.info("  Summary of groups:")
                 self.groups_info(self.groups)
 
             # semi-guests
@@ -1144,7 +967,7 @@ class GenIce():
                 rot = self.rotmatrices[root]
                 self.atoms.append([0, molname, name, self.repcell.rel2abs(pos), 0])
                 del self.dopants[root]  # processed.
-                self.logger.debug((root, cages, name, molname, pos, rot))
+                logger.debug((root, cages, name, molname, pos, rot))
 
                 for cage, group in cages.items():
                     assert group in self.groups_placer
@@ -1185,15 +1008,16 @@ class GenIce():
                                         [name],
                                         name)
 
-        self.logger.info("Stage7: end.")
+        logger.info("Stage7: end.")
 
     def prepare_random_graph(self, fixed):
 
+        logger = getLogger()
         if self.pairs is None:
-            self.logger.info("  Pairs are not given explicitly.")
-            self.logger.info("  Estimating the bonds according to the pair distances.")
+            logger.info("  Pairs are not given explicitly.")
+            logger.info("  Estimating the bonds according to the pair distances.")
 
-            self.logger.debug("Bondlen: {0}".format(self.bondlen))
+            logger.debug("Bondlen: {0}".format(self.bondlen))
             # make bonded pairs according to the pair distance.
             # make before replicating them.
             grid = pl.determine_grid(self.cell.mat, self.bondlen)
@@ -1203,11 +1027,11 @@ class GenIce():
             # self.pairs = [v for v in zip(j0,j1)]
             # Check using a simpler algorithm.
             # Do not use it for normal debug because it is too slow
-            if False:  # self.logger.level <= logging.DEBUG:
+            if False:  # logger.level <= logging.DEBUG:
                 pairs1 = self.pairs
                 pairs2 = [v for v in pl.pairs_crude(self.waters, self.bondlen, self.cell.mat, distance=False)]
-                self.logger.debug("pairs1: {0}".format(len(pairs1)))
-                self.logger.debug("pairs2: {0}".format(len(pairs2)))
+                logger.debug("pairs1: {0}".format(len(pairs1)))
+                logger.debug("pairs2: {0}".format(len(pairs2)))
                 for pair in pairs1:
                     i, j = pair
                     assert (i, j) in pairs2 or (j, i) in pairs2
@@ -1232,30 +1056,32 @@ class GenIce():
                 else:
                     graph.add_edge(j, i, fixed=False)
 
-        self.logger.info("  Number of water nodes: {0}".format(graph.number_of_nodes()))
+        logger.info("  Number of water nodes: {0}".format(graph.number_of_nodes()))
 
         return graph
 
     def test_undirected_graph(self, graph):
         # Test
 
+        logger = getLogger()
         undir = graph.to_undirected()
         for node in range(undir.number_of_nodes()):
             if node not in undir:
-                self.logger.debug("z=0 at {0}".format(node))
+                logger.debug("z=0 at {0}".format(node))
             else:
                 z = len(list(undir.neighbors(node)))
                 if z != 4:
-                    self.logger.debug("z={0} at {1}".format(z, node))
+                    logger.debug("z={0} at {1}".format(z, node))
 
         if graph.number_of_edges() != len(self.reppositions) * 2:
-            self.logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(
+            logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(
                 graph.number_of_edges(), len(self.reppositions)))
             return False
 
         return True
 
     def dopants_info(self, dopants=None, waters=None, cagepos=None, cell=None):
+        logger = getLogger()
         if dopants is None:
             dopants = self.dopants
 
@@ -1271,31 +1097,34 @@ class GenIce():
         dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
 
         for dopant, cages in dopants_neighbors.items():
-            self.logger.info(
+            logger.info(
                 "    Cages adjacent to dopant {0}: {1}".format(dopant, cages))
 
         return dopants_neighbors
 
     def groups_info(self, groups):
+        logger = getLogger()
         for root, cages in groups.items():
             for cage, group in cages.items():
-                self.logger.info(
+                logger.info(
                     "    Group {0} of dopant {1} in cage {2}".format(group, root, cage))
 
     def guests_info(self, cagetypes, molecules):
+        logger = getLogger()
         for cagetype, cageid in cagetypes.items():
-            self.logger.info("    Guests in cage type {0}:".format(cagetype))
+            logger.info("    Guests in cage type {0}:".format(cagetype))
 
             for molec, cages in molecules.items():
                 cages = set(cages)
                 cages &= cageid
 
                 if len(cages):
-                    self.logger.info("      {0} * {1} @ {2}".format(molec, len(cages), cages))
+                    logger.info("      {0} * {1} @ {2}".format(molec, len(cages), cages))
 
     def add_group(self, cage, group, root):
         self.groups[root][cage] = group
         self.filled_cages.add(cage)
 
     def __del__(self):
-        self.logger.info("Completed.")
+        logger = getLogger()
+        logger.info("Completed.")
