@@ -874,6 +874,10 @@ class GenIce():
             for typ, cages in self.cagetypes.items():
                 self.logger.info("    Cage type {0}: {1}".format(typ, cages))
             # Up here move to stage 1.
+        else:
+            self.repcagetype = None
+            self.repcagepos  = None
+            self.cagetypes   = None
 
         self.logger.info("Stage1: end.")
 
@@ -1018,7 +1022,7 @@ class GenIce():
 
     def stage6(self, water):
         """
-        Arrange water atoms and replacements
+        Arrange atoms of water and replacements
 
         Provided variables:
         atoms: atomic positions of water molecules. (absolute)

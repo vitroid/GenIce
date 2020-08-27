@@ -51,10 +51,10 @@ def cellvectors(a,b,c,A=90,B=90,C=90):
 
 
 class Cell():
-    mat = np.zeros(9).reshape(3, 3)
-    inv = None
 
     def __init__(self, desc=None):
+        self.mat = np.zeros(9).reshape(3, 3)
+        self.inv = None
         self.parse(desc)
 
     def abs2rel(self, absvecs):
