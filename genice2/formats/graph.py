@@ -8,20 +8,24 @@ desc={"ref": {"NGPH": "https://vitroid.github.io/@NGPH"},
 
 import numpy as np
 from logging import getLogger
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {2:self.hook2}
+        return {2:self.Hook2}
 
 
-    def hook2(self, ice):
+    @timeit
+    @banner
+    def Hook2(self, ice):
+        "Output the undirected network."
         logger = getLogger()
-        logger.info("Hook2: Output the undirected network.")
 
         s = ""
         s += "@NGPH\n"
@@ -31,4 +35,3 @@ class Format(genice2.formats.Format):
         s += "-1 -1\n"
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
-        logger.info("Hook2: end.")

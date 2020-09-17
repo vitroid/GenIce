@@ -13,8 +13,9 @@ options:
 from collections import defaultdict
 import numpy as np
 from logging import getLogger
-
+from genice2.decorators import timeit, banner
 from genice2 import rigid
+import genice2.formats
 
 
 def Block(name, content):
@@ -36,7 +37,6 @@ def Include(filename):
     return '#include "{0}"\n'.format(filename)
 
 
-import genice2.formats
 class Format(genice2.formats.Format):
 
 
@@ -45,12 +45,14 @@ class Format(genice2.formats.Format):
 
 
     def hooks(self):
-        return {7:self.hook7, 6:self.hook6}
+        return {7:self.Hook7, 6:self.Hook6}
 
 
-    def hook6(self, ice):
+    @timeit
+    @banner
+    def Hook6(self, ice):
+        "Output water molecules in Povray format."
         logger = getLogger()
-        logger.info("Hook6: Output water molecules in Povray format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         # prepare the reverse dict
         waters = defaultdict(dict)
@@ -89,12 +91,13 @@ class Format(genice2.formats.Format):
                     s += Bond("HB",H1,O)
         self.output = s
         self.nwateratoms = len(ice.atoms)
-        logger.info("Hook6: end.")
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output guest molecules in Povray format."
         logger = getLogger()
-        logger.info("Hook7: Output water molecules in Povray format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         cellmat = ice.repcell.mat
         gatoms = ice.atoms[self.nwateratoms:]
@@ -107,4 +110,3 @@ class Format(genice2.formats.Format):
         s = '//' + "\n//".join(ice.doc) + "\n" + s
         s += "  translate " + Vector( -(cellmat[0,:]+cellmat[1,:]+cellmat[2,:])/2 ) + "\n}\n\n"
         self.output += s
-        logger.info("Hook7: end.")

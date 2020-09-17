@@ -8,6 +8,8 @@ desc={"ref": {"NGPH": "https://vitroid.github.io/@NGPH"},
 
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
+
 
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
@@ -15,13 +17,14 @@ class Format(genice2.formats.Format):
 
 
     def hooks(self):
-        return {4:self.hook4}
+        return {4:self.Hook4}
 
 
-    def hook4(self, ice):
+    @timeit
+    @banner
+    def Hook4(self, ice):
+        "Output the hydrogen bond network."
         logger = getLogger()
-        logger.info("Hook4: Output the hydrogen bond network.")
-
         s = ""
         s += "@NGPH\n"
         s += "{0}\n".format(len(ice.reppositions))
@@ -30,4 +33,3 @@ class Format(genice2.formats.Format):
         s += "-1 -1\n"
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
-        logger.info("Hook4: end.")

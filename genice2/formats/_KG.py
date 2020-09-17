@@ -8,21 +8,23 @@ desc = { "ref": { "K1939": 'J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939).'},
 import numpy as np
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
 
 #It should be expressed as a function of distance.
-
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {5:self.hook5}
+        return {5:self.Hook5}
 
 
-    def hook5(self, ice):
+    @timeit
+    @banner
+    def Hook5(self, ice):
+        "Kirkwood G."
         logger = getLogger()
-        logger.info("Hook5: Kirkwood G.")
         zvec = np.array([0.,0.,1.])
         dipoles = np.dot(zvec, ice.rotmatrices)
         n = dipoles.shape[0]
@@ -60,4 +62,3 @@ class Format(genice2.formats.Format):
             s += "{0:.5f} {1:.5f}\n".format(x, np.sum(filter)/n)
             x += 0.08
         self.output = s
-        logger.info("Hook5: end.")

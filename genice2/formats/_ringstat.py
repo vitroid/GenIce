@@ -68,6 +68,8 @@ import fractions
 import numpy as np
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
+
 
 def isomorphs(a):
     """
@@ -175,12 +177,14 @@ class Format(genice2.formats.Format):
 
 
     def hooks(self):
-        return {4:self.hook4}
+        return {4:self.Hook4}
 
 
-    def hook4(self, ice):
+    @timeit
+    @banner
+    def Hook4(self, ice):
+        "Statistics on the HBs along a ring."
         logger = getLogger()
-        logger.info("Hook4: Statistics on the HBs along a ring.")
         graph = nx.Graph(ice.spacegraph) #undirected
         stat = dict()
         prob = defaultdict(int)
@@ -238,4 +242,3 @@ class Format(genice2.formats.Format):
                 s += "{1} {0} dKL[{0}-ring]\n".format(n,dKL)
                 logger.info("  dKL[{0}-ring]={1}".format(n,dKL))
         self.output = s
-        logger.info("Hook4: end.")

@@ -8,20 +8,24 @@ desc = { "ref": { },
 import numpy as np
 from genice2 import rigid
 from logging import getLogger
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {5:self.hook5}
+        return {5:self.Hook5}
 
 
-    def hook5(self, ice):
+    @timeit
+    @banner
+    def Hook5(self, ice):
+        "Output water molecules as rigid rotors (Euler)."
         logger = getLogger()
-        logger.info("Hook5: Output water molecules as rigid rotors (Euler).")
         cellmat = ice.repcell.mat
         s = ""
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
@@ -44,4 +48,3 @@ class Format(genice2.formats.Format):
                                                                                 euler[2])
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
-        logger.info("Hook5: end.")

@@ -7,20 +7,24 @@ desc={"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/E
 import numpy as np
 from logging import getLogger
 from genice2 import rigid
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {7:self.hook7}
+        return {7:self.Hook7}
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output in extended XYZ format."
         logger = getLogger()
-        logger.info("Hook7: Output in extended XYZ format.")
         s = ""
         s += "{0}\n".format(len(ice.atoms))
         s += "%PBC\n"
@@ -34,4 +38,3 @@ class Format(genice2.formats.Format):
         s += "Vector3 {0:15.5f}{1:15.5f}{2:15.5f}\n".format(*ice.repcell.mat[2]*10)
         s += "Offset  {0:15.5f}{1:15.5f}{2:15.5f}\n".format(0.,0.,0.)
         self.output = s
-        logger.info("Hook7: end.")

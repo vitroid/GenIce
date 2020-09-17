@@ -10,14 +10,14 @@ options:
 """}
 
 
-
 from collections import defaultdict
 from logging import getLogger
 import numpy as np
 import yaplotlib as yp
-
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     size_H = 0.01
 
@@ -33,29 +33,32 @@ class Format(genice2.formats.Format):
 
 
     def hooks(self):
-        return {1:self.hook1,
-                2:self.hook2,
-                6:self.hook6,
-                7:self.hook7}
+        return {1:self.Hook1,
+                2:self.Hook2,
+                6:self.Hook6,
+                7:self.Hook7}
 
 
-    def hook1(self, ice):
+    @timeit
+    @banner
+    def Hook1(self, ice):
+        "Draw the cell in Yaplot format."
         logger = getLogger()
-        logger.info("Hook1: Draw the cell in Yaplot format.")
         s = yp.Layer(2)
         x,y,z = ice.repcell.mat
         for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
             for a in (np.zeros(3), p, q, p+q):
                 s += yp.Line(a,a+r)
         self.output = s
-        logger.info("Hook1: end.")
 
 
-    def hook2(self, ice):
+    @timeit
+    @banner
+    def Hook2(self, ice):
+        "Output CoM of water molecules in Yaplot format."
         logger = getLogger()
         if self.size_H > 0:
             return
-        logger.info("Hook2: Output CoM of water molecules in Yaplot format.")
         # prepare the reverse dict
         waters = defaultdict(dict)
         pos = ice.reppositions @ ice.repcell.mat
@@ -66,13 +69,14 @@ class Format(genice2.formats.Format):
             s += yp.Size(0.03)
             s += yp.Circle(p)
         self.output += s + yp.NewPage()
-        logger.info("Hook2: end.")
         return True
 
 
-    def hook6(self, ice):
+    @timeit
+    @banner
+    def Hook6(self, ice):
+        "Output water molecules in Yaplot format."
         logger = getLogger()
-        logger.info("Hook6: Output water molecules in Yaplot format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         # prepare the reverse dict
         waters = defaultdict(dict)
@@ -122,12 +126,13 @@ class Format(genice2.formats.Format):
                     s += yp.Arrow(H1,O)
         self.output += s
         self.nwateratoms = len(ice.atoms)
-        logger.info("Hook6: end.")
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output water molecules in Yaplot format."
         logger = getLogger()
-        logger.info("Hook7: Output water molecules in Yaplot format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         gatoms = ice.atoms[self.nwateratoms:]
         palettes = dict()
@@ -149,4 +154,3 @@ class Format(genice2.formats.Format):
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         s += yp.NewPage()
         self.output += s
-        logger.info("Hook7: end.")

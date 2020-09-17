@@ -9,6 +9,7 @@ from genice2.cell   import Cell
 from genice2.genice import GenIce, put_in_array, shortest_distance
 from genice2.valueparser import parse_pairs
 from genice2 import digraph as dg
+from genice2.decorators import timeit, banner
 
 
 class AnalIce(GenIce):
@@ -172,7 +173,7 @@ class AnalIce(GenIce):
         Protocol for analice
         """
 
-        def stages():
+        def Stages():
             hooks = formatter.hooks()
 
             maxstage = max(0, *hooks.keys())
@@ -182,7 +183,7 @@ class AnalIce(GenIce):
                 if maxstage < 1 or abort:
                     return
 
-            self.stage1(noise)
+            self.Stage1(noise)
 
             if 1 in hooks:
                 abort = hooks[1](self)
@@ -190,7 +191,7 @@ class AnalIce(GenIce):
                     return
 
             if self.rotmatrices is None:
-                res = self.stage2()
+                res = self.Stage2()
 
             if 2 in hooks:
                 abort = hooks[2](self)
@@ -198,14 +199,14 @@ class AnalIce(GenIce):
                     return
 
             if self.rotmatrices is None:
-                self.stage3()
+                self.Stage3()
 
             if 3 in hooks:
                 abort = hooks[3](self)
                 if maxstage < 4 or abort:
                     return
 
-            self.stage4()
+            self.Stage4()
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -214,33 +215,33 @@ class AnalIce(GenIce):
 
             # molecular orientation should be given in the loader.
             if self.rotmatrices is None:
-                self.stage5()
+                self.Stage5()
 
             if 5 in hooks:
                 abort = hooks[5](self)
                 if maxstage < 6 or abort:
                     return
 
-            self.stage6(water)
+            self.Stage6(water)
 
             if 6 in hooks:
                 abort = hooks[6](self)
                 if maxstage < 7 or abort:
                     return
 
-            # self.stage7_analice(guests)
+            # self.Stage7_analice(guests)
             if 7 in hooks:
                 hooks[7](self)
 
-        abort = stages()
+        abort = Stages()
         if not abort:
             return formatter.dump()
 
-
-    def stage1(self,
+    @timeit
+    @banner
+    def Stage1(self,
                noise=0.):
-        """
-        Do nothing.
+        """Preparation.
 
         Provided variables:
         repposition: replicated molecular positions (CoM, relative)
@@ -248,7 +249,6 @@ class AnalIce(GenIce):
         """
 
         logger = getLogger()
-        logger.info("Stage1: (...)")
         self.reppositions = self.waters
 
         # This must be done before the replication of the cell.
@@ -269,11 +269,11 @@ class AnalIce(GenIce):
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 
-        logger.info("Stage1: end.")
 
-    def stage4(self):
-        """
-        Depolarize.
+    @timeit
+    @banner
+    def Stage4(self):
+        """Make a spacegraph.
 
         Provided variables:
         spacegraph: depolarized network with node positions.
@@ -281,9 +281,7 @@ class AnalIce(GenIce):
         """
 
         logger = getLogger()
-        logger.info("Stage4: (...)")
         self.yapresult = ""
         self.spacegraph = dg.SpaceIceGraph(self.graph,
                                            coord=self.reppositions,
                                            ignores=self.graph.ignores)
-        logger.info("Stage4: end.")

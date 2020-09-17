@@ -6,21 +6,24 @@ towhee file format (.coods?) [EXPERIMENTAL]
 import numpy as np
 from logging import getLogger
 from genice2 import rigid
-
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {7:self.hook7}
+        return {7:self.Hook7}
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output in TowHee format."
         logger = getLogger()
-        logger.info("Hook7: Output in TowHee format.")
         cellmat = ice.repcell.mat
         s = ""
         for i,atom in enumerate(ice.atoms):
@@ -41,4 +44,3 @@ class Format(genice2.formats.Format):
                                            cellmat[2,1]*10,
                                            cellmat[2,2]*10)
         logger.info(s)
-        logger.info("Hook7: end.")

@@ -9,18 +9,23 @@ import numpy as np
 from genice2 import rigid
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {5:self.hook5}
+        return {5:self.Hook5}
 
 
-    def hook5(self, ice):
+    @timeit
+    @banner
+    def Hook5(self, ice):
+        "Output water molecules as rigid rotors (Quaternion)."
         logger = getLogger()
-        logger.info("Hook5: Output water molecules as rigid rotors (Quaternion).")
         cellmat = ice.repcell.mat
         s = ""
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
@@ -44,4 +49,3 @@ class Format(genice2.formats.Format):
                                                                             quat[3])
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
-        logger.info("Hook5: end.")

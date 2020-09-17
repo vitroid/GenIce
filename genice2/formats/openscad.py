@@ -17,142 +17,72 @@ Options:
 
 import numpy as np
 from logging import getLogger
+import countrings as cr
+from openpyscad import *
+from math import atan2, pi, degrees
+from genice2.decorators import timeit, banner
 import genice2.formats
 
-bondfunc="""
-module bond(p1=[0,0,0],p2=[1,1,1],r=1)
-{
-    d = p2 - p1;
-    H = sqrt(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
-    R = sqrt(d[0]*d[0] + d[1]*d[1]);
-    //atan2(y,x)
-    theta = 90-atan2(d[2],R);
-    phi   = atan2(d[1],d[0]);
-    echo(theta,phi);
-    translate(p1)
-    rotate([0,theta,phi])
-    cylinder(r=r, h=H);
-}
-"""
 
-class OpenScad():
-    def __init__(self, s=""):
-        self.string = s
+#primitives
+def rhomb(cell):
+    origin = np.zeros(3)
+    points = [x+y+z for x in (origin,cell[0]) for y in (origin,cell[1]) for z in (origin,cell[2])]
+    faces = [[0,1,3,2],[0,4,5,1],[0,2,6,4],[5,4,6,7],[6,2,3,7],[3,1,5,7]]
+    return Polyhedron(points=[list(point) for point in points],
+                      faces=[face for face in faces])
 
-    def encode(self, *codes): #Stored value as a string
-        return "".join([code.__str__() for code in codes])
+# copied from rings.py
+def bond(p1, p2, r):
+    d = p2 - p1
+    H = np.linalg.norm(d)
+    R = np.linalg.norm(d[:2])
+    theta = pi/2-atan2(d[2],R)
+    phi   = atan2(d[1],d[0])
+    return Cylinder(r=r, h=H).rotate([0,degrees(theta),degrees(phi)]).translate(list(p1))
 
-    def use(self, f):
-        return OpenScad("use <{0}>;\n".format(f))
-
-    def defvar(self, name, value):
-        return OpenScad("{0}={1};\n".format(name,value))
-
-    def translate(self, value):
-        return OpenScad("translate([{0},{1},{2}]){{\n{3}}} //translate\n".format(*value, self.string))
-
-    def scale(self, value):
-        return OpenScad("scale([{0},{1},{2}]){{\n{3}}} //scale\n".format(*value, self.string))
-
-    def rotate(self, value):
-        return OpenScad("rotate([{0},{1},{2}]){{\n{3}}} //rotate\n".format(*value, self.string))
-
-    def mirror(self, value):
-        return OpenScad("mirror([{0},{1},{2}]){{\n{3}}} //mirror\n".format(*value, self.string))
-
-    def add(self, *values):
-        return OpenScad("union(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //union\n")
-
-    def union(self, *values):
-        return self.add(*values)
-
-    def subtract(self, *values):
-        return OpenScad("difference(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //difference\n")
-
-    def intersect(self, *values):
-        return OpenScad("intersection(){\n" + "".join([self.__str__()] + [value.__str__() for value in values]) + "} //intersection\n")
-
-    #aliases for backward compat
-    def difference(self, *values):
-        return self.subtract(*values)
-
-    def intersection(self, *values):
-        return self.intersect(*values)
-
-    #operators
-    def __or__(self, value):
-        return self.add(value)
-
-    def __and__(self, value):
-        return self.intersect(value)
-
-    def __sub__(self, value):
-        return self.subtract(value)
-
-    #primitives
-    def rhomb(self, cell):
-        origin = np.zeros(3)
-        points = [x+y+z for x in (origin,cell[0]) for y in (origin,cell[1]) for z in (origin,cell[2])]
-        s = "polyhedron(["
-        for point in points:
-            s += "[{0},{1},{2}],\n".format(*point)
-        s += "],\n"
-        faces = [[0,1,3,2],[0,4,5,1],[0,2,6,4],[5,4,6,7],[6,2,3,7],[3,1,5,7]]
-        s += "["
-        for face in faces:
-            s += "[{3},{2},{1},{0}],\n".format(*face)
-        s += "]);\n"
-        return OpenScad(s)
-
-    def bond(self, s1,s2,r=1.0):
-        return OpenScad("bond([{0},{1},{2}],[{3},{4},{5}],r={6});\n".format(*s1,*s2,r))
-
-    def sphere(self, r=1):
-        return OpenScad("sphere(r={0});\n".format(r))
-
-    def __str__(self):
-        return self.string
 
 def test():
-    o = OpenScad()
-    print(o.sphere(r=5).translate([1,2,3]))
-    print(o.add(o.sphere(r=2), o.sphere(r=3)))
-    print(o.sphere(r=2).add(o.sphere(r=3)).add(o.sphere(r=4))) #another way
-    print(o.sphere(r=2) | o.sphere(r=3) | o.sphere(r=4)) #another way
+    print(Sphere(r=5).translate([1,2,3]).dumps())
+    print((Sphere(r=2)+Sphere(r=3)).dumps())
 
 
 class Format(genice2.formats.Format):
-    options=dict(scale=50, rnode=0.07, rbond=0.06, fn=20)
 
     def __init__(self, **kwargs):
+        self.options=dict(scale=50, rnode=0.07, rbond=0.06, fn=20, cycle=False)
         unknown = dict()
         for k, v in kwargs.items():
             if k in ("scale", "rnode", "rbond", 'fn'):
                 self.options[k] = float(v)
+            elif k == "cycle":
+                self.options[k] = bool(v)
             else:
                 unknown[k] = v
         super().__init__(**unknown)
 
 
     def hooks(self):
-        return {0:self.hook0, 2:self.hook2}
+        return {0:self.Hook0, 2:self.Hook2}
 
 
-    def hook0(self, ice):
-        logger = getLogger()
-        logger.info("Hook0: Preprocess.")
+    @timeit
+    @banner
+    def Hook0(self, ice):
+        "Preprocess for OpenSCAD."
         for d in range(3):
             ice.rep[d] += 2  #Extend the size,then cut off later.
-        logger.info("Hook0: end.")
 
-
-    def hook2(self, ice):
+    @timeit
+    @banner
+    def Hook2(self, ice):
+        "Draw network with OpenSCAD."
         logger = getLogger()
         scale = self.options["scale"]
         rnode = self.options["rnode"]
         rbond = self.options["rbond"]
         fn    = self.options["fn"]
-        logger.info("Hook2: Output water molecules in OpenSCAD format revised.")
+        cycle = self.options["cycle"]
         cellmat = ice.repcell.mat
         rep = np.array(ice.rep)
         trimbox    = ice.cell.mat *np.array([(rep[i]-2) for i in range(3)])
@@ -173,8 +103,12 @@ class Format(genice2.formats.Format):
                 d -= np.floor( d + 0.5 )
                 logger.debug("Len {0}-{1}={2}".format(i,j,np.linalg.norm(d)))
                 s2 = s1 + d
-                if ( (lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2] ) or
-                  (lower[0] < s2[0] < upper[0] and lower[1] < s2[1] < upper[1] and lower[2] < s2[2] < upper[2] ) ):
+                if ( (lower[0] < s1[0] < upper[0] and
+                      lower[1] < s1[1] < upper[1] and
+                      lower[2] < s1[2] < upper[2] ) or
+                     (lower[0] < s2[0] < upper[0] and
+                      lower[1] < s2[1] < upper[1] and
+                      lower[2] < s2[2] < upper[2] ) ):
                     bonds.append( (np.dot(s1,cellmat), np.dot(s2,cellmat)))
 
         nodes = []
@@ -183,18 +117,19 @@ class Format(genice2.formats.Format):
                 if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
                     nodes.append( np.dot(s1, cellmat) )
 
-        o = OpenScad()
-        objs = [o.sphere(r="Rnode").translate(node) for node in nodes] + [o.bond(s1,s2,r="Rbond") for s1,s2 in bonds]
-        #operations
-        ops = [bondfunc,
-            o.defvar("$fn", fn),
-            o.defvar("Rnode", rnode),
-            o.defvar("Rbond", rbond),
-            ( o.rhomb(trimbox).translate(trimoffset) & o.union(*objs) ).translate(-trimoffset).scale([scale,scale,scale])]
-        s = o.encode(*ops)
-        s = '//' + "\n//".join(ice.doc) + "\n" + s
-        self.output = s
-        logger.info("Hook2: end.")
+        objs = Union()
+        for node in nodes:
+            objs.append(Sphere(r="Rnode").translate(list(node)))
+        for s1,s2 in bonds:
+            objs.append(bond(s1,s2,r="Rbond"))
+        i = Intersection()
+        i.append(objs)
+        i.append(rhomb(trimbox).translate(list(trimoffset)))
+        s = f"$fn={fn};Rnode={rnode};Rbond={rbond};\n"
+        # 文法的に間違ってないようだが、表示されない。
+        # Renderボタンを押すと時間がかかるので、
+        # ちゃんとRenderすれば表示される、はず。
+        self.output = s + i.translate(list(-trimoffset)).scale([scale,scale,scale]).dumps()
 
 
 

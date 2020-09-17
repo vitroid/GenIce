@@ -26,6 +26,7 @@ from math import floor
 import re
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
 
 
 MAXCELL=11
@@ -99,12 +100,14 @@ class Format(genice2.formats.Format):
 
 
     def hooks(self):
-        return {1:self.hook1}
+        return {1:self.Hook1}
 
 
-    def hook1(self, ice):
+    @timeit
+    @banner
+    def Hook1(self, ice):
+        "Make a python module."
         logger = getLogger()
-        logger.info("Hook1: Output as a python module.")
         # Original cell matrix.
         cellmat = ice.repcell.mat
         logger.info("  Reshaping the unit cell.")
@@ -174,7 +177,6 @@ class Format(genice2.formats.Format):
 
         self.output = s
 
-        logger.info("Hook1: end.")
 
 
     # Reshaping matrix (Must be integers)

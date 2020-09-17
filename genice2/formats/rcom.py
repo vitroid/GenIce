@@ -5,19 +5,23 @@ Centers of mass of water molecule
 
 import numpy as np
 from logging import getLogger
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {1:self.hook1}
+        return {1:self.Hook1}
 
-    def hook1(self, ice):
+    @timeit
+    @banner
+    def Hook1(self, ice):
+        "Output centers of mass of water molecules."
         logger = getLogger()
-        logger.info("Hook1: Output centers of mass of water molecules.")
         cellmat = ice.repcell.mat
         s = ""
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
@@ -35,4 +39,3 @@ class Format(genice2.formats.Format):
                                                        rpos[2])
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
-        logger.info("Hook1: end.")

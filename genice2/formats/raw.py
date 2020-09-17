@@ -11,9 +11,10 @@ Jupyter and Google Colab environment. Raw data is not available in the command l
 from collections import defaultdict
 from logging import getLogger
 import numpy as np
-
-
+from genice2.decorators import timeit, banner
 import genice2.formats
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         unknown = dict()
@@ -29,13 +30,13 @@ class Format(genice2.formats.Format):
 
     def hooks(self):
         hook_funcs = {
-            1:self.hook1,
-            2:self.hook2,
-            3:self.hook3,
-            4:self.hook4,
-            5:self.hook5,
-            6:self.hook6,
-            7:self.hook7,
+            1:self.Hook1,
+            2:self.Hook2,
+            3:self.Hook3,
+            4:self.Hook4,
+            5:self.Hook5,
+            6:self.Hook6,
+            7:self.Hook7,
             }
         active = dict()
         for i in self.stages:
@@ -44,58 +45,65 @@ class Format(genice2.formats.Format):
         return active
 
 
-    def hook1(self, ice):
+    @timeit
+    @banner
+    def Hook1(self, ice):
+        "Replicate water molecules to make a repeated cell."
         logger = getLogger()
-        logger.info("Hook1: Replicate water molecules to make a repeated cell.")
         self.output["reppositions"] = ice.reppositions
         self.output["repcell"]      = ice.repcell.mat
         self.output["repcagetype"]  = ice.repcagetype
         self.output["repcagepos"]   = ice.repcagepos
         self.output["cagetypes"]    = ice.cagetypes
-        logger.info("Hook1: end.")
 
 
-    def hook2(self, ice):
+    @timeit
+    @banner
+    def Hook2(self, ice):
+        "Make a random graph and replicate."
         logger = getLogger()
-        logger.info("Hook2: Make a random graph and replicate.")
         self.output["dopants"]      = ice.dopants
         self.output["groups"]       = ice.groups
         self.output["filled_cages"] = ice.filled_cages
         self.output["graph"]        = ice.graph
-        logger.info("Hook2: end.")
 
 
-    def hook3(self, ice):
+    @timeit
+    @banner
+    def Hook3(self, ice):
+        "Make a true ice graph."
         logger = getLogger()
-        logger.info("Hook3: Make a true ice graph.")
         self.output["graph"]        = ice.graph
-        logger.info("Hook3: end.")
 
 
-    def hook4(self, ice):
+    @timeit
+    @banner
+    def Hook4(self, ice):
+        "Depolarize."
         logger = getLogger()
-        logger.info("Hook4: Depolarize.")
         self.output["spacegraph"]   = ice.spacegraph
-        logger.info("Hook4: end.")
 
 
-    def hook5(self, ice):
+    @timeit
+    @banner
+    def Hook5(self, ice):
+        "Prepare orientations for rigid water molecules."
         logger = getLogger()
-        logger.info("Hook5: Prepare orientations for rigid water molecules.")
         self.output["reppositions"] = ice.reppositions
         self.output["rotmatrices"]  = ice.rotmatrices
-        logger.info("Hook5: end.")
 
 
-    def hook6(self, ice):
+    @timeit
+    @banner
+    def Hook6(self, ice):
+        "Arrange atoms of water and replacements."
         logger = getLogger()
-        logger.info("Hook6: Arrange atoms of water and replacements.")
         self.output["atoms"]        = ice.atoms
-        logger.info("Hook6: end.")
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Arrange all atoms."
         logger = getLogger()
-        logger.info("Hook7: Arrange all atoms.")
         self.output["atoms"]        = ice.atoms
-        logger.info("Hook7: end.")

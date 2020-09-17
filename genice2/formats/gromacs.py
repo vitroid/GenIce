@@ -8,18 +8,23 @@ desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
 
 from logging import getLogger
 import genice2.formats
+from genice2.decorators import timeit, banner
+
+
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {7:self.hook7}
+        return {7:self.Hook7}
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output in Gromacs format."
         logger = getLogger()
-        logger.info("Hook7: Output in Gromacs format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         if len(ice.atoms) > 99999:
             logger.warn("  Gromacs fixed format cannot deal with atoms more than 99999. Residue number and atom number are faked.")
@@ -52,4 +57,3 @@ class Format(genice2.formats.Format):
                                                                     )
         s += '#' + "\n#".join(ice.doc) + "\n"
         self.output = s
-        logger.info("Hook7: end.")

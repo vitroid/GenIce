@@ -6,25 +6,28 @@ Crude Cif file format
 from math import acos,pi
 import numpy as np
 from logging import getLogger
+from genice2.decorators import timeit, banner
+import genice2.formats
 
 
 def nearly_zero(x):
     return np.dot(x,x) < 1e-10
 
 
-import genice2.formats
 class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
     def hooks(self):
-        return {7:self.hook7}
+        return {7:self.Hook7}
 
 
-    def hook7(self, ice):
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output in CIF format."
         logger = getLogger()
-        logger.info("Hook7: Output in CIF format.")
         logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         cellmat = ice.repcell.mat
 
@@ -75,4 +78,3 @@ _atom_site_fract_z
             s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(atomname,position[0],position[1],position[2],label)
         s += "\n"
         self.output = s
-        logger.info("Hook7: end.")
