@@ -32,6 +32,12 @@ def rhomb(cell):
     return Polyhedron(points=[list(point) for point in points],
                       faces=[face for face in faces])
 
+# it becomes much easier if the openpyscad supports multmatrix.
+#def rhomb(cell):
+#    affine = np.zeros([3,4])
+#    affine[:3,:3] = cell.T
+#    return Cube().multmatrix(affine.tolist())
+
 # copied from rings.py
 def bond(p1, p2, r):
     d = p2 - p1

@@ -6,6 +6,7 @@ from genice2 import __version__
 from genice2.cli import SmartFormatter, help_format, logger_setup
 from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser
+from genice2.decorators import timeit, banner
 
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
@@ -130,8 +131,12 @@ def getoptions():
 
 
 
-
+@timeit
+@banner
 def main():
+    """
+    GenIce
+    """
     # Module-loading paths
     # 1. Look for the modules in the current working directory
     sys.path.append(".")
@@ -142,8 +147,6 @@ def main():
     # Set verbosity level
     logger = logger_setup(options.debug, options.quiet)
     logger.debug("Debug mode.")
-
-    logger.debug(options.Type)
 
     lattice_type = options.Type
     seed = options.seed

@@ -101,21 +101,32 @@ class ScadPrims(Prims):
     def Render(self, file=None):
         "Rendering with OpenSCAD."
         logger = getLogger()
-        s = []
+        layers = defaultdict(Union)
         for typ, args, kwargs in self.prims:
             if typ == "cyl":
                 p1, p2, r = args
-                s.append(bond(p1, p2, r).color(self.palette[kwargs["color"]]))
+                layer = kwargs["layer"]
+                #pal   = "palette{0}".format(kwargs["color"])
+                layers[layer].append(bond(p1, p2, r).color(self.palette[kwargs["color"]]))
             elif typ == "ply":
                 p = args[0]
                 r = 0.02
+                layer = kwargs["layer"]
+                #pal   = "palette{0}".format(kwargs["color"])
                 for i in range(len(p)):
-                    s.append(Sphere(r).translate(list(p[i])).color(self.palette[kwargs["color"]]))
-                    s.append(bond(p[i-1], p[i], r).color(self.palette[kwargs["color"]]))
+                    layers[layer].append(Sphere(r).translate(list(p[i])).color(self.palette[kwargs["color"]]))
+                    layers[layer].append(bond(p[i-1], p[i], r).color(self.palette[kwargs["color"]]))
             else:
                 logger.warn("Unknown primitive: {0}".format(typ))
         if file is None:
-            return "$fn=20;\n"+"\n".join([prim.dumps() for prim in s])
+            output = "$fn=20;"
+            #for p, color in self.palette.items():
+            #    output += "palette{0}={1};\n".format(p,list(color))
+            for layer in layers:
+                output += "module layer{0}()".format(layer)+"{" + layers[layer].dumps() + "}\n"
+            for layer in layers:
+                output += "layer{0}();\n".format(layer)
+            return output
         assert False
 
 

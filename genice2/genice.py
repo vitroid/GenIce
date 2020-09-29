@@ -21,7 +21,6 @@ from genice2.decorators import timeit, banner
 # for alkyl groups (Experimental)
 from genice2 import alkyl
 
-
 def assume_tetrahedral_vectors(v):
     """
     Assume missing vectors at a tetrahedral node.
@@ -381,6 +380,8 @@ class GenIce():
     as_is:   Avoids shuffling of the orientations of water molecules.
     signature: A text that is inserted in the output.
     """
+    @timeit
+    @banner
     def __init__(self,
                  lat,
                  signature="",
@@ -394,7 +395,7 @@ class GenIce():
                  shift=(0.,0.,0.),
                  seed=1000,
                  ):
-
+        "Constructor of GenIce."
         logger = getLogger()
         self.rep = rep
         self.asis = asis

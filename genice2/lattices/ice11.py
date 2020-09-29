@@ -1,15 +1,8 @@
 #!/usr/bin/python
-"""
-
-Computational Materials Science 49 (2010) S170–S175
-Predicting the hydrogen bond ordered structures of ice Ih, II, III, VI and ice VII: DFT methods with localized based set
-Xiaofeng Fan a, Dan Bing a, Jingyun Zhang a, Zexiang Shen a, Jer-Lai Kuo a,b,*
-
-Figure 1(d) #19
-"""
 import numpy as np
 
-desc={"ref": {"[11#19]": "Xiaofeng Fan, Dan Bing, Jingyun Zhang, Zexiang Shen, Jer-Lai Kuo, Computational Materials Science 49 (2010) S170–S175"},
+desc={"ref": {"[11#19]": "Xiaofeng Fan, Dan Bing, Jingyun Zhang, Zexiang Shen, Jer-Lai Kuo, Computational Materials Science 49 (2010) S170–S175; Figure 1(d) #19", 
+              "[11]":    "Jackson, S. M., V. M. Nield, R. W. Whitworth, M. Oguro, and C. C. Wilson, 1997, ‘‘Single-crystal neutron diffraction studies of the structure of ice XI,’’ J. Phys. Chem. B 101, 6142."},
       "usage": "No options available.",
       "brief": "A candidate for an antiferroelectric Ice XI #19."
       }

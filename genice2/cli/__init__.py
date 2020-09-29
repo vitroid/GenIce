@@ -4,6 +4,7 @@ import argparse as ap
 from textwrap import wrap
 from genice2.plugin import descriptions
 import logging
+from genice2.decorators import timeit, banner
 
 class SmartFormatter(ap.HelpFormatter):
     def _split_lines(self, text, width):
@@ -12,7 +13,11 @@ class SmartFormatter(ap.HelpFormatter):
             return [line for L in text[2:].splitlines() for line in wrap(L, width=55, drop_whitespace=False) ]
         # this is the RawTextHelpFormatter._split_lines
         return ap.HelpFormatter._split_lines(self, text, width)
+
+    @timeit
+    @banner
     def _get_help_string(self, action):
+        "General help handler"
         if callable(action.help):
             return action.help()
         return action.help
