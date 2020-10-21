@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.0.0
+version 2.0.0b1
 
 ## Requirements
 
@@ -13,6 +13,7 @@ version 2.0.0
 * yaplotlib>=0.1
 * numpy
 * wheel
+* openpyscad
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce). 
@@ -26,15 +27,16 @@ Install with pip3.
     
 ## Usage
 
-    usage: genice [-h] [--version] [--rep REP REP REP] [--dens DENS]
-                  [--add_noise percent] [--seed SEED] [--format name]
-                  [--water model] [--guest D=empty] [--Guest 13=me]
-                  [--Group 13=bu-:0] [--anion 3=Cl] [--cation 3=Na]
-                  [--visual visual] [--nodep] [--asis] [--debug] [--quiet]
+    usage: genice [-h] [--version] [--rep REP REP REP] [--shift SHIFT SHIFT SHIFT]
+                  [--dens DENS] [--add_noise percent] [--seed SEED]
+                  [--format name] [--water model] [--guest D=empty]
+                  [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
+                  [--cation 3=Na] [--visual visual] [--depol DEPOL] [--asis]
+                  [--debug] [--quiet]
                   Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.0.0)
+    (version 2.0.0b1)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See 
@@ -49,6 +51,8 @@ Install with pip3.
                             1. Lattice structures served with GenIce
                              
                             0, ice0         Metastable ice "0".
+                            11, XI, ice11   A candidate for an antiferroelectric 
+                                            Ice XI #19.
                             12, XII, ice12  Ice XII.
                             13, XIII, ice13 Ice XIII.
                             16, CS2, MTN, XVI, ice16, sII   Ice XVI.
@@ -71,7 +75,17 @@ Install with pip3.
                             9, IX, ice9     Ice IX.
                             A, iceA         Hypothetical ice A.
                             A15, Struct33   Cubic Structure I of clathrate hydrate.
+                            ACO, BSV, LTA, MAR, NON, SGT, engel01, engel02, 
+                                            engel03, engel04, engel05, engel06, 
+                                            engel07, engel08, engel09, engel10, 
+                                            engel11, engel12, engel13, engel15, 
+                                            engel16, engel18, engel19, engel21, 
+                                            engel22, engel25, engel27, engel28, 
+                                            engel29, engel31, engel32, engel33, 
+                                            engel34 Hypothetical zeolitic ice
                             B, iceB         Hypothetical ice B.
+                            DDR, engel17    Hypothetical zeolitic ice; A hexagonal 
+                                            variant of CS2.
                             DOH, HS3, sH    Clathrate type H.
                             c0te            Filled ice C0 by Teeratchanan 
                                             (Hydrogen-disordered.) (Positions of 
@@ -82,37 +96,36 @@ Install with pip3.
                             c2te            Filled ice C2 (cubic ice) by 
                                             Teeratchanan (Hydrogen disordered). 
                                             (Positions of guests are supplied.)
-                            ice11_19        A candidate for an antiferroelectric 
-                                            Ice XI #19.
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are 
                                             supplied.)
                             ice2rect        Orthogonalized Ice II.
                             ----
                             (Undocumented) 1h_unit C14 C15 C36 CRN1 CRN2 CRN3 CS1 
-                            CS4 EMT FAU FK6layers FK9layers HS1 HS2 Hcomp Kcomp LTA
-                             MEP RHO SOD Struct01 Struct02 Struct03 Struct04 
-                            Struct05 Struct06 Struct07 Struct08 Struct09 Struct10 
-                            Struct11 Struct12 Struct13 Struct14 Struct15 Struct16 
-                            Struct17 Struct18 Struct19 Struct20 Struct21 Struct22 
-                            Struct23 Struct24 Struct25 Struct26 Struct27 Struct28 
-                            Struct29 Struct30 Struct31 Struct32 Struct34 Struct35 
-                            Struct36 Struct37 Struct38 Struct39 Struct40 Struct41 
-                            Struct42 Struct43 Struct44 Struct45 Struct46 Struct47 
-                            Struct48 Struct49 Struct50 Struct51 Struct52 Struct53 
-                            Struct54 Struct55 Struct56 Struct57 Struct58 Struct59 
-                            Struct60 Struct61 Struct62 Struct63 Struct64 Struct65 
-                            Struct66 Struct67 Struct68 Struct69 Struct70 Struct71 
-                            Struct72 Struct73 Struct74 Struct75 Struct76 Struct77 
-                            Struct78 Struct79 Struct80 Struct81 Struct82 Struct83 
-                            Struct84 T TS1 Z delta dtc i ice1h_unit iceR iceT iceT2
-                             mu prism psigma sI sIII sIV sTprime sV sVII sigma xFAU
-                             xFAU2 zra-d
+                            CS4 EMT FAU FK6layers FK9layers HS1 HS2 Hcomp Kcomp MEP
+                             RHO SOD Struct01 Struct02 Struct03 Struct04 Struct05 
+                            Struct06 Struct07 Struct08 Struct09 Struct10 Struct11 
+                            Struct12 Struct13 Struct14 Struct15 Struct16 Struct17 
+                            Struct18 Struct19 Struct20 Struct21 Struct22 Struct23 
+                            Struct24 Struct25 Struct26 Struct27 Struct28 Struct29 
+                            Struct30 Struct31 Struct32 Struct34 Struct35 Struct36 
+                            Struct37 Struct38 Struct39 Struct40 Struct41 Struct42 
+                            Struct43 Struct44 Struct45 Struct46 Struct47 Struct48 
+                            Struct49 Struct50 Struct51 Struct52 Struct53 Struct54 
+                            Struct55 Struct56 Struct57 Struct58 Struct59 Struct60 
+                            Struct61 Struct62 Struct63 Struct64 Struct65 Struct66 
+                            Struct67 Struct68 Struct69 Struct70 Struct71 Struct72 
+                            Struct73 Struct74 Struct75 Struct76 Struct77 Struct78 
+                            Struct79 Struct80 Struct81 Struct82 Struct83 Struct84 T
+                             TS1 Z delta dtc i ice1h_unit iceR iceT iceT2 mu prism 
+                            psigma sI sIII sIV sTprime sV sVII sigma xFAU xFAU2 
+                            zra-d
                              
                              
-                            2. Lattice structures served by plugins
+                            2. Lattice structures served by external plugins
                              
-                            (None)
+                            cif             Read a CIF file.
+                            zeolite         Obtain from IZA Zeolite DB.
                             ----
                              
                              
@@ -128,6 +141,9 @@ Install with pip3.
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell along a, b, and c axes. [1,1,1]
+      --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
+                            Shift the unit cell along a, b, and c axes. (0.5==half
+                            cell) [0,0,0]
       --dens DENS, -d DENS  Specify the ice density in g/cm3 (Guests are not
                             included.)
       --add_noise percent   Add a Gauss noise with given width (SD) to the
@@ -156,19 +172,19 @@ Install with pip3.
                             p, python, reshape              Cell-reshaper.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
+                            raw             Raw data.
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
-                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
+                            (Undocumented) c cif cif2 com r rcom towhee xyz
                              
                              
-                            2. Formatters served by plugins
+                            2. Formatters served by external plugins
                              
-                            _RDF            Radial Distribution Functions.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
-                            twist           Twist order parameter.
                             ----
+                            (Undocumented) _RDF  twist 
                              
                              
                             3. Formatters served locally
@@ -195,7 +211,7 @@ Install with pip3.
                             molecule. (3=Na, 39=NH4, etc.)
       --visual visual       Specify the yaplot file to store the depolarization
                             paths. [""]
-      --nodep               No depolarization.
+      --depol DEPOL         Depolarization. (strict, optimal, or none) ["strict"]
       --asis                Assumes all given HB pairs to be fixed. No shuffle and
                             no depolarization.
       --debug, -D           Output debugging info.
@@ -358,112 +374,6 @@ Make V-structures (removal of quick librational motion of water) from the given 
 
 ### Usage of `analice`
 
-    usage: analice [options]
-    
-    GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.0.0)
-    
-    positional arguments:
-      File                  Input file(s). File type is estimated from the suffix. 
-                            Files of different types cannot be read at a time. File
-                             type can be specified explicitly with -s option.
-                             
-                             
-                            [Available input file types]
-                             
-                            1. File types served with GenIce
-                             
-                            exyz            Extended XYZ format.
-                            gro             Gromacs .gro file.
-                            mdv             MDView file (in Angdtrom).
-                            mdva            MDView file (in au).
-                            ----
-                            (Undocumented) ar3r nx3a
-                             
-                             
-                            2. File types served by plugins
-                             
-                            (None)
-                            ----
-                             
-                             
-                            3. File types served locally
-                             
-                            (None)
-                            ----
-                             
-                             
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      --version, -V         show program's version number and exit
-      --format name, -f name
-                            Specify the output file format. [gromacs]
-                             
-                             
-                            [Available formatters]
-                             
-                            1. Formatters served with GenIce
-                             
-                            _KG             Kirkworrd G factor.
-                            _ringstat       Bond direction statistics.
-                            d, digraph      Directed graph of HBs.
-                            e, euler        Rigid rotor (Euler angle).
-                            exmol           Extended XMol file format.
-                            exyz            Extended XYZ format.
-                            g, gromacs      Gromacs .gro file.
-                            graph           Undirected graph of HBs.
-                            m, mdview       MDView file (in Angdtrom).
-                            mdv_au          MDView file (in au).
-                            o, openscad     OpenSCAD.
-                            p, python, reshape              Cell-reshaper.
-                            povray          Povray.
-                            q, quaternion   Rigid rotor (Quaternion).
-                            rings           Show rings in Yaplot.
-                            y, yaplot       Yaplot.
-                            ----
-                            (Undocumented) bdl c cif cif2 com r rcom towhee xyz
-                             
-                             
-                            2. Formatters served by plugins
-                             
-                            _RDF            Radial Distribution Functions.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
-                            twist           Twist order parameter.
-                            ----
-                             
-                             
-                            3. Formatters served locally
-                             
-                            (None)
-                            ----
-                             
-                             
-      --output %04d.gro, -o %04d.gro
-                            Output in separate files.
-      --water model, -w model
-                            Replace water model. (tip3p, tip4p, etc.) [tip3p]
-      --oxygen OW, -O OW    Specify atom name of oxygen in input Gromacs file.
-                            ("O")
-      --hydrogen HW[12], -H HW[12]
-                            Specify atom name (regexp) of hydrogen in input
-                            Gromacs file. ("H")
-      --suffix gro, -s gro  Specify the file suffix explicitly. ((None)
-      --filerange [from:]below[:interval]
-                            Specify the number range for the input filename.
-                            ("0:1000000")
-      --framerange [from:]below[:interval]
-                            Specify the number range for the input frames.
-                            ("0:1000000")
-      --debug, -D           Output debugging info.
-      --quiet, -q           Do not output progress messages.
-      --add_noise percent   Add a Gauss noise with given width (SD) to the
-                            molecular positions of water. The value 1 corresponds
-                            to 1 percent of the molecular diameter of water.
-      --avgspan 1, -v 1     Output mean atomic positions of a given time span so
-                            as to remove fast librational motions and to make a
-                            smooth video. The values 0 and 1 specify no averaging.
 
 ## Output formats (`genice` and `analice`)
 

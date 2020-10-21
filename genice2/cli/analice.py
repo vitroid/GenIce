@@ -4,7 +4,7 @@ import argparse as ap
 from genice2.cli import SmartFormatter, help_format, logger_setup
 from genice2 import __version__, load, analice
 #from genice2.plugin import descriptions
-from genice2.plugin import safe_import
+from genice2.plugin import safe_import, descriptions
 from genice2.valueparser import plugin_option_parser
 
 def help_file():

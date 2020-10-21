@@ -30,6 +30,9 @@ cages.py
 /*.log
 /*.voro
 /*.db
+/*.cif
+/*.png
+/*.pdf
 benchmark\.txt
 README\.md\.1
 
@@ -53,5 +56,7 @@ tests-local/
 
 genice2/*/_original
 genice2/*/_original2
+genice2/*.cif
+genice2/*/*.cif
 
 .ipynb_checkpoints/
