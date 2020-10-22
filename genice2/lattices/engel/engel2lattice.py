@@ -79,21 +79,21 @@ ices={
 13: "PCOD8047078",
 14: "67_2_1563",    #missing in SI
 15: "PCOD8172143",
-16: "152_2_118474", #totally broken
+16: "152_2_118474",
 17: "DDR",
 18: "11_2_15848",
 19: "91_2_8335121",
 20: "PCOD8301974",  #missing in SI
 21: "PCOD8045578",
 22: "58_2_511",
-23: "151_2_4949650", #missing in SI
-24: "PCOD8007225",   #missing in SI
+23: "151_2_4949650",#missing in SI
+24: "PCOD8007225",  #missing in SI
 25: "2_2_342692",
-26: "PCOD8321499",   #missing in SI
+26: "PCOD8321499",  #missing in SI
 27: "PCOD8047931",
 28: "15_2_201714",
 29: "MAR",
-30: "PCOD8324623",   #missing in SI
+30: "PCOD8324623",  #missing in SI
 31: "SGT",
 32: "20_2_28176",
 33: "14_2_48453",
@@ -102,6 +102,7 @@ ices={
 
 import os
 
+assert False, "Do not run it. Some files are modified by hand."
 for num, ice in ices.items():
     try:
         with open(ice+".castep") as file:

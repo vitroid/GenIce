@@ -59,4 +59,6 @@ genice2/*/_original2
 genice2/*.cif
 genice2/*/*.cif
 
+genice2/lattices/engel/diverse_ice_structures
+
 .ipynb_checkpoints/
