@@ -140,6 +140,15 @@ def import_extra(category, name):
 
 
 def safe_import(category, name):
+    """
+    Load a plugin.
+
+    The plugins can exist either in the system, as a extra plugin, or in the
+    local folder.
+
+    category: The type of the plugin; "lattice", "format", "molecule", or "loader".
+    name:     The name of the plugin.
+    """
     logger = getLogger()
     assert category in ("lattice", "format", "molecule", "loader")
 

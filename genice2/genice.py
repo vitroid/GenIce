@@ -772,7 +772,7 @@ class GenIce():
         # test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
         if not self.test2:
-            logger.warn("Test2 failed.")
+            logger.warn("Ice rule is not satisfied.")
 
         return self.test2
 
