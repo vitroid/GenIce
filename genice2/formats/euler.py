@@ -13,6 +13,10 @@ import genice2.formats
 
 
 class Format(genice2.formats.Format):
+    """
+The positions and orientations (in Euler angles) of the water molecules are output in @NX3A format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

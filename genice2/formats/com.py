@@ -10,6 +10,10 @@ import genice2.formats
 
 
 class Format(genice2.formats.Format):
+    """
+Centers-of-mass of water molecules are output in @AR3A format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

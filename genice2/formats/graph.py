@@ -13,6 +13,10 @@ import genice2.formats
 
 
 class Format(genice2.formats.Format):
+    """
+The topology of the hydrogen bond network is output as an undirected graph in @NGPH format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

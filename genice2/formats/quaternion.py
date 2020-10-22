@@ -13,6 +13,10 @@ from genice2.decorators import timeit, banner
 
 
 class Format(genice2.formats.Format):
+    """
+The positions and orientations (in quaternions) of the water molecules are output in @NX4A format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

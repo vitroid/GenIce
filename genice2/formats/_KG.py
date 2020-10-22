@@ -12,6 +12,9 @@ from genice2.decorators import timeit, banner
 
 #It should be expressed as a function of distance.
 class Format(genice2.formats.Format):
+    """
+Calculate the Kirkwood G factor.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

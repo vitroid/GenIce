@@ -16,6 +16,43 @@ import genice2.formats
 
 
 class Format(genice2.formats.Format):
+    """
+For convenience, the internal data can be obtained.
+
+Options:
+  stages=[1,2,3]  Stages from which internal data are obtained.
+
+Available data in each stage:
+
+Stage 1:
+  reppositions: Fractional coordinates of the water molecules in the replicated cell.
+  repcell:      Shape of the replicated simulation cell.
+  repcagetype:  Types of the cages in the replicated cell.
+  repcagepos:   Fractional coordinates of the center of the cages in the replicated cell.
+  cagetypes:    List of the cage types.
+
+Stage 2:
+  dopants
+  groups
+  filled_cages
+  graph:        Topology of the hydrogen bond network (an undirected graph).
+
+Stage 3:
+  digraph:      Topology of the hydrogen bond network (directed graph obeying the ice rule).
+
+Stage 4:
+  spacegraph:   Topology of the hydrogen bond network (Depolarized).
+
+Stage 5:
+  reppositions: Fractional coordinates of the water molecules in the replicated cell.
+  rotmatrices:  Rotation matrices of the water molecules.
+
+Stage 6:
+  atoms:        Positions of atoms of the water molecules.
+
+Stage 7:
+  atoms:        Positions of atoms of all molecules.
+    """
     def __init__(self, **kwargs):
         unknown = dict()
         self.stages = []
@@ -73,7 +110,7 @@ class Format(genice2.formats.Format):
     def Hook3(self, ice):
         "Make a true ice graph."
         logger = getLogger()
-        self.output["graph"]        = ice.graph
+        self.output["digraph"]      = ice.graph
 
 
     @timeit

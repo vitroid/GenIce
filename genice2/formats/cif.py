@@ -15,6 +15,10 @@ def nearly_zero(x):
 
 
 class Format(genice2.formats.Format):
+    """
+Atomic positions are in a crude CIF format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

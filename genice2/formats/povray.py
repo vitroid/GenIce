@@ -38,6 +38,10 @@ def Include(filename):
 
 
 class Format(genice2.formats.Format):
+    """
+The atomic positions of the molecules are output in Povray format.
+No options available.
+    """
 
 
     def __init__(self, **kwargs):

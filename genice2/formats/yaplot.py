@@ -19,6 +19,12 @@ import genice2.formats
 
 
 class Format(genice2.formats.Format):
+    """
+Output the atomic positions in Yaplot format.
+
+Options:
+    H=x   Set the radius of H to be x
+    """
     size_H = 0.01
 
 

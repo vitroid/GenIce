@@ -12,6 +12,10 @@ from genice2.decorators import timeit, banner
 
 
 class Format(genice2.formats.Format):
+    """
+The topology of the hydrogen bond network is output as a digraph in @NGPH format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

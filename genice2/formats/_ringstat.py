@@ -3,7 +3,7 @@
 A formatter plugin to show the bond orientation statistics along the rings in an ice strucure.
 
 Usage:
-    genice2 5 -f _ringstat
+    genice2 5 -f _ringstat[max=8]
 
 _ringstat plugin makes the statistics of bond orientations along each
 HB ring and compare the distribution with that of an ideal (isolated
@@ -17,6 +17,9 @@ Ringstat analysis validates the ring-scale randomness. GenIce tool
 also certifies the zero net dipole moment and Bernal-Fowler-Pauling
 ice rule in terms of the validity in global and local structures.
 
+Options:
+  max=8     Size of the largest cycle to be examined.
+
 Columns in the output:
   ring size
   code (decimal) indicating the orientations of the bonds along a cycle.
@@ -28,7 +31,7 @@ Columns in the output:
 
 Finally, dKL between expectiations and observations is also shown.
 
-% genice2 1h -r 2 2 3 -f _ringstat
+% genice2 1h -r 2 2 3 -f _ringstat[max=6]
 
 6 0 000000 64/365 0.17534 66/384 0.17188
 6 1 000001 96/365 0.26301 92/384 0.23958
@@ -161,16 +164,42 @@ def orientations(members, digraph):
 
 
 class Format(genice2.formats.Format):
+    """
+_ringstat plugin makes the statistics of bond orientations along each
+HB ring and compare the distribution with that of an ideal (isolated
+random) ring. The difference in the distribution is evaluated by
+Kullback-Leibler divergence, d_{KL}.
+A typical dKL is zero for hydrogen-disordered ices, while it is
+larger than 1 for hydrogen-ordered ones like ices 2 and 9.
+
+Ringstat analysis validates the ring-scale randomness. GenIce tool
+also certifies the zero net dipole moment and Bernal-Fowler-Pauling
+ice rule in terms of the validity in global and local structures.
+
+Options:
+  max=8     Size of the largest cycle to be examined.
+
+Columns in the output:
+  ring size
+  code (decimal) indicating the orientations of the bonds.
+  code (binary)
+  expectation (fractional) for an isolated random ring
+  expectation (numerical)
+  observation (fractional) in the given structure
+  observation (numerical)
+
+dKL between expectiations and observations is also calculated.
+    """
     largestring=8
 
     def __init__(self, **kwargs):
         logger = getLogger()
         unknown = dict()
         for k, v in kwargs.items():
-            try:
-                self.largestring=int(k)
-            except:
-                logger.error("Argument must be a positive integer.")
+            if k == "max":
+                self.largestring=int(v)
+            else:
+                logger.error(f"Unknown keyword: {k}")
                 sys.exit(1)
         logger.info("  Largest ring: {0}.".format(self.largestring))
         super().__init__(**kwargs)
@@ -202,27 +231,6 @@ class Format(genice2.formats.Format):
 
         #size code code(binary) Approx. Stat.
         logger.info("""
-        _ringstat plugin makes the statistics of bond orientations along each
-        HB ring and compare the distribution with that of an ideal (isolated
-        random) ring. The difference in the distribution is evaluated by
-        Kullback-Leibler # divergence, d_{KL}.
-        A typical dKL is zero for hydrogen-disordered ices, while it is
-        larger than 1 for hydrogen-ordered ones like ices 2 and 9.
-
-        Ringstat analysis validates the ring-scale randomness. GenIce tool
-        also certifies the zero net dipole moment and Bernal-Fowler-Pauling
-        ice rule in terms of the validity in global and local structures.
-
-        Columns in the output:
-          ring size
-          code (decimal) indicating the orientations of the bonds.
-          code (binary)
-          expectation (fractional) for an isolated random ring
-          expectation (numerical)
-          observation (fractional) in the given structure
-          observation (numerical)
-
-        dKL between expectiations and observations is also calculated.
         """)
         s = ""
         for n in range(3, self.largestring+1):

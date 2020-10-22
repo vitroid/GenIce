@@ -86,14 +86,31 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
 
 
 class Format(genice2.formats.Format):
+    """
+A formatter plugin to produce a python lattice plugin.
 
+Options:
+    reshape=[i,j,k,l,m,n,o,p,q]  Nine integers separated by commas.
+
+    Cell vectors of the reshaped cell, a', b' and c' is calculated by linear combinations of the original cell vectors, a, b, and c, as
+
+        a' = i a + j b + k c
+        b' = l a + m b + n c
+        c' = o a + p b + q c
+
+    Water molecules are relocated appropriately.
+    """
 
     def __init__(self, **kwargs):
         self.ijk = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         unknown = dict()
         for k, v in kwargs.items():
             if re.match("^[-+0-9,]+$", k) is not None and v is True:
+                # for commandline use
                 self.ijk = np.array([int(x) for x in k.split(",")]).reshape(3,3)
+            elif k == "reshape":
+                # for API
+                self.ijk = np.array(v, dtype=int).reshape(3,3)
             else:
                 unknown[k] = v
         super().__init__(**unknown)

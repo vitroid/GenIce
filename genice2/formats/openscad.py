@@ -54,6 +54,16 @@ def test():
 
 
 class Format(genice2.formats.Format):
+    """
+The positions of the water molecules are output in OpenSCAD format.
+
+Options:
+  scale=50    Scaling factor.
+  rnode=0.07  Radius of the nodes.
+  rbond=0.06  Radius of the bonds.
+  fn=20       Number of divisions for a curved surface.
+  cycle=False Draw a polygon at each cycle in the HB network.
+    """
 
     def __init__(self, **kwargs):
         self.options=dict(scale=50, rnode=0.07, rbond=0.06, fn=20, cycle=False)

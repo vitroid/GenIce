@@ -19,6 +19,10 @@ AA = 0.1 # nm
 
 
 class Format(genice2.formats.Format):
+    """
+The atomic positions of the molecules are output in MDView format.
+No options available.
+    """
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
