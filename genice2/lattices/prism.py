@@ -20,6 +20,13 @@ def usage():
 
 
 class Lattice(genice2.lattices.Lattice):
+    """
+Generate a prism ice.
+
+Options:
+  rows=r
+  sides=s
+    """
     def __init__(self, **kwargs):
         logger = getLogger()
         # global sides, rows, bondlen, density, cell, waters, coord
