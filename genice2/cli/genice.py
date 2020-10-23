@@ -196,14 +196,15 @@ def main():
                 seed=seed,
     )
 
-    water_type = options.water
     guests = options.guests
     noise = options.noise
     depol = options.depol
     file_format, format_options = plugin_option_parser(options.format)
 
+    water_type, water_options = plugin_option_parser(options.water)
     logger.debug("Water type: {0}".format(water_type))
-    water = safe_import("molecule", water_type).Molecule()
+    water = safe_import("molecule", water_type).Molecule(**water_options)
+
     # Main part of the program is contained in th Formatter object. (See formats/)
     logger.debug("Output file format: {0}".format(file_format))
     formatter_module = safe_import("format", file_format)

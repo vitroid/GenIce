@@ -108,9 +108,9 @@ def main():
     formatter_module = safe_import("format", file_format)
     formatter = formatter_module.Format(**format_options)
 
-    water_type = options.water
+    water_type, water_options = plugin_option_parser(options.water)
     logger.debug("Water type: {0}".format(water_type))
-    water_module = safe_import("molecule", water_type)
+    water = safe_import("molecule", water_type).Molecule(**water_options)
 
     oname = options.oatom
     hname = options.hatom
@@ -138,7 +138,6 @@ def main():
     del options  # Dispose for safety.
 
     for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
-        water = water_module.Molecule()
         lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
 
         result = analice.AnalIce(lattice_info, signature=signature).analyze_ice(water=water,

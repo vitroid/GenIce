@@ -16,7 +16,7 @@ import pairlist as pl
 from genice2 import digraph as dg
 from genice2.plugin import safe_import
 from genice2.cell import rel_wrap, Cell
-from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten
+from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten, plugin_option_parser
 from genice2.decorators import timeit, banner
 # for alkyl groups (Experimental)
 from genice2 import alkyl
@@ -981,7 +981,9 @@ class GenIce():
 
             # molecular guests
             for molec, cages in molecules.items():
-                gmol = safe_import("molecule", molec).Molecule()
+                guest_type, guest_options = plugin_option_parser(molec)
+                logger.debug("Guest type: {0}".format(guest_type))
+                gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
 
                 try:
                     mdoc = gmol.__doc__.splitlines()
