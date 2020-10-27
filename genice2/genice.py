@@ -106,18 +106,17 @@ def orientations(coord, graph, cell):
     return rotmatrices
 
 
-def arrange_atoms(coord, cell, rotmatrices, intra, labels, name, ignores=set()):
+def arrange_atoms(coord, cell, rotmatrices, molecule, ignores=set()):
     logger = getLogger()
     atoms = []
-
-    if len(intra) == 0:
-        return atoms
 
     for order, pos in enumerate(coord):
         if order in ignores:
             continue
 
         abscom = cell.rel2abs(pos)  # relative to absolute
+
+        name, labels, intra = molecule.get() #Molecule class
         rotated = np.dot(intra, rotmatrices[order])
 
         for i in range(len(labels)):
@@ -865,13 +864,10 @@ class GenIce():
         for line in mdoc:
             logger.info("  "+line)
 
-        name, labels, sites = water.get()
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
                                    self.rotmatrices,
-                                   sites,
-                                   labels,
-                                   name,
+                                   water,
                                    ignores=set(self.dopants))
 
 
@@ -985,7 +981,6 @@ class GenIce():
                 guest_type, guest_options = plugin_option_parser(molec)
                 logger.debug("Guest type: {0}".format(guest_type))
                 gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
-                name, labels, sites = gmol.get()
 
                 try:
                     mdoc = gmol.__doc__.splitlines()
@@ -996,7 +991,7 @@ class GenIce():
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
-                                            cmat, sites, labels, name)
+                                            cmat, gmol)
 
         # Assume the dopant is monatomic and replaces one water molecule
         atomset = defaultdict(set)
@@ -1006,12 +1001,11 @@ class GenIce():
         for name, labels in atomset.items():
             pos = [self.reppositions[i] for i in sorted(labels)]
             rot = [self.rotmatrices[i] for i in sorted(labels)]
+            monatom = genice2.molecules.one.Molecule(label=name)
             self.atoms += arrange_atoms(pos,
                                         self.repcell,
                                         rot,
-                                        [[0., 0., 0.], ],
-                                        [name],
-                                        name)
+                                        monatom)
 
 
     def prepare_random_graph(self, fixed):

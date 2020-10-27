@@ -226,7 +226,7 @@ def main():
                      )
     if type(output) is bytes:
         sys.stdout.buffer.write(output)
-    else:
+    elif output is not None:
         sys.stdout.write(output)
 
 
