@@ -4,6 +4,8 @@ desc={"ref": {"TIP7P": "Zhao, C.-L. et al. Seven-Site Effective Pair Potential f
       "usage": "No options available."
       }
 
+water=1  # Identify
+
 import math
 import numpy as np
 
@@ -26,7 +28,7 @@ class Molecule(genice2.molecules.Molecule):
         oz  = -ohz*2/mass
 
 
-        self.sites = np.array([[0, 0,oz],
+        self.sites_ = np.array([[0, 0,oz],
                           [0, ohy,ohz+oz],
                           [0,-ohy,ohz+oz],
                           [0, ohy/2,ohz/2+oz],
@@ -35,6 +37,6 @@ class Molecule(genice2.molecules.Molecule):
                           [-olx,0,olz+oz],
                           ]) # nm, OHHMMLL
 
-        self.atoms = ["O", "H", "H", ".", ".", ".", "."]
-        self.labels = ["OW","HW1","HW2","MW1","MW2","LW1","LW2"]
-        self.name = "SOL"
+        self.atoms_ = ["O", "H", "H", ".", ".", ".", "."]
+        self.labels_ = ["OW","HW1","HW2","MW1","MW2","LW1","LW2"]
+        self.name_ = "SOL"

@@ -865,12 +865,13 @@ class GenIce():
         for line in mdoc:
             logger.info("  "+line)
 
+        name, labels, sites = water.get()
         self.atoms = arrange_atoms(self.reppositions,
                                    self.repcell,
                                    self.rotmatrices,
-                                   water.sites,
-                                   water.labels,
-                                   water.name,
+                                   sites,
+                                   labels,
+                                   name,
                                    ignores=set(self.dopants))
 
 
@@ -984,6 +985,7 @@ class GenIce():
                 guest_type, guest_options = plugin_option_parser(molec)
                 logger.debug("Guest type: {0}".format(guest_type))
                 gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
+                name, labels, sites = gmol.get()
 
                 try:
                     mdoc = gmol.__doc__.splitlines()
@@ -994,7 +996,7 @@ class GenIce():
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.atoms += arrange_atoms(cpos, self.repcell,
-                                            cmat, gmol.sites, gmol.labels, gmol.name)
+                                            cmat, sites, labels, name)
 
         # Assume the dopant is monatomic and replaces one water molecule
         atomset = defaultdict(set)

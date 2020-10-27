@@ -16,12 +16,17 @@ from collections import defaultdict
 from textwrap import fill
 from genice2.decorators import timeit, banner
 
+@timeit
+@banner
 def scan(category):
+    """
+    Scan available plugins.
+    """
     logger = getLogger()
 
     modules = {}
     desc = dict()
-    modules["desc"] = desc
+    iswater = dict()
 
     logger.info("\nPredefined {0}s".format(category))
     module = importlib.import_module("genice2.{0}s".format(category))
@@ -39,6 +44,7 @@ def scan(category):
             module = importlib.import_module("genice2.{0}s.{1}".format(category, mod))
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
+            iswater[mod] = "water" in module.__dict__
         except:
             pass
 
@@ -52,6 +58,7 @@ def scan(category):
             module = ep.load()
             if "desc" in module.__dict__:
                 desc[label] = module.desc["brief"]
+            iswater[mod] = "water" in module.__dict__
         except:
             pass
     logger.info(mods)
@@ -63,14 +70,24 @@ def scan(category):
         module = importlib.import_module("{0}s.{1}".format(category, mod))
         if "desc" in module.__dict__:
             desc[mod] = module.desc["brief"]
+        iswater[mod] = "water" in module.__dict__
     logger.info(mods)
     modules["local"] = mods
+    modules["desc"] = desc
+    modules["iswater"] = iswater
 
     return modules
 
 
 
-def descriptions(category, width=72):
+def descriptions(category, width=72, water=False):
+    """
+    Show the list of available plugins in the category.
+
+    Options:
+      width=72      Width of the output.
+      water=False   Pick up water molecules only (for molecule plugin).
+    """
     titles={ "lattice": {"system": "1. Lattice structures served with GenIce",
                          "extra":  "2. Lattice structures served by external plugins",
                          "local":  "3. Lattice structures served locally",
@@ -91,10 +108,16 @@ def descriptions(category, width=72):
     mods = scan(category)
     catalog = " \n \n{0}\n \n".format(titles[category]["title"])
     desc = mods["desc"]
+    iswater = mods["iswater"]
     for group in ("system", "extra", "local"):
         desced = defaultdict(list)
         undesc = []
         for L in mods[group]:
+            if category == "molecule":
+                if water and not iswater[L]:
+                    continue
+                if not water and iswater[L]:
+                    continue
             if L in desc:
                 desced[desc[L]].append(L)
             else:

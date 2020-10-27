@@ -5,6 +5,13 @@ import numpy as np
 from logging import getLogger
 import genice2.molecules
 
+
+desc={
+      "usage": "No options available.",
+      "brief": "An all-atom tetrahydrofuran (THF) model."
+      }
+
+
 class Molecule(genice2.molecules.Molecule):
     def __init__(self):
         self.sites = np.array([

@@ -12,7 +12,7 @@ desc={
         "BSV": "Database of Zeolite Structures, https://asia.iza-structure.org/IZA-SC/framework.php?STC=BSV"
     },
     "usage": "No options available.",
-    "brief": "Hypothetical zeolitic ice"
+    "brief": "Hypothetical zeolitic ice of the gyroid structure."
 }
 
 import genice2.lattices

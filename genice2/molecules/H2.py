@@ -11,8 +11,8 @@ import genice2.molecules
 
 class Molecule(genice2.molecules.Molecule):
     def __init__(self):
-        self.sites = np.array([[0,0,-0.037],
+        self.sites_ = np.array([[0,0,-0.037],
                                [0,0,+0.037]])   # nm, HH
 
-        self.labels = ["H","H"]
-        self.name = "H2"
+        self.labels_ = ["H","H"]
+        self.name_ = "H2"

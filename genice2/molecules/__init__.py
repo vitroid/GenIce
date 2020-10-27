@@ -11,13 +11,16 @@ class Molecule():
 
         # sites: positions of interaction sites relative to a center of molecule
         # a numpy array of rank (N, 3) where N is number of sites
-        self.sites = np.zeros([1,3])
+        self.sites_ = np.zeros([1,3])
 
         # Labels of the interaction sites.
-        self.labels = ["Me",]
+        self.labels_ = ["Me",]
 
         # the name that represents the molecule. It is necessary for Gromacs format.
-        self.name = "MET"
+        self.name_ = "MET"
 
-        # Define a list of atom names when the molecule contains virtual sites.
-        self.atoms = None
+    def get(self):
+        """
+        Return an instance of the molecule.
+        """
+        return self.name_, self.labels_, self.sites_

@@ -101,7 +101,7 @@ HS1.xyz: $(FMT)/xyz.py
 #test for spot semiclathrate (TBAB)
 	$(GENICE) HS1 --depol=none -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@
 TS1.yap: $(FMT)/yaplot.py
-	$(GENICE) TS1 --guest 12=g12 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
+	$(GENICE) TS1 --guest 14=mol[THF.mol] --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
 c0te.yap: $(FMT)/yaplot.py
 	$(GENICE) c0te --guest Ne1=g12 --rep 2 2 2 --format yaplot | fgrep -v "Command line:" > $@
 c1te.yap: $(FMT)/yaplot.py

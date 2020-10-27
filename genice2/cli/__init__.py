@@ -6,6 +6,17 @@ from genice2.plugin import descriptions
 import logging
 from genice2.decorators import timeit, banner
 
+# common helps for genice and analice
+def help_format():
+    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format", width=55)
+
+def help_water():
+    return 'R|Specify the water model. [tip3p]\n\n'+descriptions("molecule", water=True, width=55)
+
+
+
+
+
 class SmartFormatter(ap.HelpFormatter):
     def _split_lines(self, text, width):
         if text.startswith('R|'):
@@ -21,9 +32,6 @@ class SmartFormatter(ap.HelpFormatter):
         if callable(action.help):
             return action.help()
         return action.help
-
-def help_format():
-    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format", width=55)
 
 def logger_setup(debug=False, quiet=False):
     # Set verbosity level

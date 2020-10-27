@@ -5,14 +5,20 @@ import numpy as np
 from logging import getLogger
 import genice2.molecules
 
+
+desc={
+      "usage": "No options available.",
+      "brief": "A united-atom five-site tetrahydrofuran (THF) model."
+      }
+
 class Molecule(genice2.molecules.Molecule):
     def __init__(self):
-        self.sites = np.array([[ 0.,       -0.119625,  0.      ],
+        self.sites_ = np.array([[ 0.,       -0.119625,  0.      ],
                                [ 0.116284, -0.039705,  0.      ],
                                [ 0.076453,  0.107915,  0.      ],
                                [-0.076453,  0.107915,  0.      ],
                                [-0.116284, -0.039705,  0.      ]])
 
-        self.atoms = ["O","C","C","C","C"]
-        self.labels = ["O","CA","CB","CB","CA"]
-        self.name = "THF"
+        self.atoms_ = ["O","C","C","C","C"]
+        self.labels_ = ["O","CA","CB","CB","CA"]
+        self.name_ = "THF"

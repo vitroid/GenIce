@@ -4,6 +4,13 @@ import numpy as np
 from logging import getLogger
 import genice2.molecules
 
+desc={
+  "usage": "No options available.",
+  "brief": "A typical 5-site model.",
+}
+
+water=1  # Identify
+
 class Molecule(genice2.molecules.Molecule):
 
 
@@ -18,13 +25,13 @@ class Molecule(genice2.molecules.Molecule):
         omz =-om * math.cos(mangle)
         omx = om * math.sin(mangle)
         oz  = -ohz*2/mass
-        self.sites = np.array([[0, 0,oz],
+        self.sites_ = np.array([[0, 0,oz],
                           [0, ohy,ohz+oz],
                           [0,-ohy,ohz+oz],
                           [ omx,0,omz+oz],
                           [-omx,0,omz+oz],
                           ]) # nm, OHHMM
 
-        self.atoms = ["O","H","H",".","."]
-        self.labels = ["OW","HW1","HW2","MW1","MW2"]
-        self.name = "SOL"
+        self.atoms_ = ["O","H","H",".","."]
+        self.labels_ = ["OW","HW1","HW2","MW1","MW2"]
+        self.name_ = "SOL"

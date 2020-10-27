@@ -6,10 +6,10 @@ import genice2.molecules
 class Molecule(genice2.molecules.Molecule):
     def __init__(self, **kwargs):
         #placeholder for 12-hedral cage
-        self.sites = np.array([[0,0,0]])
-        self.labels=["X",]
-        self.name="X"
+        self.sites_ = np.array([[0,0,0]])
+        self.labels_=["X",]
+        self.name_="X"
         if "label" in kwargs:
-            self.labels = [kwargs["label"],]
+            self.labels_ = [kwargs["label"],]
         if "name" in kwargs:
-            self.name = kwargs["name"]
+            self.name_ = kwargs["name"]

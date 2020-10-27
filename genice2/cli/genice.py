@@ -3,7 +3,7 @@ import argparse as ap
 import logging
 from genice2.plugin import safe_import, descriptions
 from genice2 import __version__
-from genice2.cli import SmartFormatter, help_format, logger_setup
+from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
 from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser
 from genice2.decorators import timeit, banner
@@ -13,8 +13,8 @@ from genice2.decorators import timeit, banner
 def help_type():
     return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice", width=55)
 
-def help_format():
-    return 'R|Specify the output file format. [gromacs]\n\n'+descriptions("format")
+def help_guest():
+    return 'R|Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n'+descriptions("molecule", water=False, width=55)
 
 def getoptions():
     parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
@@ -65,14 +65,14 @@ def getoptions():
                         dest='water',
                         default="tip3p",
                         metavar="model",
-                        help='Specify water model. (tip3p, tip4p, etc.) [tip3p]')
+                        help=help_water)
     parser.add_argument('--guest',
                         '-g',
                         nargs=1,
                         dest='guests',
                         metavar="D=empty",
                         action="append",
-                        help='Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)')
+                        help=help_guest)
     parser.add_argument('--Guest',
                         '-G',
                         nargs=1,
