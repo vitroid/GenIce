@@ -6,7 +6,7 @@ desc={
         "DDR": "Database of Zeolite Structures, https://asia.iza-structure.org/IZA-SC/framework.php?STC=DDR"
     },
     "usage": "No options available.",
-    "brief": "Hypothetical zeolitic ice; A hexagonal variant of CS2."
+    "brief": "Hypothetical zeolitic ice"
 }
 
 import genice2.lattices

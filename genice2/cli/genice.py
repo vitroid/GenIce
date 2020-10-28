@@ -126,6 +126,11 @@ def getoptions():
                         action='store_true',
                         dest='quiet',
                         help='Do not output progress messages.')
+    parser.add_argument('--assess_cages',
+                        '-A',
+                        action='store_true',
+                        dest='assess_cages',
+                        help='Assess the locations of cages based on the HB network topology. Note: it may fail when the unit cell is too small.')
     parser.add_argument('Type',
                         help=help_type)
     return parser.parse_args()
@@ -204,6 +209,7 @@ def main():
             parse_guest(guests, guest_spec)
     noise = options.noise
     depol = options.depol
+    assess_cages = options.assess_cages
     file_format, format_options = plugin_option_parser(options.format)
 
     water_type, water_options = plugin_option_parser(options.water)
@@ -228,6 +234,7 @@ def main():
                      record_depolarization_path=record_depolarization_path,
                      noise=noise,
                      depol=depol,
+                     assess_cages = assess_cages,
                      )
     if type(output) is bytes:
         sys.stdout.buffer.write(output)

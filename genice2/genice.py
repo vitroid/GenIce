@@ -23,6 +23,11 @@ from genice2 import alkyl
 # A virtual monatomic molecule
 from genice2.molecules import one
 
+# for cage assessment
+from genice2.polyhed import Polyhed, centerOfMass, cage_to_graph
+from countrings import countrings_nx as cr
+from graphstat import GraphStat
+
 def assume_tetrahedral_vectors(v):
     """
     Assume missing vectors at a tetrahedral node.
@@ -396,7 +401,23 @@ class GenIce():
                  shift=(0.,0.,0.),
                  seed=1000,
                  ):
-        "Constructor of GenIce."
+        """
+        Constructor of GenIce.
+
+        Arguments:
+            lat:        The ice lattice.
+            signature:  A string for a signature.
+            density:    Target density.
+            rep:        Cell repetitions.
+            cations:    Labels of water molecules that are replaced by the cations.
+            anions:
+            spot_guests:Labels of cages in which a guest is placed.
+            spot_groups:Labels of cages in which a group is placed.
+            asis:       Do not modify the orientations of the hydrogen bonds.
+            shift:      A fractional value to be added to the positions.
+            seed:       A random seed.
+
+        """
         logger = getLogger()
         self.rep = rep
         self.asis = asis
@@ -581,12 +602,15 @@ class GenIce():
                      record_depolarization_path=None,
                      depol="strict",
                      noise=0.,
+                     assess_cages = False,
                      ):
         """
         Generate an ice structure and dump it with the aid of a formatter plugin.
 
-        water:     genice2.molecules.Molecule() class
-        formatter: genice2.format.Format() class
+            water:     genice2.molecules.Molecule() class
+            formatter: genice2.format.Format() class
+            assess_cages:   Cages will be assessed on the fly instead of
+                        pre-specified in the lattice plugin.
         """
 
         logger = getLogger()
@@ -600,7 +624,8 @@ class GenIce():
                 if maxstage < 1 or abort:
                     return
 
-            self.Stage1(noise)
+            self.Stage1(noise,
+                        assess_cages=assess_cages)
 
             if 1 in hooks:
                 abort = hooks[1](self)
@@ -656,7 +681,8 @@ class GenIce():
     @timeit
     @banner
     def Stage1(self,
-               noise=0.):
+               noise=0.,
+               assess_cages=False):
         """
         Replicate water molecules to make a repeated cell.
 
@@ -686,6 +712,57 @@ class GenIce():
                                        scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
+
+
+        if assess_cages:
+            import networkx as nx
+            logger.info("  Assessing the cages...")
+            # Prepare the list of rings
+            ringlist = [[int(x) for x in ring] for ring in cr.CountRings(nx.Graph(self.graph), pos=self.waters).rings_iter(8)]
+            # Positions of the centers of the rings.
+            ringpos = [centerOfMass(ringnodes, self.waters) for ringnodes in ringlist]
+            maxcagesize = 22
+            cagepos = []
+            cagetypes = []
+            # Detect cages and classify
+            db = GraphStat()
+            labels = set()
+            g_id2label = dict()
+            for cage in Polyhed(ringlist, maxcagesize):
+                cagepos.append(centerOfMass(list(cage), ringpos))
+                g = cage_to_graph(cage, ringlist)
+                cagesize = len(cage)
+                g_id = db.query_id(g)
+                if g_id < 0:
+                    g_id = db.register()
+                    enum = 0
+                    label = f"A{cagesize}"
+                    while label in labels:
+                        enum += 1
+                        label = f"A{cagesize}_{enum}".format(cagesize, enum)
+                    g_id2label[g_id] = label
+                    labels.add(label)
+                    ringcount = [0 for i in range(9)]
+                    for ring in cage:
+                        ringcount[len(ringlist[ring])]+= 1
+                    index = []
+                    for i in range(9):
+                        if ringcount[i] > 0:
+                            index.append(f"{i}^{ringcount[i]}")
+                    index = " ".join(index)
+                    logger.info(f"    Cage type: {label} ({index})")
+
+
+                else:
+                    label = g_id2label[g_id]
+                cagetypes.append(label)
+            if len(cagepos) > 0:
+                self.cagepos = np.array(cagepos)
+                self.cagetype = cagetypes
+            else:
+                logger.info("    No cages detected.")
+            logger.info("  Done assessment.")
+
 
         if self.cagepos is not None:
             logger.info("  Hints:")
@@ -819,6 +896,8 @@ class GenIce():
             record_depolarization_path.write(yapresult)
         else:
             dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
+
+
 
     @timeit
     @banner
