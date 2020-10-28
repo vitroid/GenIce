@@ -44,6 +44,38 @@ def parse_cages(cages):
     return cagepos, cagetype
 
 
+def parse_guest(guests, arg):
+    """
+    Parameters
+        guests: a dictionary; key is the cage type, value is the guest fractions
+        arg: Argumets of --guest option.
+
+    Returns:
+        guests: the updated dictionary.
+    """
+    cagetype, spec = arg.split("=")
+
+    # spec contains a formula consisting of "+" and "*"
+    contents = spec.split("+")
+
+    assert cagetype not in guests, "Cage type already specified."
+
+    for content in contents:
+
+        if "*" in content:
+            molec, frac = content.split("*")
+            frac = float(frac)
+            guests[cagetype][molec] = frac
+        else:
+            molec = content
+            frac = 1.0
+            guests[cagetype][molec] = frac
+
+    return guests
+
+
+
+
 def parse_pairs(values):
     if isinstance(values, str):
         lines = values.split("\n")

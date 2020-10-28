@@ -1,11 +1,12 @@
 import sys
 import argparse as ap
 import logging
+from collections import defaultdict
 from genice2.plugin import safe_import, descriptions
 from genice2 import __version__
 from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
 from genice2.genice import GenIce
-from genice2.valueparser import plugin_option_parser
+from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 
 
@@ -68,35 +69,35 @@ def getoptions():
                         help=help_water)
     parser.add_argument('--guest',
                         '-g',
-                        nargs=1,
+                        # nargs=1,
                         dest='guests',
-                        metavar="D=empty",
+                        metavar="14=me",
                         action="append",
                         help=help_guest)
     parser.add_argument('--Guest',
                         '-G',
-                        nargs=1,
+                        #nargs=1,
                         dest='spot_guests',
                         metavar="13=me",
                         action="append",
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
     parser.add_argument('--Group',
                         '-H',
-                        nargs=1,
+                        #nargs=1,
                         dest='groups',
                         metavar="13=bu-:0",
                         action="append",
                         help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
-                        nargs=1,
+                        #nargs=1,
                         dest='anions',
                         metavar="3=Cl",
                         action="append",
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation',
                         '-c',
-                        nargs=1,
+                        #nargs=1,
                         dest='cations',
                         metavar="3=Na",
                         action="append",
@@ -158,22 +159,22 @@ def main():
     if options.anions is not None:
         logger.info(options.anions)
         for v in options.anions:
-            key, value = v[0].split("=")
+            key, value = v.split("=")
             anions[int(key)] = value
     cations = dict()
     if options.cations is not None:
         for v in options.cations:
-            key, value = v[0].split("=")
+            key, value = v.split("=")
             cations[int(key)] = value
     spot_guests = dict()
     if options.spot_guests is not None:
         for v in options.spot_guests:
-            key, value = v[0].split("=")
+            key, value = v.split("=")
             spot_guests[int(key)] = value
     groups = dict()
     if options.groups is not None:
         for v in options.groups:
-            key, value = v[0].split("=")
+            key, value = v.split("=")
             groups[int(key)] = value
 
     lattice_type, lattice_options = plugin_option_parser(options.Type)
@@ -196,7 +197,11 @@ def main():
                 seed=seed,
     )
 
-    guests = options.guests
+    guests = defaultdict(dict)
+    if options.guests is not None:
+        logger.info(options.guests)
+        for guest_spec in options.guests:
+            parse_guest(guests, guest_spec)
     noise = options.noise
     depol = options.depol
     file_format, format_options = plugin_option_parser(options.format)

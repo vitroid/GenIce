@@ -20,6 +20,8 @@ from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten,
 from genice2.decorators import timeit, banner
 # for alkyl groups (Experimental)
 from genice2 import alkyl
+# A virtual monatomic molecule
+from genice2.molecules import one
 
 def assume_tetrahedral_vectors(v):
     """
@@ -575,7 +577,7 @@ class GenIce():
     def generate_ice(self,
                      water,
                      formatter,
-                     guests=[],
+                     guests={},
                      record_depolarization_path=None,
                      depol="strict",
                      noise=0.,
@@ -905,47 +907,33 @@ class GenIce():
                     molecules[molec].append(cage)
                     self.filled_cages.add(cage)
 
-            if guests is not None:
+            # process the -g option
+            for cagetype, contents in guests.items():
+                assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(cagetype)
+                resident = dict()
+                rooms = list(self.cagetypes[cagetype] - self.filled_cages)
 
-                # process the -g option
-                for arg in guests:
-                    logger.debug(arg[0])
-                    cagetype, spec = arg[0].split("=")
-                    assert cagetype in self.cagetypes, "Nonexistent cage type: {0}".format(cagetype)
-                    resident = dict()
-                    rooms = list(self.cagetypes[cagetype] - self.filled_cages)
+                for room in rooms:
+                    resident[room] = None
 
-                    for room in rooms:
-                        resident[room] = None
+                vacant = len(rooms)
 
-                    # spec contains a formula consisting of "+" and "*"
-                    contents = spec.split("+")
-                    vacant = len(rooms)
+                for molec, frac in contents.items():
+                    nmolec = int(frac * len(rooms) + 0.5)
+                    vacant -= nmolec
+                    assert vacant >= 0, "Too many guests."
+                    remain = nmolec
+                    movedin = []
 
-                    for content in contents:
+                    while remain > 0:
+                        r = random.randint(0, len(rooms) - 1)
+                        room = rooms[r]
 
-                        if "*" in content:
-                            molec, frac = content.split("*")
-                            frac = float(frac)
-                        else:
-                            molec = content
-                            frac = 1.0
-
-                        nmolec = int(frac * len(rooms) + 0.5)
-                        vacant -= nmolec
-                        assert vacant >= 0, "Too many guests."
-                        remain = nmolec
-                        movedin = []
-
-                        while remain > 0:
-                            r = random.randint(0, len(rooms) - 1)
-                            room = rooms[r]
-
-                            if resident[room] is None:
-                                resident[room] = molec
-                                molecules[molec].append(room)
-                                movedin.append(room)
-                                remain -= 1
+                        if resident[room] is None:
+                            resident[room] = molec
+                            molecules[molec].append(room)
+                            movedin.append(room)
+                            remain -= 1
 
             # Now ge got the address book of the molecules.
             if len(molecules):
@@ -1001,7 +989,7 @@ class GenIce():
         for name, labels in atomset.items():
             pos = [self.reppositions[i] for i in sorted(labels)]
             rot = [self.rotmatrices[i] for i in sorted(labels)]
-            monatom = genice2.molecules.one.Molecule(label=name)
+            monatom = one.Molecule(label=name)
             self.atoms += arrange_atoms(pos,
                                         self.repcell,
                                         rot,
