@@ -102,11 +102,11 @@ def getoptions():
                         metavar="3=Na",
                         action="append",
                         help='Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)')
-    parser.add_argument('--visual',
-                        dest='visual',
-                        default="",
-                        metavar="visual",
-                        help='Specify the yaplot file to store the depolarization paths. [""]')
+    # parser.add_argument('--visual',
+    #                     dest='visual',
+    #                     default="",
+    #                     metavar="visual",
+    #                     help='Specify the yaplot file to store the depolarization paths. [""]')
     parser.add_argument('--depol',
                         dest='depol',
                         default="strict",
@@ -221,17 +221,11 @@ def main():
     formatter_module = safe_import("format", file_format)
     formatter = formatter_module.Format(**format_options)
 
-    if options.visual != "":
-        record_depolarization_path = open(options.visual, "w")
-    else:
-        record_depolarization_path = None
-
     del options  # Dispose for safety.
 
     output = lat.generate_ice(water=water,
                      guests=guests,
                      formatter=formatter,
-                     record_depolarization_path=record_depolarization_path,
                      noise=noise,
                      depol=depol,
                      assess_cages = assess_cages,

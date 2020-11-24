@@ -599,7 +599,6 @@ class GenIce():
                      water,
                      formatter,
                      guests={},
-                     record_depolarization_path=None,
                      depol="strict",
                      noise=0.,
                      assess_cages = False,
@@ -646,8 +645,7 @@ class GenIce():
                 if maxstage < 4 or abort:
                     return
 
-            self.Stage4(depol=depol,
-                        record_depolarization_path=record_depolarization_path)
+            self.Stage4(depol=depol)
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -873,13 +871,12 @@ class GenIce():
 
     @timeit
     @banner
-    def Stage4(self, depol="strict", record_depolarization_path=None):
+    def Stage4(self, depol="strict"):
         """
         Depolarize.
 
         Provided variables:
         spacegraph: depolarized network with node positions.
-        yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
         logger = getLogger()
@@ -887,15 +884,24 @@ class GenIce():
         if self.asis:
             depol = "none"
 
-        self.spacegraph = dg.SpaceIceGraph(self.graph,
+        # self.spacegraph = dg.SpaceIceGraph(self.graph,
+        #                                    coord=self.reppositions,
+        #                                    ignores=self.graph.ignores)
+        # dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
+        digraph = dg.depolarize(self.graph,
+                                coord=self.reppositions,
+                                ignores=self.graph.ignores,
+                                cell=self.repcell.mat,
+                                depol=depol)
+        # for debug
+        # digraph = dg.depolarize(digraph,
+        #                         coord=self.reppositions,
+        #                         ignores=self.graph.ignores,
+        #                         cell=self.repcell.mat,
+        #                         depol=depol)
+        self.spacegraph = dg.SpaceIceGraph(digraph,
                                            coord=self.reppositions,
                                            ignores=self.graph.ignores)
-        if record_depolarization_path is not None:
-            draw = dg.YaplotDraw(self.reppositions, self.repcell.mat, data=self.spacegraph)
-            yapresult = dg.depolarize(self.spacegraph, self.repcell.mat, draw=draw, depol=depol)
-            record_depolarization_path.write(yapresult)
-        else:
-            dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
 
 
 

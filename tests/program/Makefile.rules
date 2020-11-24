@@ -18,7 +18,7 @@ all: 7.analice.yap.test
 all: 2D3.analice.yap.test
 all: 1h.ringstat.test
 all: T.kg.test
-all: RHO.dep.yap.test
+all: RHO.yap.test
 all: 9.yap.test dtc.yap.test # 5R.yap.test iceR.yap.test
 all: 2d.gro.test
 all: 4.ngph.test
@@ -39,8 +39,6 @@ all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 	$(GENICE) $* -f _ringstat -r 2 2 2 | fgrep -v "Command line:" > $@
 %.kg: $(FMT)/_KG.py
 	$(GENICE) $* -f _KG | fgrep -v "Command line:" > $@
-%.dep.yap:
-	$(GENICE) $* --visual $@ -r 2 2 2 > /dev/null
 %.yap: $(FMT)/yaplot.py
 	$(GENICE) $* -f yaplot | fgrep -v "Command line:" > $@
 test1.done: $(FMT)/gromacs.py
