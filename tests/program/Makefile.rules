@@ -29,6 +29,7 @@ all: i.graph.test
 all: 0.exyz.test
 all: 2.exmol.test
 all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
+all: CS2D.gro.test
 
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
@@ -94,6 +95,10 @@ CS2B.gro: $(FMT)/gromacs.py
 	$(GENICE) CS2 --depol=none -g 12=co2 -g 16=uathf --rep 1 1 2 --water 5site  | fgrep -v "Command line:" > $@
 CS2C.gro: $(FMT)/gromacs.py
 	$(GENICE) CS2 --depol=none -g 12=H2 -g 16=ch4 --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
+
+#test for cage assessment
+CS2D.gro: $(FMT)/gromacs.py
+	$(GENICE) CS2 -A -g A12=me --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
 
 HS1.xyz: $(FMT)/xyz.py
 #test for spot semiclathrate (TBAB)

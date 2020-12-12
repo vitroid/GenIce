@@ -62,7 +62,7 @@ desc = { "ref": { "Hollins1964": "Hollins, G. T. Configurational statistics and 
 
 
 import itertools as it
-from countrings import countrings_nx as cr
+from cycless.cycles import cycles_iter
 import sys
 from collections import defaultdict
 import networkx as nx
@@ -223,7 +223,7 @@ dKL between expectiations and observations is also calculated.
             prob[n] = probabilities(n)
             stat[n] = defaultdict(int)
 
-        for ring in cr.CountRings(graph, pos=ice.reppositions).rings_iter(self.largestring):
+        for ring in cycles_iter(graph, self.largestring,  pos=ice.reppositions):
             ori = orientations(ring, ice.spacegraph)
             c   = encode(ori)
             n   = len(ring)

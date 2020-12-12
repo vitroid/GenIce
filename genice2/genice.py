@@ -12,6 +12,8 @@ import itertools as it
 
 import numpy as np
 import pairlist as pl
+from cycless.polyhed import polyhedra_iter, cage_to_graph
+from cycless.cycles  import centerOfMass, cycles_iter
 
 from genice2 import digraph as dg
 from genice2.plugin import safe_import
@@ -24,8 +26,6 @@ from genice2 import alkyl
 from genice2.molecules import one
 
 # for cage assessment
-from genice2.polyhed import Polyhed, centerOfMass, cage_to_graph
-from countrings import countrings_nx as cr
 from graphstat import GraphStat
 
 def assume_tetrahedral_vectors(v):
@@ -716,7 +716,7 @@ class GenIce():
             import networkx as nx
             logger.info("  Assessing the cages...")
             # Prepare the list of rings
-            ringlist = [[int(x) for x in ring] for ring in cr.CountRings(nx.Graph(self.graph), pos=self.waters).rings_iter(8)]
+            ringlist = [[int(x) for x in ring] for ring in cycles_iter(nx.Graph(self.graph), 8, pos=self.waters)]
             # Positions of the centers of the rings.
             ringpos = [centerOfMass(ringnodes, self.waters) for ringnodes in ringlist]
             maxcagesize = 22
@@ -726,7 +726,7 @@ class GenIce():
             db = GraphStat()
             labels = set()
             g_id2label = dict()
-            for cage in Polyhed(ringlist, maxcagesize):
+            for cage in polyhedra_iter(ringlist, maxcagesize):
                 cagepos.append(centerOfMass(list(cage), ringpos))
                 g = cage_to_graph(cage, ringlist)
                 cagesize = len(cage)

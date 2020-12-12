@@ -34,7 +34,7 @@ setup(name='GenIce2',
       keywords=['genice2',],
       license='MIT',
       packages=find_packages(),
-      install_requires=['networkx>=2', 'countrings>=0.1.7', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', 'openpyscad', 'graphstat'],
+      install_requires=['networkx>=2', 'cycless', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', 'openpyscad', 'graphstat'],
       entry_points = {
               'console_scripts': [
                   'genice = genice2.cli.genice:main',

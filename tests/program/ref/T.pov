@@ -3090,11 +3090,11 @@ union {
  sphere { <0.982, 3.447, 2.254> ,RH material { MATH }  } 
  cylinder { <0.934, 3.370, 2.222> ,<0.904, 3.326, 2.301> ,ROH material { MATOH }  } 
  cylinder { <0.934, 3.370, 2.222> ,<0.982, 3.447, 2.254> ,ROH material { MATOH }  } 
- sphere { <1.079, -0.000, 2.647> ,RO material { MATO }  } 
+ sphere { <1.079, 0.000, 2.647> ,RO material { MATO }  } 
  sphere { <1.033, 0.076, 2.683> ,RH material { MATH }  } 
  sphere { <1.033, -0.076, 2.683> ,RH material { MATH }  } 
- cylinder { <1.079, -0.000, 2.647> ,<1.033, 0.076, 2.683> ,ROH material { MATOH }  } 
- cylinder { <1.079, -0.000, 2.647> ,<1.033, -0.076, 2.683> ,ROH material { MATOH }  } 
+ cylinder { <1.079, 0.000, 2.647> ,<1.033, 0.076, 2.683> ,ROH material { MATOH }  } 
+ cylinder { <1.079, 0.000, 2.647> ,<1.033, -0.076, 2.683> ,ROH material { MATOH }  } 
  sphere { <1.077, -0.004, 2.310> ,RO material { MATO }  } 
  sphere { <1.029, 0.074, 2.283> ,RH material { MATH }  } 
  sphere { <1.075, -0.002, 2.406> ,RH material { MATH }  } 
@@ -5336,7 +5336,7 @@ union {
  cylinder { <0.612, 2.900, 3.398> ,<0.423, 2.921, 3.348> ,RHB material { MATHB }  } 
  cylinder { <1.096, 3.115, 3.090> ,<1.123, 3.165, 2.901> ,RHB material { MATHB }  } 
  cylinder { <1.015, 3.116, 3.218> ,<0.867, 3.172, 3.310> ,RHB material { MATHB }  } 
- cylinder { <1.075, -0.002, 2.406> ,<1.079, -0.000, 2.647> ,RHB material { MATHB }  } 
+ cylinder { <1.075, -0.002, 2.406> ,<1.079, 0.000, 2.647> ,RHB material { MATHB }  } 
  cylinder { <1.029, 0.074, 2.283> ,<0.936, 0.223, 2.234> ,RHB material { MATHB }  } 
  cylinder { <1.205, 3.214, 0.696> ,<1.403, 3.334, 0.682> ,RHB material { MATHB }  } 
  cylinder { <1.130, 3.093, 0.746> ,<1.129, 2.894, 0.866> ,RHB material { MATHB }  } 
@@ -5380,7 +5380,7 @@ union {
  cylinder { <1.388, 0.178, 2.875> ,<1.354, 0.000, 2.785> ,RHB material { MATHB }  } 
  cylinder { <1.598, 0.377, 2.681> ,<1.664, 0.260, 2.521> ,RHB material { MATHB }  } 
  cylinder { <1.647, 0.458, 2.799> ,<1.794, 0.511, 2.894> ,RHB material { MATHB }  } 
- cylinder { <1.265, 0.000, 2.750> ,<1.079, -0.000, 2.647> ,RHB material { MATHB }  } 
+ cylinder { <1.265, 0.000, 2.750> ,<1.079, 0.000, 2.647> ,RHB material { MATHB }  } 
  cylinder { <1.410, 0.000, 2.708> ,<1.521, 0.005, 2.521> ,RHB material { MATHB }  } 
  cylinder { <1.647, 0.458, 0.798> ,<1.794, 0.518, 0.709> ,RHB material { MATHB }  } 
  cylinder { <1.598, 0.377, 0.916> ,<1.664, 0.260, 1.076> ,RHB material { MATHB }  } 
