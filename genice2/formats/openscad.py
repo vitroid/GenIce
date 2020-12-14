@@ -17,7 +17,7 @@ Options:
 
 import numpy as np
 from logging import getLogger
-import countrings as cr
+# from cycles.cycles import cycles_iter
 from openpyscad import *
 from math import atan2, pi, degrees
 from genice2.decorators import timeit, banner
@@ -62,7 +62,7 @@ Options:
   rnode=0.07  Radius of the nodes.
   rbond=0.06  Radius of the bonds.
   fn=20       Number of divisions for a curved surface.
-  cycle=False Draw a polygon at each cycle in the HB network.
+  # cycle=False Draw a polygon at each cycle in the HB network.
     """
 
     def __init__(self, **kwargs):
@@ -71,8 +71,8 @@ Options:
         for k, v in kwargs.items():
             if k in ("scale", "rnode", "rbond", 'fn'):
                 self.options[k] = float(v)
-            elif k == "cycle":
-                self.options[k] = bool(v)
+            # elif k == "cycle":
+            #     self.options[k] = bool(v)
             else:
                 unknown[k] = v
         super().__init__(**unknown)
@@ -98,7 +98,7 @@ Options:
         rnode = self.options["rnode"]
         rbond = self.options["rbond"]
         fn    = self.options["fn"]
-        cycle = self.options["cycle"]
+        # cycle = self.options["cycle"]
         cellmat = ice.repcell.mat
         rep = np.array(ice.rep)
         trimbox    = ice.cell.mat *np.array([(rep[i]-2) for i in range(3)])

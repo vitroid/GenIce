@@ -29,7 +29,7 @@ import colorsys
 
 from genice2 import rigid
 import genice2.formats
-from countrings import countrings_nx as cr
+from cycless.cycles import cycles_iter
 from genice2.decorators import timeit, banner
 
 
@@ -184,7 +184,7 @@ class Format(genice2.formats.Format):
             self.p.Cylinder(pi @ cellmat, (pi+d) @ cellmat, 0.01, # 0.2 AA
                        color=0,
                        layer=2)
-        for ring in cr.CountRings(graph, pos=ice.reppositions).rings_iter(self.largestring):
+        for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             deltas = np.zeros((len(ring),3))
             d2 = np.zeros(3)
             for k,i in enumerate(ring):

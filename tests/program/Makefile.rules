@@ -18,7 +18,7 @@ all: 7.analice.yap.test
 all: 2D3.analice.yap.test
 all: 1h.ringstat.test
 all: T.kg.test
-all: RHO.dep.yap.test
+all: RHO.yap.test
 all: 9.yap.test dtc.yap.test # 5R.yap.test iceR.yap.test
 all: 2d.gro.test
 all: 4.ngph.test
@@ -29,6 +29,7 @@ all: i.graph.test
 all: 0.exyz.test
 all: 2.exmol.test
 all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
+all: CS2D.gro.test
 
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
@@ -39,8 +40,6 @@ all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 	$(GENICE) $* -f _ringstat -r 2 2 2 | fgrep -v "Command line:" > $@
 %.kg: $(FMT)/_KG.py
 	$(GENICE) $* -f _KG | fgrep -v "Command line:" > $@
-%.dep.yap:
-	$(GENICE) $* --visual $@ -r 2 2 2 > /dev/null
 %.yap: $(FMT)/yaplot.py
 	$(GENICE) $* -f yaplot | fgrep -v "Command line:" > $@
 test1.done: $(FMT)/gromacs.py
@@ -96,6 +95,10 @@ CS2B.gro: $(FMT)/gromacs.py
 	$(GENICE) CS2 --depol=none -g 12=co2 -g 16=uathf --rep 1 1 2 --water 5site  | fgrep -v "Command line:" > $@
 CS2C.gro: $(FMT)/gromacs.py
 	$(GENICE) CS2 --depol=none -g 12=H2 -g 16=ch4 --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
+
+#test for cage assessment
+CS2D.gro: $(FMT)/gromacs.py
+	$(GENICE) CS2 -A -g A12=me --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
 
 HS1.xyz: $(FMT)/xyz.py
 #test for spot semiclathrate (TBAB)

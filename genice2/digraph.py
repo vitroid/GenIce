@@ -9,7 +9,7 @@ Graph variants with geometrical information
 from __future__ import print_function
 import sys
 import math
-import networkx
+import networkx as nx
 import random
 import numpy as np
 from logging import getLogger, DEBUG, basicConfig
@@ -88,7 +88,7 @@ def shortest_paths(G, start, ends, allowfixed=False):
     return paths
 
 
-class YaplotDraw(networkx.DiGraph):
+class YaplotDraw(nx.DiGraph):
     def __init__(self, coord, cell, data=None):
         super().__init__(data)
         self.coord = coord  # fractional coord.
@@ -143,7 +143,7 @@ class YaplotDraw(networkx.DiGraph):
         return s
 
 
-class IceGraph(networkx.DiGraph):
+class IceGraph(nx.DiGraph):
     def __init__(self, data=None):
         super(IceGraph, self).__init__(data)
         # set of nodes that ignore the ice rule.
@@ -342,12 +342,22 @@ class SpaceIceGraph(IceGraph):
         """
         add vector attributes to each edge
         """
-        self.coord = coord  # Shall it be copied?
+        self.coord = coord.copy()
+        self.pbc   = pbc
         for i, j, k in self.edges(data=True):
             vec = coord[j] - coord[i]
             if pbc:
                 vec -= np.floor(vec + 0.5)
             k["vector"] = vec  # each edge has "vector" attribute
+
+    def digraph(self):
+        """
+        Return the digraph only.
+        """
+        di = nx.DiGraph()
+        for i, j, k in self.edges(data=True):
+            di.add_edge(i,j,**k)
+        return di
 
     def dipole_moment(self, order):
         """
@@ -385,14 +395,15 @@ class SpaceIceGraph(IceGraph):
                 logger.error("The edge ({0},{1}) has no vector.".format(i, j))
 
 
-def find_apsis(coord, cell, distance, vertex, axis):
+def find_apsis(vertices, coord, cell, distance, vertex, axis):
     logger = getLogger()
     # for Z case
     apsis = coord[vertex] + axis * 0.5
     # find the atoms near the apsis
     min_r = 1e99
     min_a = -1
-    for i, p in enumerate(coord):
+    for i in vertices:
+        p = coord[i]
         d = p - apsis
         d -= np.floor(d + 0.5)
         a = np.dot(d, cell)
@@ -412,12 +423,12 @@ def estimate_edge_length(spaceicegraph, cell, vertex):
     delta = spaceicegraph.coord[vertex] - spaceicegraph.coord[nei]
     delta -= np.floor(delta + 0.5)
     delta = np.dot(delta, cell)  # distance in abs coord
-    distance = np.dot(delta, delta)**0.5
+    distance = np.linalg.norm(delta)
     logger.debug("Distance={0}".format(distance))
     return distance
 
 
-def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
+def traversing_cycles_iter(spaceicegraph, cell, axis):
     """
     Find a farthest atom from the given atom, and
     make the shortest paths between them.
@@ -428,11 +439,11 @@ def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
     # 近傍の定義のために結合距離が必要。
     distance = 0
     while distance == 0:
-        vertex = random.randint(0, Nnode - 1)
+        vertex = random.sample(spaceicegraph.nodes(), 1)[0]
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
     # すべての頂点を順番にあたる。
-    for vertex in random.sample(range(Nnode), Nnode):
-        apsis = find_apsis(spaceicegraph.coord, cell, distance * 1.3, vertex, axis)
+    for vertex in random.sample(spaceicegraph.nodes(), Nnode):
+        apsis = find_apsis(spaceicegraph.nodes(), spaceicegraph.coord, cell, distance * 1.3, vertex, axis)
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
         path1 = shortest_path(spaceicegraph, vertex, [apsis, ])
         logger.debug("Path1: {0}".format(path1))
@@ -462,8 +473,9 @@ def traversing_cycles_iter(spaceicegraph, cell, axis, draw=None):
             yield cycle
 
 
-def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
+def depolarize_(subgraph, coord, ignores=[], pbc=True, cell=np.identity(3), depol="strict"):
     """
+    Receives a connected component of a large graph.
     Find a farthest atom (apsis) from the given atom, and
     make the shortest paths between them.
 
@@ -474,14 +486,16 @@ def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
 
     """
     logger = getLogger()
-    #logger.debug("  isZ4: {0}".format(spaceicegraph.isZ4()))
-    #logger.debug("  defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
-    spaceicegraph.vector_check()
-    s = ""  # for yaplot
 
     if depol == "none":
         logger.info("  Skip depolarization by request.")
-        return s
+        return subgraph
+
+    spaceicegraph = SpaceIceGraph(subgraph,
+                                  coord   = coord,
+                                  pbc     = pbc,
+                                  ignores = ignores)
+    spaceicegraph.vector_check()
 
     # TSL
     # defect-defect chains
@@ -490,7 +504,7 @@ def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
         if spaceicegraph.degree(node) != 4:
             assert spaceicegraph.degree(node) < 4
             defects.append(node)
-    logger.info("  Non Z4: {0}".format(defects))
+    logger.info(f"  Non Z4: {defects}")
     if len(defects) > 0:
         reject_count = 10
         while reject_count > 0:
@@ -511,11 +525,6 @@ def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
             logger.debug("  Dipole moment = {0}".format(spaceicegraph.dipole_moment(path)))
             new_net_polar = net_polar - spaceicegraph.dipole_moment(path) * 2
             if np.linalg.norm(new_net_polar) < np.linalg.norm(net_polar):
-                if draw is not None:
-                    s += yp.Size(0.03)
-                    s += draw.draw_cell()
-                    s += draw.draw_path(path)
-                    s += yp.NewPage()
                 spaceicegraph.invert_path(path)
                 net_polar = new_net_polar
                 logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
@@ -526,22 +535,18 @@ def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
 
     for axis_ in ([1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]):
         net_polar = spaceicegraph.net_polarization()
+        logger.debug(f"Net polarization: {net_polar}")
         axis = np.array(axis_, dtype=float)
         L1 = (net_polar**2).sum()
         L2 = ((net_polar-axis*2)**2).sum()
         if L2 < L1:
             logger.info("  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
-            for cycle in traversing_cycles_iter(spaceicegraph, cell, axis, draw):
+            for cycle in traversing_cycles_iter(spaceicegraph, cell, axis):
                 if cycle is not None:
                     edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
                     if len(edges) != len(set(edges)):
                         logger.debug("The cycle is entangled.")
                     else:
-                        if draw is not None:
-                            s += yp.Size(0.03)
-                            s += draw.draw_cell()
-                            s += draw.draw_path(cycle)
-                            s += yp.NewPage()
                         spaceicegraph.invert_path(cycle)
                         spaceicegraph.vector_check()
                         net_polar = spaceicegraph.net_polarization()
@@ -554,16 +559,23 @@ def depolarize(spaceicegraph, cell, draw=None, depol="strict"):
 
     if depol == "strict":
         if not np.allclose(net_polar, np.zeros(3)):
-            logger.error("  Gave up on depolarization. Perhaps because they contain ions,"
-                         " or the cells are very small, or have a double network structure."
-                         " When creating an ice structure with a double network "
-                         "(e.g., ice 6 and 7), all repetition numbers (--rep) must be even."
+            logger.error("  Gave up on total depolarization. Perhaps because they contain ions"
+                         " or the cells are very small."
                          " Use --depol=optimal or --depol=none instead.")
             sys.exit(1)
-    #logger.debug("isZ4: {0}".format(spaceicegraph.isZ4()))
-    #logger.debug("defects: {0}".format(spaceicegraph.bernal_fowler_defects()))
-    return s
+    return spaceicegraph.digraph()
 
+
+def depolarize(digraph, coord, ignores=[], pbc=True, cell=np.identity(3), depol="strict"):
+    logger = getLogger()
+    graph = nx.Graph(digraph)
+    newdigraph = nx.DiGraph()
+    for i, subgraph in enumerate(nx.connected_components(graph)):
+        logger.info(f"  Component {i}:")
+        subdigraph = digraph.subgraph(subgraph) # really?
+        newsubdigraph = depolarize_(subdigraph, coord=coord, ignores=ignores, pbc=pbc, cell=cell, depol=depol)
+        newdigraph = nx.union(newdigraph, newsubdigraph)
+    return newdigraph
 
 def purge_ice_defects(icegraph):
     """
@@ -593,7 +605,7 @@ def test():
     basicConfig(level=DEBUG, format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
     logger = getLogger(__name__)
     logger.setLevel(DEBUG)
-    g = networkx.Graph()
+    g = nx.Graph()
     # 6-cycle
     for i in range(5):
         g.add_edge(i,i+1)
