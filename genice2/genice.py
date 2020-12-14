@@ -9,6 +9,7 @@ from logging import getLogger
 from collections import defaultdict
 import random
 import itertools as it
+import string
 
 import numpy as np
 import pairlist as pl
@@ -736,8 +737,9 @@ class GenIce():
                     enum = 0
                     label = f"A{cagesize}"
                     while label in labels:
+                        char = string.ascii_lowercase[enum]
+                        label = f"A{cagesize}{char}".format(cagesize, enum)
                         enum += 1
-                        label = f"A{cagesize}_{enum}".format(cagesize, enum)
                     g_id2label[g_id] = label
                     labels.add(label)
                     ringcount = [0 for i in range(9)]
