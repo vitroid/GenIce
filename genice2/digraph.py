@@ -236,6 +236,15 @@ class IceGraph(nx.DiGraph):
                 return False
         return True
 
+    def isZ22(self):
+        """
+        Reply whether all the vertices have two incomings and two outgoings.
+        """
+        for node in self:
+            if len(list(self.successors(node)))!=2 or len(list(self.predecessors(node)))!=2:
+                return False
+        return True
+
     def purgedefects(self, defects):
         d = defects[0]
         logger = getLogger()

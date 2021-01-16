@@ -74,42 +74,72 @@ def orientations(coord, graph, cell):
     """
 
     logger = getLogger()
-    rotmatrices = []
     assert len(coord) == graph.number_of_nodes()  # just for a test of pure water
 
-    for node in range(graph.number_of_nodes()):
-        if node in graph.ignores:
-            # for dopants; do not rotate
-            rotmat = np.identity(3)
-        else:
-            vsucc = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.successors(node)]
+    # 通常の氷であればアルゴリズムを高速化できる。
 
-            if len(vsucc) < 2:  # TSL
-                vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
-                vsucc = [x / np.linalg.norm(x) for x in vsucc]
-                vpred = [x / np.linalg.norm(x) for x in vpred]
+    if graph.isZ22() and len(graph.ignores)== 0:
+        # fast track
+        rotmatrices = np.zeros([len(list(graph)),3,3])
 
-                if len(vpred) > 2:
-                    vpred = vpred[:2]  # number of incoming bonds should be <= 2
-                vcomp = assume_tetrahedral_vectors(vpred + vsucc)
-                logger.debug("Node {0} vcomp {1} vsucc {2} vpred {3}".format(node, vcomp, vsucc, vpred))
-                vsucc = (vsucc + vcomp)[:2]
+        neis = np.zeros([len(list(graph)),2], dtype=np.int)
+        for node in graph:
+            neis[node] = list(graph.successors(node))
+        # array of donating vectors
+        v0   = coord[neis[:,0]] - coord[:]
+        v0  -= np.floor(v0+0.5)
+        v0   = v0 @ cell.mat
+        v0  /= np.linalg.norm(v0, axis=1)[:, np.newaxis]
+        v1   = coord[neis[:,1]] - coord[:]
+        v1  -= np.floor(v1+0.5)
+        v1   = v1 @ cell.mat
+        v1 /= np.linalg.norm(v1, axis=1)[:, np.newaxis]
+        # intramolecular axes
+        y = v1 - v0
+        y /= np.linalg.norm(y, axis=1)[:, np.newaxis]
+        z = v0 + v1
+        z /= np.linalg.norm(z, axis=1)[:, np.newaxis]
+        x = np.cross(y, z, axisa=1, axisb=1)
+        rotmatrices[:,0,:] = x
+        rotmatrices[:,1,:] = y
+        rotmatrices[:,2,:] = z
+        return rotmatrices
 
-            logger.debug("Node {0} vsucc {1}".format(node, vsucc))
-            assert 2 <= len(vsucc), "Probably a wrong ice network."
-            # normalize vsucc
-            vsucc[0] /= np.linalg.norm(vsucc[0])
-            vsucc[1] /= np.linalg.norm(vsucc[1])
-            y = vsucc[1] - vsucc[0]
-            y /= np.linalg.norm(y)
-            z = (vsucc[0] + vsucc[1]) / 2
-            z /= np.linalg.norm(z)
-            x = np.cross(y, z)
-            # orthogonality check
-            # logger.debug((x@x,y@y,z@z,x@y,y@z,z@x))
-            rotmat = np.vstack([x, y, z])
+    else:
+        rotmatrices = []
+        for node in range(graph.number_of_nodes()):
+            if node in graph.ignores:
+                # for dopants; do not rotate
+                rotmat = np.identity(3)
+            else:
+                vsucc = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.successors(node)]
 
-        rotmatrices.append(rotmat)
+                if len(vsucc) < 2:  # TSL
+                    vpred = [cell.rel2abs(rel_wrap(coord[x] - coord[node])) for x in graph.predecessors(node)]
+                    vsucc = [x / np.linalg.norm(x) for x in vsucc]
+                    vpred = [x / np.linalg.norm(x) for x in vpred]
+
+                    if len(vpred) > 2:
+                        vpred = vpred[:2]  # number of incoming bonds should be <= 2
+                    vcomp = assume_tetrahedral_vectors(vpred + vsucc)
+                    logger.debug("Node {0} vcomp {1} vsucc {2} vpred {3}".format(node, vcomp, vsucc, vpred))
+                    vsucc = (vsucc + vcomp)[:2]
+
+                logger.debug("Node {0} vsucc {1}".format(node, vsucc))
+                assert 2 <= len(vsucc), "Probably a wrong ice network."
+                # normalize vsucc
+                vsucc[0] /= np.linalg.norm(vsucc[0])
+                vsucc[1] /= np.linalg.norm(vsucc[1])
+                y = vsucc[1] - vsucc[0]
+                y /= np.linalg.norm(y)
+                z = (vsucc[0] + vsucc[1]) / 2
+                z /= np.linalg.norm(z)
+                x = np.cross(y, z)
+                # orthogonality check
+                # logger.debug((x@x,y@y,z@z,x@y,y@z,z@x))
+                rotmat = np.vstack([x, y, z])
+
+            rotmatrices.append(rotmat)
 
     return rotmatrices
 

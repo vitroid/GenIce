@@ -145,7 +145,7 @@ def main():
                         noise=noise,
                         )
         if output is not None:
-            sys.stdout = open(output % i, "w")
+            sys.stdout = open(output % i, "wb")
         sys.stdout.write(result)
     if stdout is not None:
         # recover stdout
