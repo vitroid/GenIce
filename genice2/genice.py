@@ -669,7 +669,20 @@ class GenIce():
                 if maxstage < 3 or abort:
                     return
 
-            self.Stage3()
+            # cyclefiller == fast algorithm
+            cyclefiller = True
+            # it makes the digraph obeying ice rule with zero net polarization
+            # but it works only for a perfect 4-graph.
+            if res == False or self.asis or self.nfixed>0:
+                # The network is not 4-connected.
+                cyclefiller = False
+
+            if cyclefiller:
+                assert depol == "strict"
+                self.Stage3C()
+            else:
+                # Normal path; make it random, and then remove the defects.
+                self.Stage3()
 
             if 3 in hooks:
                 abort = hooks[3](self)
@@ -876,6 +889,7 @@ class GenIce():
         logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
         logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
         logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
+        self.nfixed = nfixed
 
         # test2==True means it is a z=4 graph.
         self.test2 = self.test_undirected_graph(self.graph)
@@ -936,6 +950,112 @@ class GenIce():
                                            ignores=self.graph.ignores)
 
 
+    @timeit
+    @banner
+    def Stage3B(self):
+        """
+        Make a graph obeying the ice rule in a single pass.
+
+        It is slow.
+        """
+
+        def find_cycle(g):
+            L = list(g.nodes())
+            head = random.choice(L)
+            neis = list(g.neighbors(head))
+
+            cycle = [head]
+            while True:
+                while True:
+                    next = random.choice(neis)
+                    if len(cycle) ==1:
+                        break
+                    elif cycle[-2] != next:
+                        break
+                if next in cycle:
+                    # the cycle is closed.
+                    rec = cycle.index(next)
+                    cycle = cycle[rec:]
+                    # print(cycle)
+                    return cycle
+                cycle.append(next)
+                neis = list(g.neighbors(next))
+
+        logger = getLogger()
+
+        # should be separated in digraph.py
+        import networkx as nx
+        # undirected replica of the self.graph
+        g = nx.Graph(self.graph)
+        d = dg.IceGraph()
+        while g.number_of_edges() > 0:
+            # Randomly find a cycle
+            cycle = find_cycle(g)
+            nx.add_cycle(d, cycle, fixed=False)
+            for i in range(len(cycle)):
+                g.remove_edge(cycle[i-1], cycle[i])
+            for v in cycle:
+                if len(list(g.neighbors(v))) == 0:
+                    g.remove_node(v)
+
+        self.graph = d
+
+
+    @timeit
+    @banner
+    def Stage3C(self):
+        """
+        Make a graph obeying the ice rule in a single pass.
+
+        Implement using dict() instead of networkx.
+        A little bit faster than Stage3, but not very effective. Sigh.
+        """
+
+        def find_cycle(g):
+            L = list(g)
+            head = random.choice(L)
+            neis = list(g[head])
+
+            cycle = [head]
+            while True:
+                next = random.choice(neis)
+                if next in cycle:
+                    # the cycle is shortcut.
+                    rec = cycle.index(next)
+                    cycle = cycle[rec:]
+                    # print(cycle)
+                    return cycle
+                cycle.append(next)
+                neis = list(g[next] - {cycle[-2]}) # remove the backward path
+
+        logger = getLogger()
+
+        # should be separated in digraph.py
+        import networkx as nx
+        # undirected replica of the self.graph
+        g = dict()
+        for i,j in self.graph.edges():
+            if i not in g:
+                g[i] = set()
+            g[i].add(j)
+            if j not in g:
+                g[j] = set()
+            g[j].add(i)
+        d = dg.IceGraph()
+        while len(g) > 0:
+            # Randomly find a cycle
+            cycle = find_cycle(g)
+            nx.add_cycle(d, cycle, fixed=False)
+            for i in range(len(cycle)):
+                a, b = cycle[i-1], cycle[i]
+                g[a].remove(b)
+                if len(g[a]) == 0:
+                    del g[a]
+                g[b].remove(a)
+                if len(g[b]) == 0:
+                    del g[b]
+
+        self.graph = d
 
     @timeit
     @banner
