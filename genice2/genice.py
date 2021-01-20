@@ -673,13 +673,13 @@ class GenIce():
             cyclefiller = True
             # it makes the digraph obeying ice rule with zero net polarization
             # but it works only for a perfect 4-graph.
-            if res == False or self.asis or self.nfixed>0:
+            if res == False or self.asis or self.nfixed>0 or depol != "strict":
                 # The network is not 4-connected.
                 cyclefiller = False
 
             if cyclefiller:
-                assert depol == "strict"
-                self.Stage3C()
+                # Fast track
+                self.Stage3D()
             else:
                 # Normal path; make it random, and then remove the defects.
                 self.Stage3()
@@ -950,65 +950,14 @@ class GenIce():
                                            ignores=self.graph.ignores)
 
 
-    @timeit
-    @banner
-    def Stage3B(self):
-        """
-        Make a graph obeying the ice rule in a single pass.
-
-        It is slow.
-        """
-
-        def find_cycle(g):
-            L = list(g.nodes())
-            head = random.choice(L)
-            neis = list(g.neighbors(head))
-
-            cycle = [head]
-            while True:
-                while True:
-                    next = random.choice(neis)
-                    if len(cycle) ==1:
-                        break
-                    elif cycle[-2] != next:
-                        break
-                if next in cycle:
-                    # the cycle is closed.
-                    rec = cycle.index(next)
-                    cycle = cycle[rec:]
-                    # print(cycle)
-                    return cycle
-                cycle.append(next)
-                neis = list(g.neighbors(next))
-
-        logger = getLogger()
-
-        # should be separated in digraph.py
-        import networkx as nx
-        # undirected replica of the self.graph
-        g = nx.Graph(self.graph)
-        d = dg.IceGraph()
-        while g.number_of_edges() > 0:
-            # Randomly find a cycle
-            cycle = find_cycle(g)
-            nx.add_cycle(d, cycle, fixed=False)
-            for i in range(len(cycle)):
-                g.remove_edge(cycle[i-1], cycle[i])
-            for v in cycle:
-                if len(list(g.neighbors(v))) == 0:
-                    g.remove_node(v)
-
-        self.graph = d
-
 
     @timeit
     @banner
-    def Stage3C(self):
+    def Stage3D(self):
         """
         Make a graph obeying the ice rule in a single pass.
 
         Implement using dict() instead of networkx.
-        A little bit faster than Stage3, but not very effective. Sigh.
         """
 
         def find_cycle(g):
@@ -1041,21 +990,67 @@ class GenIce():
             if j not in g:
                 g[j] = set()
             g[j].add(i)
-        d = dg.IceGraph()
+        cycles = []
         while len(g) > 0:
             # Randomly find a cycle
             cycle = find_cycle(g)
-            nx.add_cycle(d, cycle, fixed=False)
+            cycles.append(cycle)
             for i in range(len(cycle)):
+                # remove edges in the cycle
                 a, b = cycle[i-1], cycle[i]
                 g[a].remove(b)
+                g[b].remove(a)
+                # remove nodes also
                 if len(g[a]) == 0:
                     del g[a]
-                g[b].remove(a)
                 if len(g[b]) == 0:
                     del g[b]
 
+        # evaluate the dipoles
+        dipoles = []
+        spanning = []
+        for j, cycle in enumerate(cycles):
+            dipole = np.zeros(3)
+            for i in range(len(cycle)):
+                # remove edges in the cycle
+                a, b = cycle[i-1], cycle[i]
+                d = self.reppositions[b] - self.reppositions[a]
+                d -= np.floor(d+0.5)
+                dipole += d
+            if not np.allclose(dipole, np.zeros(3)):
+                dipoles.append(dipole)
+                spanning.append(j)
+        dipoles = np.array(dipoles)
+
+        logger.debug(dipoles)
+        # invert randomly to eliminate the net polarization.
+        # Rarely, it cannot be depolarized.
+
+        bestm = 999999
+        bestp = None
+        for i in range(1000):
+            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
+            pol = dipoles.T @ dir
+            if pol@pol < bestm:
+                bestm = pol@pol
+                bestp = dir
+            logger.debug(f"Polarization {pol}")
+            if np.allclose(pol, np.zeros(3)):
+                break
+
+        dir = bestp
+        # invert cycles
+        for i,p in enumerate(dir):
+            if p < 0:
+                cycles[spanning[i]].reverse()
+
+        d = dg.IceGraph()
+        for cycle in cycles:
+            nx.add_cycle(d, cycle, fixed=False)
         self.graph = d
+        self.spacegraph = dg.SpaceIceGraph(d,
+                                           coord=self.reppositions,
+                                           ignores=self.graph.ignores)
 
     @timeit
     @banner

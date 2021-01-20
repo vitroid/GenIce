@@ -41,7 +41,7 @@ all: CS2D.gro.test
 %.kg: $(FMT)/_KG.py
 	$(GENICE) $* -f _KG | fgrep -v "Command line:" > $@
 %.yap: $(FMT)/yaplot.py
-	$(GENICE) $* -f yaplot | fgrep -v "Command line:" > $@
+	$(GENICE) $* --debug -f yaplot | fgrep -v "Command line:" > $@
 test1.done: $(FMT)/gromacs.py
 	$(GENICE) __test1 --guest 12=g12 --rep 1 1 1 --debug > /dev/null
 	touch test1.done
