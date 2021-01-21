@@ -662,7 +662,24 @@ class GenIce():
                 if maxstage < 2 or abort:
                     return
 
-            res = self.Stage2()
+            self.Stage2()
+
+            # Count bonds
+            nrandom = 0
+            nfixed = 0
+            for i, j, data in self.graph.edges(data=True):
+                if self.graph[i][j]['fixed']:  # fixed pair
+                    nfixed += 1
+                else:
+                    nrandom += 1
+            logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
+            logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
+            logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
+
+            # test2==True means it is a z=4 graph.
+            test2 = self.test_undirected_graph(self.graph)
+            if not test2:
+                logger.warn("Ice rule is not satisfied.")
 
             if 2 in hooks:
                 abort = hooks[2](self)
@@ -673,7 +690,7 @@ class GenIce():
             cyclefiller = True
             # it makes the digraph obeying ice rule with zero net polarization
             # but it works only for a perfect 4-graph.
-            if res == False or self.asis or self.nfixed>0 or depol != "strict":
+            if not test2 or self.asis or nfixed>0 or depol != "strict":
                 # The network is not 4-connected.
                 cyclefiller = False
 
@@ -689,7 +706,10 @@ class GenIce():
                 if maxstage < 4 or abort:
                     return
 
-            self.Stage4(depol=depol)
+            # spacegraph might be already set in Stage3D.
+            if self.spacegraph is None:
+                logger.debug(f"  graph? {self.spacegraph}")
+                self.Stage4(depol=depol)
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -878,25 +898,6 @@ class GenIce():
                 self.graph.cationize(site)
                 self.dopants[site] = name
 
-        # Count bonds
-        nrandom = 0
-        nfixed = 0
-        for i, j, data in self.graph.edges(data=True):
-            if self.graph[i][j]['fixed']:  # fixed pair
-                nfixed += 1
-            else:
-                nrandom += 1
-        logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
-        logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
-        logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
-        self.nfixed = nfixed
-
-        # test2==True means it is a z=4 graph.
-        self.test2 = self.test_undirected_graph(self.graph)
-        if not self.test2:
-            logger.warn("Ice rule is not satisfied.")
-
-        return self.test2
 
     @timeit
     @banner
@@ -914,6 +915,9 @@ class GenIce():
             logger.info("  Skip applying the ice rule by request.")
         else:
             self.graph.purge_ice_defects()
+
+        self.spacegraph = None
+
 
     @timeit
     @banner
@@ -1022,7 +1026,7 @@ class GenIce():
                 spanning.append(j)
         dipoles = np.array(dipoles)
 
-        logger.debug(dipoles)
+        # logger.debug(dipoles)
         # invert randomly to eliminate the net polarization.
         # Rarely, it cannot be depolarized.
 
@@ -1034,8 +1038,8 @@ class GenIce():
             if pol@pol < bestm:
                 bestm = pol@pol
                 bestp = dir
-            logger.debug(f"Polarization {pol}")
-            if np.allclose(pol, np.zeros(3)):
+            logger.debug(f"  Polarization {pol}")
+            if bestm < 1e-6:
                 break
 
         dir = bestp
@@ -1047,10 +1051,15 @@ class GenIce():
         d = dg.IceGraph()
         for cycle in cycles:
             nx.add_cycle(d, cycle, fixed=False)
+
         self.graph = d
-        self.spacegraph = dg.SpaceIceGraph(d,
-                                           coord=self.reppositions,
-                                           ignores=self.graph.ignores)
+        self.spacegraph = None
+        if bestm < 1e-6:
+            # Skip Stage4
+            logger.debug("  Depolarized in Stage3D.")
+            self.spacegraph = dg.SpaceIceGraph(d,
+                                               coord=self.reppositions,
+                                               ignores=self.graph.ignores)
 
     @timeit
     @banner
