@@ -14,6 +14,7 @@ from genice import __version__
 from genice.cell import rel_wrap, Cell
 from genice.valueparsers import parse_cages, parse_pairs, put_in_array, flatten
 import genice.plugins
+from genice.decorators import timeit, banner
 
 # for alkyl groups (Experimental)
 from genice import alkyl
@@ -74,7 +75,7 @@ def descriptions(category):
     return catalog
 
 
-        
+
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 def help_type():
@@ -733,7 +734,7 @@ class GenIce():
         arg   = formatter.arg
         maxstage = max(0, *hooks.keys())
         logger = getLogger()
-        
+
         if 0 in hooks:
             hooks[0](self, arg)
         elif arg != "":
@@ -793,6 +794,8 @@ class GenIce():
             hooks[7](self)
 
 
+    @timeit
+    @banner
     def stage1(self,
                noise=0.):
         """
@@ -806,7 +809,6 @@ class GenIce():
         cagetypes:   set of cage types
         """
 
-        self.logger.info("Stage1: Replication.")
         self.reppositions = replicate_positions(self.waters, self.rep)
 
         # This must be done before the replication of the cell.
@@ -843,8 +845,9 @@ class GenIce():
                 self.logger.info("    Cage type {0}: {1}".format(typ, cages))
             # Up here move to stage 1.
 
-        self.logger.info("Stage1: end.")
 
+    @timeit
+    @banner
     def stage2(self):
         """
         Make a random graph and replicate.
@@ -856,7 +859,6 @@ class GenIce():
         graph:   replicated network topology (bond orientation may be random)
         """
 
-        self.logger.info("Stage2: Graph preparation.")
 
         # Some edges are directed when ions are doped.
         if self.dopeIonsToUnitCell is not None:
@@ -908,9 +910,10 @@ class GenIce():
         if not self.test2:
             self.logger.warn("Test2 failed.")
 
-        self.logger.info("Stage2: end.")
         return self.test2
 
+    @timeit
+    @banner
     def stage3(self):
         """
         Make a true ice graph.
@@ -919,15 +922,14 @@ class GenIce():
         graph: network obeying B-F rule.
         """
 
-        self.logger.info("Stage3: Bernal-Fowler rule.")
-
         if self.asis:
             self.logger.info("  Skip applying the ice rule by request.")
         else:
             self.graph.purge_ice_defects()
 
-        self.logger.info("Stage3: end.")
 
+    @timeit
+    @banner
     def stage4(self, depolarize=True, record_depolarization_path=None):
         """
         Depolarize.
@@ -937,7 +939,6 @@ class GenIce():
         yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
-        self.logger.info("Stage4: Depolarization.")
 
         if not depolarize or self.asis:
             self.logger.info("  Skip depolarization by request. {0} {1}".format(depolarize, self.asis))
@@ -961,8 +962,9 @@ class GenIce():
                 record_depolarization_path.write(yapresult)
             else:
                 dg.depolarize(self.spacegraph, self.repcell.mat, draw=None)
-        self.logger.info("Stage4: end.")
 
+    @timeit
+    @banner
     def stage5(self):
         """
         Prepare orientations for rigid molecules.
@@ -972,8 +974,6 @@ class GenIce():
         rotmatrices:  rotation matrices for water molecules
         """
 
-        self.logger.info("Stage5: Orientation.")
-
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
@@ -982,8 +982,9 @@ class GenIce():
         # Activate it.
         # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
         # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
-        self.logger.info("Stage5: end.")
 
+    @timeit
+    @banner
     def stage6(self, water_type):
         """
         Arrange water atoms and replacements
@@ -1014,8 +1015,9 @@ class GenIce():
                                    water.name,
                                    ignores=set(self.dopants))
 
-        self.logger.info("Stage6: end.")
 
+    @timeit
+    @banner
     def stage7(self, guests):
         """
         Arrange guest atoms
@@ -1023,8 +1025,6 @@ class GenIce():
         Provided variables:
         atoms: atomic positions of all molecules.
         """
-
-        self.logger.info("Stage7: Atomic positions of the guest.")
 
         if self.cagepos is not None:
 
@@ -1149,7 +1149,6 @@ class GenIce():
                                         [name],
                                         name)
 
-        self.logger.info("Stage7: end.")
 
     def prepare_random_graph(self, fixed):
 
@@ -1263,4 +1262,3 @@ class GenIce():
 
     def __del__(self):
         self.logger.info("Completed.")
-

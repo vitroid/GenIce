@@ -26,7 +26,7 @@ setup(name='GenIce',
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         ],
       author='Masakazu Matsumoto',
       author_email='vitroid@gmail.com',
@@ -47,4 +47,3 @@ setup(name='GenIce',
               ]
           }
       )
-

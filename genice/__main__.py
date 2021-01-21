@@ -7,13 +7,16 @@ from genice.importer import safe_import
 from genice import genice, analice, __version__, load
 import random
 import numpy as np
+from genice.decorators import timeit, banner
 
 
 
 
 
-
+@timeit
+@banner
 def main():
+    "<<<GenIce>>>"
     # Module-loading paths
     # 1. Look for the modules in the current working directory
     sys.path.append(".")
