@@ -959,49 +959,64 @@ class GenIce():
     @banner
     def Stage3D(self):
         """
-        Make a graph obeying the ice rule in a single pass.
+        Tile the graph with directed cycles.
 
         Implement using dict() instead of networkx.
         """
 
-        def find_cycle(g):
-            L = list(g)
-            head = random.choice(L)
-            neis = list(g[head])
+        def cycle_edges(cycle):
+            for i in range(len(cycle)):
+                yield cycle[i-1], cycle[i]
 
-            cycle = [head]
+        def find_cycle(g, chain):
+            head = chain[-1]
+            if len(chain) > 1:
+                neis = [x for x in g[head] if x != chain[-2]]
+            else:
+                neis = list(g[head])
+
             while True:
                 next = random.choice(neis)
-                if next in cycle:
-                    # the cycle is shortcut.
-                    rec = cycle.index(next)
-                    cycle = cycle[rec:]
-                    # print(cycle)
-                    return cycle
-                cycle.append(next)
-                neis = list(g[next] - {cycle[-2]}) # remove the backward path
+                if next in chain:
+                    rec = chain.index(next)
+                    tail, cycle = chain[:rec], chain[rec:]
+                    return tail, cycle
+                chain.append(next)
+                neis = [x for x in g[next] if x != chain[-2]] # remove the backward path
 
         logger = getLogger()
 
         # should be separated in digraph.py
         import networkx as nx
         # undirected replica of the self.graph
-        g = dict()
+        # a homemade implementation of a graph with dict and set
+        g = defaultdict(set)
         for i,j in self.graph.edges():
-            if i not in g:
-                g[i] = set()
             g[i].add(j)
-            if j not in g:
-                g[j] = set()
             g[j].add(i)
+
         cycles = []
+
+        N = self.graph.number_of_edges()
+
+        chain = []
+        nc = 0
+        tick = 1
         while len(g) > 0:
+            if len(chain) == 0:
+                # prepare a new chain
+                L = list(g)
+                head = random.choice(L)
+                chain = [head]
             # Randomly find a cycle
-            cycle = find_cycle(g)
+            chain, cycle = find_cycle(g, chain)
             cycles.append(cycle)
-            for i in range(len(cycle)):
+            nc += len(cycle)
+            if tick*N < nc*10:
+                logger.debug(f"* {tick}/10 tiled.")
+                tick += 1
+            for a,b in cycle_edges(cycle):
                 # remove edges in the cycle
-                a, b = cycle[i-1], cycle[i]
                 g[a].remove(b)
                 g[b].remove(a)
                 # remove nodes also
@@ -1010,21 +1025,23 @@ class GenIce():
                 if len(g[b]) == 0:
                     del g[b]
 
-        # evaluate the dipoles
+
+        # evaluate the dipole of each cycle
         dipoles = []
         spanning = []
         for j, cycle in enumerate(cycles):
             dipole = np.zeros(3)
-            for i in range(len(cycle)):
-                # remove edges in the cycle
-                a, b = cycle[i-1], cycle[i]
+            for a, b in cycle_edges(cycle):
+                # displacement vector
                 d = self.reppositions[b] - self.reppositions[a]
                 d -= np.floor(d+0.5)
                 dipole += d
             if not np.allclose(dipole, np.zeros(3)):
+                # it is a cell-spanning cycle
                 dipoles.append(dipole)
                 spanning.append(j)
         dipoles = np.array(dipoles)
+        logger.debug(f"  {len(spanning)} spanning cycles.")
 
         # logger.debug(dipoles)
         # invert randomly to eliminate the net polarization.
@@ -1032,17 +1049,24 @@ class GenIce():
 
         bestm = 999999
         bestp = None
-        for i in range(1000):
-            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
-            pol = dipoles.T @ dir
-            if pol@pol < bestm:
-                bestm = pol@pol
-                bestp = dir
-            logger.debug(f"  Polarization {pol}")
-            if bestm < 1e-6:
-                break
+        # ここもランダムに探すのは効率が悪すぎる。
+        # しかし、体系的にさがす方法はあるのか?
+        # 調査せよ。
+        dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
+        pol = dipoles.T @ dir
+        pol2 = pol@pol
+        for i in range(len(dipoles)*2):
+            r = random.randint(0,len(dipoles)-1)
+            newpol = pol - 2*dir[r]*dipoles[r]
+            newpol2 = newpol @ newpol
+            if newpol2 <= pol2:
+                dir[r] = -dir[r]
+                pol = newpol
+                pol2 = newpol2
+                if pol2 < 1e-6:
+                    break
+        logger.debug(f"  Depolarized to {pol} in {i} steps")
 
-        dir = bestp
         # invert cycles
         for i,p in enumerate(dir):
             if p < 0:
@@ -1054,7 +1078,7 @@ class GenIce():
 
         self.graph = d
         self.spacegraph = None
-        if bestm < 1e-6:
+        if pol2 < 1e-6:
             # Skip Stage4
             logger.debug("  Depolarized in Stage3D.")
             self.spacegraph = dg.SpaceIceGraph(d,
