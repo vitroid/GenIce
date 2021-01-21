@@ -662,21 +662,54 @@ class GenIce():
                 if maxstage < 2 or abort:
                     return
 
-            res = self.Stage2()
+            self.Stage2()
+
+            # Count bonds
+            nrandom = 0
+            nfixed = 0
+            for i, j, data in self.graph.edges(data=True):
+                if self.graph[i][j]['fixed']:  # fixed pair
+                    nfixed += 1
+                else:
+                    nrandom += 1
+            logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
+            logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
+            logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
+
+            # test2==True means it is a z=4 graph.
+            test2 = self.test_undirected_graph(self.graph)
+            if not test2:
+                logger.warn("Ice rule is not satisfied.")
 
             if 2 in hooks:
                 abort = hooks[2](self)
                 if maxstage < 3 or abort:
                     return
 
-            self.Stage3()
+            # cyclefiller == fast algorithm
+            cyclefiller = True
+            # it makes the digraph obeying ice rule with zero net polarization
+            # but it works only for a perfect 4-graph.
+            if not test2 or self.asis or nfixed>0 or depol != "strict":
+                # The network is not 4-connected.
+                cyclefiller = False
+
+            if cyclefiller:
+                # Fast track
+                self.Stage3D()
+            else:
+                # Normal path; make it random, and then remove the defects.
+                self.Stage3()
 
             if 3 in hooks:
                 abort = hooks[3](self)
                 if maxstage < 4 or abort:
                     return
 
-            self.Stage4(depol=depol)
+            # spacegraph might be already set in Stage3D.
+            if self.spacegraph is None:
+                logger.debug(f"  graph? {self.spacegraph}")
+                self.Stage4(depol=depol)
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -865,24 +898,6 @@ class GenIce():
                 self.graph.cationize(site)
                 self.dopants[site] = name
 
-        # Count bonds
-        nrandom = 0
-        nfixed = 0
-        for i, j, data in self.graph.edges(data=True):
-            if self.graph[i][j]['fixed']:  # fixed pair
-                nfixed += 1
-            else:
-                nrandom += 1
-        logger.info("  Number of pre-oriented hydrogen bonds: {0}".format(nfixed))
-        logger.info("  Number of unoriented hydrogen bonds: {0}".format(nrandom))
-        logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(nfixed + nrandom, len(self.reppositions) * 2))
-
-        # test2==True means it is a z=4 graph.
-        self.test2 = self.test_undirected_graph(self.graph)
-        if not self.test2:
-            logger.warn("Ice rule is not satisfied.")
-
-        return self.test2
 
     @timeit
     @banner
@@ -900,6 +915,9 @@ class GenIce():
             logger.info("  Skip applying the ice rule by request.")
         else:
             self.graph.purge_ice_defects()
+
+        self.spacegraph = None
+
 
     @timeit
     @banner
@@ -936,6 +954,112 @@ class GenIce():
                                            ignores=self.graph.ignores)
 
 
+
+    @timeit
+    @banner
+    def Stage3D(self):
+        """
+        Make a graph obeying the ice rule in a single pass.
+
+        Implement using dict() instead of networkx.
+        """
+
+        def find_cycle(g):
+            L = list(g)
+            head = random.choice(L)
+            neis = list(g[head])
+
+            cycle = [head]
+            while True:
+                next = random.choice(neis)
+                if next in cycle:
+                    # the cycle is shortcut.
+                    rec = cycle.index(next)
+                    cycle = cycle[rec:]
+                    # print(cycle)
+                    return cycle
+                cycle.append(next)
+                neis = list(g[next] - {cycle[-2]}) # remove the backward path
+
+        logger = getLogger()
+
+        # should be separated in digraph.py
+        import networkx as nx
+        # undirected replica of the self.graph
+        g = dict()
+        for i,j in self.graph.edges():
+            if i not in g:
+                g[i] = set()
+            g[i].add(j)
+            if j not in g:
+                g[j] = set()
+            g[j].add(i)
+        cycles = []
+        while len(g) > 0:
+            # Randomly find a cycle
+            cycle = find_cycle(g)
+            cycles.append(cycle)
+            for i in range(len(cycle)):
+                # remove edges in the cycle
+                a, b = cycle[i-1], cycle[i]
+                g[a].remove(b)
+                g[b].remove(a)
+                # remove nodes also
+                if len(g[a]) == 0:
+                    del g[a]
+                if len(g[b]) == 0:
+                    del g[b]
+
+        # evaluate the dipoles
+        dipoles = []
+        spanning = []
+        for j, cycle in enumerate(cycles):
+            dipole = np.zeros(3)
+            for i in range(len(cycle)):
+                # remove edges in the cycle
+                a, b = cycle[i-1], cycle[i]
+                d = self.reppositions[b] - self.reppositions[a]
+                d -= np.floor(d+0.5)
+                dipole += d
+            if not np.allclose(dipole, np.zeros(3)):
+                dipoles.append(dipole)
+                spanning.append(j)
+        dipoles = np.array(dipoles)
+
+        # logger.debug(dipoles)
+        # invert randomly to eliminate the net polarization.
+        # Rarely, it cannot be depolarized.
+
+        bestm = 999999
+        bestp = None
+        for i in range(1000):
+            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
+            pol = dipoles.T @ dir
+            if pol@pol < bestm:
+                bestm = pol@pol
+                bestp = dir
+            logger.debug(f"  Polarization {pol}")
+            if bestm < 1e-6:
+                break
+
+        dir = bestp
+        # invert cycles
+        for i,p in enumerate(dir):
+            if p < 0:
+                cycles[spanning[i]].reverse()
+
+        d = dg.IceGraph()
+        for cycle in cycles:
+            nx.add_cycle(d, cycle, fixed=False)
+
+        self.graph = d
+        self.spacegraph = None
+        if bestm < 1e-6:
+            # Skip Stage4
+            logger.debug("  Depolarized in Stage3D.")
+            self.spacegraph = dg.SpaceIceGraph(d,
+                                               coord=self.reppositions,
+                                               ignores=self.graph.ignores)
 
     @timeit
     @banner
