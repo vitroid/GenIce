@@ -18,7 +18,7 @@ test-install:
 	pip install --index-url https://test.pypi.org/simple/ genice2
 
 
-install: README.md
+install:
 	./setup.py install
 uninstall:
 	-pip uninstall -y genice2
