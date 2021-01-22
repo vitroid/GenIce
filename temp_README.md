@@ -3,45 +3,45 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version %%version%%
+version {{version}}
 
 ## Demo
 
-The new GenIce works very well with interactive execution. 
+The new GenIce works very well with interactive execution.
 [Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/test.ipynb) on Google Colab.
 
 ## Requirements
 
-* %%requires%%
+{{requires}}
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
 Install with pip3.
 
-    pip3 install genice
+    pip3 install genice2
 
 ## Uninstallation
 
-    pip3 uninstall genice
+    pip3 uninstall genice2
 
 ## Usage
 
-    %%usage%%
+{{usage}}
 
-Use `./genice.x` instead of `genice` if you want to use GenIce without installation.
+Use `./genice.x` instead of `genice2` if you want to use it inside the source tree.
 
 ## Examples
 
 * To make a 3x3x3 units of a hydrogen-disordered ice IV (4) of TIP4P water in GROMACS
 .gro format:
 
-        genice --water tip4p --rep 3 3 3  4 > ice4.gro
+        genice2 --water tip4p --rep 3 3 3  4 > ice4.gro
 
 * To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
 THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
-        genice -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
+        genice2 -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
 
 
 ## Basics
@@ -50,15 +50,15 @@ The program generates various ice lattice with proton disorder and without defec
 
 * To get a large repetition of ice Ih in XYZ format,
 
-        genice --rep 8 8 8 1h --format xyz > 1hx888.xyz
+        genice2 --rep 8 8 8 1h --format xyz > 1hx888.xyz
 
 * To get a ice V lattice of different hydrogen order in CIF format, use `-s` option to specify the random seed.
 
-        genice 5 -s 1024 --format cif > 5-1024.cif
+        genice2 5 -s 1024 --format cif > 5-1024.cif
 
 * To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
-        genice 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
+        genice2 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
 
 GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options.
 
@@ -69,11 +69,11 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
 * To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
 .gro format: (60% of small cages are filled with co2 and 40% are methane)
 
-        genice -g 12=co2*0.6+me*0.4 -g 14=co2 --water tip4p CS1 > cs1.gro
+        genice2 -g 12=co2*0.6+me*0.4 -g 14=co2 --water tip4p CS1 > cs1.gro
 
-* To make a CS2 clathrate hydrate structure of TIP5P water containing THF molecules in the large cage, while only one cage is filled with methane molecule, first just run genice without guest specifications:
+* To make a CS2 clathrate hydrate structure of TIP5P water containing THF molecules in the large cage, while only one cage is filled with methane molecule, first just run `genice2` without guest specifications:
 
-        genice CS2 > CS2.gro
+        genice2 CS2 > CS2.gro
 
     The list of cages will be output as follows:
 
@@ -83,31 +83,35 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
 
     This indicates that there are two types of cages named `12` and `16`.  Fill the `16` cages with THF and put a methane molecule in the `0`th cage of type `12` as follows:
 
-        genice CS2 -g 16=uathf -G 0=me > CS2.gro
+        genice2 CS2 -g 16=uathf -G 0=me > CS2.gro
 
-Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example for the ethlene oxide molecule.
+Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example for the ethylene oxide molecule.
 
-`eo.py`
+```python
+import numpy as np
+import genice2.molecules
 
-    import numpy as np
-    # United-atom EO model with a dummy site
-    LOC = 0.1436 # nm
-    LCC = 0.1472 # nm
+class Molecule(genice2.molecules.Molecule):
+    def __init__(self):
+        # United-atom EO model with a dummy site
+        LOC = 0.1436 # nm
+        LCC = 0.1472 # nm
 
-    Y = (LOC**2 - (LCC/2)**2)**0.5
+        Y = (LOC**2 - (LCC/2)**2)**0.5
 
-    sites = np.array([[ 0.,    0., 0. ],
-                      [-LCC/2, Y,  0. ],
-                      [+LCC/2, Y,  0. ],])
+        self.sites = np.array([[ 0.,    0., 0. ],
+                               [-LCC/2, Y,  0. ],
+                               [+LCC/2, Y,  0. ],])
 
-    mass = np.array([16,14,14])
-    # center of mass
-    CoM = np.dot(mass, sites) / np.sum(mass)
-    sites -= CoM
+        mass = np.array([16,14,14])
+        # center of mass
+        CoM = mass @ self.sites / np.sum(mass)
+        self.sites -= CoM
 
-    atoms = ["O","C","C"]
-    labels = ["Oe","Ce","Ce"]
-    name = "EO"
+        self.atoms_  = ["O","C","C"]
+        self.labels_ = ["Oe","Ce","Ce"]
+        self.name_   = "EO"
+```
 
 Write the code in eo.py. Make a folder named `molecules` in the current working directory and put it in.
 
@@ -119,7 +123,7 @@ Small ions may replace the host molecules.  In that case, you can use `-a` and `
 
 The following example replaces the `0`th water molecule (in the replicated lattice) with Na cation and `1`st water molecule with Cl anion.  The hydrogen bonds around the ions are organized appropriately.
 
-    genice CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+    genice2 CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
 
 *Note 1*: The numbers of cations and anions must be the same.  Otherwise, ice rule is never satisfied and the program does not stop.  
 
@@ -133,7 +137,7 @@ The following example replaces the `0`th water molecule (in the replicated latti
 
 Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counterion Br.
 
-    genice HS1 -c 0=N -a 2=Br --nodep > HS1.gro
+    genice2 HS1 -c 0=N -a 2=Br --nodep > HS1.gro
 
 Then you will see the following info.
 
@@ -147,7 +151,7 @@ Then you will see the following info.
 
 It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
 
-    genice HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+    genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
 
 Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option.
 
@@ -158,36 +162,9 @@ Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, 
 
 It is more convenient if the lattice of the semiclathrate hydrate contains molecular ions in the appropriate locations in advance.  Here we explain the way to make the special module for semclathrates.
 
-## AnalIce command
+## Output formats
 
-AnalIce is a variant of GenIce. AnalIce reads a Gromacs file and do not modify the molecular orientation or the hydrogen bond network topology.  AnalIce is prepared to use it for structure analysis.
-
-For example, if you want to see the ring statistic of a given `.gro` file, use like this:
-
-
-    analice input.gro -f _ringstat
-
-If you want to replace water model from the original three-site one (described as OW, HW1, and HW2) to TIP4P-like four-site model, try
-
-    analice input.gro -O OW -H HW[12] -w tip4p
-
-All the output formats are also available for AnalIce.
-
-### More examples
-
-Load every 10 frames from a set of .gro files and output ring statistics in separate files.
-
-    analice '%05d.gro' --framerange 0:1000000:10 -O OW -H HW[12] --format _ringstat -o '%04d.rstat'
-
-Make V-structures (removal of quick librational motion of water) from the given set of .gro files.
-
-    analice '%05d.gro' -O OW -H HW[12] -w tip3p --avgspan 25 > vstruct.gro
-
-### Usage of `analice`
-
-    %%usage_analice%%
-
-## Output formats (`genice` and `analice`)
+(pluginから自動抽出してほしい)
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
@@ -227,11 +204,13 @@ Internally, there are seven stages to generate an ice structure.
 
 In the format plugin, you define the hook functions that are invoked after processing each stage.
 
-## Ice structures (`genice` only)
-<!-- references removed. -->
+## Ice structures
+
+(pluginから自動抽出してほしい)
 
 Symbol | Description
 -------|------------
+{{ices}}
 1h, ice1h, Ih   | Most popular Ice I (hexagonal)
 1c, ice1c, Ic   | Cubic type of ice I
 2, ice2, II     | Hydrogen-ordered ice II
@@ -305,7 +284,7 @@ FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
 -: No correspondence; *: Non-FK types.
 
 Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structures.
-## Water models (`genice` and `analice`)
+## Water models
 A water model can be chosen with `--water` option.
 
 symbol   | type
@@ -316,7 +295,7 @@ symbol   | type
 `5site`, `tip5p`  | 5-site TIP5P
 `6site`, `NvdE`   | 6-site NvdE
 
-## Guest molecules (`genice` only)
+## Guest molecules
 
 symbol | type
 -------|---------
@@ -328,17 +307,6 @@ symbol | type
 
 
 You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
-
-## Input files (`analice` only)
-
-suffix | type
--------|-------------------
-`gro`  | Gromacs
-`mdv`  | mdview (Angstrom)
-`mdva` | mdview (au)
-`nx3a` | Rigid rotors (with euler angles)
-
-You can prepare your own file loaders.  Create a folder named `loaders` in the current working directory and put the plugins in it. The plugin name is refered as the suffix of the file. (e.g. prepare pdb.py to load a *.pdb file.)
 
 # Extra plugins
 (New in v1.0)
@@ -367,6 +335,7 @@ Analysis plugin is a kind of output plugin (specified with -f option). They are 
 |[`genice-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice-svg` |
 
 ## Input plugins
+
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 | pip name   | GenIce usage    | Description  |requirements |
@@ -375,104 +344,18 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 # References
 
-* L.A. Báez, P. Clancy,
-  J. Chem. Phys. 103, 9744–9755 (1998).
-  [DOI: 10.1063/1.469938](http://doi.org/10.1063/1.469938)
-* L. del Rosso, M. Celli, L. Ulivi,
-  Nat Commun 2016, 7, 13394.
-  [DOI: 10.1038/ncomms13394](http://doi.org/10.1038/ncomms13394)
-* M. Dutour Sikirić, O. Delgado-Friedrichs, M. Deza,
-  Acta Crystallogr. A 2010, 66, 602.
-  [DOI: 10.1107/S0108767310022932](http://doi.org/10.1107/S0108767310022932)
-* A. Falenty, T. C. Hansen, W. F. Kuhs,
-  Nature 2014, 516, 231.
-  [DOI: 10.1038/nature14014](http://doi.org/10.1038/nature14014)
-* Xiaofeng Fan, Dan Bing, Jingyun Zhang, Zexiang Shen, Jer-Lai Kuo,
-  Computational Materials Science 49 (2010) S170–S175.
-* C. J. Fennell, J. D. Gezelter,
-  J. Chem. Theory Comput. 2005, 1, 662.
-  [DOI: 10.1021/ct050005s](http://doi.org/10.1021/ct050005s)
-* M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
-  Langmuir 33, 42, 11561-11569(2017).
-  [DOI: 10.1021/acs.langmuir.7b01764](http://doi.org/10.1021/acs.langmuir.7b01764)
-* Y. Huang, C. Zhu, L. Wang, X. Cao, Y. Su, X. Jiang, S. Meng, J. Zhao, X. C. Zeng,
-  Science Advances 2016, 2, e1501010.
-  [DOI: 10.1126/sciadv.1501010](http://doi.org/10.1126/sciadv.1501010)
-* Y. Huang, C. Zhu, L. Wang, J. Zhao, X. C. Zeng,
-  Chem. Phys. Lett. 2017, 671, 186.
-  [DOI: 10.1016/j.cplett.2017.01.035](http://doi.org/10.1016/j.cplett.2017.01.035)
-* G. A. Jeffrey,
-  In Inclusion Compounds;
-  J. L. Atwood, J. E. D. Davies, D. D. MacNicol, Eds.;
-  Academic Press: London, 1984, Vol. 1, Chap. 5.
-* A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen,
-  Inorg Chem 2011, 50, 1733.
-  [DOI: 10.1021/ic102178d](http://doi.org/10.1021/ic102178d)
-* K Koga, GT Gao, H Tanaka, XC Zeng,
-  Nature 412 (6849), 802-805.
-  [DOI:10.1038/35090532](http://doi.org/10.1038/35090532)
-* V.I. Kosyakov, T.M. Polyanskaya,
-  J. Struct. Chem. 1999, 40, 239.
-  [DOI:10.1007/BF02903652](http://doi.org/10.1007/BF02903652)
-* WF Kuhs, JL Finney, C Vettier, DV Bliss,
-  J. Chem. Phys. 81, 3612–3623 (1998).
-  [DOI: 10.1063/1.448109](http://doi.org/10.1063/1.448109)
-* Y. Liu, Y. Huang, C. Zhu, H. Li, J. Zhao, L. Wang, L. Ojamäe, J.S. Francisco, X.C. Zeng,
-  PNAS 116, 12684-12691 (2019).
-  [DOI: 10.1073/pnas.1900739116](https://doi.org/10.1073/pnas.1900739116)
-* C. Lobban, J.L. Finney, W. F. Kuhs,
-  Nature 1998, 391, 268.
-  [DOI: 10.1038/34622](http://doi.org/10.1038/34622)
-* D. Londono, W.F. Kuhs, J.L. Finney,
-  Nature 1988, 332, 141.
-  [DOI: 10.1038/332141a0](http://doi.org/10.1038/332141a0)
-* D. Londono, W.F. Kuhs, J.L. Finney,
-  J. Chem. Phys. 98, 4878–4888 (1993).
-  [DOI: 10.1063/1.464942](http://doi.org/10.1063/1.464942)
-* T. Matsui, M. Hirata, T. Yagasaki, M. Matsumoto, H. Tanaka,
-  J. Chem. Phys. 147, 091101 (2017).
-  [DOI: /10.1063/1.4994757](http://doi.org/10.1063/1.4994757)
-* T. Matsui, T. Yagasaki, M. Matsumoto, H. Tanaka,
-  J. Chem. Phys. 150, 041102 (2019).
-  [DOI: 10.1063/1.5083021](http://doi.org/10.1063/1.5083021)
-* M. Matsumoto, T. Yagasaki, H. Tanaka,
-  J. Chem. Phys. 150, 214504 (2019).
-  [DOI: 10.1063/1.5096556](https://doi.org/10.1063/1.5096556)
-* K. Mochizuki, K. Himoto, M. Matsumoto,
-  Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
-  [DOI: 10.1039/c4cp01616e](http://doi.org/10.1039/c4cp01616e)
-* N. Mousseau, G. T. Barkema,
-  Curr. Opin. Solid State Mater. Sci. 2001, 5, 497.
-  [DOI: 10.1016/S1359-0286(02)00005-0](https://doi.org/10.1016/S1359-0286%2802%2900005-0)
-* T. Nakamura, M. Matsumoto, T. Yagasaki, H. Tanaka,
-  J. Phys. Chem. B 2015, 120, 1843.
-  [DOI: 10.1021/acs.jpcb.5b09544](http://doi.org/10.1021/acs.jpcb.5b09544)
-* J. Russo, F. Romano, H. Tanaka,
-  Nat. Mater. 2014, 13, 733.
-  [DOI: 10.1038/NMAT3977](http://doi.org/10.1038/NMAT3977)
-* C.G. Salzmann, P. Radaelli, A. Hallbrucker, E. Mayer,
-  Science 311, 1758–1761 (2006).
-  [DOI: 10.1126/science.1123896](http://doi.org/10.1126/science.1123896)
-* G. S. Smirnov, V. V. Stegailov,
-  J. Phys. Chem. Lett. 2013, 4, 3560.
-  [DOI: 10.1021/jz401669d](http://doi.org/10.1021/jz401669d)
-* W. L. Vos, L. W. Finger, R. J. Hemley, H. Mao,
-  Phys. Rev. Lett. 1993, 71, 3150.
-  [DOI: 10.1103/PhysRevLett.71.3150](http://doi.org/10.1103/PhysRevLett.71.3150)
-* T. Yagasaki, M. Matsumoto, H. Tanaka,
-  J. Phys. Chem. B 122, 7718–7725 (2018).
-  [DOI: 10.1021/acs.jpcb.8b04441](http://doi.org/10.1021/acs.jpcb.8b04441)
+{{citationlist}}
 
 # Algorithm and how to cite it.
 
-The algorithm to make a depolarized hydrogen-disordered ice is explained in our recent paper:
+The algorithm to make a depolarized hydrogen-disordered ice is explained in our paper:
 
 M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
 Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://doi.org/10.1002/jcc.25077)
 
     @article{Matsumoto:2017bk,
         author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
-        title = {{GenIce: Hydrogen-Disordered Ice Generator}},
+        title = {GenIce: Hydrogen-Disordered Ice Generator},
         journal = {Journal of Computational Chemistry},
 		volume = {39},
 		pages = {61-64},
@@ -481,4 +364,4 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
 
 # How to contribute
 
-GenIce is served at the GitHub (%%url%%) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.
+GenIce is served at the GitHub ({{url}}) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.

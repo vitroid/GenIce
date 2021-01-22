@@ -80,7 +80,7 @@ def scan(category):
 
 
 
-def descriptions(category, width=72, water=False):
+def descriptions(category, width=72, water=False, groups=("system", "extra", "local")):
     """
     Show the list of available plugins in the category.
 
@@ -109,7 +109,7 @@ def descriptions(category, width=72, water=False):
     catalog = " \n \n{0}\n \n".format(titles[category]["title"])
     desc = mods["desc"]
     iswater = mods["iswater"]
-    for group in ("system", "extra", "local"):
+    for group in groups:
         desced = defaultdict(list)
         undesc = []
         for L in mods[group]:
@@ -136,6 +136,34 @@ def descriptions(category, width=72, water=False):
         if undesc != "":
             undesc = "(Undocumented) " + undesc
         catalog += table + "----\n" + undesc + "\n \n \n"
+    return catalog
+
+
+def plugin_descriptors(category, water=False, groups=("system", "extra", "local")):
+    """
+    Show the list of available plugins in the category.
+
+    Options:
+      water=False   Pick up water molecules only (for molecule plugin).
+    """
+    mods = scan(category)
+    catalog = dict()
+    desc = mods["desc"]
+    iswater = mods["iswater"]
+    for group in groups:
+        desced = defaultdict(list)
+        undesc = []
+        for L in mods[group]:
+            if category == "molecule":
+                if water and not iswater[L]:
+                    continue
+                if not water and iswater[L]:
+                    continue
+            if L in desc:
+                desced[desc[L]].append(L)
+            else:
+                undesc.append(L)
+        catalog[group] = [desced, undesc]
     return catalog
 
 

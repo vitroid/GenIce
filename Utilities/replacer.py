@@ -4,36 +4,46 @@ import os
 # from genice2.tool import line_replacer
 import distutils.core
 from logging import getLogger
+from jinja2 import Template
+import json
+from genice2.plugin import plugin_descriptors
 
-def line_replacer(line, d):
-    logger = getLogger()
+
+
+def system_ices(markdown=True):
+    desc = plugin_descriptors("lattice", groups=["system"])
+    documented, undocumented = desc["system"]
+
     s = ""
-    for tag in d:
-        loc = line.find(tag)
-        if loc >= 0:
-            logger.debug("From {0} by {1}.".format(tag, d[tag]))
-            replacement = d[tag].splitlines()
-            if len(replacement) == 1:
-                s = line.replace(tag, replacement[0])
-            else:
-                indent = line[:loc]
-                for newline in replacement:
-                    s += indent + newline + "\n"
-            return s
-    return line
+    for description, ices in documented.items():
+        s += ", ".join(ices) + " | " + description + "\n"
+    s += ", ".join(undocumented) + " | (Undocumented)\n"
+    return s
+
+
+
+
+with open("citations.json") as f:
+    citations = json.load(f)
+
+citationlist = [f"[{key}] {desc}" for key, doi, desc in citations]
+
+def prefix(L, pre):
+    return pre + ("\n"+pre).join(L) + "\n"
 
 setup = distutils.core.run_setup("setup.py")
 
 d = {
-    "%%usage%%"   : "".join(os.popen("./genice.x -h").readlines()),
-    "%%usage_analice%%" : "".join(os.popen("./analice.x -h").readlines()),
-    "%%version%%" : setup.get_version(),
-    "%%package%%" : setup.get_name(),
-    "%%url%%"     : setup.get_url(),
-    "%%genice%%"  : "[GenIce](https://github.com/vitroid/GenIce)",
-    "%%requires%%": "\n".join(setup.install_requires),
+    "usage"   : prefix(os.popen("./genice.x -h").readlines(), "    "),
+    "version" : setup.get_version(),
+    "package" : setup.get_name(),
+    "url"     : setup.get_url(),
+    "genice"  : "[GenIce](https://github.com/vitroid/GenIce)",
+    "requires": prefix(setup.install_requires, "* "),
+    "ices"    : system_ices(),
+    "citationlist": prefix(citationlist, "* ")
 }
 
 
-for line in sys.stdin:
-    print(line_replacer(line, d), end="")
+t = Template(sys.stdin.read())
+print(t.render(**d))

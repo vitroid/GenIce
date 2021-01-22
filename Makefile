@@ -2,8 +2,11 @@ all: README.md
 	echo Hello.
 %: temp_% Utilities/replacer.py genice2/__init__.py
 	python Utilities/replacer.py < $< > $@
-	-fgrep '%%' $@
+	-fgrep '{{' $@
 
+update-citations:
+	cp citations.json old.citations.json
+	python Utilities/citation.py < old.citations.json > citations.json
 
 
 test:
