@@ -1,12 +1,24 @@
 [
-  ["Avogadro","","Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif"],
+    [
+        "Avogadro",
+        "",
+        "Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif"
+    ],
     [
         "Baez 1998",
         "10.1063/1.469938",
         "\nB\u00c1EZ, Luis A. and CLANCY, Paulette, 1995, Phase equilibria in extended simple point charge ice\u2010water systems. The Journal of Chemical Physics [online]. 8 December 1995. Vol.\u00a0103, no.\u00a022, p.\u00a09744\u20139755. DOI\u00a010.1063/1.469938. Available from: http://dx.doi.org/10.1063/1.469938\n"
     ],
-    ["Engel 2018", "10.1038/s41467-018-04618-6", ""],
-    ["Frank 1959", "10.1107/S0365110X59001499", ""],
+    [
+        "Engel 2018",
+        "10.1038/s41467-018-04618-6",
+        "\nENGEL, Edgar A., ANELLI, Andrea, CERIOTTI, Michele, PICKARD, Chris J. and NEEDS, Richard J., 2018, Mapping uncharted territory in ice\u00a0from zeolite networks to ice structures. Nature Communications [online]. 5 June 2018. Vol.\u00a09, no.\u00a01. DOI\u00a010.1038/s41467-018-04618-6. Available from: http://dx.doi.org/10.1038/s41467-018-04618-6\n"
+    ],
+    [
+        "Frank 1959",
+        "10.1107/S0365110X59001499",
+        "\nFRANK, F. C. and KASPER, J. S., 1959, Complex alloy structures regarded as sphere packings. II. Analysis and classification of representative structures. Acta Crystallographica [online]. 10 July 1959. Vol.\u00a012, no.\u00a07, p.\u00a0483\u2013499. DOI\u00a010.1107/s0365110x59001499. Available from: http://dx.doi.org/10.1107/S0365110X59001499\n"
+    ],
     [
         "Falenty 2014",
         "10.1038/nature14014",
@@ -37,16 +49,31 @@
         "10.1016/j.cplett.2017.01.035",
         "\nHUANG, Yingying, ZHU, Chongqin, WANG, Lu, ZHAO, Jijun and ZENG, Xiao Cheng, 2017, Prediction of a new ice clathrate with record low density: A potential candidate as ice XIX in guest-free form. Chemical Physics Letters [online]. March 2017. Vol.\u00a0671, p.\u00a0186\u2013191. DOI\u00a010.1016/j.cplett.2017.01.035. Available from: http://dx.doi.org/10.1016/j.cplett.2017.01.035\n"
     ],
-    ["IZA Database", "", "http://www.iza-structure.org/databases/"],
-    ["IZA Databases", "", "http://www.iza-structure.org/databases/"],
-    ["Jackson 1997", "", "Jackson, S. M., V. M. Nield, R. W. Whitworth, M. Oguro, and C. C. Wilson, 1997, ‘‘Single-crystal neutron diffraction studies of the structure of ice XI,’’ J. Phys. Chem. B 101, 6142."],
+    [
+        "IZA Database",
+        "",
+        "http://www.iza-structure.org/databases/"
+    ],
+    [
+        "Jackson 1997",
+        "",
+        "Jackson, S. M., V. M. Nield, R. W. Whitworth, M. Oguro, and C. C. Wilson, 1997, \u2018\u2018Single-crystal neutron diffraction studies of the structure of ice XI,\u2019\u2019 J. Phys. Chem. B 101, 6142."
+    ],
     [
         "Jeffrey 1984",
         "",
         "G. A. Jeffrey, In Inclusion Compounds; J. L. Atwood, J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5."
     ],
-    ["Kamb 1964", "", "Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437–1449 (1964)."],
-    ["Kamb 2003", "", "Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. Ordered Proton Configuration in Ice II, from Single‐Crystal Neutron Diffraction. J. Chem. Phys. 55, 1934–1945 (2003)."],
+    [
+        "Kamb 1964",
+        "",
+        "Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437\u20131449 (1964)."
+    ],
+    [
+        "Kamb 2003",
+        "",
+        "Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. Ordered Proton Configuration in Ice II, from Single\u2010Crystal Neutron Diffraction. J. Chem. Phys. 55, 1934\u20131945 (2003)."
+    ],
     [
         "Karttunen 2011",
         "10.1021/ic102178d",
@@ -62,7 +89,11 @@
         "10.1007/BF02903652",
         "\nKOSYAKOV, V. I. and POLYANSKAYA, T. M., 1999, Using structural data for estimating the stability of water networks in clathrate and semiclathrate hydrates. Journal of Structural Chemistry [online]. March 1999. Vol.\u00a040, no.\u00a02, p.\u00a0239\u2013245. DOI\u00a010.1007/bf02903652. Available from: http://dx.doi.org/10.1007/BF02903652\n"
     ],
-    ["Koza 2000", "10.1103/PhysRevLett.84.4112", ""],
+    [
+        "Koza 2000",
+        "10.1103/PhysRevLett.84.4112",
+        "\nKOZA, M. M., SCHOBER, H., HANSEN, T., T\u00d6LLE, A. and FUJARA, F., 2000, Ice XII in Its Second Regime of Metastability. Physical Review Letters [online]. 1 May 2000. Vol.\u00a084, no.\u00a018, p.\u00a04112\u20134115. DOI\u00a010.1103/physrevlett.84.4112. Available from: http://dx.doi.org/10.1103/PhysRevLett.84.4112\n"
+    ],
     [
         "Kuhs 1998",
         "10.1063/1.448109",
@@ -103,7 +134,11 @@
         "10.1063/1.5096556",
         "\nMATSUMOTO, Masakazu, YAGASAKI, Takuma and TANAKA, Hideki, 2019, A Bayesian approach for identification of ice Ih, ice Ic, high density, and low density liquid water with a torsional order parameter. The Journal of Chemical Physics [online]. 7 June 2019. Vol.\u00a0150, no.\u00a021, p.\u00a0214504. DOI\u00a010.1063/1.5096556. Available from: http://dx.doi.org/10.1063/1.5096556\n"
     ],
-    ["Maynard-Casely 2010", "10.1063/1.3455889", ""],
+    [
+        "Maynard-Casely 2010",
+        "10.1063/1.3455889",
+        "\nMAYNARD-CASELY, H. E., BULL, C. L., GUTHRIE, M., LOA, I., MCMAHON, M. I., GREGORYANZ, E., NELMES, R. J. and LOVEDAY, J. S., 2010, The distorted close-packed crystal structure of methane A. The Journal of Chemical Physics [online]. 14 August 2010. Vol.\u00a0133, no.\u00a06, p.\u00a0064504. DOI\u00a010.1063/1.3455889. Available from: http://dx.doi.org/10.1063/1.3455889\n"
+    ],
     [
         "Mochizuki 2014",
         "10.1039/c4cp01616e",
@@ -119,7 +154,11 @@
         "10.1021/acs.jpcb.5b09544",
         "\nNAKAMURA, Tatsuya, MATSUMOTO, Masakazu, YAGASAKI, Takuma and TANAKA, Hideki, 2015, Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy. The Journal of Physical Chemistry B [online]. 3 December 2015. Vol.\u00a0120, no.\u00a08, p.\u00a01843\u20131848. DOI\u00a010.1021/acs.jpcb.5b09544. Available from: http://dx.doi.org/10.1021/acs.jpcb.5b09544\n"
     ],
-    ["Petrenko 1999", "", "Petrenko and Whitworth, Physics of Ice, Table 11.2."],
+    [
+        "Petrenko 1999",
+        "",
+        "Petrenko and Whitworth, Physics of Ice, Table 11.2."
+    ],
     [
         "Rosso 2016",
         "10.1038/ncomms13394",
@@ -145,8 +184,16 @@
         "10.1021/jz401669d",
         "\nSMIRNOV, Grigory S. and STEGAILOV, Vladimir V., 2013, Toward Determination of the New Hydrogen Hydrate Clathrate Structures. The Journal of Physical Chemistry Letters [online]. 9 October 2013. Vol.\u00a04, no.\u00a021, p.\u00a03560\u20133564. DOI\u00a010.1021/jz401669d. Available from: http://dx.doi.org/10.1021/jz401669d\n"
     ],
-    ["Strobel 2016", "", "Strobel, Timothy A et al. “Hydrogen-Stuffed, Quartz-Like Water Ice.” Journal of the American Chemical Society 138.42 (2016): 13786–13789."],
-    ["Teeratchanan 2015", "10.1063/1.4933371", ""],
+    [
+        "Strobel 2016",
+        "",
+        "Strobel, Timothy A et al. \u201cHydrogen-Stuffed, Quartz-Like Water Ice.\u201d Journal of the American Chemical Society 138.42 (2016): 13786\u201313789."
+    ],
+    [
+        "Teeratchanan 2015",
+        "10.1063/1.4933371",
+        "\nTEERATCHANAN, Pattanasak and HERMANN, Andreas, 2015, Computational phase diagrams of noble gas hydrates under pressure. The Journal of Chemical Physics [online]. 21 October 2015. Vol.\u00a0143, no.\u00a015, p.\u00a0154507. DOI\u00a010.1063/1.4933371. Available from: http://dx.doi.org/10.1063/1.4933371\n"
+    ],
     [
         "Vos 1993",
         "10.1103/PhysRevLett.71.3150",

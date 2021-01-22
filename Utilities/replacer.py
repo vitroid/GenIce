@@ -47,7 +47,7 @@ d = {
     "url"     : setup.get_url(),
     "genice"  : "[GenIce](https://github.com/vitroid/GenIce)",
     "requires": prefix(setup.install_requires, "* "),
-    "ices"    : system_ices(citations=[key for key, doi, desc in citations]),
+    "ices"    : system_ices(), #citations=[key for key, doi, desc in citations]),
     "citationlist": prefix(citationlist, "* ")
 }
 
