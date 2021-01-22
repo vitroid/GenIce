@@ -4,6 +4,7 @@ from logging import getLogger
 import genice2.molecules
 
 desc={
+  "ref": {"NvdE": "Nada 2003"},
   "usage": "No options available.",
   "brief": "A 6-site water model.",
 }

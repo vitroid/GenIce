@@ -27,6 +27,23 @@ def system_ices(markdown=True, citations=None):
     s += ", ".join(undocumented) + " | (Undocumented)\n"
     return s
 
+def system_molecules(markdown=True, water=False, citations=None):
+    desc = plugin_descriptors("molecule", water=water, groups=["system"])
+    documented, undocumented, refss = desc["system"]
+
+    s = ""
+    for description, ices in documented.items():
+        if len(refss[description]) > 0:
+            citation = " [" + ",".join(refss[description]) + "]"
+        else:
+            citation = ""
+        s += ", ".join(ices) + " | " + description + citation + "\n"
+        if citations is not None:
+            for ref in refss[description]:
+                assert ref in citations, f"{ref} in {ices}"
+    s += ", ".join(undocumented) + " | (Undocumented)\n"
+    return s
+
 
 
 
@@ -48,6 +65,8 @@ d = {
     "genice"  : "[GenIce](https://github.com/vitroid/GenIce)",
     "requires": prefix(setup.install_requires, "* "),
     "ices"    : system_ices(), #citations=[key for key, doi, desc in citations]),
+    "waters"  : system_molecules(water=True),
+    "guests"  : system_molecules(water=False),
     "citationlist": prefix(citationlist, "* ")
 }
 

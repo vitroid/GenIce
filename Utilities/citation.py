@@ -1,6 +1,7 @@
 import json
 import requests
 import sys
+from logging import getLogger, basicConfig, INFO
 
 # citations = [
 #     ["Baez 1998", "10.1063/1.469938", ""],
@@ -38,6 +39,10 @@ import sys
 citations = json.load(sys.stdin)
 
 updated = []
+basicConfig(level=INFO,
+            format="%(levelname)s %(message)s")
+logger = getLogger()
+
 for key, doi, desc in citations:
     if len(doi) > 0 and len(desc) == 0:
         style = "iso690-author-date-en"
@@ -47,6 +52,7 @@ for key, doi, desc in citations:
             desc = r.content.decode("UTF-8")
         else:
             desc = ""
+            logger.info(f"DOI {doi} for {key} not found.")
     updated.append([key, doi, desc])
 
 print(json.dumps(updated, indent=4))

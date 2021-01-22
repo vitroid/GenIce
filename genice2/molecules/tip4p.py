@@ -1,7 +1,8 @@
 # coding: utf-8
 
 desc={
-  "ref": {"TIP4P": "W. L. Jorgensen, J. Chandrasekhar, J. D. Madura, R. W. Impey, and M. L. Klein, Comparison of simple potential functions for simulating liquid water, J. Chem. Phys. 79 (1983) 926-935; W. L. Jorgensen and J. D. Madura, Temperature and size dependence for monte carlo simulations of TIP4P water, Mol. Phys. 56 (1985) 1381-1392."},
+  "ref": {"TIP4P(a)": "Jorgensen 1983",
+          "TIP4P(b)": "Jorgensen 1985"},
   "usage": "No options available.",
   "brief": "A typical 4-site model.",
 }

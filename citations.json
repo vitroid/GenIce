@@ -65,6 +65,16 @@
         "G. A. Jeffrey, In Inclusion Compounds; J. L. Atwood, J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5."
     ],
     [
+        "Jorgensen 1983",
+        "",
+        "W. L. Jorgensen, J. Chandrasekhar, J. D. Madura, R. W. Impey, and M. L. Klein, Comparison of simple potential functions for simulating liquid water, J. Chem. Phys. 79 (1983) 926-935."
+    ],
+    [
+        "Jorgensen 1985",
+        "",
+        "W. L. Jorgensen and J. D. Madura, Temperature and size dependence for monte carlo simulations of TIP4P water, Mol. Phys. 56 (1985) 1381-1392."
+    ],
+    [
         "Kamb 1964",
         "",
         "Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437\u20131449 (1964)."
@@ -150,6 +160,11 @@
         "\nMOUSSEAU, Normand and BARKEMA, G.T., 2001, Fast bond-transposition algorithms for generating covalent amorphous structures. Current Opinion in Solid State and Materials Science [online]. December 2001. Vol.\u00a05, no.\u00a06, p.\u00a0497\u2013502. DOI\u00a010.1016/s1359-0286(02)00005-0. Available from: http://dx.doi.org/10.1016/S1359-0286(02)00005-0\n"
     ],
     [
+        "Nada 2003",
+        "10.1063/1.1562610",
+        "Nada, Hiroki, and Jan P. J. M. van der Eerden. 2003. \u201cAn Intermolecular Potential Model for the Simulation of Ice and Water near the Melting Point: A Six-Site Model of H2O.\u201d The Journal of Chemical Physics 118 (16): 7401\u201313."
+    ],
+    [
         "Nakamura 2015",
         "10.1021/acs.jpcb.5b09544",
         "\nNAKAMURA, Tatsuya, MATSUMOTO, Masakazu, YAGASAKI, Takuma and TANAKA, Hideki, 2015, Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy. The Journal of Physical Chemistry B [online]. 3 December 2015. Vol.\u00a0120, no.\u00a08, p.\u00a01843\u20131848. DOI\u00a010.1021/acs.jpcb.5b09544. Available from: http://dx.doi.org/10.1021/acs.jpcb.5b09544\n"
@@ -203,5 +218,10 @@
         "Yagasaki 2018",
         "10.1021/acs.jpcb.8b04441",
         "\nYAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2018, Phase Diagrams of TIP4P/2005, SPC/E, and TIP5P Water at High Pressure. The Journal of Physical Chemistry B [online]. 17 July 2018. Vol.\u00a0122, no.\u00a031, p.\u00a07718\u20137725. DOI\u00a010.1021/acs.jpcb.8b04441. Available from: http://dx.doi.org/10.1021/acs.jpcb.8b04441\n"
+    ],
+    [
+        "Zhao 2019",
+        "",
+        "Zhao, C.-L. et al. Seven-Site Effective Pair Potential for Simulating Liquid Water. J. Phys. Chem. B 123, 4594-4603 (2019)."
     ]
 ]

@@ -206,55 +206,9 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 ## Ice structures
 
-(pluginから自動抽出してほしい)
-
 Symbol | Description
 -------|------------
 {{ices}}
-1h, ice1h, Ih   | Most popular Ice I (hexagonal)
-1c, ice1c, Ic   | Cubic type of ice I
-2, ice2, II     | Hydrogen-ordered ice II
-2d, ice2d       | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
-3, ice3, III    | Conventional high-pressure ice III.[Lobban 1998]
-4, ice4, IV     | Metastable high-pressure ice IV.[Lobban 1998]
-4R              | Ice IV with orthogonal unit cell. (testing)
-5, ice5, V      | Monoclinic ice V (testing).
-5R              | Ice V with orthogonal unit cell. (testing)
-6, ice6, VI     | Conventional high-pressure ice VI.[Lobban 1998]
-6h              | Half lattice of ice IV.
-7, ice7, VII    | Conventional high-pressure ice VII.[Lobban 1998]
-8, ice8, VIII   | Ice VIII, a hydrogen-ordered counterpart of ice VII.[Kuhs 1998]
-9, ice9, IX     | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
-ice11_19        | A candidate for an antiferroelectric ice 11; ice 11 type 19 in Ref. [Fan 2010]
-12, ice12, XII  | Metastable high-pressure ice XII.[Lobban 1998]
-13, ice13, XIII | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
-16, ice16, XVI  | Negative-pressure ice XVI.[Falenty 2014]
-17, ice17, XVII | Negative-pressure ice XVII.[del Rosso 2016]
-0, ice0         | Hypothetical ice "0".[Russo 2014]
-i               | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
-A, iceA         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
-B, iceB         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
-C0, C0-II       | Filled ice C0 (Alias of 17).[Smirnov 2013]
-C1              | Filled ice C1 (Alias of 2).[Londono 1988]
-C2              | Filled ice C2 (Alias of 1c).[Vos 1993]
-sTprime         | Filled ice "sT'". [Smirnov 2013]
-CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999]
-sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. [Jeffrey 1984]
-RHO             | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
-FAU             | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
-EMT             | Hypothetical ice with a large cavity.[Liu 2019]
-DOH,MEP,MTN,SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
-CRN1,CRN2,CRN3  | 4-coordinated continuous random network [Mousseau 2005]
-Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
-A15, sigma, Hcomp, Kcomp, Z, mu, zra-d, FK9layers, FK6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
-T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
-xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
-xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (Hydrogen bond orientations are modified.)
-iceR   | Partial plastic ice R [Mochizuki 2014].
-iceT   | Partial plastic ice T [Hirata 2017].
-iceT2  | Partial plastic ice T2 [Yagasaki 2018].
-dtc    | Ultralow-density ice containing cylindrical pores. [Matsui 2019]
-prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
@@ -289,22 +243,13 @@ A water model can be chosen with `--water` option.
 
 symbol   | type
 ---------|-----
-`3site`, `tip3p`  | 3-site TIP3P (default)
-`4site`, `tip4p`  | 4-site TIP4P
-`ice`             | TIP4P/ice
-`5site`, `tip5p`  | 5-site TIP5P
-`6site`, `NvdE`   | 6-site NvdE
+{{waters}}
 
 ## Guest molecules
 
 symbol | type
 -------|---------
-`co2`    | CO<sub>2</sub>
-`me`     | United atom monatomic methane
-`uathf`  | United atom 5-site THF  
-`g12`,`g14`,`g15`,`g16` | A monatomic dummy site
-`empty`  | Leave the cage empty.
-
+{{guests}}
 
 You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
 

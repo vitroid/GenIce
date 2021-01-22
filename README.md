@@ -472,7 +472,13 @@ Install with pip3.
 
                              
 
+                            3site, tip3p    A typical 3-site model.
+
                             4site, tip4p    A typical 4-site model.
+
+                            5site, tip5p    A typical 5-site model.
+
+                            6site, NvdE     A 6-site water model.
 
                             7site           A seven-site water model.
 
@@ -529,12 +535,6 @@ Install with pip3.
                             1. Molecules served with GenIce
 
                              
-
-                            3site, tip3p    A typical 3-site model.
-
-                            5site, tip5p    A typical 5-site model.
-
-                            6site, NvdE     A 6-site water model.
 
                             H2              Hydrogen molecule.
 
@@ -804,20 +804,18 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 ## Ice structures
 
-(pluginから自動抽出してほしい)
-
 Symbol | Description
 -------|------------
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Fan 2010,Jackson 1997]
-115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984,Kosyakov 1999,IZA Database,Engel 2018]
-12, XII, ice12 | Metastable high-pressure ice XII. [Koza 2000,Lobban 1998]
+115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [IZA Database,Jeffrey 1984,Engel 2018,Kosyakov 1999]
+12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998,Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
-16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Kosyakov 1999,IZA Database,Falenty 2014,Jeffrey 1984,Sikiric 2010]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Strobel 2016,Smirnov 2013,Rosso 2016]
+16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [IZA Database,Jeffrey 1984,Sikiric 2010,Falenty 2014,Kosyakov 1999]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Rosso 2016,Smirnov 2013,Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
-2, II, ice2 | Hydrogen-ordered ice II. [Londono 1988,Kamb 1964,Kamb 2003]
+2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964,Londono 1988,Kamb 2003]
 2D3 | Trilayer honeycomb ice.
 2d, ice2d, ice2rect | A hydrogen-disordered counterpart of ice II. [Nakamura 2015]
 3, III, ice3 | Ice III. [Petrenko 1999]
@@ -834,9 +832,9 @@ A, iceA | Hypothetical ice A. [Baez 1998]
 A15, Struct33 | Cubic Structure I of clathrate hydrate. [Sikiric 2010]
 B, iceB | Hypothetical ice B. [Baez 1998]
 BSV, engel05 | Hypothetical zeolitic ice of the gyroid structure. [IZA Database,Engel 2018]
-C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [http://www.iza-structure.org/databases,Sikiric 2010]
+C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [Sikiric 2010]
 CRN1, CRN2, CRN3 | A continuous random network of Sillium. [Mousseau 2001]
-CS1, MEP, sI | Clathrate hydrates sI. [Frank 1959,Kosyakov 1999,IZA Database,Jeffrey 1984]
+CS1, MEP, sI | Clathrate hydrates sI. [IZA Database,Frank 1959,Jeffrey 1984,Kosyakov 1999]
 DOH, HS3, sH | Clathrate type H.
 EMT | Hypothetical ice with a large cavity. [IZA Database,Liu 2019]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017,IZA Database]
@@ -855,50 +853,6 @@ sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
 
-1h, ice1h, Ih   | Most popular Ice I (hexagonal)
-1c, ice1c, Ic   | Cubic type of ice I
-2, ice2, II     | Hydrogen-ordered ice II
-2d, ice2d       | Hypothetical Hydrogen-disordered Ice II.[Nakamura 2015]
-3, ice3, III    | Conventional high-pressure ice III.[Lobban 1998]
-4, ice4, IV     | Metastable high-pressure ice IV.[Lobban 1998]
-4R              | Ice IV with orthogonal unit cell. (testing)
-5, ice5, V      | Monoclinic ice V (testing).
-5R              | Ice V with orthogonal unit cell. (testing)
-6, ice6, VI     | Conventional high-pressure ice VI.[Lobban 1998]
-6h              | Half lattice of ice IV.
-7, ice7, VII    | Conventional high-pressure ice VII.[Lobban 1998]
-8, ice8, VIII   | Ice VIII, a hydrogen-ordered counterpart of ice VII.[Kuhs 1998]
-9, ice9, IX     | Ice IX, a hydrogen-ordered counterpart of ice III.[Londono 1993]
-ice11_19        | A candidate for an antiferroelectric ice 11; ice 11 type 19 in Ref. [Fan 2010]
-12, ice12, XII  | Metastable high-pressure ice XII.[Lobban 1998]
-13, ice13, XIII | Ice XIII, a hydrogen-ordered counterpart of ice V.[Salzmann 2006]
-16, ice16, XVI  | Negative-pressure ice XVI.[Falenty 2014]
-17, ice17, XVII | Negative-pressure ice XVII.[del Rosso 2016]
-0, ice0         | Hypothetical ice "0".[Russo 2014]
-i               | Hypothetical ice "i". = Zeolite BCT.[Fennell 2005]
-A, iceA         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
-B, iceB         | Hypothetical hydrogen-ordered ices "A" and "B".[Baez 1998]
-C0, C0-II       | Filled ice C0 (Alias of 17).[Smirnov 2013]
-C1              | Filled ice C1 (Alias of 2).[Londono 1988]
-C2              | Filled ice C2 (Alias of 1c).[Vos 1993]
-sTprime         | Filled ice "sT'". [Smirnov 2013]
-CS1, CS2, CS4, TS1, HS1, HS2, HS3| Clathrate hydrates, Kosyakov's nomenclature. [Kosyakov 1999]
-sI, sII, sIII, sIV, sV, sVII, sH | Clathrate hydrates, Jeffrey's nomenclature. [Jeffrey 1984]
-RHO             | Hypothetical ice at negative pressure ice "sIII".[Huang 2016]
-FAU             | Hypothetical ice at negative pressure ice "sIV". [Huang 2017]
-EMT             | Hypothetical ice with a large cavity.[Liu 2019]
-DOH,MEP,MTN,SOD | Aliases of HS3, CS1, CS2, and CS4, respectively.
-CRN1,CRN2,CRN3  | 4-coordinated continuous random network [Mousseau 2005]
-Struct01 .. Struct84 | Space Fullerenes [Dutour Sikiric 2010]
-A15, sigma, Hcomp, Kcomp, Z, mu, zra-d, FK9layers, FK6layers, C36, C15, C14, delta, psigma | Space Fullerenes, Aliases of the Struct?? series.  See the data source for their names. [Dutour Sikiric 2010]
-T      | Space fullerene type T,[Dutour Sikiric 2010] II+IVa. [Karttunen 2011]
-xFAU[2], xFAU[4], xFAU[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017]
-xFAU2[2], xFAU2[4], xFAU2[16], ... | Aeroices, i.e. extended FAU.[Matsui 2017] (Hydrogen bond orientations are modified.)
-iceR   | Partial plastic ice R [Mochizuki 2014].
-iceT   | Partial plastic ice T [Hirata 2017].
-iceT2  | Partial plastic ice T2 [Yagasaki 2018].
-dtc    | Ultralow-density ice containing cylindrical pores. [Matsui 2019]
-prism[4], prism[5], prism[6], ... | Ice nanotubes. [Koga 2001].
 
 Ice names with double quotations are not experimentally verified.
 
@@ -933,21 +887,26 @@ A water model can be chosen with `--water` option.
 
 symbol   | type
 ---------|-----
-`3site`, `tip3p`  | 3-site TIP3P (default)
-`4site`, `tip4p`  | 4-site TIP4P
-`ice`             | TIP4P/ice
-`5site`, `tip5p`  | 5-site TIP5P
-`6site`, `NvdE`   | 6-site NvdE
+3site, tip3p | A typical 3-site model.
+4site, tip4p | A typical 4-site model. [Jorgensen 1985,Jorgensen 1983]
+5site, tip5p | A typical 5-site model.
+6site, NvdE | A 6-site water model. [Nada 2003]
+7site | A seven-site water model. [Zhao 2019]
+physical_water | Physical model of water; Oxygen atom is on the lattice point. [Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983).]
+ice, spce | (Undocumented)
+
 
 ## Guest molecules
 
 symbol | type
 -------|---------
-`co2`    | CO<sub>2</sub>
-`me`     | United atom monatomic methane
-`uathf`  | United atom 5-site THF  
-`g12`,`g14`,`g15`,`g16` | A monatomic dummy site
-`empty`  | Leave the cage empty.
+H2 | Hydrogen molecule. [https://www.britannica.com/science/hydrogen]
+ch4 | An all-atom methane model.
+me | A united-atom methane model.
+mol | Loader for MOL files (generated by MolView.org), e.g. mol[THF.mol].
+thf | An all-atom tetrahydrofuran (THF) model.
+uathf | A united-atom five-site tetrahydrofuran (THF) model.
+co2, empty, g12, g14, g15, g16, one, uathf6 | (Undocumented)
 
 
 You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
@@ -1017,6 +976,8 @@ HUANG, Yingying, ZHU, Chongqin, WANG, Lu, ZHAO, Jijun and ZENG, Xiao Cheng, 2017
 * [IZA Database] http://www.iza-structure.org/databases/
 * [Jackson 1997] Jackson, S. M., V. M. Nield, R. W. Whitworth, M. Oguro, and C. C. Wilson, 1997, ‘‘Single-crystal neutron diffraction studies of the structure of ice XI,’’ J. Phys. Chem. B 101, 6142.
 * [Jeffrey 1984] G. A. Jeffrey, In Inclusion Compounds; J. L. Atwood, J. E. D. Davies, D. D. MacNicol, Eds.; Academic Press: London, 1984, Vol. 1, Chap. 5.
+* [Jorgensen 1983] W. L. Jorgensen, J. Chandrasekhar, J. D. Madura, R. W. Impey, and M. L. Klein, Comparison of simple potential functions for simulating liquid water, J. Chem. Phys. 79 (1983) 926-935.
+* [Jorgensen 1985] W. L. Jorgensen and J. D. Madura, Temperature and size dependence for monte carlo simulations of TIP4P water, Mol. Phys. 56 (1985) 1381-1392.
 * [Kamb 1964] Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437–1449 (1964).
 * [Kamb 2003] Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. Ordered Proton Configuration in Ice II, from Single‐Crystal Neutron Diffraction. J. Chem. Phys. 55, 1934–1945 (2003).
 * [Karttunen 2011] 
@@ -1064,6 +1025,7 @@ MOCHIZUKI, Kenji, HIMOTO, Kazuhiro and MATSUMOTO, Masakazu, 2014, Diversity of t
 * [Mousseau 2001] 
 MOUSSEAU, Normand and BARKEMA, G.T., 2001, Fast bond-transposition algorithms for generating covalent amorphous structures. Current Opinion in Solid State and Materials Science [online]. December 2001. Vol. 5, no. 6, p. 497–502. DOI 10.1016/s1359-0286(02)00005-0. Available from: http://dx.doi.org/10.1016/S1359-0286(02)00005-0
 
+* [Nada 2003] Nada, Hiroki, and Jan P. J. M. van der Eerden. 2003. “An Intermolecular Potential Model for the Simulation of Ice and Water near the Melting Point: A Six-Site Model of H2O.” The Journal of Chemical Physics 118 (16): 7401–13.
 * [Nakamura 2015] 
 NAKAMURA, Tatsuya, MATSUMOTO, Masakazu, YAGASAKI, Takuma and TANAKA, Hideki, 2015, Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy. The Journal of Physical Chemistry B [online]. 3 December 2015. Vol. 120, no. 8, p. 1843–1848. DOI 10.1021/acs.jpcb.5b09544. Available from: http://dx.doi.org/10.1021/acs.jpcb.5b09544
 
@@ -1093,6 +1055,7 @@ VOS, Willem L., FINGER, Larry W., HEMLEY, Russell J. and MAO, Ho-kwang, 1993, No
 * [Yagasaki 2018] 
 YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2018, Phase Diagrams of TIP4P/2005, SPC/E, and TIP5P Water at High Pressure. The Journal of Physical Chemistry B [online]. 17 July 2018. Vol. 122, no. 31, p. 7718–7725. DOI 10.1021/acs.jpcb.8b04441. Available from: http://dx.doi.org/10.1021/acs.jpcb.8b04441
 
+* [Zhao 2019] Zhao, C.-L. et al. Seven-Site Effective Pair Potential for Simulating Liquid Water. J. Phys. Chem. B 123, 4594-4603 (2019).
 
 
 # Algorithm and how to cite it.

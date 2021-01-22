@@ -1,6 +1,6 @@
 all: README.md
 	echo Hello.
-%: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py
+%: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
 	python Utilities/replacer.py < $< > $@
 	-fgrep '{{' $@
 

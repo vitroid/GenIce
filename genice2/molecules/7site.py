@@ -1,5 +1,5 @@
 # coding: utf-8
-desc={"ref": {"TIP7P": "Zhao, C.-L. et al. Seven-Site Effective Pair Potential for Simulating Liquid Water. J. Phys. Chem. B 123, 4594–4603 (2019)."},
+desc={"ref": {"TIP7P": "Zhao 2019"},
       "brief": "A seven-site water model.",
       "usage": "No options available."
       }
