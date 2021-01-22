@@ -17,7 +17,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice2', '__init__.py
 long_desc = "".join(open("README.md").readlines())
 
 setup(name='GenIce2',
-      python_requires='>=3.5',
+      python_requires='>=3.6',
       version=metadata['version'],
       description='A Swiss army knife to generate hydrogen-disordered ice structures.',
       long_description=long_desc,
@@ -26,7 +26,7 @@ setup(name='GenIce2',
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         ],
       author='Masakazu Matsumoto',
       author_email='vitroid@gmail.com',
@@ -37,8 +37,8 @@ setup(name='GenIce2',
       install_requires=['networkx>=2', 'cycless', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', 'openpyscad', 'graphstat'],
       entry_points = {
               'console_scripts': [
-                  'genice = genice2.cli.genice:main',
-                  'analice = genice2.cli.analice:main'
+                  'genice2 = genice2.cli.genice:main',
+                  'analice2 = genice2.cli.analice:main'
               ]
           }
       )
