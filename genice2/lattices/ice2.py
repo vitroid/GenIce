@@ -13,9 +13,9 @@ def usage():
     logger = getLogger()
     logger.info(__doc__)
 
-desc={"ref": {"2atom": "Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. Ordered Proton Configuration in Ice II, from Single‐Crystal Neutron Diffraction. J. Chem. Phys. 55, 1934–1945 (2003).",
-              "2cell": "Kamb, B.IUCr. Ice. II. A proton-ordered form of ice. Acta Cryst 17, 1437–1449 (1964).",
-              "C1": "D. Londono, W. F. Kuhs, J. L. Finney, Nature, 1988, DOI:10.1038/332141a0."},
+desc={"ref": {"2atom": "Kamb 2003",
+              "2cell": "Kamb 1964",
+              "C1": "Londono 1988"},
       "usage": usage(),
       "brief": "Hydrogen-ordered ice II."
       }

@@ -2,7 +2,7 @@
 
 desc={"ref": {},
       "usage": "No options available.",
-      "brief": "Ice Ih."
+      "brief": "Most popular Ice I (hexagonal)"
       }
 
 

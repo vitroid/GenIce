@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-desc={"ref": {"13": 'Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).'},
+desc={"ref": {"13": 'Salzmann 2006'},
       "usage": "No options available.",
-      "brief": "Ice XIII."
+      "brief": "Ice XIII, a hydrogen-ordered counterpart of ice V."
       }
 
 import genice2.lattices

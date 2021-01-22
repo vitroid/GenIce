@@ -8,8 +8,8 @@ Reshaping the unit cell.
 """
 desc={
     "ref": {
-        "engel29": "Engel, E.A., Anelli, A., Ceriotti, M. et al. Mapping uncharted territory in ice from zeolite networks to ice structures. Nat Commun 9, 2173 (2018). https://doi.org/10.1038/s41467-018-04618-6",
-        "MAR": "Database of Zeolite Structures, https://asia.iza-structure.org/IZA-SC/framework.php?STC=MAR"
+        "engel29": "Engel 2018",
+        "MAR": "IZA Database"
     },
     "usage": "No options available.",
     "brief": "Hypothetical zeolitic ice"

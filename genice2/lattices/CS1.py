@@ -1,10 +1,13 @@
 # coding: utf-8
-"""
-[A15] Frank, F.C., and JS Kasper. “Complex Alloy Structures Regarded as Sphere Packings. II. Analysis and Classification of Representative Structures.” Acta Crystallographica 12.7 (1959): 483–499.
-[sI] Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.
-[CS1] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
-[MEP] http://www.iza-structure.org/databases/
-"""
+
+desc={"ref": {
+              "A15": 'Frank 1959',
+              "sI": 'Jeffrey 1984',
+              "CS1": 'Kosyakov 1999',
+              "MEP": 'IZA Database'},
+      "usage": "No options available.",
+      "brief": "Clathrate hydrates sI."
+      }
 
 
 import genice2.lattices

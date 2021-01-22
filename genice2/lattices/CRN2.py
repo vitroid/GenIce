@@ -1,9 +1,8 @@
 # coding: utf-8
-"""
-A continuous random network of Sillium.
-
-Mousseau, N, and G T Barkema. “Fast Bond-Transposition Algorithms for Generating Covalent Amorphous Structures.” Current Opinion in Solid State and Materials … 5.6 (2001): 497–502. Web.
-"""
+desc={"ref": {"CRN": 'Mousseau 2001'},
+      "usage": "No options available.",
+      "brief": "A continuous random network of Sillium."
+      }
 
 import genice2.lattices
 from genice2.cell import cellvectors

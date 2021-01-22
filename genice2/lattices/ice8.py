@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # coding: utf-8
 
-desc={"ref": {"VIII": 'Kuhs, W. F., Finney, J. L., Vettier, C. & Bliss, D. V. Structure and hydrogen ordering in ices VI, VII, and VIII by neutron powder diffraction. J. Chem. Phys. 81, 3612–3623 (1998).'},
+desc={"ref": {"VIII": 'Kuhs 1998'},
       "usage": "No options available.",
-      "brief": "Ice VIII."
+      "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII."
       }
 
 import genice2.lattices

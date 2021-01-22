@@ -7,6 +7,10 @@ Data source:
 Cage composition:
  (12,14,15,16) = (8,0,0,4,)
 """
+desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
+      "usage": "No options available.",
+      "brief": "A space fullerene."
+      }
 
 import genice2.lattices
 from genice2.cell import cellvectors

@@ -9,8 +9,7 @@ def usage():
     logger = getLogger()
     logger.info(__doc__)
 
-desc={"ref": {"Ih": "Page 11 of the Supplemenrary Material of P. Teeratchanan and A. Hermann, Computational phase diagrams of noble gas hydrates under pressure, J. Chem. Phys. 143, 154507 (2015); https://doi.org/10.1063/1.4933371",
-},
+desc={"ref": {"C0": "Teeratchanan 2015"},
       "usage": usage(),
       "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.)"
       }

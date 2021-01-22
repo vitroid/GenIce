@@ -3,6 +3,14 @@
 Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
 """
 
+desc={
+    "ref": {
+        "prism": "Koga 2001"
+    },
+    "usage": "No options available.",
+    "brief": "Ice nanotubes."
+}
+
 from math import sin, pi, cos
 from logging import getLogger
 from genice2.cell import cellvectors

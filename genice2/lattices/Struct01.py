@@ -1,10 +1,13 @@
 # coding: utf-8
 """
-Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
-
 Cage composition:
  (12,14,15,16) = (28,16,8,8,)
 """
+
+desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
+      "usage": "No options available.",
+      "brief": "A space fullerene."
+      }
 
 import genice2.lattices
 from genice2.cell import cellvectors

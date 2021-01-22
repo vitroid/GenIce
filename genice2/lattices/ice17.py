@@ -1,9 +1,10 @@
 # coding: utf-8
 
-desc={"ref": {"C0": 'Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013); Strobel, Timothy A et al. “Hydrogen-Stuffed, Quartz-Like Water Ice.” Journal of the American Chemical Society 138.42 (2016): 13786–13789.',
-              "Ice 17": 'del Rosso, Leonardo, Milva Celli, and Lorenzo Ulivi. “Ice XVII as a Novel Material for Hydrogen Storage.” Challenges 8.1 (2017): 3.'},
+desc={"ref": {"C0(a)": 'Smirnov 2013',
+              "C0(b)": 'Strobel 2016',
+              "Ice 17": 'Rosso 2016'},
       "usage": "No options available.",
-      "brief": "Ice XVII."
+      "brief": "Ultralow-density Ice XVII."
       }
 
 import genice2.lattices

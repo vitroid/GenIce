@@ -2,7 +2,7 @@
 
 desc={"ref": {},
       "usage": "No options available.",
-      "brief": "Ice VII."
+      "brief": "Conventional high-pressure ice VII."
       }
 
 

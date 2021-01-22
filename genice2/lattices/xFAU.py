@@ -8,6 +8,10 @@ Usage:
 Options:
   n    Length of the hexagonal prism. (rep=1:FAU, rep=0:SOD, rep>1: aeroice)
 """
+desc={"ref": {"T":         'Matsui 2017'},
+      "usage": __doc__,
+      "brief": "Aeroice xFAU."
+      }
 #FAU Decoration of a 4-network
 #読みこんだAR3Rの座標を、FAU構造における多面体vertexの位置とみなし、
 #それらを連結するネットワークを六角柱で修飾して大きなネットワークを作る。

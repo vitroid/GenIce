@@ -2,6 +2,13 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
+
+desc={"ref": {"sIII": 'Huang 2017',
+              "FAU": 'IZA Database'},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice at negative pressure ice 'sIV'."
+      }
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.cell = """

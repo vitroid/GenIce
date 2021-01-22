@@ -1,3 +1,8 @@
+desc={"ref": {"T":         'Hirata 2017'},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice T."
+      }
+
 import genice2.lattices
 from genice2.cell import cellvectors
 

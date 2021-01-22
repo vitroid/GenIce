@@ -1,6 +1,12 @@
 from genice2.cell import cellvectors
 import genice2.lattices
 
+desc={"ref": {"EMT(a)": "Liu 2019",
+              "EMT(b)": 'IZA Database'},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice with a large cavity."
+      }
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.cell = cellvectors(a=15.621810598341442,

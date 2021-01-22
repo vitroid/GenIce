@@ -2,7 +2,7 @@
 
 desc={"ref": {},
       "usage": "No options available.",
-      "brief": "Ice V."
+      "brief": "Monoclinic ice V (testing)."
       }
 
 from genice2.cell import cellvectors

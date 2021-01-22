@@ -27,6 +27,7 @@ def scan(category):
     modules = {}
     desc = dict()
     iswater = dict()
+    refs = dict()
 
     logger.info("\nPredefined {0}s".format(category))
     module = importlib.import_module("genice2.{0}s".format(category))
@@ -44,6 +45,7 @@ def scan(category):
             module = importlib.import_module("genice2.{0}s.{1}".format(category, mod))
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
+                refs[mod] = module.desc["ref"]
             iswater[mod] = "water" in module.__dict__
         except:
             pass
@@ -58,6 +60,7 @@ def scan(category):
             module = ep.load()
             if "desc" in module.__dict__:
                 desc[label] = module.desc["brief"]
+                refs[mod] = module.desc["ref"]
             iswater[mod] = "water" in module.__dict__
         except:
             pass
@@ -70,11 +73,13 @@ def scan(category):
         module = importlib.import_module("{0}s.{1}".format(category, mod))
         if "desc" in module.__dict__:
             desc[mod] = module.desc["brief"]
+            refs[mod] = module.desc["ref"]
         iswater[mod] = "water" in module.__dict__
     logger.info(mods)
     modules["local"] = mods
     modules["desc"] = desc
     modules["iswater"] = iswater
+    modules["refs"] = refs
 
     return modules
 
@@ -114,6 +119,8 @@ def descriptions(category, width=72, water=False, groups=("system", "extra", "lo
         undesc = []
         for L in mods[group]:
             if category == "molecule":
+                if L not in iswater:
+                    iswater[L] = False
                 if water and not iswater[L]:
                     continue
                 if not water and iswater[L]:
@@ -150,9 +157,11 @@ def plugin_descriptors(category, water=False, groups=("system", "extra", "local"
     catalog = dict()
     desc = mods["desc"]
     iswater = mods["iswater"]
+    refs = mods["refs"]
     for group in groups:
         desced = defaultdict(list)
         undesc = []
+        refss  = defaultdict(set)
         for L in mods[group]:
             if category == "molecule":
                 if water and not iswater[L]:
@@ -160,10 +169,13 @@ def plugin_descriptors(category, water=False, groups=("system", "extra", "local"
                 if not water and iswater[L]:
                     continue
             if L in desc:
+                # desc[L] is the brief description of the module
+                # L is the name of module (name of ice)
                 desced[desc[L]].append(L)
+                refss[desc[L]] |= set([label for key, label in refs[L].items()])
             else:
                 undesc.append(L)
-        catalog[group] = [desced, undesc]
+        catalog[group] = [desced, undesc, refss]
     return catalog
 
 

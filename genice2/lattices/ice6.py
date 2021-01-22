@@ -1,8 +1,8 @@
 # coding: utf-8
 
-desc={"ref": {"VI": 'Petrenko and Whitworth, Physics of Ice, Table 11.2'},
+desc={"ref": {"VI": 'Petrenko 1999'},
       "usage": "No options available.",
-      "brief": "Ice VI."
+      "brief": "Conventional high-pressure ice VI."
       }
 
 

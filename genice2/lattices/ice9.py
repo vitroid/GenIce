@@ -1,8 +1,8 @@
 # coding: utf-8
 
-desc={"ref": {"[9]":'Londono, D., Kuhs, W. F. & Finney, J. L. Neutron diffraction studies of ices III and IX on under-pressure and recovered samples. J. Chem. Phys. 98, 4878–4888 (1993).'},
+desc={"ref": {"9":'Londono 1993'},
       "usage": "No options available.",
-      "brief": "Ice IX."
+      "brief": "Ice IX, a hydrogen-ordered counterpart of ice III."
       }
 
 

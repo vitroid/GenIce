@@ -2,11 +2,11 @@
 
 desc={
     "ref": {
-        "sVII": "Jeffrey, G A. “Hydrate Inclusion Compounds.” Inclusion Compounds 1 (1984): 135–190.",
-        "CS4": "Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.",
-        "SOD": "http://www.iza-structure.org/databases/",
-        "207_1_4435": "Engel, E.A., Anelli, A., Ceriotti, M. et al. Mapping uncharted territory in ice from zeolite networks to ice structures. Nat Commun 9, 2173 (2018). https://doi.org/10.1038/s41467-018-04618-6",
-        "engel01": "Engel, E.A., Anelli, A., Ceriotti, M. et al. Mapping uncharted territory in ice from zeolite networks to ice structures. Nat Commun 9, 2173 (2018). https://doi.org/10.1038/s41467-018-04618-6",
+        "sVII": "Jeffrey 1984",
+        "CS4": "Kosyakov 1999",
+        "SOD": "IZA Database",
+        "207_1_4435": "Engel 2018",
+        "engel01": "Engel 2018",
     },
     "usage": "No options available.",
     "brief": "Hypothetical zeolitic ice"

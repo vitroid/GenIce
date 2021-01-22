@@ -1,9 +1,8 @@
 # coding: utf-8
 
-desc={"ref": {"IId": 'Nakamura, Tatsuya et al. “Thermodynamic Stability of Ice II and Its Hydrogen-Disordered Counterpart: Role of Zero-Point Energy.” The Journal of Physical Chemistry B 120.8 (2015): 1843–1848.',
-              },
+desc={"ref": {"IId": 'Nakamura 2015'},
       "usage": "No options available.",
-      "brief": "Orthogonalized Ice II."
+      "brief": "A hydrogen-disordered counterpart of ice II."
       }
 
 import genice2.lattices

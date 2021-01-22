@@ -4,9 +4,9 @@ Data sources
 
 """
 
-desc={"ref": {"Ic": 'W. L. Vos, L. W. Finger, R. J. Hemley, H.-K. Mao, Phys. Rev. Lett., 1993, DOI:10.1103/PhysRevLett.71.3150.'},
+desc={"ref": {"Ic": 'Vos 1993'},
       "usage": "No options available.",
-      "brief": "Ice Ic."
+      "brief": "Cubic type of ice I."
       }
 
 from genice2.cell import cellvectors

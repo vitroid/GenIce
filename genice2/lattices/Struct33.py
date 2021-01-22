@@ -3,7 +3,7 @@
 Cage composition:
  (12,14,15,16) = (2,6,0,0,)
 """
-desc={"ref": {"CS1": 'Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.'},
+desc={"ref": {"CS1": 'Sikiric 2010'},
       "usage": "No options available.",
       "brief": "Cubic Structure I of clathrate hydrate."
       }

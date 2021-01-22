@@ -1,7 +1,7 @@
 desc={
     "ref": {
-        "53_3_726600": "Engel, E.A., Anelli, A., Ceriotti, M. et al. Mapping uncharted territory in ice from zeolite networks to ice structures. Nat Commun 9, 2173 (2018). https://doi.org/10.1038/s41467-018-04618-6",
-        "engel07": "Engel, E.A., Anelli, A., Ceriotti, M. et al. Mapping uncharted territory in ice from zeolite networks to ice structures. Nat Commun 9, 2173 (2018). https://doi.org/10.1038/s41467-018-04618-6"
+        "53_3_726600": "Engel 2018",
+        "engel07": "Engel 2018"
     },
     "usage": "No options available.",
     "brief": "Hypothetical zeolitic ice"

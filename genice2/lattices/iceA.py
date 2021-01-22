@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # coding: utf-8
 
-desc={"ref": {"A": 'BÁEZ, L. A. & CLANCY, P. Phase equilibria in extended simple point charge ice‐water systems. J. Chem. Phys. 103, 9744–9755 (1998).'},
+desc={"ref": {"A": 'Baez 1998'},
       "usage": "No options available.",
       "brief": "Hypothetical ice A."
       }

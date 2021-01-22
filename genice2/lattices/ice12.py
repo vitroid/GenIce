@@ -1,9 +1,9 @@
 # coding: utf-8
 
-desc={"ref": {"12(1)": "C. Lobban, J. L. Finney, W. F. Kuhs, Nature, 1998, DOI:10.1038/34622.",
-              "12(2)": 'Koza, M M et al. "Ice XII in Its Second Regime of Metastability." Physical Review Letters 84.18 (2000): 4112-4115.'},
+desc={"ref": {"12(1)": "Lobban 1998",
+              "12(2)": 'Koza 2000'},
       "usage": "No options available.",
-      "brief": "Ice XII."
+      "brief": "Metastable high-pressure ice XII."
       }
 
 import genice2.lattices

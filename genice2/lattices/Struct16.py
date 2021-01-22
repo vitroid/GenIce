@@ -5,6 +5,10 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (21,6,6,6,)
 """
+desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
+      "usage": "No options available.",
+      "brief": "A space fullerene."
+      }
 
 import genice2.lattices
 from genice2.cell import cellvectors

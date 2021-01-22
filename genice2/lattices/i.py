@@ -3,12 +3,14 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
-class Lattice(genice2.lattices.Lattice):
-    """
-Hypothetical ice "i".
 
-Data source: Fennell, C. J. & Gezelter, J. D. Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice I h. J. Chem. Theory Comput. 1, 662-667 (2005).
-"""
+desc={"ref": {"0": "Fennell 2005",},
+      "usage": "No options available.",
+      "brief": 'Hypothetical ice "i".'
+      }
+
+
+class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.density = 0.92     #default self.density
 

@@ -6,6 +6,11 @@ Reshaping the unit cell.
   j:[0 1 0]
   k:[0 0 1]
 """
+desc={"ref": {"T2":         'Yagasaki 2018'},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice T2."
+      }
+
 import genice2.lattices
 from genice2.cell import cellvectors
 

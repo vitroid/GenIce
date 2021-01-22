@@ -1,7 +1,9 @@
 # coding: utf-8
-"""
-Data source: Smirnov, G. S. & Stegailov, V. V. Toward Determination of the New Hydrogen Hydrate Clathrate Structures. J Phys Chem Lett 4, 3560-3564 (2013).
-"""
+
+desc={"ref": {"sT'": 'Smirnov 2013'},
+      "usage": "No options available.",
+      "brief": "Filled ice sT'."
+      }
 
 import genice2.lattices
 from genice2.cell import cellvectors

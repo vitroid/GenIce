@@ -10,13 +10,20 @@ from genice2.plugin import plugin_descriptors
 
 
 
-def system_ices(markdown=True):
+def system_ices(markdown=True, citations=None):
     desc = plugin_descriptors("lattice", groups=["system"])
-    documented, undocumented = desc["system"]
+    documented, undocumented, refss = desc["system"]
 
     s = ""
     for description, ices in documented.items():
-        s += ", ".join(ices) + " | " + description + "\n"
+        if len(refss[description]) > 0:
+            citation = " [" + ",".join(refss[description]) + "]"
+        else:
+            citation = ""
+        s += ", ".join(ices) + " | " + description + citation + "\n"
+        if citations is not None:
+            for ref in refss[description]:
+                assert ref in citations, f"{ref} in {ices}"
     s += ", ".join(undocumented) + " | (Undocumented)\n"
     return s
 
@@ -40,7 +47,7 @@ d = {
     "url"     : setup.get_url(),
     "genice"  : "[GenIce](https://github.com/vitroid/GenIce)",
     "requires": prefix(setup.install_requires, "* "),
-    "ices"    : system_ices(),
+    "ices"    : system_ices(citations=[key for key, doi, desc in citations]),
     "citationlist": prefix(citationlist, "* ")
 }
 

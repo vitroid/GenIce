@@ -4,6 +4,13 @@ Data Source
 [Methane A] Maynard-Casely, H. E. et al. The distorted close-packed crystal structure of methane A. J. Chem. Phys. 133, 064504 (2010).
 [ice R] Mochizuki, K., Himoto, K. & Matsumoto, M. Diversity of transition pathways in the course of crystallization into ice VII. Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
 """
+
+desc={"ref": {"Methane A": 'Maynard-Casely 2010',
+              "R":         'Mochizuki 2014'},
+      "usage": "No options available.",
+      "brief": "Hypothetical ice R."
+      }
+
 import genice2.lattices
 from genice2.cell import cellvectors
 

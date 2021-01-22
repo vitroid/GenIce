@@ -1,6 +1,6 @@
 
 
-desc={"ref": {"III": 'Petrenko and Whitworth, Physics of Ice, Table 11.2'},
+desc={"ref": {"III": 'Petrenko 1999'},
       "usage": "No options available.",
       "brief": "Ice III."
       }

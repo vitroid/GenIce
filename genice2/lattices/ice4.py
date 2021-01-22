@@ -1,5 +1,5 @@
 
-desc={"ref": {"IV": 'Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif'},
+desc={"ref": {"IV": 'Avogadro'},
       "usage": "No options available.",
       "brief": "Ice IV."
       }
