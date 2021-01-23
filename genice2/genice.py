@@ -1043,15 +1043,11 @@ class GenIce():
         dipoles = np.array(dipoles)
         logger.debug(f"  {len(spanning)} spanning cycles.")
 
-        # logger.debug(dipoles)
         # invert randomly to eliminate the net polarization.
         # Rarely, it cannot be depolarized.
 
         bestm = 999999
         bestp = None
-        # ここもランダムに探すのは効率が悪すぎる。
-        # しかし、体系的にさがす方法はあるのか?
-        # 調査せよ。
         dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
         pol = dipoles.T @ dir
         pol2 = pol@pol
