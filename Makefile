@@ -22,7 +22,7 @@ install:
 	./setup.py install
 uninstall:
 	-pip uninstall -y genice2
-build: README.md $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
+build: $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
 	./setup.py sdist bdist_wheel
 
 

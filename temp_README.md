@@ -141,17 +141,21 @@ Let us assume that the id of the water molecule to be replaced by nitrogen of th
 
 Then you will see the following info.
 
-    INFO   Hints:
-    INFO     Cage types: ['12', '14', '15']
-    INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-    INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-    INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-    INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-    INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+```
+INFO   Hints:
+INFO     Cage types: ['12', '14', '15']
+INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
+INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
+INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
+INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
+INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+```
 
 It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
 
-    genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+```shell
+genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+```
 
 Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option.
 
@@ -286,6 +290,29 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 | pip name   | GenIce usage    | Description  |requirements |
 |------------|-----------------|--------------|-------------|
 |[`genice-cif`](https://github.com/vitroid/genice-cif)| `genice cif[ITT.cif]`<br /> `genice zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
+
+# Changes from GenIce1
+
+## New algorithm to make a structure obeying the ice rules in Stage 3
+
+- We have devised a completely new algorithm for orienting water molecules so that they follow ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
+  1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by an undirected graph.
+  2. The undirected graph is then tiled with cycles. That is, we draw a number of cycles in the network so that all edges belong to only one of the cycles.
+  3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle, so that the total polarization of the entire system is as small as possible.
+  4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
+
+## Faster, faster, faster.
+
+Combinations of the new algorithm and other improvements in coding, the process time of GenIce2 is about five times faster than that of GenIce1.
+
+## Colaboratory-ready!
+
+Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/test.ipynb)
+
+## New ices
+
+Many new ice structures are added.
+
 
 # References
 
