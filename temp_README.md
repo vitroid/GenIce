@@ -296,8 +296,8 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 ## New algorithm to make a structure obeying the ice rules in Stage 3
 
 - We have devised a completely new algorithm for orienting water molecules so that they follow ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
-  1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by an undirected graph.
-  2. The undirected graph is then tiled with cycles. That is, we draw a number of cycles in the network so that all edges belong to only one of the cycles.
+  1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by a 4-connected undirected graph.
+  2. The undirected graph is then tiled with cycles. That is, we draw a number of cycles in the network so that all edges belong to only one of the cycles. It is always possible to a 4-connected regular graph.
   3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle, so that the total polarization of the entire system is as small as possible.
   4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
 

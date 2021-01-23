@@ -58,7 +58,7 @@ def prefix(L, pre):
 setup = distutils.core.run_setup("setup.py")
 
 d = {
-    "usage"   : prefix(os.popen("./genice.x -h").readlines(), "    "),
+    "usage"   : prefix([x.rstrip() for x in os.popen("./genice.x -h").readlines()], "    "),
     "version" : setup.get_version(),
     "package" : setup.get_name(),
     "url"     : setup.get_url(),
