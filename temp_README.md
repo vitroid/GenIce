@@ -37,8 +37,7 @@ Use `./genice.x` instead of `genice2` if you want to use it inside the source tr
 
         genice2 --water tip4p --rep 3 3 3  4 > ice4.gro
 
-* To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing
-THF (united atom with a dummy site) in the large cage in GROMACS
+* To make a 2x2x4 units of CS2 clathrate hydrate structure of TIP4P water containing THF (united atom with a dummy site) in the large cage in GROMACS
 .gro format:
 
         genice2 -g 16=uathf6 --water tip4p --rep 2 2 4  CS2 > cs2-224.gro
@@ -46,7 +45,7 @@ THF (united atom with a dummy site) in the large cage in GROMACS
 
 ## Basics
 
-The program generates various ice lattice with proton disorder and without defect.  Total dipole moment is always set to zero (except the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
+The program generates various ice lattice with proton disorder and without defect.  The total dipole moment is always set to zero (except in the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
 
 * To get a large repetition of ice Ih in XYZ format,
 
@@ -56,22 +55,21 @@ The program generates various ice lattice with proton disorder and without defec
 
         genice2 5 -s 1024 --format cif > 5-1024.cif
 
-* To obtain a ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
+* To obtain an ice VI lattice with different density and with TIP4P water model in gromacs format, use `--dens x` option to specify the density in g cm<sup>-3</sup>.
 
         genice2 6 --dens 1.00 --format g --water tip4p > 6d1.00.gro
 
-GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your own plugins to extend GenIce. Some plugins also accept options.
+GenIce is a modular program; it reads a unit cell data from a lattice plugin defined in the lattices folder, put water and guest molecules using a molecule plugin defined in the molecules/ folder, and output in various formats using a format plugin defined in the formats/ folder. You can write your plugins to extend GenIce. Some plugins also accept options.
 
 ## Clathrate hydrates
 
 For clathrate hydrates, you can prepare the lattice with cages partially occupied by various guest molecules.
 
-* To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS
-.gro format: (60% of small cages are filled with co2 and 40% are methane)
+* To make a CS1 clathrate hydrate structure of TIP4P water containing CO2 in GROMACS .gro format: (60% of small cages are filled with co2 and 40% are methane)
 
         genice2 -g 12=co2*0.6+me*0.4 -g 14=co2 --water tip4p CS1 > cs1.gro
 
-* To make a CS2 clathrate hydrate structure of TIP5P water containing THF molecules in the large cage, while only one cage is filled with methane molecule, first just run `genice2` without guest specifications:
+* To make a CS2 clathrate hydrate structure of TIP5P water containing THF molecules in the large cage, while only one cage is filled with methane molecule, first, just run `genice2` without guest specifications:
 
         genice2 CS2 > CS2.gro
 
@@ -85,7 +83,7 @@ For clathrate hydrates, you can prepare the lattice with cages partially occupie
 
         genice2 CS2 -g 16=uathf -G 0=me > CS2.gro
 
-Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example for the ethylene oxide molecule.
+Although only a few kinds of guest molecules are preset, you can easily prepare new guest molecules as a module. Here is an example of the ethylene oxide molecule.
 
 ```python
 import numpy as np
@@ -125,7 +123,7 @@ The following example replaces the `0`th water molecule (in the replicated latti
 
     genice2 CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
 
-*Note 1*: The numbers of cations and anions must be the same.  Otherwise, ice rule is never satisfied and the program does not stop.  
+*Note 1*: The numbers of cations and anions must be the same.  Otherwise, the ice rule is never satisfied and the program does not stop.  
 
 *Note 2*: The option `--nodep` is also required because it is impossible to depolarize the structure containing ions.
 
@@ -135,7 +133,7 @@ The following example replaces the `0`th water molecule (in the replicated latti
 
 ### Placement of a tetrabutylammonium ion
 
-Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counterion Br.
+Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counter-ion Br.
 
     genice2 HS1 -c 0=N -a 2=Br --nodep > HS1.gro
 
@@ -151,13 +149,13 @@ INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
 INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
 ```
 
-It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent dopant 0.
+It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent to dopant 0.
 
 ```shell
 genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
 ```
 
-Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and root is the nitrogen that is specified by `-c` (cation) option.
+Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and the root is the nitrogen that is specified by `-c` (cation) option.
 
 
 ### Placement of TBAB in the lattice module
@@ -167,8 +165,6 @@ Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, 
 It is more convenient if the lattice of the semiclathrate hydrate contains molecular ions in the appropriate locations in advance.  Here we explain the way to make the special module for semclathrates.
 
 ## Output formats
-
-(pluginから自動抽出してほしい)
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
@@ -194,7 +190,7 @@ Name |Application | extension | water | solute | HB | remarks
 `rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | center of mass | none |o | It renders HB rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
-You can prepare your own file formats. Create a folder named `formats` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
+You can prepare your file formats. Create a folder named `formats` in the current working directory and put the plugins in it.
 
 Internally, there are seven stages to generate an ice structure.
 
@@ -216,7 +212,7 @@ Symbol | Description
 
 Ice names with double quotations are not experimentally verified.
 
-You can prepare your own ice structures. Create a folder named `lattices` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
+You can prepare your own ice structures. Create a folder named `lattices` in the current working directory and put the plugins in it.
 
 [cif2ice](https://github.com/vitroid/cif2ice) is a tool to retrieve a
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
@@ -255,10 +251,9 @@ symbol | type
 -------|---------
 {{guests}}
 
-You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it. GenIce 1.0 no longer refers the files in `~/.genice` folder.
+You can prepare your own guest molecules.  Create a folder named `molecules` in the current working directory and put the plugins in it.
 
 # Extra plugins
-(New in v1.0)
 
 Some extra plugins are available via python package index using pip command.
 
@@ -273,6 +268,7 @@ And use it as an output format to get the radial distribution functions.
 
 
 ## Output and analysis plugins
+
 Analysis plugin is a kind of output plugin (specified with -f option). They are useful with analice command.
 
 | pip name | GenIce option | Description | output format | requirements |
@@ -297,13 +293,13 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 - We have devised a completely new algorithm for orienting water molecules so that they follow ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
   1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by a 4-connected undirected graph.
-  2. The undirected graph is then tiled with cycles. That is, we draw a number of cycles in the network so that all edges belong to only one of the cycles. It is always possible to a 4-connected regular graph.
-  3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle, so that the total polarization of the entire system is as small as possible.
+  2. The undirected graph is then tiled with cycles. That is, we draw many cycles in the network so that all edges belong to only one of the cycles. It is always possible to a 4-connected regular graph.
+  3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle so that the total polarization of the entire system is as small as possible.
   4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
 
 ## Faster, faster, faster.
 
-Combinations of the new algorithm and other improvements in coding, the process time of GenIce2 is about five times faster than that of GenIce1.
+Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
 
 ## Colaboratory-ready!
 
@@ -336,4 +332,4 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
 
 # How to contribute
 
-GenIce is served at the GitHub ({{url}}) as an open source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but is not in GenIce.
+GenIce is served at GitHub ({{url}}) as an open-source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but are not in GenIce.
