@@ -1,5 +1,5 @@
 ![Logo](https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png)
-# GenIce
+# GenIce2
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 

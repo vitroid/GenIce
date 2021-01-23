@@ -18,7 +18,7 @@ def help_guest():
     return 'R|Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n'+descriptions("molecule", water=False, width=55)
 
 def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice2', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',

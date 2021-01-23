@@ -12,7 +12,7 @@ def help_file():
 
 
 def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice', usage='%(prog)s [options]', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice2', usage='%(prog)s [options]', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',
