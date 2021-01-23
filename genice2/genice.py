@@ -398,8 +398,6 @@ def Alkyl(cpos, root, cell, molname, backbone):
     return atoms
 
 
-
-
 class GenIce():
     """
     The core of GenIce.
