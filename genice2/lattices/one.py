@@ -18,10 +18,6 @@ lat = [[[0,0], [2,0], [1,3], [3,3]],
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):
         logger = logging.getLogger()
-        layer = 0
-        height = 0
-        dir = 1
-        L = []
         for k, v in kwargs.items():
             if k == 'layers':
                 arg = v
@@ -29,6 +25,10 @@ class Lattice(genice2.lattices.Lattice):
                 arg = k
             else:
                 logger.error(f"Unknown option for one plugin: {k}={v}")
+        layer = 0
+        height = 0
+        dir = 1
+        L = []
         for ch in arg:
             for x,y in lat[layer]:
                 L.append([x, y, height])
