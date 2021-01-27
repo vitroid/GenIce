@@ -206,7 +206,7 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 ## Ice structures
 
-Symbol | Description
+Symbol | <div style="width:300px">Description</div>
 -------|------------
 {{ices}}
 
