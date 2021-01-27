@@ -121,7 +121,7 @@ def plugin_option_parser(s):
     kwargs = dict()
     for elem in args.split(":"):
         if "=" in elem:
-            k, v = elem.split("=", 2)
+            k, v = elem.split("=", 1)
             kwargs[k] = v
         else:
             kwargs[elem] = True

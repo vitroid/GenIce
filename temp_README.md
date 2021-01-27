@@ -259,41 +259,40 @@ Some extra plugins are available via python package index using pip command.
 
 For example, you can install RDF plugin by the following command,
 
-    % pip install genice-rdf
+    % pip install genice2-rdf
 
 And use it as an output format to get the radial distribution functions.
 
-    % genice TS1 -f _RDF > TS1.rdf.txt
+    % genice2 TS1 -f _RDF > TS1.rdf.txt
 
 
 
 ## Output and analysis plugins
 
-Analysis plugin is a kind of output plugin (specified with -f option). They are useful with analice command.
+Analysis plugin is a kind of output plugin (specified with -f option).
 
-| pip name | GenIce option | Description | output format | requirements |
+| pip name | GenIce2 option | Description | output format | requirements |
 |----------|-------|-------------|---------------|--------------|
-|[`genice-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json | `countrings` |
-|[`genice-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
-|[`genice-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
-|[`genice-vpython`](https://github.com/vitroid/genice-vpython)|`-f vpython`| Display the structure in the browser using VPython.| (none) | `vpython` |
-|[`genice-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice-svg` |
+|[`genice2-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json | `cycless` |
+|[`genice2-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
+|[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
+|[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
 
 ## Input plugins
 
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
-| pip name   | GenIce usage    | Description  |requirements |
+| pip name   | GenIce2 usage    | Description  |requirements |
 |------------|-----------------|--------------|-------------|
-|[`genice-cif`](https://github.com/vitroid/genice-cif)| `genice cif[ITT.cif]`<br /> `genice zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
+|[`genice2-cif`](https://github.com/vitroid/genice-cif)| `genice2 cif[ITT.cif]`<br /> `genice2 zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
 
 # Changes from GenIce1
 
-## New algorithm to make a structure obeying the ice rules in Stage 3
+## Novel algorithm to make a structure obeying the ice rules in Stage 3.
 
-- We have devised a completely new algorithm for orienting water molecules so that they follow ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
+- We have devised a completely new algorithm for orienting water molecules so that they obey ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
   1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by a 4-connected undirected graph.
-  2. The undirected graph is then tiled with cycles. That is, we draw many cycles in the network so that all edges belong to only one of the cycles. It is always possible to a 4-connected regular graph.
+  2. The undirected graph is then randomly tiled with cycles. That is, we draw many cycles in the network so that all edges belong to only one of the cycles. It is always possible to a 4-connected regular graph.
   3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle so that the total polarization of the entire system is as small as possible.
   4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
 
@@ -332,4 +331,4 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
 
 # How to contribute
 
-GenIce is served at GitHub ({{url}}) as an open-source software since 2015. Feedbacks, proposals for improvements and extensions, and bug fixes are sincerely appreciated. Developers and test users are also welcome. Please let us know if there are ices that have been published but are not in GenIce.
+GenIce has been available as open source software on GitHub({{url}}) since 2015. Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome. Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let me know.

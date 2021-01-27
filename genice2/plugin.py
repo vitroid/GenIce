@@ -52,7 +52,7 @@ def scan(category):
             pass
 
     logger.info("Extra {0}s".format(category))
-    groupname = 'genice_{0}'.format(category)
+    groupname = 'genice2_{0}'.format(category)
     mods = []
     for ep in pr.iter_entry_points(group=groupname):
         label, m = str(ep).split("=")
@@ -194,8 +194,8 @@ def audit_name(name):
 
 def import_extra(category, name):
     logger = getLogger()
-    logger.info("Extra {0} plugin: {1}".format(category,name))
-    groupname = 'genice_{0}'.format(category)
+    logger.info(f"Extra {category} plugin: {name}")
+    groupname = f'genice2_{category}'
     module = None
     for ep in pr.iter_entry_points(group=groupname):
         logger.debug("    Entry point: {0}".format(ep))
