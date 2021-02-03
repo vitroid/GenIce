@@ -46,10 +46,10 @@ No options available.
             else:
                 s += "{0:5d}{1:5s}{2:>5s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(molorder,resname, atomname, i+1,position[0],position[1],position[2])
         if cellmat[1,0] == 0 and cellmat[2,0] == 0 and cellmat[2,1] == 0:
-            s += "    {0} {1} {2}\n".format(cellmat[0,0],cellmat[1,1],cellmat[2,2])
+            s += "    {0:.8f} {1:.8f} {2:.8f}\n".format(cellmat[0,0],cellmat[1,1],cellmat[2,2])
         else:
             assert cellmat[0,1] == 0 and cellmat[0,2] == 0 and cellmat[1,2] == 0
-            s += "    {0} {1} {2} {3} {4} {5} {6} {7} {8}\n".format(cellmat[0,0],
+            s += "    {0:.8f} {1:.8f} {2:.8f} {3:.8f} {4:.8f} {5:.8f} {6:.8f} {7:.8f} {8:.8f}\n".format(cellmat[0,0],
                                                                     cellmat[1,1],
                                                                     cellmat[2,2],
                                                                     cellmat[0,1],
