@@ -34,8 +34,8 @@ all: 3xFAU.yap.test
 all: T.pov.test
 # all: MTN.gro MTN.re.gro.test
 # all: ITT.gro.test
-all: 7.analice.yap.test
-all: 2D3.analice.yap.test
+all: 7-000.analice.yap.test
+all: 2D3-000.analice.gro.test
 all: 1h.ringstat.test
 all: T.kg.test
 all: RHO.yap.test
@@ -154,12 +154,12 @@ prism7.ringtest: $(FMT)/_ringstat.py
 #	$(GENICE) cif[MTN.cif] --rep 1 1 1 | fgrep -v "Command line:" > $@
 #ITT.gro: $(LTC)/zeolite.py $(FMT)/gromacs.py
 #	$(GENICE) zeolite[ITT] --rep 1 1 1 | fgrep -v "Command line:" > $@
-7.analice.yap: 7.gro $(FMT)/yaplot.py
-	$(ANALICE) $< -f yaplot --debug | fgrep -v "Command line:" > $@
+7-000.analice.yap: 7.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f yaplot --debug -o '7-%03d.analice.yap'
 2D3.gro: $(FMT)/gromacs.py
 	$(GENICE) 2D3 -r 4 4 1 --depol=optimal | fgrep -v "Command line:" > $@
-2D3.analice.yap: 2D3.gro $(FMT)/yaplot.py
-	$(ANALICE) $< -f yaplot | fgrep -v "Command line:" > $@
+2D3-000.analice.gro: 2D3.gro $(FMT)/yaplot.py
+	$(ANALICE) $< -f gromacs -o '2D3-%03d.analice.gro'
 
 # loader2 test
 # ar3rの場合、配向はランダムで決める必要があるが、analiceは乱数利用を想定していないので、

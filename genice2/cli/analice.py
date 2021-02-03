@@ -145,14 +145,16 @@ def main():
                         noise=noise,
                         )
 
-        if output is not None:
-            # redirect
-            sys.stdout = open(output % i, "wb")
-
-        if type(result) is bytes:
-            # binary mode
-            sys.stdout.buffer.write(result)
-        elif result is not None:
+        if result is not None:
+            if output is not None:
+                if type(result) is bytes:
+                    # binary mode
+                # redirect
+                    sys.stdout = open(output % i, "wb").buffer
+                    logger.debug(f"Binary output to a file: {output%i}")
+                else:
+                    sys.stdout = open(output % i, "w")
+                    logger.debug(f"Text output to a file: {output%i}")
             sys.stdout.write(result)
     if stdout is not None:
         # recover stdout

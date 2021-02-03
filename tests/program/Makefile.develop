@@ -1,6 +1,6 @@
 BASE=../..
 GENICE=$(BASE)/genice.x
-ANALICE=$(BASE)/analice.x
+ANALICE=$(BASE)/analice.x --debug
 LIB=$(BASE)/genice2
 FMT=$(LIB)/formats
 LTC=$(LIB)/lattices
