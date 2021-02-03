@@ -144,9 +144,16 @@ def main():
                         formatter=formatter,
                         noise=noise,
                         )
+
         if output is not None:
+            # redirect
             sys.stdout = open(output % i, "wb")
-        sys.stdout.write(result)
+
+        if type(result) is bytes:
+            # binary mode
+            sys.stdout.buffer.write(result)
+        elif result is not None:
+            sys.stdout.write(result)
     if stdout is not None:
         # recover stdout
         sys.stdout = stdout

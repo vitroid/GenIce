@@ -223,17 +223,17 @@ def main():
 
     del options  # Dispose for safety.
 
-    output = lat.generate_ice(water=water,
+    result = lat.generate_ice(water=water,
                      guests=guests,
                      formatter=formatter,
                      noise=noise,
                      depol=depol,
                      assess_cages = assess_cages,
                      )
-    if type(output) is bytes:
-        sys.stdout.buffer.write(output)
-    elif output is not None:
-        sys.stdout.write(output)
+    if type(result) is bytes:
+        sys.stdout.buffer.write(result)
+    elif result is not None:
+        sys.stdout.write(result)
 
 
 if __name__ == "__main__":
