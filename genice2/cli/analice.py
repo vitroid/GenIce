@@ -150,7 +150,7 @@ def main():
                 if type(result) is bytes:
                     # binary mode
                 # redirect
-                    sys.stdout = open(output % i, "wb").buffer
+                    sys.stdout = open(output % i, "wb") #.buffer
                     logger.debug(f"Binary output to a file: {output%i}")
                 else:
                     sys.stdout = open(output % i, "w")
