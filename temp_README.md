@@ -8,7 +8,7 @@ version {{version}}
 ## Demo
 
 The new GenIce works very well with interactive execution.
-[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/colaboratory.ipynb) on Google Colab.
+[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/colaboratory.ipynb) on Google Colab.
 
 ## Requirements
 
