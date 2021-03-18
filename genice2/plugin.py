@@ -257,6 +257,21 @@ def safe_import(category, name):
     return module
 
 
+def Lattice(name, **kwargs):
+    return safe_import("lattice", name).Lattice(**kwargs)
+
+def Format(name, **kwargs):
+    return safe_import("format", name).Format(**kwargs)
+
+def Molecule(name, **kwargs):
+    return safe_import("molecule", name).Molecule(**kwargs)
+
+def Loader(name, **kwargs):
+    return safe_import("loader", name).Loader(**kwargs)
+
+
+
+
 if __name__ == "__main__":
     basicConfig(level=INFO)
     if len(sys.argv) == 1:

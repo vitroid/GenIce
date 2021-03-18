@@ -9,7 +9,7 @@ import numpy as np
 import sys
 import logging
 from genice2.valueparser import put_in_array
-from math import pi, sin, cos, sqrt, acos
+from math import pi, sin, cos, sqrt, acos, degrees
 
 
 def rel_wrap(relvec):
@@ -53,6 +53,17 @@ def cellvectors(a,b,c,A=90,B=90,C=90):
     # logger.info((cos(C), np.dot(ea, eb)))
     return np.vstack([ea*a, eb*b, ec*c])
 
+def cellshape(cellmat):
+    """
+    From cell matrix to a, b, c, alpha, beta, and gamma.
+    """
+    a = np.linalg.norm(cellmat[0])
+    b = np.linalg.norm(cellmat[1])
+    c = np.linalg.norm(cellmat[2])
+    alpha = degrees(acos((cellmat[1]@cellmat[2]) / (b*c)))
+    beta  = degrees(acos((cellmat[2]@cellmat[0]) / (c*a)))
+    gamma = degrees(acos((cellmat[0]@cellmat[1]) / (a*b)))
+    return a,b,c,alpha,beta,gamma
 
 class Cell():
 
