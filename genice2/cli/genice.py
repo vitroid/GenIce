@@ -8,7 +8,7 @@ from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
 from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
-
+import pickle
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 def help_type():
@@ -232,8 +232,10 @@ def main():
                      )
     if type(result) is bytes:
         sys.stdout.buffer.write(result)
-    elif result is not None:
+    elif result is str:
         sys.stdout.write(result)
+    elif result is not None:
+        pickle.dump(result, sys.stdout.buffer)
 
 
 if __name__ == "__main__":

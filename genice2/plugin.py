@@ -258,15 +258,27 @@ def safe_import(category, name):
 
 
 def Lattice(name, **kwargs):
+    """
+    Shortcut for safe_import.
+    """
     return safe_import("lattice", name).Lattice(**kwargs)
 
 def Format(name, **kwargs):
+    """
+    Shortcut for safe_import.
+    """
     return safe_import("format", name).Format(**kwargs)
 
 def Molecule(name, **kwargs):
+    """
+    Shortcut for safe_import.
+    """
     return safe_import("molecule", name).Molecule(**kwargs)
 
 def Loader(name, **kwargs):
+    """
+    Shortcut for safe_import.
+    """
     return safe_import("loader", name).Loader(**kwargs)
 
 

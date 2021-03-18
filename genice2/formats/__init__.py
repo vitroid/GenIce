@@ -14,6 +14,6 @@ class Format():
 
     def dump(self):
         """
-        This mothod returns self.output.
+        This method returns self.output.
         """
         return self.output
