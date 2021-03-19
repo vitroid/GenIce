@@ -232,7 +232,7 @@ def main():
                      )
     if type(result) is bytes:
         sys.stdout.buffer.write(result)
-    elif result is str:
+    elif type(result) is str:
         sys.stdout.write(result)
     elif result is not None:
         pickle.dump(result, sys.stdout.buffer)
