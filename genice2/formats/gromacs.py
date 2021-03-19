@@ -9,22 +9,8 @@ desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
 from logging import getLogger
 import genice2.formats
 from genice2.decorators import timeit, banner
+from genice2.molecules  import serialize
 
-
-
-def serialize_universe(u):
-    """
-    u is collections of molecules
-    make them into a list of atoms for Gromacs
-    """
-    logger = getLogger()
-    atoms = []
-    for mols in u:
-        for i, atompositions in enumerate(mols.positions):
-            for j, atompos in enumerate(atompositions):
-                atoms.append([i, mols.resname, mols.atomnames[j], atompos, mols.orig_order[i]])
-    logger.debug(atoms)
-    return atoms
 
 
 class Format(genice2.formats.Format):
@@ -46,7 +32,11 @@ No options available.
         "Output in Gromacs format."
         logger = getLogger()
         cellmat = ice.repcell.mat
-        atoms = serialize_universe(ice.universe)
+
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
         if len(atoms) > 99999:
             logger.warn("  Gromacs fixed format cannot deal with atoms more than 99999. Residue number and atom number are faked.")

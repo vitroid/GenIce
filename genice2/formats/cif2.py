@@ -28,8 +28,7 @@ class Format(genice2.formats.Format):
     def Hook7(self, ice):
         "Output in CIF format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(atoms)))
-        aL, bL, cL, alpha, beta, gamma = repcell.shape()
+        aL, bL, cL, alpha, beta, gamma = ice.repcell.shape()
 
         s = ""
         s += "data_genice\n"

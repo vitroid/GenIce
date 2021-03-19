@@ -22,8 +22,18 @@ def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
         abscom = cell.rel2abs(pos)  # relative to absolute
         rotated = intra @ rotmatrices[order]
         mols.positions.append(abscom + rotated)
-    logger.info(mols)
     return mols
+
+def monatom(coord, cell, name):
+    logger = getLogger()
+
+    mols = SimpleNamespace(resname=name,
+                           atomnames=[name],
+                           positions=[np.array([cell.rel2abs(coord),])],         # atomic positions
+                           orig_order=[0],  #
+                           )
+    return mols
+
 
 
 def serialize(mols):
@@ -35,8 +45,7 @@ def serialize(mols):
     atoms = []
     for i, atompositions in enumerate(mols.positions):
         for j, atompos in enumerate(atompositions):
-            atoms.append([i, mols.resname, mols.atomnames[j], atompos, mols.orig_order[i]])
-    logger.debug(atoms)
+            atoms.append([j, mols.resname, mols.atomnames[j], atompos, mols.orig_order[i]])
     return atoms
 
 

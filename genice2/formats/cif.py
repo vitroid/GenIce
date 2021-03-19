@@ -32,7 +32,6 @@ No options available.
     def Hook7(self, ice):
         "Output in CIF format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
         aL, bL, cL, alpha, beta, gamma = ice.repcell.shape()
         s = ""
         s += "data_genice\n" # .format(ice.lattice_type)
