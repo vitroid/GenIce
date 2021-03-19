@@ -8,6 +8,7 @@ import numpy as np
 from logging import getLogger
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 def nearly_zero(x):
@@ -27,21 +28,9 @@ class Format(genice2.formats.Format):
     def Hook7(self, ice):
         "Output in CIF format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
-        cellmat = ice.repcell.mat
+        logger.info("  Total number of atoms: {0}".format(len(atoms)))
+        aL, bL, cL, alpha, beta, gamma = repcell.shape()
 
-        a = cellmat[0,:]
-        b = cellmat[1,:]
-        c = cellmat[2,:]
-        aL= np.linalg.norm(a)
-        bL= np.linalg.norm(b)
-        cL= np.linalg.norm(c)
-        ab = np.dot(a,b)
-        bc = np.dot(b,c)
-        ca = np.dot(c,a)
-        alpha = acos(bc/(bL*cL)) * 180 / pi
-        beta  = acos(ca/(cL*aL)) * 180 / pi
-        gamma = acos(ab/(aL*bL)) * 180 / pi
         s = ""
         s += "data_genice\n"
         s += '#' + "\n#".join(ice.doc) + "\n"
@@ -70,7 +59,10 @@ _atom_site_fract_y
 _atom_site_fract_z
 _atom_site_type_symbol
 """
-        for i, atom in enumerate(ice.atoms):
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+        for i, atom in enumerate(atoms):
             molorder, resname, atomname, position, order = atom
             position = ice.repcell.abs2rel(position)
             label = atomname+"{0}".format(i)

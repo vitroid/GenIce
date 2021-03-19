@@ -16,6 +16,7 @@ import numpy as np
 import yaplotlib as yp
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 class Format(genice2.formats.Format):
@@ -83,10 +84,15 @@ Options:
     def Hook6(self, ice):
         "Output water molecules in Yaplot format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+
+        logger.info("  Total number of atoms: {0}".format(len(atoms)))
         # prepare the reverse dict
         waters = defaultdict(dict)
-        for atom in ice.atoms:
+        for atom in atoms:
             resno, resname, atomname, position, order = atom
             if "O" in atomname:
                 waters[order]["O"] = position
@@ -131,7 +137,7 @@ Options:
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += yp.Arrow(H1,O)
         self.output += s
-        self.nwateratoms = len(ice.atoms)
+        self.nwateratoms = len(atoms)
 
 
     @timeit
@@ -139,8 +145,9 @@ Options:
     def Hook7(self, ice):
         "Output water molecules in Yaplot format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
-        gatoms = ice.atoms[self.nwateratoms:]
+        gatoms = []
+        for mols in ice.universe[1:]: # 0 is water
+            gatoms += serialize(mols)
         palettes = dict()
         s = ""
         s += yp.Layer(4)

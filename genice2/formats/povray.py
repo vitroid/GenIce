@@ -16,6 +16,7 @@ from logging import getLogger
 from genice2.decorators import timeit, banner
 from genice2 import rigid
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 def Block(name, content):
@@ -57,10 +58,15 @@ No options available.
     def Hook6(self, ice):
         "Output water molecules in Povray format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+
+        logger.info("  Total number of atoms: {0}".format(len(atoms)))
         # prepare the reverse dict
+
         waters = defaultdict(dict)
-        for atom in ice.atoms:
+        for atom in atoms:
             resno, resname, atomname, position, order = atom
             if "O" in atomname:
                 waters[order]["O"] = position
@@ -94,7 +100,6 @@ No options available.
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += Bond("HB",H1,O)
         self.output = s
-        self.nwateratoms = len(ice.atoms)
 
 
     @timeit
@@ -102,9 +107,10 @@ No options available.
     def Hook7(self, ice):
         "Output guest molecules in Povray format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        gatoms = []
+        for mols in ice.universe[1:]:
+            gatoms += serialize(mols)
         cellmat = ice.repcell.mat
-        gatoms = ice.atoms[self.nwateratoms:]
         s = ""
         H = []
         O  = ""

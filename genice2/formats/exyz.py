@@ -9,6 +9,7 @@ from logging import getLogger
 from genice2 import rigid
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 class Format(genice2.formats.Format):
@@ -29,10 +30,13 @@ No options available.
     def Hook7(self, ice):
         "Output in extended XYZ format."
         logger = getLogger()
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
         s = ""
-        s += "{0}\n".format(len(ice.atoms))
+        s += "{0}\n".format(len(atoms))
         s += "%PBC\n"
-        for atom in ice.atoms:
+        for atom in atoms:
             molorder, resname, atomname, position, order = atom
             s += "{0:>4}{1:15.5f}{2:15.5f}{3:15.5f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
