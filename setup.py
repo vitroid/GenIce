@@ -16,6 +16,9 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice2', '__init__.py
 
 long_desc = "".join(open("README.md").readlines())
 
+with open("requirements.txt") as f:
+    requires = [x.strip() for x in f.readlines()]
+
 setup(name='GenIce2',
       python_requires='>=3.6',
       version=metadata['version'],
@@ -34,7 +37,7 @@ setup(name='GenIce2',
       keywords=['genice2',],
       license='MIT',
       packages=find_packages(),
-      install_requires=['networkx>=2', 'cycless', 'pairlist>=0.2.3', 'yaplotlib>=0.1', 'numpy',  'wheel', 'openpyscad', 'graphstat'],
+      install_requires=requires,
       entry_points = {
               'console_scripts': [
                   'genice2 = genice2.cli.genice:main',

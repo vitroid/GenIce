@@ -1,6 +1,7 @@
 all: README.md
 	echo Hello.
 %: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
+	-pip install jinja2
 	python Utilities/replacer.py < $< > $@
 	-fgrep '{{' $@
 
@@ -12,9 +13,10 @@ update-citations:
 test:
 	make -C tests all
 test-deploy: build
+	-pip install twine
 	twine upload -r pypitest dist/*
-test-install:
-	pip install networkx numpy pairlist countrings yaplotlib
+test-install: requirements.txt
+	pip install `cat $<`
 	pip install --index-url https://test.pypi.org/simple/ genice2
 
 
@@ -23,7 +25,7 @@ install:
 uninstall:
 	-pip uninstall -y genice2
 build: $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
-	./setup.py sdist bdist_wheel
+	./setup.py sdist # bdist_wheel
 
 
 deploy: build

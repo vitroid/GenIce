@@ -166,6 +166,7 @@ It is more convenient if the lattice of the semiclathrate hydrate contains molec
 
 ## Output formats
 
+
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
 `cif, cif2 |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
@@ -189,6 +190,13 @@ Name |Application | extension | water | solute | HB | remarks
 `_ringstat`      |Ring phase statistics |     | |  | | Statistical test suite 1: Check the appearance frequencies of the ring phases as a test for the intermediate-range disorder.
 `rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | center of mass | none |o | It renders HB rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
+
+By installing the [`genice-mdanalysis`](https://github.com/vitroid/genice-mdanalysis) package separately, you can generate files in many formats for a  large number of molecular dynamics package softwares. E.g.
+
+```shell
+% genice2 1c -f mdanalysis[1c.pdb]
+% genice2 1h -f mdanalysis[1h.xtc]
+```
 
 You can prepare your file formats. Create a folder named `formats` in the current working directory and put the plugins in it.
 
