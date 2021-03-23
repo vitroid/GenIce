@@ -120,3 +120,6 @@ class Cell():
         for d in range(3):
             s += "{0:.4f} {1:.4f} {2:.4f}\n".format(*self.mat[d] * 10)  # AA
         return s
+
+    def shape(self):
+        return cellshape(self.mat)

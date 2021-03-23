@@ -12,6 +12,7 @@ import numpy as np
 from logging import getLogger
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 au = 0.052917721092 # nm
@@ -36,7 +37,10 @@ No options available.
     def Hook7(self, ice):
         "Output in MDView format."
         logger = getLogger()
-        logger.info("  Total number of atoms: {0}".format(len(ice.atoms)))
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+        logger.info("  Total number of atoms: {0}".format(len(atoms)))
         if __name__[-6:] == 'mdv_au':
             conv = 1.0 / au
         else:
@@ -46,8 +50,8 @@ No options available.
         s += "# {0} {1} {2}\n".format(cellmat[0,0]*conv, cellmat[1,1]*conv, cellmat[2,2]*conv)
         s += "-center 0 0 0\n"
         s += "-fold\n"
-        s += "{0}\n".format(len(ice.atoms))
-        for atom in ice.atoms:
+        s += "{0}\n".format(len(atoms))
+        for atom in atoms:
             molorder, resname, atomname, position, order = atom
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,*(position[:3]*conv))
         self.output = s

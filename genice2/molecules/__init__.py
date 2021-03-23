@@ -1,6 +1,56 @@
 # coding: utf-8
+from types import SimpleNamespace
+from logging import getLogger
 
 import numpy as np
+
+
+def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
+    logger = getLogger()
+
+    name, labels, intra = molecule.get() #Molecule class
+    mols = SimpleNamespace(resname=name,
+                           atomnames=labels,
+                           positions=[],         # atomic positions
+                           orig_order=[],  #
+                           )
+    for order, pos in enumerate(coord):
+        if order in ignores:
+            continue
+        mols.orig_order.append(order)
+
+        abscom = cell.rel2abs(pos)  # relative to absolute
+        rotated = intra @ rotmatrices[order]
+        mols.positions.append(abscom + rotated)
+    return mols
+
+def monatom(coord, cell, name):
+    logger = getLogger()
+
+    mols = SimpleNamespace(resname=name,
+                           atomnames=[name],
+                           positions=[np.array([cell.rel2abs(coord),])],         # atomic positions
+                           orig_order=[0],  #
+                           )
+    return mols
+
+
+
+def serialize(mols):
+    """
+    mols is a collection of molecules
+    make them into a list of atoms for Gromacs
+    """
+    logger = getLogger()
+    atoms = []
+    for i, atompositions in enumerate(mols.positions):
+        for j, atompos in enumerate(atompositions):
+            atoms.append([j, mols.resname, mols.atomnames[j], atompos, mols.orig_order[i]])
+    return atoms
+
+
+
+
 
 class Molecule():
     """

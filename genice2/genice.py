@@ -10,6 +10,7 @@ from collections import defaultdict
 import random
 import itertools as it
 import string
+from types import SimpleNamespace
 
 import numpy as np
 import pairlist as pl
@@ -24,7 +25,7 @@ from genice2.decorators import timeit, banner
 # for alkyl groups (Experimental)
 from genice2 import alkyl
 # A virtual monatomic molecule
-from genice2.molecules import one
+from genice2.molecules import one, arrange, monatom
 
 # for cage assessment
 from graphstat import GraphStat
@@ -144,24 +145,6 @@ def orientations(coord, graph, cell):
     return rotmatrices
 
 
-def arrange_atoms(coord, cell, rotmatrices, molecule, ignores=set()):
-    logger = getLogger()
-    atoms = []
-
-    for order, pos in enumerate(coord):
-        if order in ignores:
-            continue
-
-        abscom = cell.rel2abs(pos)  # relative to absolute
-
-        name, labels, intra = molecule.get() #Molecule class
-        rotated = np.dot(intra, rotmatrices[order])
-
-        for i in range(len(labels)):
-            atoms.append([i, name, labels[i], rotated[i, :] + abscom, order])
-        # logger.debug((np.linalg.norm(rotated[0] - rotated[1])))
-
-    return atoms
 
 
 def shortest_distance(coord, cell, pairs=None):
@@ -378,7 +361,7 @@ def _3_3_dimethylbutyl(cpos, root, cell, molname):
 
 def Alkyl(cpos, root, cell, molname, backbone):
     """
-    put a normal-alkyl group rooted at root toward cpos.
+    put a normal-alkyl group rooted at root and growing toward cpos.
     """
     logger = getLogger()
     # logger.info("  Put butyl at {0}".format(molname))
@@ -389,13 +372,21 @@ def Alkyl(cpos, root, cell, molname, backbone):
     CC = 0.154
     rawatoms = alkyl.alkyl(v1, v1abs * 1.5 / CC, backbone)
 
-    atoms = []
+    atomnames = []
+    atompos   = []
+    order     = []
+    # atoms = []
     for i, atom in enumerate(rawatoms):
         atomname, pos = atom
-        atompos = cell.abs_wrapf(pos * CC + origin)
-        atoms.append([i, molname, atomname, atompos, 0])
-
-    return atoms
+        atomnames.append(atomname)
+        atompos.append(cell.abs_wrapf(pos * CC + origin))
+        order.append(i)
+    mols = SimpleNamespace(resname=molname,
+                           atomnames=atomnames,
+                           positions=[atompos],         # atomic positions
+                           orig_order=order,  #
+                           )
+    return mols
 
 
 class GenIce():
@@ -1125,11 +1116,12 @@ class GenIce():
         for line in mdoc:
             logger.info("  "+line)
 
-        self.atoms = arrange_atoms(self.reppositions,
-                                   self.repcell,
-                                   self.rotmatrices,
-                                   water,
-                                   ignores=set(self.dopants))
+        self.universe = []
+        self.universe.append(arrange(self.reppositions,
+                                     self.repcell,
+                                     self.rotmatrices,
+                                     water,
+                                     ignores=set(self.dopants)))
 
 
     @timeit
@@ -1210,7 +1202,7 @@ class GenIce():
                 molname = "G{0}".format(root)
                 pos = self.reppositions[root]
                 rot = self.rotmatrices[root]
-                self.atoms.append([0, molname, name, self.repcell.rel2abs(pos), 0])
+                self.universe.append(monatom(pos, self.repcell, name))
                 del self.dopants[root]  # processed.
                 logger.debug((root, cages, name, molname, pos, rot))
 
@@ -1218,10 +1210,10 @@ class GenIce():
                     assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
                     cpos = self.repcagepos[cage]
-                    self.atoms += self.groups_placer[group](cpos,
+                    self.universe.append(self.groups_placer[group](cpos,
                                                             pos,
                                                             self.repcell,
-                                                            molname)
+                                                            molname))
 
             # molecular guests
             for molec, cages in molecules.items():
@@ -1237,8 +1229,10 @@ class GenIce():
                     logger.info("  "+line)
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
-                self.atoms += arrange_atoms(cpos, self.repcell,
-                                            cmat, gmol)
+                self.universe.append(arrange(cpos,
+                                             self.repcell,
+                                             cmat,
+                                             gmol))
 
         # Assume the dopant is monatomic and replaces one water molecule
         atomset = defaultdict(set)
@@ -1248,11 +1242,11 @@ class GenIce():
         for name, labels in atomset.items():
             pos = [self.reppositions[i] for i in sorted(labels)]
             rot = [self.rotmatrices[i] for i in sorted(labels)]
-            monatom = one.Molecule(label=name)
-            self.atoms += arrange_atoms(pos,
-                                        self.repcell,
-                                        rot,
-                                        monatom)
+            oneatom = one.Molecule(label=name)
+            self.universe.append(arrange(pos,
+                                         self.repcell,
+                                         rot,
+                                         oneatom))
 
 
     def prepare_random_graph(self, fixed):

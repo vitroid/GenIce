@@ -8,6 +8,7 @@ from logging import getLogger
 from genice2 import rigid
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 class Format(genice2.formats.Format):
@@ -29,8 +30,13 @@ No options available.
         "Output in TowHee format."
         logger = getLogger()
         cellmat = ice.repcell.mat
+
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
+
         s = ""
-        for i,atom in enumerate(ice.atoms):
+        for i,atom in enumerate(atoms):
             molorder, resname, atomname, position, order = atom
             s += "{0:20.15f}{1:20.15f}{2:20.15f}   {3:6}{4:3}{5:6}{6:6}\n".format(position[0]*10,position[1]*10,position[2]*10,atomname,resname,order+1,i+1)
         print(s,end="")

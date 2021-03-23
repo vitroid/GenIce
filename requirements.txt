@@ -1,0 +1,8 @@
+networkx>=2
+cycless
+pairlist>=0.2.3
+yaplotlib>=0.1
+numpy
+wheel
+openpyscad
+graphstat

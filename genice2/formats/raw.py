@@ -13,6 +13,7 @@ from logging import getLogger
 import numpy as np
 from genice2.decorators import timeit, banner
 import genice2.formats
+from genice2.molecules  import serialize
 
 
 class Format(genice2.formats.Format):
@@ -135,7 +136,7 @@ Stage 7:
     def Hook6(self, ice):
         "Arrange atoms of water and replacements."
         logger = getLogger()
-        self.output["atoms"]        = ice.atoms
+        self.output["mols"]        = ice.universe
 
 
     @timeit
@@ -143,4 +144,4 @@ Stage 7:
     def Hook7(self, ice):
         "Arrange all atoms."
         logger = getLogger()
-        self.output["atoms"]        = ice.atoms
+        self.output["mols"]        = ice.universe
