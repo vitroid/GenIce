@@ -16,7 +16,7 @@ test-deploy: build
 	-pip install twine
 	twine upload -r pypitest dist/*
 test-install: requirements.txt
-	pip install `cat $<`
+	pip install -r $<
 	pip install --index-url https://test.pypi.org/simple/ genice2
 
 

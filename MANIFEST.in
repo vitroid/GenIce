@@ -1,3 +1,4 @@
 include README.md
 include setup.cfg
 #recursive-include tests *
+include requirements.txt
