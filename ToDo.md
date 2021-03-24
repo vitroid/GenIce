@@ -4,5 +4,6 @@
 * hydrates of water and NH4F
 
 ##Done
-* Monoclinic cell for ice 5 
-* High pressure ices with prearranged network topology 
+* Monoclinic cell for ice 5
+* High pressure ices with prearranged network topology
+* MDAnalysis integration.

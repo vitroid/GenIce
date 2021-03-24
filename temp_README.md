@@ -5,6 +5,16 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 
 version {{version}}
 
+
+## New in GenIce2.1
+
+GenIce2-MDAnalysis integration is now available. Try
+```shell
+% pip install genice2-mdanalysis
+% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
+```
+to generate a PDB file.
+
 ## Demo
 
 The new GenIce works very well with interactive execution.
@@ -191,11 +201,12 @@ Name |Application | extension | water | solute | HB | remarks
 `rings`      |[Yaplot](https://github.com/vitroid/Yaplot)      | `.yap`      | center of mass | none |o | It renders HB rings.
 `_KG`      |Kirkwood G(r)|     | |  | | Statistical test suite 2: Calculate G(r) for checking long-range disorder in molecular orientations.
 
-By installing the [`genice-mdanalysis`](https://github.com/vitroid/genice-mdanalysis) package separately, you can generate files in many formats for a  large number of molecular dynamics package softwares. E.g.
+By installing the [`genice2-mdanalysis`](https://github.com/vitroid/genice-mdanalysis) package separately, you can generate files in many formats for a  large number of molecular dynamics package softwares. E.g.
 
 ```shell
-% genice2 1c -f mdanalysis[1c.pdb]
-% genice2 1h -f mdanalysis[1h.xtc]
+% pip install genice2-mdanalysis
+% genice2 1c -f 'mdanalysis[1c.pdb]'
+% genice2 1h -f 'mdanalysis[1h.xtc]'
 ```
 
 You can prepare your file formats. Create a folder named `formats` in the current working directory and put the plugins in it.
@@ -285,7 +296,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |[`genice2-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
-
+|[`genice2-mdanalysis`](https://github.com/vitroid/genice-mdanalysis)|`-f mdanalysis`| Output the atoms in various file formats that are served by [MDAnalysis](https://github.com/MDAnalysis/mdanalysis).| text, binary | `mdanalysis` |
 ## Input plugins
 
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
@@ -316,6 +327,9 @@ Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.co
 
 Many new ice structures are added.
 
+## Integration with MDAnalysis
+
+GenIce2 is now integrated with MDAnalysis. See the Jupyter notebooks (.ipynb) for usage.
 
 # References
 

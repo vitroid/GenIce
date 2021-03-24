@@ -1,6 +1,6 @@
 networkx>=2
 cycless
-pairlist>=0.2.3
+pairlist>=0.2.11.1
 yaplotlib>=0.1
 numpy
 wheel
