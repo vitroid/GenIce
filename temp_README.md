@@ -18,7 +18,7 @@ to generate a PDB file.
 ## Demo
 
 The new GenIce works very well with interactive execution.
-[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/colaboratory.ipynb) on Google Colab.
+[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colab.
 
 ## Requirements
 
@@ -323,7 +323,7 @@ Combinations of the new algorithm and other improvements in coding, the processi
 
 ## Colaboratory-ready!
 
-Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/test.ipynb)
+Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/jupyter.ipynb)
 
 ## New ices
 
@@ -331,7 +331,7 @@ Many new ice structures are added.
 
 ## Integration with MDAnalysis
 
-GenIce2 is now integrated with MDAnalysis. See the Jupyter notebooks (.ipynb) for usage.
+GenIce2 is now integrated with MDAnalysis.
 
 # References
 
