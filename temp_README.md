@@ -209,6 +209,8 @@ By installing the [`genice2-mdanalysis`](https://github.com/vitroid/genice-mdana
 % genice2 1h -f 'mdanalysis[1h.xtc]'
 ```
 
+All the supported file types are listed in the [MDAnalysis web page](https://docs.mdanalysis.org/stable/documentation_pages/coordinates/init.html#supported-coordinate-formats).
+
 You can prepare your file formats. Create a folder named `formats` in the current working directory and put the plugins in it.
 
 Internally, there are seven stages to generate an ice structure.
