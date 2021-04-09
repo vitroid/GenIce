@@ -16,6 +16,7 @@ import numpy as np
 import pairlist as pl
 from cycless.polyhed import polyhedra_iter, cage_to_graph
 from cycless.cycles  import centerOfMass, cycles_iter
+import tilecycles as tc
 
 from genice2 import digraph as dg
 from genice2.plugin import safe_import
@@ -450,6 +451,7 @@ class GenIce():
         # Set random seeds
         random.seed(seed)
         np.random.seed(seed)
+        self.seed = seed # used in tilecycles
 
         try:
             self.doc = lat.__doc__.splitlines()
@@ -958,109 +960,76 @@ class GenIce():
             for i in range(len(cycle)):
                 yield cycle[i-1], cycle[i]
 
-        def find_cycle(g, chain):
-            head = chain[-1]
-            if len(chain) > 1:
-                neis = [x for x in g[head] if x != chain[-2]]
-            else:
-                neis = list(g[head])
+        @timeit
+        def spanningCycles(cycles):
+            dipoles = []
+            spanning = []
+            for j, cycle in enumerate(cycles):
+                dipole = np.zeros(3)
+                for a, b in cycle_edges(cycle):
+                    # displacement vector
+                    d = self.reppositions[b] - self.reppositions[a]
+                    d -= np.floor(d+0.5)
+                    dipole += d
+                if not np.allclose(dipole, np.zeros(3)):
+                    # it is a cell-spanning cycle
+                    dipoles.append(dipole)
+                    spanning.append(j)
+            dipoles = np.array(dipoles)
+            return dipoles, spanning
 
-            while True:
-                next = random.choice(neis)
-                if next in chain:
-                    rec = chain.index(next)
-                    tail, cycle = chain[:rec], chain[rec:]
-                    return tail, cycle
-                chain.append(next)
-                neis = [x for x in g[next] if x != chain[-2]] # remove the backward path
+        @timeit
+        def direct(dipoles, spanning):
+            bestm = 999999
+            bestp = None
+            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
+            pol = dipoles.T @ dir
+            pol2 = pol@pol
+            for i in range(len(dipoles)*2):
+                r = random.randint(0,len(dipoles)-1)
+                newpol = pol - 2*dir[r]*dipoles[r]
+                newpol2 = newpol @ newpol
+                if newpol2 <= pol2:
+                    dir[r] = -dir[r]
+                    pol = newpol
+                    pol2 = newpol2
+                    if pol2 < 1e-6:
+                        break
+            logger.debug(f"  Depolarized to {pol} in {i} steps")
+            return dir
+
+        @timeit
+        def cycles2digraph(cycles):
+            d = dg.IceGraph()
+            for cycle in cycles:
+                nx.add_cycle(d, cycle, fixed=False)
+            return d
 
         logger = getLogger()
 
-        # should be separated in digraph.py
-        import networkx as nx
-        # undirected replica of the self.graph
-        # a homemade implementation of a graph with dict and set
-        g = defaultdict(set)
-        for i,j in self.graph.edges():
-            g[i].add(j)
-            g[j].add(i)
-
-        cycles = []
-
-        N = self.graph.number_of_edges()
-
-        chain = []
-        nc = 0
-        tick = 1
-        while len(g) > 0:
-            if len(chain) == 0:
-                # prepare a new chain
-                L = list(g)
-                head = random.choice(L)
-                chain = [head]
-            # Randomly find a cycle
-            chain, cycle = find_cycle(g, chain)
-            cycles.append(cycle)
-            nc += len(cycle)
-            if tick*N < nc*10:
-                logger.debug(f"* {tick}/10 tiled.")
-                tick += 1
-            for a,b in cycle_edges(cycle):
-                # remove edges in the cycle
-                g[a].remove(b)
-                g[b].remove(a)
-                # remove nodes also
-                if len(g[a]) == 0:
-                    del g[a]
-                if len(g[b]) == 0:
-                    del g[b]
-
+        pairs = np.array([(i,j) for i,j in self.graph.edges()], dtype=np.int32)
+        Nnode = len(self.reppositions)
+        cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
 
         # evaluate the dipole of each cycle
-        dipoles = []
-        spanning = []
-        for j, cycle in enumerate(cycles):
-            dipole = np.zeros(3)
-            for a, b in cycle_edges(cycle):
-                # displacement vector
-                d = self.reppositions[b] - self.reppositions[a]
-                d -= np.floor(d+0.5)
-                dipole += d
-            if not np.allclose(dipole, np.zeros(3)):
-                # it is a cell-spanning cycle
-                dipoles.append(dipole)
-                spanning.append(j)
-        dipoles = np.array(dipoles)
+        dipoles, spanning = spanningCycles(cycles)
         logger.debug(f"  {len(spanning)} spanning cycles.")
 
         # invert randomly to eliminate the net polarization.
         # Rarely, it cannot be depolarized.
 
-        bestm = 999999
-        bestp = None
-        dir = np.random.randint(2, size=len(dipoles)) * 2 - 1 # +1 or -1
+        dir = direct(dipoles, spanning)
         pol = dipoles.T @ dir
         pol2 = pol@pol
-        for i in range(len(dipoles)*2):
-            r = random.randint(0,len(dipoles)-1)
-            newpol = pol - 2*dir[r]*dipoles[r]
-            newpol2 = newpol @ newpol
-            if newpol2 <= pol2:
-                dir[r] = -dir[r]
-                pol = newpol
-                pol2 = newpol2
-                if pol2 < 1e-6:
-                    break
-        logger.debug(f"  Depolarized to {pol} in {i} steps")
 
         # invert cycles
         for i,p in enumerate(dir):
             if p < 0:
                 cycles[spanning[i]].reverse()
 
-        d = dg.IceGraph()
-        for cycle in cycles:
-            nx.add_cycle(d, cycle, fixed=False)
+        import networkx as nx
+
+        d = cycles2digraph(cycles)
 
         self.graph = d
         self.spacegraph = None
