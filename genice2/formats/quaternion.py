@@ -4,10 +4,11 @@ desc = { "ref": { },
          "usage": "No options.",
          }
 
-import numpy as np
-
-from genice2 import rigid
 from logging import getLogger
+
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+
 import genice2.formats
 from genice2.decorators import timeit, banner
 
@@ -43,13 +44,8 @@ No options available.
         s += "{0}\n".format(len(ice.reppositions))
         for pos,rot in zip(ice.reppositions, ice.rotmatrices):
             position = np.dot(pos, cellmat)*10   #in Angstrom
-            quat     = rigid.rotmat2quat(rot.transpose())
-            s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(position[0],
-                                                                            position[1],
-                                                                            position[2],
-                                                                            quat[0],
-                                                                            quat[1],
-                                                                            quat[2],
-                                                                            quat[3])
+            # quat     = rigid.rotmat2quat(rot.transpose())
+            quat    = np.roll(R.from_matrix(rot).as_quat(),1) * np.array([-1,+1,-1,+1])
+            s += " ".join([f"{v:9.4f}" for v in [*position, *quat]]) + "\n"
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s
