@@ -5,9 +5,11 @@ desc = { "ref": { },
          "usage": "No options.",
          }
 
-import numpy as np
-from genice2 import rigid
 from logging import getLogger
+
+import numpy as np
+from scipy.spatial.transform import Rotation as R
+
 from genice2.decorators import timeit, banner
 import genice2.formats
 
@@ -43,12 +45,10 @@ No options available.
         s += "{0}\n".format(len(ice.reppositions))
         for pos,rot  in zip(ice.reppositions, ice.rotmatrices):
             position = np.dot(pos,cellmat)*10   #in Angstrom
-            euler = rigid.quat2euler(rigid.rotmat2quat(rot.transpose()))
-            s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f}\n".format(position[0],
-                                                                                position[1],
-                                                                                position[2],
-                                                                                euler[0],
-                                                                                euler[1],
-                                                                                euler[2])
+            # euler = rigid.quat2euler(rigid.rotmat2quat(rot.transpose()))
+            euler = R.from_matrix(rot.T).as_euler('ZXZ')
+            euler = euler[[1,0,2]]
+            euler[1:] -= np.floor(euler[1:]/(2*np.pi))*2*np.pi
+            s += " ".join([f"{v:9.4f}" for v in [*position, *euler]]) + "\n"
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s

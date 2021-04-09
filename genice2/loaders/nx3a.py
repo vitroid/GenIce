@@ -3,8 +3,8 @@ import logging
 import numpy as np
 import pairlist as pl
 
-from genice2 import rigid
 import genice2.molecules.tip4p
+from scipy.spatial.transform import Rotation as R
 
 
 def load_iter(file, **kwargs):
@@ -35,7 +35,10 @@ def load_iter(file, **kwargs):
                     pos = np.array([float(x) for x in cols[:3]]) / 10
                     # oatoms.append(pos / 10)  # in nm
                     euler = np.array([float(x) for x in cols[3:6]])
-                    rotmat = rigid.euler2rotmat(euler)
+                    # rotmat = rigid.euler2rotmat(euler)
+                    r = R.from_euler("ZXZ", euler[[1,0,2]]).as_matrix().T
+                    # logger.info([rotmat, r, np.allclose(rotmat,r)])
+                    rotmat = r
                     a = sites @ rotmat + pos
                     oatoms.append(a[0])
                     hatoms.append(a[1])

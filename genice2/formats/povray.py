@@ -14,7 +14,6 @@ from collections import defaultdict
 import numpy as np
 from logging import getLogger
 from genice2.decorators import timeit, banner
-from genice2 import rigid
 import genice2.formats
 from genice2.molecules  import serialize
 

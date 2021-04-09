@@ -7,7 +7,6 @@ desc={"ref": {"exmol": "http://libatoms.github.io/QUIP/io.html#extendedxyz"},
 
 import numpy as np
 from logging import getLogger
-from genice2 import rigid
 from genice2.decorators import timeit, banner
 import genice2.formats
 from genice2.molecules  import serialize
