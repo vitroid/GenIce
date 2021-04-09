@@ -953,6 +953,7 @@ class GenIce():
         Implement using dict() instead of networkx.
         """
 
+        # Cに書きかえるなら、この下の3つをおきかえる。
         def cycle_edges(cycle):
             for i in range(len(cycle)):
                 yield cycle[i-1], cycle[i]
