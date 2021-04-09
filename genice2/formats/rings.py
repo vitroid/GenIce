@@ -27,7 +27,6 @@ from logging import getLogger
 from openpyscad import *
 import colorsys
 
-from genice2 import rigid
 import genice2.formats
 from cycless.cycles import cycles_iter
 from genice2.decorators import timeit, banner

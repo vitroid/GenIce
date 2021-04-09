@@ -6,7 +6,6 @@ desc={"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/E
 
 import numpy as np
 from logging import getLogger
-from genice2 import rigid
 from genice2.decorators import timeit, banner
 import genice2.formats
 from genice2.molecules  import serialize

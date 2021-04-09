@@ -5,7 +5,6 @@ towhee file format (.coods?) [EXPERIMENTAL]
 
 import numpy as np
 from logging import getLogger
-from genice2 import rigid
 from genice2.decorators import timeit, banner
 import genice2.formats
 from genice2.molecules  import serialize

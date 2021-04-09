@@ -5,7 +5,6 @@ XMol file format (.xyz)
 
 import numpy as np
 
-from genice2 import rigid
 from logging import getLogger
 from genice2.decorators import timeit, banner
 import genice2.formats
