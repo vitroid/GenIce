@@ -480,7 +480,7 @@ class GenIce():
         # waters: positions of water molecules
         #
         self.waters = put_in_array(lat.waters)
-        logger.debug(f"Waters: {len(self.waters))}")
+        logger.debug(f"Waters: {len(self.waters)}")
         self.waters = self.waters.reshape((self.waters.size // 3, 3))
 
         # ================================================================
