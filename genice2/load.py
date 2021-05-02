@@ -15,6 +15,7 @@ import numpy as np
 from types import SimpleNamespace
 import pairlist as pl
 
+
 def str2rangevalues(s):
     values = s.split(":")
     assert len(values) > 0
@@ -34,7 +35,8 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
     logger = getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
-    logger.info("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
+    logger.info("  file number range: {0}:{1}:{2}".format(
+        *str2rangevalues(filerange)))
     logger.info("  frame number range: {0}:{1}:{2}".format(*rframe))
     # test whether filename has a regexp for enumeration
     logger.info(filename)
@@ -75,7 +77,7 @@ def average(load_iter, span=0):
         # pass through.
         yield from load_iter()
         return
-    ohist = [] # center-of-mass position (relative)
+    ohist = []  # center-of-mass position (relative)
     for oatoms, hatoms, cellmat in load_iter():
 
         # center of mass
@@ -109,12 +111,13 @@ def make_lattice_info(oatoms, hatoms, cellmat):
     assert oatoms.shape[0] > 0
     assert hatoms is None or oatoms.shape[0] * 2 == hatoms.shape[0]
     coord = 'relative'
-    density = oatoms.shape[0] / (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
+    density = oatoms.shape[0] / \
+        (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
 
     if hatoms is None:
         return SimpleNamespace(waters=oatoms, coord=coord, density=density, bondlen=0.3, cell=cellmat)
 
-    rotmat = np.zeros((oatoms.shape[0],3,3))
+    rotmat = np.zeros((oatoms.shape[0], 3, 3))
     for i in range(oatoms.shape[0]):
         ro = oatoms[i]
         rdh0 = rel_wrap(hatoms[i * 2] - ro)

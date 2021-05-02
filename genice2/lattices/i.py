@@ -4,17 +4,17 @@ import genice2.lattices
 from genice2.cell import cellvectors
 
 
-desc={"ref": {"0": "Fennell 2005",},
-      "usage": "No options available.",
-      "brief": 'Hypothetical ice "i".'
-      }
+desc = {"ref": {"0": "Fennell 2005", },
+        "usage": "No options available.",
+        "brief": 'Hypothetical ice "i".'
+        }
 
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.92     #default self.density
+        self.density = 0.92  # default self.density
 
-        self.bondlen = 0.4      #bond threshold
+        self.bondlen = 0.4  # bond threshold
 
         self.cell = """
         1.0 1.0 0.94
@@ -42,5 +42,5 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "absolute"
 
         self.cell = cellvectors(a=1.0,
-                           b=1.0,
-                           c=0.94)
+                                b=1.0,
+                                c=0.94)

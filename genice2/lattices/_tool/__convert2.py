@@ -18,12 +18,13 @@ def detect_header(lines):
         i += 1
     return -1
 
+
 with open(sys.argv[1], "r") as source:
     lines = source.readlines()
 
 x = detect_header(lines)
 header = lines[:x]
-body   = lines[x:]
+body = lines[x:]
 
 newbody = ["\n",
            "class Lattice(genice.lattices.Lattice):\n",
@@ -35,13 +36,13 @@ for line in body:
     else:
         for word in ("waters", "bondlen", "density", "cell", "coord", "cages", "pairs", "fixed"):
             line = line.replace(word, "self."+word)
-        #recovery
+        # recovery
         for word in ("waters_",):
             line = line.replace("self."+word, word)
-        for word, alt in {"parse_self.":"parse_",
-                          "waters_and_self.":"waters_and_",
-                          "estimate_self.":"estimate_",
-                          "self.cellve":"cellve",
+        for word, alt in {"parse_self.": "parse_",
+                          "waters_and_self.": "waters_and_",
+                          "estimate_self.": "estimate_",
+                          "self.cellve": "cellve",
                           }.items():
             line = line.replace(word, alt)
 

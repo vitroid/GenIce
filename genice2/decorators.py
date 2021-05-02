@@ -3,6 +3,8 @@ import time
 from logging import getLogger
 
 # decorator
+
+
 def timeit(func):
     @wraps(func)
     def _time_it(*args, **kwargs):
@@ -16,12 +18,14 @@ def timeit(func):
     return _time_it
 
 # decorator
+
+
 def banner(func):
     @wraps(func)
     def _banner(*args, **kwargs):
         logger = getLogger()
         lines = func.__doc__.splitlines()
-        if len(lines[0]) == 0 and len(lines)>1:
+        if len(lines[0]) == 0 and len(lines) > 1:
             msg = lines[1]
         else:
             msg = lines[0]

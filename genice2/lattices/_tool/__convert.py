@@ -34,10 +34,10 @@ s.append("c={0}".format(Lc))
 
 if alpha != 90.0:
     s.append("A={0}".format(alpha))
-    
+
 if beta != 90.0:
     s.append("B={0}".format(beta))
-    
+
 if gamma != 90.0:
     s.append("C={0}".format(gamma))
 
@@ -50,6 +50,4 @@ for line in open(name+".py").readlines():
 print()
 print("from genice.cell import cellvectors")
 H = "cell = cellvectors("
-print( H + (",\n"+" "*len(H)).join(s) +")")
-
-
+print(H + (",\n"+" "*len(H)).join(s) + ")")

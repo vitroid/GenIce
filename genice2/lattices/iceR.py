@@ -5,14 +5,14 @@ Data Source
 [ice R] Mochizuki, K., Himoto, K. & Matsumoto, M. Diversity of transition pathways in the course of crystallization into ice VII. Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
 """
 
-desc={"ref": {"Methane A": 'Maynard-Casely 2010',
-              "R":         'Mochizuki 2014'},
-      "usage": "No options available.",
-      "brief": "Hypothetical ice R."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"Methane A": 'Maynard-Casely 2010',
+                "R":         'Mochizuki 2014'},
+        "usage": "No options available.",
+        "brief": "Hypothetical ice R."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -49,8 +49,8 @@ class Lattice(genice2.lattices.Lattice):
         self.density = 1.5
 
         self.cell = cellvectors(a=7.547382417065826,
-                           b=7.547382417065826,
-                           c=7.547382417065826,
-                           A=89.31999999999998,
-                           B=89.31999999999998,
-                           C=89.31999999999998)
+                                b=7.547382417065826,
+                                c=7.547382417065826,
+                                A=89.31999999999998,
+                                B=89.31999999999998,
+                                C=89.31999999999998)

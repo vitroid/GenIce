@@ -1,4 +1,7 @@
-desc={
+from genice2.cell import cellvectors
+import genice2.lattices
+import numpy as np
+desc = {
     "ref": {
         "53_3_726600": "Engel 2018",
         "engel07": "Engel 2018"
@@ -6,9 +9,7 @@ desc={
     "usage": "No options available.",
     "brief": "Hypothetical zeolitic ice"
 }
-import numpy as np
-import genice2.lattices
-from genice2.cell import cellvectors
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):

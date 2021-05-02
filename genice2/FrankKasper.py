@@ -15,7 +15,6 @@ import numpy as np
 import pairlist as pl
 
 
-
 def shortest_distance(atoms, cell):
     logger = logging.getLogger()
     dmin = 1e99

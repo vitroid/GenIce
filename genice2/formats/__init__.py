@@ -2,10 +2,12 @@
 
 import sys
 
+
 class Format():
     """
     Base class for Format()
     """
+
     def __init__(self, **kwargs):
         self.output = ""
 

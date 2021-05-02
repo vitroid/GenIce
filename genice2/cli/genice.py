@@ -11,14 +11,19 @@ from genice2.decorators import timeit, banner
 import pickle
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
+
+
 def help_type():
     return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice", width=55)
+
 
 def help_guest():
     return 'R|Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n'+descriptions("molecule", water=False, width=55)
 
+
 def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='genice2', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(
+        __version__), prog='genice2', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',
@@ -76,28 +81,28 @@ def getoptions():
                         help=help_guest)
     parser.add_argument('--Guest',
                         '-G',
-                        #nargs=1,
+                        # nargs=1,
                         dest='spot_guests',
                         metavar="13=me",
                         action="append",
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
     parser.add_argument('--Group',
                         '-H',
-                        #nargs=1,
+                        # nargs=1,
                         dest='groups',
                         metavar="13=bu-:0",
                         action="append",
                         help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
-                        #nargs=1,
+                        # nargs=1,
                         dest='anions',
                         metavar="3=Cl",
                         action="append",
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation',
                         '-c',
-                        #nargs=1,
+                        # nargs=1,
                         dest='cations',
                         metavar="3=Na",
                         action="append",
@@ -136,7 +141,6 @@ def getoptions():
     return parser.parse_args()
 
 
-
 @timeit
 @banner
 def main():
@@ -157,7 +161,7 @@ def main():
     lattice_type = options.Type
     seed = options.seed
     rep = options.rep
-    sh  = options.shift
+    sh = options.shift
     density = options.dens
     asis = options.asis
     anions = dict()
@@ -190,17 +194,17 @@ def main():
 
     # Initialize the Lattice class with arguments which are required for plugins.
     lat = GenIce(safe_import("lattice", lattice_type).Lattice(**lattice_options),
-                signature=signature,
-                density=density,
-                rep=rep,
-                cations=cations,
-                anions=anions,
-                spot_guests=spot_guests,
-                spot_groups=groups,
-                asis=asis,
-                shift=sh,
-                seed=seed,
-    )
+                 signature=signature,
+                 density=density,
+                 rep=rep,
+                 cations=cations,
+                 anions=anions,
+                 spot_guests=spot_guests,
+                 spot_groups=groups,
+                 asis=asis,
+                 shift=sh,
+                 seed=seed,
+                 )
 
     guests = defaultdict(dict)
     if options.guests is not None:
@@ -224,12 +228,12 @@ def main():
     del options  # Dispose for safety.
 
     result = lat.generate_ice(water=water,
-                     guests=guests,
-                     formatter=formatter,
-                     noise=noise,
-                     depol=depol,
-                     assess_cages = assess_cages,
-                     )
+                              guests=guests,
+                              formatter=formatter,
+                              noise=noise,
+                              depol=depol,
+                              assess_cages=assess_cages,
+                              )
     if type(result) is bytes:
         sys.stdout.buffer.write(result)
     elif type(result) is str:

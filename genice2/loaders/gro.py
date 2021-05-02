@@ -1,16 +1,12 @@
-desc={"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
-      "brief": "Gromacs .gro file.",
-      "usage": "No options available."
-      }
-
-
-import logging
-import re
-
-import numpy as np
-import pairlist as pl
-
 from genice2.cell import rel_wrap
+import pairlist as pl
+import numpy as np
+import re
+import logging
+desc = {"ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
+        "brief": "Gromacs .gro file.",
+        "usage": "No options available."
+        }
 
 
 def readaline(file):
@@ -44,7 +40,8 @@ def load_iter(file, oname="O", hname=None):
             # resna = line[5:10]
             atomname = line[10:15].replace(' ', '')
             # atomid = int(line[15:20])
-            pos = np.array([float(x) for x in line[20:].split()[:3]])  # drop velocity
+            pos = np.array([float(x)
+                           for x in line[20:].split()[:3]])  # drop velocity
             if re.fullmatch(oname, atomname):
                 oatoms.append(pos)
             elif hname is not None and re.fullmatch(hname, atomname):

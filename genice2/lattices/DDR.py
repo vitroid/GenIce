@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
-desc={
+import numpy as np
+from genice2 import CIF
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {
     "ref": {
         "engel17": "Engel 2018",
         "DDR": "IZA Database"
@@ -9,14 +13,10 @@ desc={
     "brief": "Hypothetical zeolitic ice"
 }
 
-import genice2.lattices
-from genice2.cell import cellvectors
-from genice2 import CIF
-import numpy as np
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        atoms="""
+        atoms = """
     O1       0.7281    0.0539    0.0698
     O2       0.1309    0.2618    0.1075
     O3       0.1999    0.3999    0.1718
@@ -26,7 +26,7 @@ class Lattice(genice2.lattices.Lattice):
     O7       0.0000    0.0000    0.1166
         """
 
-        symops="""
+        symops = """
 +x,+y,+z
 2/3+x,1/3+y,1/3+z
 1/3+x,2/3+y,2/3+z
@@ -65,23 +65,24 @@ class Lattice(genice2.lattices.Lattice):
 1/3-x,2/3-x+y,2/3-z
         """.replace(',', ' ')
 
-        a=13.7950 / 10.0 #nm
-        b=13.7950 / 10.0 #nm
-        c=40.7500 / 10.0 #nm
-        A=90
-        B=90
-        C=120
+        a = 13.7950 / 10.0  # nm
+        b = 13.7950 / 10.0  # nm
+        c = 40.7500 / 10.0  # nm
+        A = 90
+        B = 90
+        C = 120
 
-        self.cell  = cellvectors(a,b,c,A,B,C)
+        self.cell = cellvectors(a, b, c, A, B, C)
 
         # helper routines to make from CIF-like data
         atomd = CIF.atomdic(atoms)
-        sops  = CIF.symmetry_operators(symops)
+        sops = CIF.symmetry_operators(symops)
         self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
 
         # set self.pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18*len(self.waters)/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.density = 18*len(self.waters)/6.022e23 / \
+            (np.linalg.det(self.cell)*1e-21)
 
         self.coord = "relative"

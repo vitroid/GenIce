@@ -1,18 +1,18 @@
 #!/usr/bin/python
 
-desc={"ref": {"13": 'Salzmann 2006'},
-      "usage": "No options available.",
-      "brief": "Ice XIII, a hydrogen-ordered counterpart of ice V."
-      }
-
-import genice2.lattices
-from genice2.cell import cellvectors
-from genice2 import CIF
 import numpy as np
+from genice2 import CIF
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"13": 'Salzmann 2006'},
+        "usage": "No options available.",
+        "brief": "Ice XIII, a hydrogen-ordered counterpart of ice V."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        atoms="""
+        atoms = """
         O1 0.2541(6)  0.5629(5) 0.2517(5)
         O2 0.4771(6)  0.7992(5) 0.4089(5)
         O3 0.0503(6)  0.8082(6) 0.0941(5)
@@ -39,7 +39,7 @@ class Lattice(genice2.lattices.Lattice):
         # space group: P2_1/a No. 14
         # http://img.chem.ucl.ac.uk/sgp/large/014dy1.htm
 
-        symops="""
+        symops = """
             x            y            z
             1/2-x        1/2+y         -z
 
@@ -47,23 +47,24 @@ class Lattice(genice2.lattices.Lattice):
             1/2+x        1/2-y          z
         """
 
-        a=9.2417 / 10.0 #nm
-        b=7.4724 / 10.0 #nm
-        c=10.2970 / 10.0 #nm
-        A=90
-        B=109.6873
-        C=90
+        a = 9.2417 / 10.0  # nm
+        b = 7.4724 / 10.0  # nm
+        c = 10.2970 / 10.0  # nm
+        A = 90
+        B = 109.6873
+        C = 90
 
-        self.cell  = cellvectors(a,b,c,A,B,C)
+        self.cell = cellvectors(a, b, c, A, B, C)
 
         # helper routines to make from CIF-like data
         atomd = CIF.atomdic(atoms)
-        sops  = CIF.symmetry_operators(symops)
+        sops = CIF.symmetry_operators(symops)
         self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
 
         # set self.pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18*len(self.waters)/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.density = 18*len(self.waters)/6.022e23 / \
+            (np.linalg.det(self.cell)*1e-21)
 
         self.coord = "relative"

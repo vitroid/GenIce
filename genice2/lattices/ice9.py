@@ -1,13 +1,12 @@
 # coding: utf-8
 
-desc={"ref": {"9":'Londono 1993'},
-      "usage": "No options available.",
-      "brief": "Ice IX, a hydrogen-ordered counterpart of ice III."
-      }
-
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"9": 'Londono 1993'},
+        "usage": "No options available.",
+        "brief": "Ice IX, a hydrogen-ordered counterpart of ice III."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -29,7 +28,7 @@ class Lattice(genice2.lattices.Lattice):
         self.bondlen = 3
         self.density = 1.15672
 
-        self.fixed="""
+        self.fixed = """
         0 7
         0 8
         1 6
@@ -57,5 +56,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=6.67,
-                           b=6.67,
-                           c=6.97)
+                                b=6.67,
+                                c=6.97)

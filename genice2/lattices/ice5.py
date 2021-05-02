@@ -1,19 +1,19 @@
 # coding: utf-8
 
-desc={"ref": {},
-      "usage": "No options available.",
-      "brief": "Monoclinic ice V (testing)."
-      }
-
-from genice2.cell import cellvectors
 import genice2.lattices
+from genice2.cell import cellvectors
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Monoclinic ice V (testing)."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.cell = cellvectors(a=9.19977812589,
-                           b=7.52346280577,
-                           c=10.327299740014166,
-                           B=109.2)
+                                b=7.52346280577,
+                                c=10.327299740014166,
+                                B=109.2)
 
         self.waters = """
         0.8993 0.1404 0.4854

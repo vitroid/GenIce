@@ -1,28 +1,26 @@
 # coding: utf-8
 
-desc={"ref": {"sT'": 'Smirnov 2013'},
-      "usage": "No options available.",
-      "brief": "Filled ice sT'."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"sT'": 'Smirnov 2013'},
+        "usage": "No options available.",
+        "brief": "Filled ice sT'."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 1.2     #default self.density
+        self.density = 1.2  # default self.density
 
+        self.bondlen = 1.2  # bond threshold
 
-        self.bondlen = 1.2      #bond threshold
-
-
-        self.cell="""
+        self.cell = """
         4.04345643838 3.18400949048 3.18412710497
         """
 
-        #estimated by unitself.cell-designer2.py
-        self.coord="relative"
-        self.waters="""
+        # estimated by unitself.cell-designer2.py
+        self.coord = "relative"
+        self.waters = """
         0.324999313604 0.241626046227 0.741607546689
         0.457688412412 0.491604796867 0.811167153486
         0.324997440466 0.741611811736 0.741618888106
@@ -49,7 +47,6 @@ class Lattice(genice2.lattices.Lattice):
         0.957685771209 0.172166522813 0.991732627999
         """
 
-
         self.cell = cellvectors(a=4.04345643838,
-                           b=3.18400949048,
-                           c=3.18412710497)
+                                b=3.18400949048,
+                                c=3.18412710497)

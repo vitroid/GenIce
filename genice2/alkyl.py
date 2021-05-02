@@ -17,7 +17,6 @@ import logging
 from math import pi, sin, cos
 
 
-
 def alkyl(direction, destination, tree, dest=None):
     """
     put a normal-alkyl group rooted at root toward cpos.
@@ -82,8 +81,10 @@ def test():
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)s %(message)s")
     direction = np.array([1.0, 0.0, 0.0])  # must be a unit vector
-    destination = np.array([10.0, 10.0, 0.0])  # All the branches direct to this point.
-    atoms = alkyl(direction, destination, tree=["Ma", ["Mb", "Mf", ["Mc", "Me", ["Md", ["A", ["B", ["C", ["D"]]]]]]]])
+    # All the branches direct to this point.
+    destination = np.array([10.0, 10.0, 0.0])
+    atoms = alkyl(direction, destination, tree=[
+                  "Ma", ["Mb", "Mf", ["Mc", "Me", ["Md", ["A", ["B", ["C", ["D"]]]]]]]])
     # in yaplot format
     print("t 0 0 0 +")
     print("t", destination[0], destination[1], destination[2], "@")

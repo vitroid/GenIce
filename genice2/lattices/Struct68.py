@@ -7,17 +7,17 @@ Data source:
 Cage composition:
  (12,14,15,16) = (8,0,0,4,)
 """
-desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "A space fullerene."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "A space fullerene."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.pairs="""
+        self.pairs = """
         13 17
         21 16
         7 22
@@ -156,7 +156,7 @@ class Lattice(genice2.lattices.Lattice):
         36 45
         """
 
-        self.waters="""
+        self.waters = """
         0.45594 0.54406 0.625
         0.33333 0.66667 0.67149
         0.54406 0.08812 0.125
@@ -227,9 +227,9 @@ class Lattice(genice2.lattices.Lattice):
         0.70595 0.66189 0.4375
         """
 
-        self.coord= "relative"
+        self.coord = "relative"
 
-        self.cages="""
+        self.cages = """
         12 0.0 -1.0 0.5
         12 -0.17622 -0.35245 0.25
         16 -0.66667 -0.33333 -0.56406
@@ -246,7 +246,6 @@ class Lattice(genice2.lattices.Lattice):
 
         self.bondlen = 3
 
-
         self.cell = """
         13.46100100093214 0.0 0.0
         -6.730500500466066 11.657568827174991 0.0
@@ -255,9 +254,7 @@ class Lattice(genice2.lattices.Lattice):
 
         self.density = 0.5866191722917903
 
-
-
         self.cell = cellvectors(a=13.46100100093214,
-                           b=13.46100100093214,
-                           c=22.08,
-                           C=119.99999999999999)
+                                b=13.46100100093214,
+                                c=22.08,
+                                C=119.99999999999999)

@@ -1,20 +1,20 @@
 # coding: utf-8
 
-desc={"ref": {"IId": 'Nakamura 2015'},
-      "usage": "No options available.",
-      "brief": "A hydrogen-disordered counterpart of ice II."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"IId": 'Nakamura 2015'},
+        "usage": "No options available.",
+        "brief": "A hydrogen-disordered counterpart of ice II."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen = 3     #bond threshold
+        self.bondlen = 3  # bond threshold
 
         self.coord = "absolute"
 
-        self.waters="""
+        self.waters = """
         1.8266 2.4421 0.9143
         1.8266 10.0920 5.0426
         8.4516 6.2671 2.9784
@@ -89,8 +89,7 @@ class Lattice(genice2.lattices.Lattice):
         10.7045 14.9866 5.6619
         """
 
-
-        self.fixed="""
+        self.fixed = """
         64 61
         61 67
         69 19
@@ -360,5 +359,5 @@ class Lattice(genice2.lattices.Lattice):
         self.pairs = self.fixed
 
         self.cell = cellvectors(a=13.25,
-                           b=22.9496665056,
-                           c=6.19244244367)
+                                b=22.9496665056,
+                                c=6.19244244367)

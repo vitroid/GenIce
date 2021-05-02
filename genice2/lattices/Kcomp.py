@@ -2,6 +2,7 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.cell = """
@@ -954,5 +955,5 @@ class Lattice(genice2.lattices.Lattice):
         self.density = 0.5019985322904406
 
         self.cell = cellvectors(a=38.1655980555777,
-                           b=52.119307970263776,
-                           c=28.137560859940926)
+                                b=52.119307970263776,
+                                c=28.137560859940926)

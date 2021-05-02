@@ -5,7 +5,7 @@ import random
 import numpy as np
 import pairlist as pl
 
-from genice2.cell   import Cell
+from genice2.cell import Cell
 from genice2.genice import GenIce, put_in_array, shortest_distance
 from genice2.valueparser import parse_pairs
 from genice2 import digraph as dg
@@ -16,7 +16,7 @@ class AnalIce(GenIce):
     def __init__(self, lat, signature="", seed=1000):
 
         logger = getLogger()
-        self.rep = (1,1,1)
+        self.rep = (1, 1, 1)
         density = 0.0
         #         cations=dict(),
         #         anions=dict(),
@@ -102,7 +102,8 @@ class AnalIce(GenIce):
                               rc=rc,
                               cell=self.cell.mat,
                               distance=False)
-            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
+            self.bondlen = 1.1 * \
+                shortest_distance(self.waters, self.cell, pairs=p)
             logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
@@ -166,7 +167,6 @@ class AnalIce(GenIce):
 
         # groups info
         self.groups = defaultdict(dict)
-
 
     def analyze_ice(self, water, formatter, noise=0.):
         """
@@ -252,7 +252,8 @@ class AnalIce(GenIce):
         self.reppositions = self.waters
 
         # This must be done before the replication of the cell.
-        logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
+        logger.info("  Number of water molecules: {0}".format(
+            len(self.reppositions)))
 
         # self.graph = self.prepare_random_graph(self.fixed)
         self.graph = self.prepare_random_graph(self.pairs)
@@ -268,7 +269,6 @@ class AnalIce(GenIce):
                                        scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
                                        size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
-
 
     @timeit
     @banner

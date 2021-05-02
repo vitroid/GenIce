@@ -3,17 +3,17 @@
 Cage composition:
  (12,14,15,16) = (2,6,0,0,)
 """
-desc={"ref": {"CS1": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "Cubic Structure I of clathrate hydrate."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"CS1": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "Cubic Structure I of clathrate hydrate."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.pairs="""
+        self.pairs = """
         17 26
         34 39
         6 10
@@ -108,7 +108,7 @@ class Lattice(genice2.lattices.Lattice):
         19 31
         """
 
-        self.waters="""
+        self.waters = """
         0.625 0.8125 0.5
         0.3125 0.6875 0.3125
         0.3125 0.3125 0.6875
@@ -157,9 +157,9 @@ class Lattice(genice2.lattices.Lattice):
         0.1875 0.8125 0.1875
         """
 
-        self.coord= "relative"
+        self.coord = "relative"
 
-        self.cages="""
+        self.cages = """
         12 0.5 0.5 0.5
         14 0.5 0.0 -0.25
         14 0.0 0.25 0.5
@@ -172,15 +172,12 @@ class Lattice(genice2.lattices.Lattice):
 
         self.bondlen = 3
 
-
         self.cell = """
         12.747893943706936 12.747893943706936 12.747893943706936
         """
 
         self.density = 0.6637037332735554
 
-
-
         self.cell = cellvectors(a=12.747893943706936,
-                           b=12.747893943706936,
-                           c=12.747893943706936)
+                                b=12.747893943706936,
+                                c=12.747893943706936)

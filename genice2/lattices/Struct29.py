@@ -1,7 +1,9 @@
-desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "A space fullerene."
-      }
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "A space fullerene."
+        }
 # coding: utf-8
 """
 Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza. “Space Fullerenes: a Computer Search for New Frank-Kasper Structures” Acta Crystallographica Section A Foundations of Crystallography 66.Pt 5 (2010): 602–615.
@@ -9,17 +11,15 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (22,4,4,8,)
 """
-desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "A space fullerene."
-      }
+desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "A space fullerene."
+        }
 
-import genice2.lattices
-from genice2.cell import cellvectors
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.pairs="""
+        self.pairs = """
         110 129
         199 204
         139 79
@@ -454,7 +454,7 @@ class Lattice(genice2.lattices.Lattice):
         3 131
         """
 
-        self.waters="""
+        self.waters = """
         0.0 0.0 0.36788
         0.41667 0.20834 0.53433
         0.1237 0.8763 0.61709
@@ -673,9 +673,9 @@ class Lattice(genice2.lattices.Lattice):
         0.58593 0.79296 0.6545
         """
 
-        self.coord= "relative"
+        self.coord = "relative"
 
-        self.cages="""
+        self.cages = """
         12 0.5 0.0 0.0
         14 0.66667 0.33333 0.20811
         12 0.0 0.5 0.0
@@ -718,7 +718,6 @@ class Lattice(genice2.lattices.Lattice):
 
         self.bondlen = 3
 
-
         self.cell = """
         12.787696703673442 0.0 0.0
         -6.393848351836717 11.07447020127173 0.0
@@ -727,9 +726,7 @@ class Lattice(genice2.lattices.Lattice):
 
         self.density = 0.6684590950407042
 
-
-
         self.cell = cellvectors(a=12.787696703673442,
-                           b=12.787696703673442,
-                           c=68.20172862323463,
-                           C=119.99999999999999)
+                                b=12.787696703673442,
+                                c=68.20172862323463,
+                                C=119.99999999999999)

@@ -5,17 +5,17 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (40,16,16,8,)
 """
-desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "A space fullerene."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "A space fullerene."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.pairs="""
+        self.pairs = """
         82 209
         424 30
         288 5
@@ -930,7 +930,7 @@ class Lattice(genice2.lattices.Lattice):
         398 96
         """
 
-        self.waters="""
+        self.waters = """
         0.19206 0.60638 0.75
         0.80399 0.54001 0.65644
         0.0 0.47598 0.40606
@@ -1389,9 +1389,9 @@ class Lattice(genice2.lattices.Lattice):
         0.80794 0.25267 0.25
         """
 
-        self.coord= "relative"
+        self.coord = "relative"
 
-        self.cages="""
+        self.cages = """
         12 0.0 0.42107 -0.11499
         12 0.0 0.57893 0.38501
         15 0.0 -0.1139 -0.50806
@@ -1476,15 +1476,12 @@ class Lattice(genice2.lattices.Lattice):
 
         self.bondlen = 3
 
-
         self.cell = """
         14.660858880484453 73.8382409300653 26.369216077228458
         """
 
         self.density = 0.47748377898764377
 
-
-
         self.cell = cellvectors(a=14.660858880484453,
-                           b=73.8382409300653,
-                           c=26.369216077228458)
+                                b=73.8382409300653,
+                                c=26.369216077228458)

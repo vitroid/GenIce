@@ -1,15 +1,11 @@
-desc={"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
-      "brief": "Extended XYZ format.",
-      "usage": "No options available."
-      }
-
-
-from logging import getLogger
-import re
-
-import numpy as np
-
 from genice2.cell import rel_wrap
+import numpy as np
+import re
+from logging import getLogger
+desc = {"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
+        "brief": "Extended XYZ format.",
+        "usage": "No options available."
+        }
 
 
 def readaline(file):
@@ -29,11 +25,11 @@ def load_iter(file, oname="O", hname=None):
     while True:
         # first line: number of atoms
         line = readaline(file)
-        if len(line) == 0: #EOF
+        if len(line) == 0:  # EOF
             break
         # second line: %PBC
         line = readaline(file)
-        if len(line) == 0: #EOF
+        if len(line) == 0:  # EOF
             break
         assert line[:4] == "%PBC"
         hatoms = []
@@ -48,7 +44,7 @@ def load_iter(file, oname="O", hname=None):
             # each column width is fixed according to the refernce.
             atomname = cols[0]
             # atomid = int(line[15:20])
-            pos = np.array([float(x)/10 for x in cols[1:4]]) # in nm
+            pos = np.array([float(x)/10 for x in cols[1:4]])  # in nm
             if re.fullmatch(oname, atomname):
                 oatoms.append(pos)
             elif hname is not None and re.fullmatch(hname, atomname):
@@ -72,7 +68,7 @@ def load_iter(file, oname="O", hname=None):
         # The meaning of "Offset" is anbiguous.
         # We will ignore it for now.
 
-        cellmat = np.array([v1,v2,v3]) / 10 # in nm
+        cellmat = np.array([v1, v2, v3]) / 10  # in nm
         celli = np.linalg.inv(cellmat)
         # fractional coordinate
         oatoms = np.array(oatoms) @ celli
@@ -83,6 +79,7 @@ def load_iter(file, oname="O", hname=None):
             hatoms = np.array(hatoms) @ celli
         yield oatoms, hatoms, cellmat
     return
+
 
 """
 4

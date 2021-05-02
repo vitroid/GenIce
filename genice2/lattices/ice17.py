@@ -1,28 +1,28 @@
 # coding: utf-8
 
-desc={"ref": {"C0(a)": 'Smirnov 2013',
-              "C0(b)": 'Strobel 2016',
-              "Ice 17": 'Rosso 2016'},
-      "usage": "No options available.",
-      "brief": "Ultralow-density Ice XVII."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"C0(a)": 'Smirnov 2013',
+                "C0(b)": 'Strobel 2016',
+                "Ice 17": 'Rosso 2016'},
+        "usage": "No options available.",
+        "brief": "Ultralow-density Ice XVII."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.88     #default self.density
+        self.density = 0.88  # default self.density
 
         self.bondlen = 1.2
 
-        self.coord="relative"
+        self.coord = "relative"
 
-        self.cell="""
+        self.cell = """
         2.66453550129  4.69111124482  2.55091895393
         """
 
-        self.waters="""
+        self.waters = """
         0.677211836339 -0.109412115924 0.692291816468
         -0.127211837083 0.159412115985 0.192291816964
         0.0250000004322 0.00787072277433 0.525000000221
@@ -38,5 +38,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=2.66453550129,
-                           b=4.69111124482,
-                           c=2.55091895393)
+                                b=4.69111124482,
+                                c=2.55091895393)

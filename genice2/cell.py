@@ -28,7 +28,7 @@ def sincos(A):
 
 
 # moved from GenIce/cif/CIF.py
-def cellvectors(a,b,c,A=90,B=90,C=90):
+def cellvectors(a, b, c, A=90, B=90, C=90):
     """
     Generate cell vectors from a,b,c and alpha, beta, gamma.
     """
@@ -53,6 +53,7 @@ def cellvectors(a,b,c,A=90,B=90,C=90):
     # logger.info((cos(C), np.dot(ea, eb)))
     return np.vstack([ea*a, eb*b, ec*c])
 
+
 def cellshape(cellmat):
     """
     From cell matrix to a, b, c, alpha, beta, and gamma.
@@ -61,9 +62,10 @@ def cellshape(cellmat):
     b = np.linalg.norm(cellmat[1])
     c = np.linalg.norm(cellmat[2])
     alpha = degrees(acos((cellmat[1]@cellmat[2]) / (b*c)))
-    beta  = degrees(acos((cellmat[2]@cellmat[0]) / (c*a)))
+    beta = degrees(acos((cellmat[2]@cellmat[0]) / (c*a)))
     gamma = degrees(acos((cellmat[0]@cellmat[1]) / (a*b)))
-    return a,b,c,alpha,beta,gamma
+    return a, b, c, alpha, beta, gamma
+
 
 class Cell():
 
@@ -98,7 +100,7 @@ class Cell():
 
     def parse(self, mat):
         logger = logging.getLogger()
-        logger.debug(("MAT:",mat))
+        logger.debug(("MAT:", mat))
         self.mat = mat.copy()
         La = np.linalg.norm(self.mat[0])
         Lb = np.linalg.norm(self.mat[1])

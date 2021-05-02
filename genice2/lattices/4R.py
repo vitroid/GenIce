@@ -7,21 +7,21 @@ Reshaping the unit cell.
 
 """
 
-desc={"ref": {"IV": 'Avogadro'},
-      "usage": "No options available.",
-      "brief": "Orthogonalized ice IV."
-      }
-
-import genice2.lattices
-import numpy as np
 from genice2.cell import cellvectors
+import numpy as np
+import genice2.lattices
+desc = {"ref": {"IV": 'Avogadro'},
+        "usage": "No options available.",
+        "brief": "Orthogonalized ice IV."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=3.0000000000000004
-        self.coord='relative'
-        self.density=1.3072141048893433
-        self.waters="""
+        self.bondlen = 3.0000000000000004
+        self.coord = 'relative'
+        self.density = 1.3072141048893433
+        self.waters = """
             0.2927    0.0000    1.0000
             0.4594    0.0000    0.8333
             0.4594    0.7500    0.0833
@@ -792,8 +792,8 @@ class Lattice(genice2.lattices.Lattice):
             0.8383    0.3728    0.4791
         """
 
-        self.waters=np.fromstring(self.waters, dtype='float', sep=" ")
-        self.waters = self.waters.reshape(self.waters.shape[0]//3,3)
+        self.waters = np.fromstring(self.waters, dtype='float', sep=" ")
+        self.waters = self.waters.reshape(self.waters.shape[0]//3, 3)
         self.waters -= np.floor(self.waters)
 
         halfwater = []
@@ -802,8 +802,6 @@ class Lattice(genice2.lattices.Lattice):
                 halfwater.append(w)
         self.waters = np.array(halfwater)*2
 
-
-
         self.cell = cellvectors(a=16.919963345,
-                           b=8.65462208,
-                           c=14.99024516)
+                                b=8.65462208,
+                                c=14.99024516)

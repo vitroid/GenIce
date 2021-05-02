@@ -1,16 +1,16 @@
 # coding: utf-8
 
-desc={"ref": {},
-      "usage": "No options available.",
-      "brief": "Clathrate type H."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Clathrate type H."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.cages="""
+        self.cages = """
         12         0.5000 0.5000 0.5000
         12         0.4167 0.0000 0.5000
         12_1       0.7500 0.3333 0.7500
@@ -25,13 +25,12 @@ class Lattice(genice2.lattices.Lattice):
         12         0.5000 0.0000 0.0000
         """
 
-        self.bondlen=3.0000000000030558
-        self.coord='relative'
+        self.bondlen = 3.0000000000030558
+        self.coord = 'relative'
 
+        self.density = 0.755632278461
 
-        self.density=0.755632278461
-
-        self.waters="""
+        self.waters = """
             0.3333    0.6667    0.4301
             0.6667    0.3333    0.4301
             0.6667    0.3333    0.0699
@@ -102,8 +101,7 @@ class Lattice(genice2.lattices.Lattice):
             0.4173    0.2087    0.6123
         """
 
-
         self.cell = cellvectors(a=12.4212113964,
-                           b=12.421211396338748,
-                           c=10.0656455142*2,
-                           C=120.0000000000566)
+                                b=12.421211396338748,
+                                c=10.0656455142*2,
+                                C=120.0000000000566)

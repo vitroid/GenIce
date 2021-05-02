@@ -74,8 +74,6 @@ def parse_guest(guests, arg):
     return guests
 
 
-
-
 def parse_pairs(values):
     if isinstance(values, str):
         lines = values.split("\n")

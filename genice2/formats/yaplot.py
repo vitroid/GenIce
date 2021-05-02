@@ -1,22 +1,20 @@
 # coding: utf-8
 
-desc={"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
-      "brief": "Yaplot.",
-      "usage": """
+from genice2.molecules import serialize
+import genice2.formats
+from genice2.decorators import timeit, banner
+import yaplotlib as yp
+import numpy as np
+from logging import getLogger
+from collections import defaultdict
+desc = {"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
+        "brief": "Yaplot.",
+        "usage": """
 Usage: genice2 icename -f yaplot[options]
 
 options:
     H=x   Set the radius of H to be x.
 """}
-
-
-from collections import defaultdict
-from logging import getLogger
-import numpy as np
-import yaplotlib as yp
-from genice2.decorators import timeit, banner
-import genice2.formats
-from genice2.molecules  import serialize
 
 
 class Format(genice2.formats.Format):
@@ -28,7 +26,6 @@ Options:
     """
     size_H = 0.01
 
-
     def __init__(self, **kwargs):
         unknown = dict()
         for k, v in kwargs.items():
@@ -38,13 +35,11 @@ Options:
                 unknown[k] = v
         super().__init__(**unknown)
 
-
     def hooks(self):
-        return {1:self.Hook1,
-                2:self.Hook2,
-                6:self.Hook6,
-                7:self.Hook7}
-
+        return {1: self.Hook1,
+                2: self.Hook2,
+                6: self.Hook6,
+                7: self.Hook7}
 
     @timeit
     @banner
@@ -52,12 +47,11 @@ Options:
         "Draw the cell in Yaplot format."
         logger = getLogger()
         s = yp.Layer(2)
-        x,y,z = ice.repcell.mat
-        for p,q,r in ((x,y,z),(y,z,x),(z,x,y)):
+        x, y, z = ice.repcell.mat
+        for p, q, r in ((x, y, z), (y, z, x), (z, x, y)):
             for a in (np.zeros(3), p, q, p+q):
-                s += yp.Line(a,a+r)
+                s += yp.Line(a, a+r)
         self.output = s
-
 
     @timeit
     @banner
@@ -77,7 +71,6 @@ Options:
             s += yp.Circle(p)
         self.output += s + yp.NewPage()
         return True
-
 
     @timeit
     @banner
@@ -111,8 +104,8 @@ Options:
             s += yp.Color(3)
             s += yp.Size(0.03)
             s += yp.Circle(O)
-            s += yp.Line(O,H0)
-            s += yp.Line(O,H1)
+            s += yp.Line(O, H0)
+            s += yp.Line(O, H1)
             s += yp.Size(self.size_H)
             s += yp.Circle(H0)
             s += yp.Circle(H1)
@@ -123,22 +116,21 @@ Options:
         s += yp.Color(4)
         s += yp.ArrowType(1)
         s += yp.Size(0.03)
-        for i,j in ice.spacegraph.edges(data=False):
+        for i, j in ice.spacegraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
                 H1 = waters[i]["H1"]
                 d0 = H0 - O
                 d1 = H1 - O
-                rr0 = np.dot(d0,d0)
-                rr1 = np.dot(d1,d1)
+                rr0 = np.dot(d0, d0)
+                rr1 = np.dot(d1, d1)
                 if rr0 < rr1 and rr0 < 0.245**2:
-                    s += yp.Arrow(H0,O)
+                    s += yp.Arrow(H0, O)
                 if rr1 < rr0 and rr1 < 0.245**2:
-                    s += yp.Arrow(H1,O)
+                    s += yp.Arrow(H1, O)
         self.output += s
         self.nwateratoms = len(atoms)
-
 
     @timeit
     @banner
@@ -146,14 +138,14 @@ Options:
         "Output water molecules in Yaplot format."
         logger = getLogger()
         gatoms = []
-        for mols in ice.universe[1:]: # 0 is water
+        for mols in ice.universe[1:]:  # 0 is water
             gatoms += serialize(mols)
         palettes = dict()
         s = ""
         s += yp.Layer(4)
         s += yp.ArrowType(1)
         H = []
-        O  = ""
+        O = ""
         for atom in gatoms:
             resno, resname, atomname, position, order = atom
             if atomname in palettes:

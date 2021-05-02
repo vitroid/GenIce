@@ -124,7 +124,7 @@ def tRMfromQ(q):
     """
     transposed Rotation matrix from Quaternion, multiple bodies at a time.
     """
-    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
+    a, b, c, d = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
     aa = a*a
     bb = b*b
     cc = c*c
@@ -135,16 +135,16 @@ def tRMfromQ(q):
     bc = b*c
     bd = b*d
     cd = c*d
-    t = np.zeros([q.shape[0],3,3])
-    t[:,0,0] = (aa + bb - (cc + dd))
-    t[:,0,1] = -2 * (ad + bc)
-    t[:,0,2] = 2 * (bd - ac)
-    t[:,1,0] = 2 * (ad - bc)
-    t[:,1,1] = aa + cc - (bb + dd)
-    t[:,1,2] = -2 * (ab + cd)
-    t[:,2,0] = 2 * (ac + bd)
-    t[:,2,1] = 2 * (ab - cd)
-    t[:,2,2] = aa + dd - (bb + cc)
+    t = np.zeros([q.shape[0], 3, 3])
+    t[:, 0, 0] = (aa + bb - (cc + dd))
+    t[:, 0, 1] = -2 * (ad + bc)
+    t[:, 0, 2] = 2 * (bd - ac)
+    t[:, 1, 0] = 2 * (ad - bc)
+    t[:, 1, 1] = aa + cc - (bb + dd)
+    t[:, 1, 2] = -2 * (ab + cd)
+    t[:, 2, 0] = 2 * (ac + bd)
+    t[:, 2, 1] = 2 * (ab - cd)
+    t[:, 2, 2] = aa + dd - (bb + cc)
     return t
 
 
@@ -159,26 +159,26 @@ def euler2quat(e):
 
 # Vector function
 def QfromE(e):
-    ea, eb, ec = e[:,0], e[:,1], e[:,2]
-    q = np.zeros([e.shape[0],4])
-    q[:,0] = np.cos(ea / 2) * np.cos((ec + eb) / 2)
-    q[:,1] = np.sin(ea / 2) * np.cos((ec - eb) / 2)
-    q[:,2] = np.sin(ea / 2) * np.sin((ec - eb) / 2)
-    q[:,3] = np.cos(ea / 2) * np.sin((ec + eb) / 2)
+    ea, eb, ec = e[:, 0], e[:, 1], e[:, 2]
+    q = np.zeros([e.shape[0], 4])
+    q[:, 0] = np.cos(ea / 2) * np.cos((ec + eb) / 2)
+    q[:, 1] = np.sin(ea / 2) * np.cos((ec - eb) / 2)
+    q[:, 2] = np.sin(ea / 2) * np.sin((ec - eb) / 2)
+    q[:, 3] = np.cos(ea / 2) * np.sin((ec + eb) / 2)
     return q
 
 
 # Vector function
 def EfromQ(q):
-    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
-    P = np.arctan2(c,b)
-    Q = np.arctan2(d,a)
-    e = np.zeros([a.shape[0],3])
-    e[:,2] = P+Q
-    e[:,1] = Q-P
+    a, b, c, d = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
+    P = np.arctan2(c, b)
+    Q = np.arctan2(d, a)
+    e = np.zeros([a.shape[0], 3])
+    e[:, 2] = P+Q
+    e[:, 1] = Q-P
     ac = a/np.cos(Q)
     bc = b/np.cos(P)
-    e[:,0] = np.arctan2(bc,ac)*2
+    e[:, 0] = np.arctan2(bc, ac)*2
     return e
 
 
@@ -465,7 +465,7 @@ def test():
     print(qe4)
 
     print("test 6: array handling")
-    e = np.array([[0.01, 0.0, 0.3],[0.4, 0.5, 0.6]])
+    e = np.array([[0.01, 0.0, 0.3], [0.4, 0.5, 0.6]])
     q = QfromE(e)
     print("q", q)
     print(quat2euler(q[0]))
@@ -482,8 +482,6 @@ def test():
     m = tRMfromQ(QfromE(e))
     print(m)
     print(tRMfromQ(QfromE(EfromQ(QfromtRM(m)))))
-
-
 
 
 if __name__ == "__main__":

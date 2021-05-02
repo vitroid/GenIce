@@ -1,26 +1,26 @@
 #!/usr/bin/python
 # coding: utf-8
 
-desc={"ref": {"VIII": 'Kuhs 1998'},
-      "usage": "No options available.",
-      "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII."
-      }
-
-import genice2.lattices
-from genice2.cell import cellvectors
-from genice2 import CIF
 import numpy as np
+from genice2 import CIF
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"VIII": 'Kuhs 1998'},
+        "usage": "No options available.",
+        "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        atoms="""
+        atoms = """
         O 0   0.25       0.1071(12)
         D 0   0.4157(15) 0.1935(8)
         """
 
         # space group: I4_1 /a m d No. 141
 
-        symops="""
+        symops = """
              x,            y,            z
              -x,          1/2-y,          z
             3/4-y,        1/4+x,        3/4+z
@@ -39,7 +39,7 @@ class Lattice(genice2.lattices.Lattice):
             1/4-y,        1/4-x,        3/4-z
             1/4+y,        3/4+x,        1/4-z
 
-        """.translate({ord(','):''})
+        """.translate({ord(','): ''})
 
         # add +1/2, +1/2, +1/2
         lines = ""
@@ -51,24 +51,25 @@ class Lattice(genice2.lattices.Lattice):
 
         symops += lines
 
+        a = 4.656 / 10.0  # nm
+        b = a
+        c = 6.775 / 10.0  # nm
+        A = 90
+        B = 90
+        C = 90
 
-        a=4.656 / 10.0 #nm
-        b=a
-        c=6.775 / 10.0 #nm
-        A=90
-        B=90
-        C=90
-
-        self.cell  = cellvectors(a,b,c,A,B,C)
+        self.cell = cellvectors(a, b, c, A, B, C)
 
         # helper routines to make from CIF-like data
         atomd = CIF.atomdic(atoms)
-        sops  = CIF.symmetry_operators(symops)
-        self.waters, self.pairs = CIF.waters_and_pairs(self.cell, atomd, sops, rep=(2,2,2))
+        sops = CIF.symmetry_operators(symops)
+        self.waters, self.pairs = CIF.waters_and_pairs(
+            self.cell, atomd, sops, rep=(2, 2, 2))
 
         # All the self.pairs are self.fixed.
         self.fixed = self.pairs
 
-        self.density = 18*len(self.waters)/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.density = 18*len(self.waters)/6.022e23 / \
+            (np.linalg.det(self.cell)*1e-21)
 
         self.coord = "relative"

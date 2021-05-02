@@ -7,7 +7,8 @@ Reshaping the unit cell.
   k:[0 0 1]
 """
 
-desc={
+import genice2.lattices
+desc = {
     "ref": {
         "engel03": "Engel 2018",
         "ACO": "IZA Database"
@@ -15,15 +16,16 @@ desc={
     "usage": "No options available.",
     "brief": "Hypothetical zeolitic ice"
 }
-import genice2.lattices
+
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=0.30360000000000015
-        self.coord='relative'
+        self.bondlen = 0.30360000000000015
+        self.coord = 'relative'
         from genice2.cell import cellvectors
         self.cell = cellvectors(a=0.88235294, b=0.88235294, c=0.88235294)
-        self.density=0.6961850990811413
-        self.waters="""
+        self.density = 0.6961850990811413
+        self.waters = """
     0.3436    0.3436    0.6564
     0.8436    0.8436    0.1564
     0.3436    0.3436    0.3436

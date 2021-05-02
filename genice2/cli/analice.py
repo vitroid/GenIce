@@ -7,12 +7,14 @@ from genice2 import __version__, load, analice
 from genice2.plugin import safe_import, descriptions
 from genice2.valueparser import plugin_option_parser
 
+
 def help_file():
     return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
 
 
 def getoptions():
-    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__), prog='analice2', usage='%(prog)s [options]', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(
+        __version__), prog='analice2', usage='%(prog)s [options]', formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',
@@ -89,7 +91,6 @@ def getoptions():
     return parser.parse_args()
 
 
-
 def main():
     # Module-loading paths
     # 1. Look for the modules in the current working directory
@@ -137,20 +138,20 @@ def main():
 
     del options  # Dispose for safety.
 
-    for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda:load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
+    for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda: load.iterate(filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
         lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
 
         result = analice.AnalIce(lattice_info, signature=signature).analyze_ice(water=water,
-                        formatter=formatter,
-                        noise=noise,
-                        )
+                                                                                formatter=formatter,
+                                                                                noise=noise,
+                                                                                )
 
         if result is not None:
             if output is not None:
                 if type(result) is bytes:
                     # binary mode
-                # redirect
-                    sys.stdout = open(output % i, "wb") #.buffer
+                    # redirect
+                    sys.stdout = open(output % i, "wb")  # .buffer
                     logger.debug(f"Binary output to a file: {output%i}")
                 else:
                     sys.stdout = open(output % i, "w")

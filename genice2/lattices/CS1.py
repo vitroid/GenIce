@@ -1,25 +1,23 @@
 # coding: utf-8
 
-desc={"ref": {
-              "A15": 'Frank 1959',
-              "sI": 'Jeffrey 1984',
-              "CS1": 'Kosyakov 1999',
-              "MEP": 'IZA Database'},
-      "usage": "No options available.",
-      "brief": "Clathrate hydrates sI."
-      }
-
-
-import genice2.lattices
-from genice2.cell import cellvectors
 from genice2.valueparser import parse_cages
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {
+    "A15": 'Frank 1959',
+    "sI": 'Jeffrey 1984',
+    "CS1": 'Kosyakov 1999',
+    "MEP": 'IZA Database'},
+    "usage": "No options available.",
+    "brief": "Clathrate hydrates sI."
+}
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.795     #default self.density
+        self.density = 0.795  # default self.density
 
-
-        self.bondlen = 3      #bond threshold
+        self.bondlen = 3  # bond threshold
         self.cell = """
         12.238818320447 12.238818320447 12.238818320447
         """
@@ -75,7 +73,7 @@ class Lattice(genice2.lattices.Lattice):
 
         self.coord = "absolute"
 
-        self.cagepos, self.cagetype=parse_cages("""
+        self.cagepos, self.cagetype = parse_cages("""
             12    0.5000    0.5000    0.5000
             12    1.0000    1.0000    0.0000
             14    0.5000    0.7500    0.0000
@@ -87,5 +85,5 @@ class Lattice(genice2.lattices.Lattice):
         """)
 
         self.cell = cellvectors(a=12.238818320447,
-                           b=12.238818320447,
-                           c=12.238818320447)
+                                b=12.238818320447,
+                                c=12.238818320447)

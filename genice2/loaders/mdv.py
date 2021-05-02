@@ -1,18 +1,16 @@
 
-desc={"ref": {},
-      "brief": "MDView file (in Angdtrom).",
-      "usage": "No options available."
-      }
+import pairlist as pl
+import numpy as np
+import re
+import logging
+desc = {"ref": {},
+        "brief": "MDView file (in Angdtrom).",
+        "usage": "No options available."
+        }
 
 if __name__[-4:] == 'mdva':
     desc["brief"] = "MDView file (in au)."
 
-
-import logging
-import re
-
-import numpy as np
-import pairlist as pl
 
 def load_iter(file, oname, hname=None):
     logger = logging.getLogger()
@@ -36,7 +34,7 @@ def load_iter(file, oname, hname=None):
             line = file.readline()
             if line[0] != "-":
                 break
-        
+
         natom = int(line)
         hatoms = []
         oatoms = []
