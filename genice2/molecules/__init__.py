@@ -66,7 +66,8 @@ class Molecule():
         # Labels of the interaction sites.
         self.labels_ = ["Me", ]
 
-        # the name that represents the molecule. It is necessary for Gromacs format.
+        # the name that represents the molecule. It is necessary for Gromacs
+        # format.
         self.name_ = "MET"
 
     def get(self):

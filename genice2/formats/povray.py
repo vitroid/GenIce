@@ -30,11 +30,13 @@ def Juxtapose(v):
 
 
 def Atom(atomtype, pos):
-    return Block("sphere", Juxtapose([Vector(pos), "R{0}".format(atomtype)]) + Block("material", "MAT{0}".format(atomtype))) + "\n"
+    return Block("sphere", Juxtapose([Vector(pos), "R{0}".format(
+        atomtype)]) + Block("material", "MAT{0}".format(atomtype))) + "\n"
 
 
 def Bond(bondtype, pos1, pos2):
-    return Block("cylinder", Juxtapose([Vector(pos1), Vector(pos2), "R{0}".format(bondtype)]) + Block("material", "MAT{0}".format(bondtype))) + "\n"
+    return Block("cylinder", Juxtapose([Vector(pos1), Vector(pos2), "R{0}".format(
+        bondtype)]) + Block("material", "MAT{0}".format(bondtype))) + "\n"
 
 
 def Include(filename):
@@ -118,5 +120,5 @@ No options available.
             s += Atom(atomname, position)
         s = '//' + "\n//".join(ice.doc) + "\n" + s
         s += "  translate " + \
-            Vector(-(cellmat[0, :]+cellmat[1, :]+cellmat[2, :])/2) + "\n}\n\n"
+            Vector(-(cellmat[0, :] + cellmat[1, :] + cellmat[2, :]) / 2) + "\n}\n\n"
         self.output += s

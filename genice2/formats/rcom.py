@@ -25,13 +25,13 @@ class Format(genice2.formats.Format):
         s = ""
         if cellmat[1, 0] == 0 and cellmat[2, 0] == 0 and cellmat[2, 1] == 0:
             s += "@BOX3\n"
-            s += "{0} {1} {2}\n".format(cellmat[0, 0]
-                                        * 10, cellmat[1, 1]*10, cellmat[2, 2]*10)
+            s += "{0} {1} {2}\n".format(cellmat[0, 0] *
+                                        10, cellmat[1, 1] * 10, cellmat[2, 2] * 10)
         else:
             s += "@BOX9\n"
             for d in range(3):
-                s += "{0} {1} {2}\n".format(cellmat[0, d]
-                                            * 10, cellmat[1, d]*10, cellmat[2, d]*10)
+                s += "{0} {1} {2}\n".format(cellmat[0, d] *
+                                            10, cellmat[1, d] * 10, cellmat[2, d] * 10)
         s += "@AR3R\n"
         s += "{0}\n".format(len(ice.reppositions))
         for rpos in ice.reppositions:

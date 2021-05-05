@@ -39,7 +39,7 @@ class AnalIce(GenIce):
             self.doc.append(signature)
 
         for line in self.doc:
-            logger.info("  "+line)
+            logger.info("  " + line)
         # ================================================================
         # rotmatrices (analice)
         #

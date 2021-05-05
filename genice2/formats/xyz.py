@@ -40,6 +40,6 @@ No options available.
             molorder, resname, atomname, position, order = atom
             logger.info(atom)
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(
-                atomname, position[0]*10, position[1]*10, position[2]*10)
+                atomname, position[0] * 10, position[1] * 10, position[2] * 10)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         self.output = s

@@ -49,8 +49,8 @@ Options:
         s = yp.Layer(2)
         x, y, z = ice.repcell.mat
         for p, q, r in ((x, y, z), (y, z, x), (z, x, y)):
-            for a in (np.zeros(3), p, q, p+q):
-                s += yp.Line(a, a+r)
+            for a in (np.zeros(3), p, q, p + q):
+                s += yp.Line(a, a + r)
         self.output = s
 
     @timeit

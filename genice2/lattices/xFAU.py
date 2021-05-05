@@ -16,7 +16,7 @@ import logging
 import numpy as np
 from collections import defaultdict
 from math import acos, pi, sin, cos
-desc = {"ref": {"T":         'Matsui 2017'},
+desc = {"ref": {"T": 'Matsui 2017'},
         "usage": __doc__,
         "brief": "Aeroice xFAU."
         }
@@ -52,8 +52,8 @@ def tune_angles(sixvecs, pivot):
         sum = 0.0
         dsum = 0.0
         for a in sixangles:
-            sum += cos((a+offset)*6)
-            dsum += -sin((a+offset)*6)
+            sum += cos((a + offset) * 6)
+            dsum += -sin((a + offset) * 6)
         doffset = dsum / 20.0
         if abs(doffset) < 1e-6:
             return offset
@@ -100,52 +100,52 @@ class decorate():
             vec = vec @ self.cell
             # orthogonalize
             shadow = dij @ vec
-            vec -= shadow*dij
+            vec -= shadow * dij
             vec /= np.linalg.norm(vec)
             # print(np.dot(vec,dij))
             vecs.append(vec)
         # 向きを同じにする。
         if np.linalg.det(np.vstack([dij, vecs[0], vecs[1]])) < 0:
             vecs[0], vecs[1] = vecs[1], vecs[0]
-        offset = pi/6  # 30 degree
+        offset = pi / 6  # 30 degree
         x = vecs[0]
         z = dij
         y = np.cross(z, x)
         sixvecs = np.zeros((6, 3))
         for j in range(6):
-            a = j*pi*2/6 + offset
-            sixvecs[j] = x*cos(a) + y*sin(a)
+            a = j * pi * 2 / 6 + offset
+            sixvecs[j] = x * cos(a) + y * sin(a)
         # determine r
         # assume edge length is 1
         # the radius of the outer sphere of the polyhed is sqrt(3/2)
-        L = (3/2)**0.5 * 2 + self.Ncyl
-        r = 1/L  # edge len = radius of cyl
-        rp = (3/2)**0.5 / L  # = radius of polyhed
+        L = (3 / 2)**0.5 * 2 + self.Ncyl
+        r = 1 / L  # edge len = radius of cyl
+        rp = (3 / 2)**0.5 / L  # = radius of polyhed
         #
         icell = np.linalg.inv(self.cell)
         a = self.atoms[i] @ self.cell
         s = ""
-        for j in range(0, self.Ncyl+1):
-            vec0 = dij*(rp + j*r)*scale + a
+        for j in range(0, self.Ncyl + 1):
+            vec0 = dij * (rp + j * r) * scale + a
             for vec in sixvecs:
-                rpos = vec0 + vec*r*scale
+                rpos = vec0 + vec * r * scale
                 pos = rpos @ icell
                 self.vertices.append(pos)
-            first = len(self.vertices)-6
+            first = len(self.vertices) - 6
             if j % 2 == 0:
                 for k in range(5):
-                    self.fixedEdges.append((first+k, first+k+1))
-                self.fixedEdges.append((first+5, first))
+                    self.fixedEdges.append((first + k, first + k + 1))
+                self.fixedEdges.append((first + 5, first))
             else:
                 for k in range(5):
-                    self.fixedEdges.append((first+k+1, first+k))
-                self.fixedEdges.append((first, first+5))
+                    self.fixedEdges.append((first + k + 1, first + k))
+                self.fixedEdges.append((first, first + 5))
             if j > 0:
                 for k in range(6):
                     if k % 2 == 0:
-                        self.fixedEdges.append((first+k, first+k-6))
+                        self.fixedEdges.append((first + k, first + k - 6))
                     else:
-                        self.fixedEdges.append((first+k-6, first+k))
+                        self.fixedEdges.append((first + k - 6, first + k))
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -161,9 +161,9 @@ Options:
         ice1c = ic.Lattice()
         cell1c = ice1c.cell
         waters1c = np.fromstring(ice1c.waters, sep=" ")
-        waters1c = waters1c.reshape((waters1c.shape[0]//3, 3))
+        waters1c = waters1c.reshape((waters1c.shape[0] // 3, 3))
         pairs1c = np.fromstring(ice1c.pairs, sep=" ", dtype=int)
-        pairs1c = pairs1c.reshape((pairs1c.shape[0]//2, 2))
+        pairs1c = pairs1c.reshape((pairs1c.shape[0] // 2, 2))
         #
         # 0..3を黒、4..7を白とする。もともと二部グラフになっているようだ。
         #

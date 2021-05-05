@@ -13,7 +13,7 @@ desc = {"ref": {},
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.cell = [4*3**0.5, 6.0, 2/8**0.5*20]
+        self.cell = [4 * 3**0.5, 6.0, 2 / 8**0.5 * 20]
 
         # Final self.density of ice.
         self.density = 0.75

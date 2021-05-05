@@ -8,7 +8,7 @@ Data Source
 from genice2.cell import cellvectors
 import genice2.lattices
 desc = {"ref": {"Methane A": 'Maynard-Casely 2010',
-                "R":         'Mochizuki 2014'},
+                "R": 'Mochizuki 2014'},
         "usage": "No options available.",
         "brief": "Hypothetical ice R."
         }

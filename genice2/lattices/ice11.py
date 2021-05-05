@@ -4,7 +4,7 @@ import genice2.lattices
 import numpy as np
 
 desc = {"ref": {"11#19": "Fan 2010",
-                "11":    "Jackson 1997"},
+                "11": "Jackson 1997"},
         "usage": "No options available.",
         "brief": "A candidate for an antiferroelectric Ice XI #19."
         }
@@ -71,12 +71,12 @@ class Lattice(genice2.lattices.Lattice):
 
         self.pairs = self.fixed
 
-        a = 4.4923/10*2
-        b = 7.7808/10
-        c = 7.3358/10
+        a = 4.4923 / 10 * 2
+        b = 7.7808 / 10
+        c = 7.3358 / 10
 
         self.cell = cellvectors(a, b, c)
 
-        self.density = 18*16/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.density = 18 * 16 / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"

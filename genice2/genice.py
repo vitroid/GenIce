@@ -91,11 +91,11 @@ def orientations(coord, graph, cell):
             neis[node] = list(graph.successors(node))
         # array of donating vectors
         v0 = coord[neis[:, 0]] - coord[:]
-        v0 -= np.floor(v0+0.5)
+        v0 -= np.floor(v0 + 0.5)
         v0 = v0 @ cell.mat
         v0 /= np.linalg.norm(v0, axis=1)[:, np.newaxis]
         v1 = coord[neis[:, 1]] - coord[:]
-        v1 -= np.floor(v1+0.5)
+        v1 -= np.floor(v1 + 0.5)
         v1 = v1 @ cell.mat
         v1 /= np.linalg.norm(v1, axis=1)[:, np.newaxis]
         # intramolecular axes
@@ -325,7 +325,12 @@ def pentyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
+    return Alkyl(
+        cpos, root, cell, molname, [
+            "Ma", [
+                "Mb", [
+                    "Mc", [
+                        "Md", "Me"]]]])
 
 
 def propyl(cpos, root, cell, molname):
@@ -347,7 +352,11 @@ def _2_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
+    return Alkyl(
+        cpos, root, cell, molname, [
+            "Ma", [
+                "Mb", [
+                    "Mc", "Md", "Me"], "Mf"]])
 
 
 def _3_methylbutyl(cpos, root, cell, molname):
@@ -361,7 +370,11 @@ def _3_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
+    return Alkyl(
+        cpos, root, cell, molname, [
+            "Ma", [
+                "Mb", [
+                    "Mc", "Md", "Me", "Mf"]]])
 
 
 def Alkyl(cpos, root, cell, molname, backbone):
@@ -467,7 +480,7 @@ class GenIce():
             self.doc.append(signature)
 
         for line in self.doc:
-            logger.info("  "+line)
+            logger.info("  " + line)
         # ================================================================
         # rotmatrices (analice)
         #
@@ -959,7 +972,7 @@ class GenIce():
         # Cに書きかえるなら、この下の3つをおきかえる。
         def cycle_edges(cycle):
             for i in range(len(cycle)):
-                yield cycle[i-1], cycle[i]
+                yield cycle[i - 1], cycle[i]
 
         @timeit
         def spanningCycles(cycles):
@@ -970,7 +983,7 @@ class GenIce():
                 for a, b in cycle_edges(cycle):
                     # displacement vector
                     d = self.reppositions[b] - self.reppositions[a]
-                    d -= np.floor(d+0.5)
+                    d -= np.floor(d + 0.5)
                     dipole += d
                 if not np.allclose(dipole, np.zeros(3)):
                     # it is a cell-spanning cycle
@@ -985,10 +998,10 @@ class GenIce():
             bestp = None
             dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
             pol = dipoles.T @ dir
-            pol2 = pol@pol
-            for i in range(len(dipoles)*2):
-                r = random.randint(0, len(dipoles)-1)
-                newpol = pol - 2*dir[r]*dipoles[r]
+            pol2 = pol @ pol
+            for i in range(len(dipoles) * 2):
+                r = random.randint(0, len(dipoles) - 1)
+                newpol = pol - 2 * dir[r] * dipoles[r]
                 newpol2 = newpol @ newpol
                 if newpol2 <= pol2:
                     dir[r] = -dir[r]
@@ -1022,7 +1035,7 @@ class GenIce():
 
         dir = direct(dipoles, spanning)
         pol = dipoles.T @ dir
-        pol2 = pol@pol
+        pol2 = pol @ pol
 
         # invert cycles
         for i, p in enumerate(dir):
@@ -1086,7 +1099,7 @@ class GenIce():
             mdoc = []
 
         for line in mdoc:
-            logger.info("  "+line)
+            logger.info("  " + line)
 
         self.universe = []
         self.universe.append(arrange(self.reppositions,
@@ -1181,10 +1194,9 @@ class GenIce():
                     assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
                     cpos = self.repcagepos[cage]
-                    self.universe.append(self.groups_placer[group](cpos,
-                                                                   pos,
-                                                                   self.repcell,
-                                                                   molname))
+                    self.universe.append(
+                        self.groups_placer[group](
+                            cpos, pos, self.repcell, molname))
 
             # molecular guests
             for molec, cages in molecules.items():
@@ -1198,7 +1210,7 @@ class GenIce():
                 except BaseException:
                     mdoc = []
                 for line in mdoc:
-                    logger.info("  "+line)
+                    logger.info("  " + line)
                 cpos = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.universe.append(arrange(cpos,
@@ -1288,8 +1300,10 @@ class GenIce():
                     logger.debug(f"z={z} at {node}")
 
         if graph.number_of_edges() != len(self.reppositions) * 2:
-            logger.info("Inconsistent number of HBs {0} for number of molecules {1}.".format(
-                graph.number_of_edges(), len(self.reppositions)))
+            logger.info(
+                "Inconsistent number of HBs {0} for number of molecules {1}.".format(
+                    graph.number_of_edges(), len(
+                        self.reppositions)))
             return False
 
         return True

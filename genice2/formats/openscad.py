@@ -26,7 +26,7 @@ Options:
 # primitives
 def rhomb(cell):
     origin = np.zeros(3)
-    points = [x+y+z for x in (origin, cell[0])
+    points = [x + y + z for x in (origin, cell[0])
               for y in (origin, cell[1]) for z in (origin, cell[2])]
     faces = [[0, 1, 3, 2], [0, 4, 5, 1], [0, 2, 6, 4],
              [5, 4, 6, 7], [6, 2, 3, 7], [3, 1, 5, 7]]
@@ -46,14 +46,15 @@ def bond(p1, p2, r):
     d = p2 - p1
     H = np.linalg.norm(d)
     R = np.linalg.norm(d[:2])
-    theta = pi/2-atan2(d[2], R)
+    theta = pi / 2 - atan2(d[2], R)
     phi = atan2(d[1], d[0])
-    return Cylinder(r=r, h=H).rotate([0, degrees(theta), degrees(phi)]).translate(list(p1))
+    return Cylinder(r=r, h=H).rotate(
+        [0, degrees(theta), degrees(phi)]).translate(list(p1))
 
 
 def test():
     print(Sphere(r=5).translate([1, 2, 3]).dumps())
-    print((Sphere(r=2)+Sphere(r=3)).dumps())
+    print((Sphere(r=2) + Sphere(r=3)).dumps())
 
 
 class Format(genice2.formats.Format):
@@ -103,8 +104,8 @@ Options:
         # cycle = self.options["cycle"]
         cellmat = ice.repcell.mat
         rep = np.array(ice.rep)
-        trimbox = ice.cell.mat * np.array([(rep[i]-2) for i in range(3)])
-        trimoffset = ice.cell.mat[0]+ice.cell.mat[1]+ice.cell.mat[2]
+        trimbox = ice.cell.mat * np.array([(rep[i] - 2) for i in range(3)])
+        trimoffset = ice.cell.mat[0] + ice.cell.mat[1] + ice.cell.mat[2]
         # logger.info(ice.repcell.mat)
         # logger.info(ice.cell.mat)
 
@@ -117,7 +118,7 @@ Options:
             for i, j in ice.graph.edges(data=False):
                 s1 = ice.reppositions[i]
                 s2 = ice.reppositions[j]
-                d = s2-s1
+                d = s2 - s1
                 d -= np.floor(d + 0.5)
                 logger.debug("Len {0}-{1}={2}".format(i, j, np.linalg.norm(d)))
                 s2 = s1 + d

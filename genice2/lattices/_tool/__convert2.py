@@ -13,7 +13,16 @@ def detect_header(lines):
     i = 0
     inblock = False
     for line in lines:
-        if len(line) > 5 and line[:4] in ("logg", "atom", "bond", "dens", "wate", "cell", "coor", "pair", "doub", "cage"):
+        if len(line) > 5 and line[:4] in ("logg",
+                                          "atom",
+                                          "bond",
+                                          "dens",
+                                          "wate",
+                                          "cell",
+                                          "coor",
+                                          "pair",
+                                          "doub",
+                                          "cage"):
             return i
         i += 1
     return -1
@@ -34,11 +43,19 @@ for line in body:
     if len(line) > 5 and line[:4] in ("from", "impo"):
         imports.append(line)
     else:
-        for word in ("waters", "bondlen", "density", "cell", "coord", "cages", "pairs", "fixed"):
-            line = line.replace(word, "self."+word)
+        for word in (
+            "waters",
+            "bondlen",
+            "density",
+            "cell",
+            "coord",
+            "cages",
+            "pairs",
+                "fixed"):
+            line = line.replace(word, "self." + word)
         # recovery
         for word in ("waters_",):
-            line = line.replace("self."+word, word)
+            line = line.replace("self." + word, word)
         for word, alt in {"parse_self.": "parse_",
                           "waters_and_self.": "waters_and_",
                           "estimate_self.": "estimate_",
@@ -46,8 +63,8 @@ for line in body:
                           }.items():
             line = line.replace(word, alt)
 
-        newbody.append(" "*8 + line)
+        newbody.append(" " * 8 + line)
 
 header += imports
-for line in header+newbody:
+for line in header + newbody:
     print(line.rstrip())

@@ -47,4 +47,4 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "relative"
         self.density = FrankKasper.estimate_density(
             self.waters, self.cell, 2.76)
-        self.bondlen = 2.76*1.1
+        self.bondlen = 2.76 * 1.1

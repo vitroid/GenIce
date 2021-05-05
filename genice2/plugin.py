@@ -34,7 +34,7 @@ def scan(category):
     module = importlib.import_module("genice2.{0}s".format(category))
     mods = []
     for path in module.__path__:
-        for mod in sorted(glob.glob(path+"/*.py")):
+        for mod in sorted(glob.glob(path + "/*.py")):
             mod = os.path.basename(mod)[:-3]
             if mod[:2] != "__":
                 mods.append(mod)
@@ -50,7 +50,7 @@ def scan(category):
                 if "ref" in module.desc:
                     refs[mod] = module.desc["ref"]
             iswater[mod] = "water" in module.__dict__
-        except:
+        except BaseException:
             pass
 
     logger.info("Extra {0}s".format(category))
@@ -66,7 +66,7 @@ def scan(category):
                 if "ref" in module.desc:
                     refs[label] = module.desc["ref"]
             iswater[label] = "water" in module.__dict__
-        except:
+        except BaseException:
             pass
     logger.info(mods)
     modules["extra"] = mods
@@ -90,7 +90,14 @@ def scan(category):
     return modules
 
 
-def descriptions(category, width=72, water=False, groups=("system", "extra", "local")):
+def descriptions(
+    category,
+    width=72,
+    water=False,
+    groups=(
+        "system",
+        "extra",
+        "local")):
     """
     Show the list of available plugins in the category.
 
@@ -98,23 +105,28 @@ def descriptions(category, width=72, water=False, groups=("system", "extra", "lo
       width=72      Width of the output.
       water=False   Pick up water molecules only (for molecule plugin).
     """
-    titles = {"lattice": {"system": "1. Lattice structures served with GenIce",
-                          "extra":  "2. Lattice structures served by external plugins",
-                          "local":  "3. Lattice structures served locally",
-                          "title":  "[Available lattice structures]"},
-              "format": {"system": "1. Formatters served with GenIce",
-                         "extra":  "2. Formatters served by external plugins",
-                         "local":  "3. Formatters served locally",
-                         "title":  "[Available formatters]"},
-              "loader": {"system": "1. File types served with GenIce",
-                         "extra":  "2. File types served by external eplugins",
-                         "local":  "3. File types served locally",
-                         "title":  "[Available input file types]"},
-              "molecule": {"system": "1. Molecules served with GenIce",
-                           "extra":  "2. Molecules served by external plugins",
-                           "local":  "3. Molecules served locally",
-                           "title":  "[Available molecules]"},
-              }
+    titles = {
+        "lattice": {
+            "system": "1. Lattice structures served with GenIce",
+            "extra": "2. Lattice structures served by external plugins",
+            "local": "3. Lattice structures served locally",
+            "title": "[Available lattice structures]"},
+        "format": {
+            "system": "1. Formatters served with GenIce",
+            "extra": "2. Formatters served by external plugins",
+            "local": "3. Formatters served locally",
+            "title": "[Available formatters]"},
+        "loader": {
+            "system": "1. File types served with GenIce",
+            "extra": "2. File types served by external eplugins",
+            "local": "3. File types served locally",
+            "title": "[Available input file types]"},
+        "molecule": {
+            "system": "1. Molecules served with GenIce",
+            "extra": "2. Molecules served by external plugins",
+            "local": "3. Molecules served locally",
+            "title": "[Available molecules]"},
+    }
     mods = scan(category)
     catalog = " \n \n{0}\n \n".format(titles[category]["title"])
     desc = mods["desc"]
@@ -142,9 +154,16 @@ def descriptions(category, width=72, water=False, groups=("system", "extra", "lo
             table += "{0}\t{1}\n".format(desced[dd], dd)
         if table == "":
             table = "(None)\n"
-        table = [fill(line, width=width, drop_whitespace=False, expand_tabs=True,
-                      tabsize=16, subsequent_indent=" "*16) for line in table.splitlines()]
-        table = "\n".join(table)+"\n"
+        table = [
+            fill(
+                line,
+                width=width,
+                drop_whitespace=False,
+                expand_tabs=True,
+                tabsize=16,
+                subsequent_indent=" " *
+                16) for line in table.splitlines()]
+        table = "\n".join(table) + "\n"
         undesc = " ".join(undesc)
         if undesc != "":
             undesc = "(Undocumented) " + undesc
@@ -152,7 +171,13 @@ def descriptions(category, width=72, water=False, groups=("system", "extra", "lo
     return catalog
 
 
-def plugin_descriptors(category, water=False, groups=("system", "extra", "local")):
+def plugin_descriptors(
+    category,
+    water=False,
+    groups=(
+        "system",
+        "extra",
+        "local")):
     """
     Show the list of available plugins in the category.
 
@@ -248,7 +273,7 @@ def safe_import(category, name):
         logger.debug("Load module: {0}".format(fullname))
         try:
             module = importlib.import_module(fullname)
-        except:
+        except BaseException:
             pass
     if module is None:
         module = import_extra(category, name)

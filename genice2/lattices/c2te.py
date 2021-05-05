@@ -25,7 +25,7 @@ def pick_atoms(atoms, names, repeat=(1, 1, 1)):
             for x in range(repeat[0]):
                 for y in range(repeat[1]):
                     for z in range(repeat[2]):
-                        yield atomname, (fracpos+np.array([x, y, z]))/nrep
+                        yield atomname, (fracpos + np.array([x, y, z])) / nrep
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -39,7 +39,8 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         # Ref. C2
-        # space group: I4_1md No. 109 http://img.chem.ucl.ac.uk/sgp/large/109az1.htm
+        # space group: I4_1md No. 109
+        # http://img.chem.ucl.ac.uk/sgp/large/109az1.htm
         symops = """
           x,            y,            z
          -x,           -y,            z
@@ -81,6 +82,6 @@ class Lattice(genice2.lattices.Lattice):
         self.waters, self.pairs = CIF.waters_and_pairs(
             self.cell, atomd, CIF.symmetry_operators(symops), rep=(2, 2, 2))
 
-        self.density = 18*len(self.waters)/6.022e23 / \
-            (np.linalg.det(self.cell)*1e-21)
+        self.density = 18 * len(self.waters) / 6.022e23 / \
+            (np.linalg.det(self.cell) * 1e-21)
         self.coord = "relative"

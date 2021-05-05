@@ -103,5 +103,5 @@ class Lattice(genice2.lattices.Lattice):
 
         self.cell = cellvectors(a=12.4212113964,
                                 b=12.421211396338748,
-                                c=10.0656455142*2,
+                                c=10.0656455142 * 2,
                                 C=120.0000000000566)

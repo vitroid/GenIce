@@ -84,7 +84,7 @@ def shortest_paths(G, start, ends, allowfixed=False):
             for v1 in G[v0]:
                 if v1 not in visited:
                     if allowfixed or not G[v0][v1]['fixed']:
-                        heapq.heappush(q, (cost + 1, path+[v1]))
+                        heapq.heappush(q, (cost + 1, path + [v1]))
     return paths
 
 
@@ -241,7 +241,8 @@ class IceGraph(nx.DiGraph):
         Reply whether all the vertices have two incomings and two outgoings.
         """
         for node in self:
-            if len(list(self.successors(node))) != 2 or len(list(self.predecessors(node))) != 2:
+            if len(list(self.successors(node))) != 2 or len(
+                    list(self.predecessors(node))) != 2:
                 return False
         return True
 
@@ -256,7 +257,8 @@ class IceGraph(nx.DiGraph):
             assert self.degree(
                 d) < 4, "Degree {0} should be <4.".format(self.degree(d))
             # logger.warn("  Defect {0} {1} >>{2} <<{3}".format(d,self.degree(d),self.in_degree(d),self.out_degree(d)))
-            if self.in_degree(d) <= 2 and self.out_degree(d) <= 2:  # acceptable
+            if self.in_degree(d) <= 2 and self.out_degree(
+                    d) <= 2:  # acceptable
                 defects.pop(0)
                 return
         if self.in_degree(d) == 2 and self.out_degree(d) == 2:
@@ -326,7 +328,7 @@ class IceGraph(nx.DiGraph):
 
     def is_homodromic(self, path):
         for i in range(1, len(path)):
-            if not self.has_edge(path[i-1], path[i]):
+            if not self.has_edge(path[i - 1], path[i]):
                 return False
         return True
 
@@ -489,7 +491,13 @@ def traversing_cycles_iter(spaceicegraph, cell, axis):
             yield cycle
 
 
-def depolarize_(subgraph, coord, ignores=[], pbc=True, cell=np.identity(3), depol="strict"):
+def depolarize_(
+        subgraph,
+        coord,
+        ignores=[],
+        pbc=True,
+        cell=np.identity(3),
+        depol="strict"):
     """
     Receives a connected component of a large graph.
     Find a farthest atom (apsis) from the given atom, and
@@ -545,21 +553,24 @@ def depolarize_(subgraph, coord, ignores=[], pbc=True, cell=np.identity(3), depo
                 spaceicegraph.invert_path(path)
                 net_polar = new_net_polar
                 logger.info(
-                    "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                    "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
+                        *net_polar))
                 reject_count = 10
             else:
                 logger.debug("  Reject inversion")
                 reject_count -= 1
 
-    for axis_ in ([1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]):
+    for axis_ in ([1, 0, 0], [-1, 0, 0], [0, 1, 0],
+                  [0, -1, 0], [0, 0, 1], [0, 0, -1]):
         net_polar = spaceicegraph.net_polarization()
         logger.debug(f"Net polarization: {net_polar}")
         axis = np.array(axis_, dtype=float)
         L1 = (net_polar**2).sum()
-        L2 = ((net_polar-axis*2)**2).sum()
+        L2 = ((net_polar - axis * 2)**2).sum()
         if L2 < L1:
             logger.info(
-                "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
+                    *net_polar))
             for cycle in traversing_cycles_iter(spaceicegraph, cell, axis):
                 if cycle is not None:
                     edges = [(cycle[i], cycle[i + 1])
@@ -571,23 +582,31 @@ def depolarize_(subgraph, coord, ignores=[], pbc=True, cell=np.identity(3), depo
                         spaceicegraph.vector_check()
                         net_polar = spaceicegraph.net_polarization()
                         logger.info(
-                            "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar))
+                            "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
+                                *net_polar))
                         L1 = (net_polar**2).sum()
-                        L2 = ((net_polar-axis*2)**2).sum()
+                        L2 = ((net_polar - axis * 2)**2).sum()
                         if L2 > L1:
                             break
             # break this for-loop
 
     if depol == "strict":
         if not np.allclose(net_polar, np.zeros(3)):
-            logger.error("  Gave up on total depolarization. Perhaps because they contain ions"
-                         " or the cells are very small."
-                         " Use --depol=optimal or --depol=none instead.")
+            logger.error(
+                "  Gave up on total depolarization. Perhaps because they contain ions"
+                " or the cells are very small."
+                " Use --depol=optimal or --depol=none instead.")
             sys.exit(1)
     return spaceicegraph.digraph()
 
 
-def depolarize(digraph, coord, ignores=[], pbc=True, cell=np.identity(3), depol="strict"):
+def depolarize(
+        digraph,
+        coord,
+        ignores=[],
+        pbc=True,
+        cell=np.identity(3),
+        depol="strict"):
     logger = getLogger()
     graph = nx.Graph(digraph)
     newdigraph = nx.DiGraph()
@@ -595,7 +614,12 @@ def depolarize(digraph, coord, ignores=[], pbc=True, cell=np.identity(3), depol=
         logger.info(f"  Component {i}:")
         subdigraph = digraph.subgraph(subgraph)  # really?
         newsubdigraph = depolarize_(
-            subdigraph, coord=coord, ignores=ignores, pbc=pbc, cell=cell, depol=depol)
+            subdigraph,
+            coord=coord,
+            ignores=ignores,
+            pbc=pbc,
+            cell=cell,
+            depol=depol)
         newdigraph = nx.union(newdigraph, newsubdigraph)
     return newdigraph
 
@@ -626,13 +650,14 @@ def purge_ice_defects(icegraph):
 def test():
     # logger
     basicConfig(
-        level=DEBUG, format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
+        level=DEBUG,
+        format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
     logger = getLogger(__name__)
     logger.setLevel(DEBUG)
     g = nx.Graph()
     # 6-cycle
     for i in range(5):
-        g.add_edge(i, i+1)
+        g.add_edge(i, i + 1)
     g.add_edge(0, 5)
     print(shortest_paths(g, 0, [3, ], allowfixed=True))
 

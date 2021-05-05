@@ -29,7 +29,7 @@ def fullatoms(atomd, sops):
             tooclose = False
             for n, f in atoms:
                 d = f - p
-                d -= np.floor(d+0.5)
+                d -= np.floor(d + 0.5)
                 L2 = np.dot(d, d)
                 if L2 < 0.0001:
                     # print(f,p)
@@ -65,7 +65,7 @@ def symmetry_operators(symops):
     Array of symmetry operations.
     """
     def _wrap(x):
-        return x - np.floor(x+0.5)
+        return x - np.floor(x + 0.5)
 
     symops = symops.translate(str.maketrans("XYZ", "xyz"))
     #symfuncs = []
@@ -95,12 +95,12 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
         elif name[0] in "DH":
             hydrogens.append(pos)
 
-    assert len(oxygens)*2 == len(hydrogens) or len(
-        hydrogens) == 0, "{0}:{1}".format(len(oxygens)*2, len(hydrogens))
+    assert len(oxygens) * 2 == len(hydrogens) or len(
+        hydrogens) == 0, "{0}:{1}".format(len(oxygens) * 2, len(hydrogens))
 
     cell *= np.array(rep)
 
-    oo = [[o[0]+x, o[1]+y, o[2]+z]
+    oo = [[o[0] + x, o[1] + y, o[2] + z]
           for o in oxygens
           for x in range(rep[0])
           for y in range(rep[1])
@@ -111,7 +111,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
     if len(hydrogens) == 0:
         return oxygens, None
 
-    hh = [[h[0]+x, h[1]+y, h[2]+z]
+    hh = [[h[0] + x, h[1] + y, h[2] + z]
           for h in hydrogens
           for x in range(rep[0])
           for y in range(rep[1])
@@ -148,9 +148,9 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
         j, k = oh[i]
         dhj = hydrogens[j] - oxygens[i]
         dhk = hydrogens[k] - oxygens[i]
-        dhj -= np.floor(dhj+0.5)
-        dhk -= np.floor(dhk+0.5)
-        com = oxygens[i] + (dhj + dhk)/18
+        dhj -= np.floor(dhj + 0.5)
+        dhk -= np.floor(dhk + 0.5)
+        com = oxygens[i] + (dhj + dhk) / 18
         waters.append(com)
 
     return waters, pairs

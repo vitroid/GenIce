@@ -34,10 +34,10 @@ No options available.
         s = ""
         s += "{0}\n".format(len(atoms))
         s += 'Lattice="{0:.3f} {1:.3f} {2:.3f} {3:.3f} {4:.3f} {5:.3f} {6:.3f} {7:.3f} {8:.3f}"\n'.format(
-            *ice.repcell.mat.reshape((9,))*10)
+            *ice.repcell.mat.reshape((9,)) * 10)
         for atom in atoms:
             molorder, resname, atomname, position, order = atom
             s += "{0:>4}{1:15.5f}{2:15.5f}{3:15.5f}\n".format(
-                atomname, position[0]*10, position[1]*10, position[2]*10)
+                atomname, position[0] * 10, position[1] * 10, position[2] * 10)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         self.output = s

@@ -45,7 +45,7 @@ def make_plugin(cell, Os, number, name):
             "brief": "Hypothetical zeolitic ice"}
 
     lines = []
-    lines.append("desc="+json.dumps(desc, indent=4))
+    lines.append("desc=" + json.dumps(desc, indent=4))
     lines.append("import numpy as np")
     lines.append("import genice2.lattices")
     lines.append("from genice2.cell import cellvectors")
@@ -106,17 +106,17 @@ ices = {
 assert False, "Do not run it. Some files are modified by hand."
 for num, ice in ices.items():
     try:
-        with open(ice+".castep") as file:
+        with open(ice + ".castep") as file:
             cell, Os, Hs = load_castep(file)
             outname = "../engel{0:02d}.py".format(num)
             if not os.path.exists(outname):
                 print(outname)
                 with open(outname, "w") as outfile:
                     outfile.write(make_plugin(cell, Os, num, ice))
-    except:
+    except BaseException:
         if len(ice) == 3:
             try:
-                os.symlink(ice+".py", "../engel{0:02d}.py".format(num))
-            except:
+                os.symlink(ice + ".py", "../engel{0:02d}.py".format(num))
+            except BaseException:
                 pass
         pass

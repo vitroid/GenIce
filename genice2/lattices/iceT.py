@@ -1,6 +1,6 @@
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"T":         'Hirata 2017'},
+desc = {"ref": {"T": 'Hirata 2017'},
         "usage": "No options available.",
         "brief": "Hypothetical ice T."
         }

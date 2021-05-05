@@ -4,10 +4,11 @@ import numpy as np
 from genice2 import CIF
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"14": 'Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).'},
-        "usage": "No options available.",
-        "brief": "Ice XIV. (EXPERIMENTAL)"
-        }
+desc = {
+    "ref": {
+        "14": 'Salzmann, C. G., Radaelli, P., Hallbrucker, A. & Mayer, E. The Preparation and Structures of Hydrogen Ordered Phases of Ice. Science 311, 1758–1761 (2006).'},
+    "usage": "No options available.",
+    "brief": "Ice XIV. (EXPERIMENTAL)"}
 
 assert False, "IT DOES NOT WORK."
 
@@ -56,7 +57,7 @@ class Lattice(genice2.lattices.Lattice):
         # set self.pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18*len(self.waters)/6.022e23 / \
-            (np.linalg.det(self.cell)*1e-21)
+        self.density = 18 * len(self.waters) / 6.022e23 / \
+            (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"

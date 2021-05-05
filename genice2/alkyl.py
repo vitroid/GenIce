@@ -83,8 +83,15 @@ def test():
     direction = np.array([1.0, 0.0, 0.0])  # must be a unit vector
     # All the branches direct to this point.
     destination = np.array([10.0, 10.0, 0.0])
-    atoms = alkyl(direction, destination, tree=[
-                  "Ma", ["Mb", "Mf", ["Mc", "Me", ["Md", ["A", ["B", ["C", ["D"]]]]]]]])
+    atoms = alkyl(
+        direction, destination, tree=[
+            "Ma", [
+                "Mb", "Mf", [
+                    "Mc", "Me", [
+                        "Md", [
+                            "A", [
+                                "B", [
+                                    "C", ["D"]]]]]]]])
     # in yaplot format
     print("t 0 0 0 +")
     print("t", destination[0], destination[1], destination[2], "@")

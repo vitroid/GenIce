@@ -21,12 +21,13 @@ import numpy as np
 from math import atan2, pi, degrees
 from collections import defaultdict
 import sys
-desc = {"ref": {"MBO2007": "Matsumoto, M., Baba, A. & Ohmine, I. Topological building blocks of hydrogen bond network in water. J. Chem. Phys. 127, 134504 (2007).",
-                "CountRings": "https://github.com/vitroid/CountRings",
-                "Yaplot":     "https://github.com/vitroid/Yaplot"},
-        "brief": "Show rings in Yaplot.",
-        "usage": __doc__
-        }
+desc = {
+    "ref": {
+        "MBO2007": "Matsumoto, M., Baba, A. & Ohmine, I. Topological building blocks of hydrogen bond network in water. J. Chem. Phys. 127, 134504 (2007).",
+        "CountRings": "https://github.com/vitroid/CountRings",
+        "Yaplot": "https://github.com/vitroid/Yaplot"},
+    "brief": "Show rings in Yaplot.",
+    "usage": __doc__}
 
 
 # Basic primitives
@@ -86,9 +87,10 @@ def bond(p1, p2, r):
     d = p2 - p1
     H = np.linalg.norm(d)
     R = np.linalg.norm(d[:2])
-    theta = pi/2-atan2(d[2], R)
+    theta = pi / 2 - atan2(d[2], R)
     phi = atan2(d[1], d[0])
-    return Cylinder(r=r, h=H).rotate([0, degrees(theta), degrees(phi)]).translate(list(p1))
+    return Cylinder(r=r, h=H).rotate(
+        [0, degrees(theta), degrees(phi)]).translate(list(p1))
 
 
 class ScadPrims(Prims):
@@ -114,7 +116,7 @@ class ScadPrims(Prims):
                     layers[layer].append(Sphere(r).translate(
                         list(p[i])).color(self.palette[kwargs["color"]]))
                     layers[layer].append(
-                        bond(p[i-1], p[i], r).color(self.palette[kwargs["color"]]))
+                        bond(p[i - 1], p[i], r).color(self.palette[kwargs["color"]]))
             else:
                 logger.warn("Unknown primitive: {0}".format(typ))
         if file is None:
@@ -131,7 +133,7 @@ class ScadPrims(Prims):
 
 
 def face(p, center, rpos):
-    pos = rpos*0.8 + center
+    pos = rpos * 0.8 + center
     n = rpos.shape[0]
     p.Polygon(pos, color=n, layer=n)
 
@@ -155,10 +157,10 @@ class Format(genice2.formats.Format):
             self.p = YaPrims()
         elif self.format == "openscad":
             self.p = ScadPrims()
-        phi = (1+5**0.5)/2  # golden ratio
+        phi = (1 + 5**0.5) / 2  # golden ratio
         self.p.SetPalette(0, [0, 0, 0])
-        for i in range(3, self.largestring+1):
-            hue = (i/phi) % 1
+        for i in range(3, self.largestring + 1):
+            hue = (i / phi) % 1
             r, g, b = colorsys.hsv_to_rgb(hue, 0.75, 1)
             self.p.SetPalette(i, [r, g, b])
         super().__init__()
@@ -177,8 +179,8 @@ class Format(genice2.formats.Format):
         for i, j in graph.edges():
             pi, pj = ice.reppositions[i], ice.reppositions[j]
             d = pj - pi
-            d -= np.floor(d+0.5)
-            self.p.Cylinder(pi @ cellmat, (pi+d) @ cellmat, 0.01,  # 0.2 AA
+            d -= np.floor(d + 0.5)
+            self.p.Cylinder(pi @ cellmat, (pi + d) @ cellmat, 0.01,  # 0.2 AA
                             color=0,
                             layer=2)
         for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
@@ -186,14 +188,14 @@ class Format(genice2.formats.Format):
             d2 = np.zeros(3)
             for k, i in enumerate(ring):
                 d = ice.reppositions[i] - ice.reppositions[ring[0]]
-                d -= np.floor(d+0.5)
+                d -= np.floor(d + 0.5)
                 deltas[k] = d
             comofs = np.sum(deltas, axis=0) / len(ring)
             deltas -= comofs
             com = ice.reppositions[ring[0]] + comofs
             com -= np.floor(com)
             # rel to abs
-            com = np.dot(com,    cellmat)
+            com = np.dot(com, cellmat)
             deltas = np.dot(deltas, cellmat)
             face(self.p, com, deltas)
         self.output = self.p.Render()

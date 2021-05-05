@@ -29,6 +29,6 @@ class Molecule(genice2.molecules.Molecule):
             [0.4532, 1.4885, -1.1793],
             [0.7639, 1.9583, 0.5070]]) / 10
 
-        self.atoms_ = ["O"]+["C"]*4+["H"]*8
-        self.labels_ = ["O", "CA", "CA", "CB", "CB"]+["H"]*8
+        self.atoms_ = ["O"] + ["C"] * 4 + ["H"] * 8
+        self.labels_ = ["O", "CA", "CA", "CB", "CB"] + ["H"] * 8
         self.name_ = "THF"

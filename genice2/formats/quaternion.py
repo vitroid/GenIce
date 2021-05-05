@@ -31,24 +31,19 @@ No options available.
         s = ""
         if cellmat[1, 0] == 0 and cellmat[2, 0] == 0 and cellmat[2, 1] == 0:
             s += "@BOX3\n"
-            s += "{0} {1} {2}\n".format(cellmat[0, 0]
-                                        * 10, cellmat[1, 1]*10, cellmat[2, 2]*10)
+            s += "{0} {1} {2}\n".format(cellmat[0, 0] *
+                                        10, cellmat[1, 1] * 10, cellmat[2, 2] * 10)
         else:
             s += "@BOX9\n"
             for d in range(3):
-                s += "{0} {1} {2}\n".format(cellmat[0, d]
-                                            * 10, cellmat[1, d]*10, cellmat[2, d]*10)
+                s += "{0} {1} {2}\n".format(cellmat[0, d] *
+                                            10, cellmat[1, d] * 10, cellmat[2, d] * 10)
         s += "@NX4A\n"
         s += "{0}\n".format(len(ice.reppositions))
         for pos, rot in zip(ice.reppositions, ice.rotmatrices):
-            position = np.dot(pos, cellmat)*10  # in Angstrom
+            position = np.dot(pos, cellmat) * 10  # in Angstrom
             quat = rigid.rotmat2quat(rot.transpose())
-            s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(position[0],
-                                                                                            position[1],
-                                                                                            position[2],
-                                                                                            quat[0],
-                                                                                            quat[1],
-                                                                                            quat[2],
-                                                                                            quat[3])
+            s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f} {6:9.4f}\n".format(
+                position[0], position[1], position[2], quat[0], quat[1], quat[2], quat[3])
         s = "\n".join(ice.doc) + "\n" + s
         self.output = s

@@ -9,7 +9,8 @@ update-citations:
 	cp citations.json old.citations.json
 	python Utilities/citation.py < old.citations.json > citations.json
 
-
+pep8:
+	autopep8 -r -a -a -i genice2/
 test:
 	make -C tests all
 test-deploy: build

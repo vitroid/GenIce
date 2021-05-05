@@ -57,9 +57,11 @@ from collections import defaultdict
 import sys
 from cycless.cycles import cycles_iter
 import itertools as it
-desc = {"ref": {"Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)."},
-        "brief": "Bond direction statistics.",
-        "usage": __doc__}
+desc = {
+    "ref": {
+        "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)."},
+    "brief": "Bond direction statistics.",
+    "usage": __doc__}
 
 
 # A directed cycle is expressed as an array of True and False.
@@ -78,12 +80,12 @@ def isomorphs(a):
     iso = set()
     aa = a + a
     for i in range(len(a)):
-        part = tuple(aa[i:i+len(a)])
+        part = tuple(aa[i:i + len(a)])
         iso.add(part)
     e = [not x for x in a]
     ee = e + e
     for i in range(len(a)):
-        part = tuple(ee[i:i+len(a)])
+        part = tuple(ee[i:i + len(a)])
         iso.add(part)
     return iso
 
@@ -118,7 +120,7 @@ def freedom(a):
     """
     n = 1
     for i in range(len(a)):
-        if a[i-1] is a[i]:
+        if a[i - 1] is a[i]:
             n *= 2
     return n
 
@@ -156,7 +158,8 @@ def probabilities(N):
 
 
 def orientations(members, digraph):
-    return [digraph.has_edge(members[i-1], members[i]) for i in range(len(members))]
+    return [digraph.has_edge(members[i - 1], members[i])
+            for i in range(len(members))]
 
 
 class Format(genice2.formats.Format):
@@ -213,11 +216,11 @@ dKL between expectiations and observations is also calculated.
         prob = defaultdict(int)
 
         # Ideal distributions
-        for n in range(3, self.largestring+1):
+        for n in range(3, self.largestring + 1):
             prob[n] = probabilities(n)
             stat[n] = defaultdict(int)
 
-        for ring in cycles_iter(graph, self.largestring,  pos=ice.reppositions):
+        for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             ori = orientations(ring, ice.spacegraph)
             c = encode(ori)
             n = len(ring)
@@ -227,7 +230,7 @@ dKL between expectiations and observations is also calculated.
         logger.info("""
         """)
         s = ""
-        for n in range(3, self.largestring+1):
+        for n in range(3, self.largestring + 1):
             fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(
                 n)
             denom = 0
@@ -236,12 +239,17 @@ dKL between expectiations and observations is also calculated.
             if denom > 0:
                 dKL = 0.0
                 for c in prob[n]:
-                    s += fmtstr.format(n, c, prob[n][c], float(prob[n][c]),
-                                       stat[n][c]/denom, stat[n][c], denom) + "\n"
-                    q = stat[n][c]/denom
+                    s += fmtstr.format(n,
+                                       c,
+                                       prob[n][c],
+                                       float(prob[n][c]),
+                                       stat[n][c] / denom,
+                                       stat[n][c],
+                                       denom) + "\n"
+                    q = stat[n][c] / denom
                     p = prob[n][c]
                     if q > 0.0:
-                        dKL += q*(log(q) - log(p))
+                        dKL += q * (log(q) - log(p))
                 dKL /= log(2.0)  # bit
                 s += "{1} {0} dKL[{0}-ring]\n".format(n, dKL)
                 logger.info("  dKL[{0}-ring]={1}".format(n, dKL))

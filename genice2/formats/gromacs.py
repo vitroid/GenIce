@@ -50,7 +50,7 @@ No options available.
                     9999, resname, atomname, 9999, position[0], position[1], position[2])
             else:
                 s += "{0:5d}{1:5s}{2:>5s}{3:5d}{4:8.3f}{5:8.3f}{6:8.3f}\n".format(
-                    molorder, resname, atomname, i+1, position[0], position[1], position[2])
+                    molorder, resname, atomname, i + 1, position[0], position[1], position[2])
         if cellmat[1, 0] == 0 and cellmat[2, 0] == 0 and cellmat[2, 1] == 0:
             s += "    {0:.8f} {1:.8f} {2:.8f}\n".format(
                 cellmat[0, 0], cellmat[1, 1], cellmat[2, 2])

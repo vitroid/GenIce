@@ -1,8 +1,8 @@
 # coding: utf-8
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"II+IVa":         'Karttunen 2011',
-                "T":              'Sikiric 2010'},
+desc = {"ref": {"II+IVa": 'Karttunen 2011',
+                "T": 'Sikiric 2010'},
         "usage": "No options available.",
         "brief": "Hypothetical clathrate type T."
         }

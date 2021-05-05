@@ -4,10 +4,12 @@ from genice2.decorators import timeit, banner
 import genice2.formats
 from logging import getLogger
 import numpy as np
-desc = {"ref": {"K1939": 'J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939).'},
-        "brief": "Kirkworrd G factor.",
-        "usage": "Kirkwood G is a convenient index for testing the long-range order.",
-        }
+desc = {
+    "ref": {
+        "K1939": 'J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939).'},
+    "brief": "Kirkworrd G factor.",
+    "usage": "Kirkwood G is a convenient index for testing the long-range order.",
+}
 
 
 # It should be expressed as a function of distance.
@@ -37,8 +39,8 @@ Calculate the Kirkwood G factor.
         for i in (0, 1, 2):  # x,y,z
             x = dipoles[:, i]
             xT = x.reshape((n, 1))
-            ip[:, :, i] = x*xT  # broadcast product
-        ip = np.sum(ip, axis=2).reshape(n*n)
+            ip[:, :, i] = x * xT  # broadcast product
+        ip = np.sum(ip, axis=2).reshape(n * n)
         logger.info("  Pair distances.")
         # pair distances
         coord = ice.reppositions
@@ -50,9 +52,9 @@ Calculate the Kirkwood G factor.
             d -= np.floor(d + 0.5)  # wrap
             delta[:, :, i] = d
         delta = np.dot(delta, ice.repcell.mat)
-        delta = delta*delta
+        delta = delta * delta
         delta = np.sum(delta, axis=2)
-        delta = np.sqrt(delta).reshape(n*n)
+        delta = np.sqrt(delta).reshape(n * n)
         # print(ip)
         # print(delta)
         # print(ice.repcell.mat)
@@ -62,6 +64,6 @@ Calculate the Kirkwood G factor.
         s = ""
         while x < mx:
             filter = ip[delta < x]
-            s += "{0:.5f} {1:.5f}\n".format(x, np.sum(filter)/n)
+            s += "{0:.5f} {1:.5f}\n".format(x, np.sum(filter) / n)
             x += 0.08
         self.output = s

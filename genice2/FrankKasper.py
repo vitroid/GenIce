@@ -32,7 +32,8 @@ def shortest_distance(atoms, cell):
 def estimate_density(atoms, cell, bondlen):
     dmin = shortest_distance(atoms, cell)
     scale = bondlen / dmin
-    return 18 / 6.022e23 * len(atoms) / (np.linalg.det(cell) * 1e-24 * scale**3)
+    return 18 / 6.022e23 * len(atoms) / \
+        (np.linalg.det(cell) * 1e-24 * scale**3)
 
 
 def is_zero(v):

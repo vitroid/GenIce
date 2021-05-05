@@ -20,7 +20,7 @@ class Lattice(genice2.lattices.Lattice):
         for k, v in kwargs.items():
             if k == 'layers':
                 arg = v
-            elif v == True:  # in case only the char string is given
+            elif v:  # in case only the char string is given
                 arg = k
             else:
                 logger.error(f"Unknown option for one plugin: {k}={v}")
@@ -31,7 +31,7 @@ class Lattice(genice2.lattices.Lattice):
         for ch in arg:
             for x, y in lat[layer]:
                 L.append([x, y, height])
-            layer = (layer+dir+3) % 3
+            layer = (layer + dir + 3) % 3
             height += 1
             for x, y in lat[layer]:
                 L.append([x, y, height])
@@ -46,8 +46,8 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "relative"
         LHB = 0.276
         self.bondlen = 0.3
-        y = LHB * (8**0.5 / 3)*3
+        y = LHB * (8**0.5 / 3) * 3
         x = y * 2 / 3**0.5
-        z = LHB*height/3
+        z = LHB * height / 3
         self.cell = cellvectors(x, y, z)
         self.density = 0.92

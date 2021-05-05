@@ -24,12 +24,12 @@ class Molecule(genice2.molecules.Molecule):
         ohy = oh * math.sin(hangle)
         omz = -om * math.cos(mangle)
         omx = om * math.sin(mangle)
-        oz = -ohz*2/mass
+        oz = -ohz * 2 / mass
         self.sites_ = np.array([[0, 0, oz],
-                                [0, ohy, ohz+oz],
-                                [0, -ohy, ohz+oz],
-                                [omx, 0, omz+oz],
-                                [-omx, 0, omz+oz],
+                                [0, ohy, ohz + oz],
+                                [0, -ohy, ohz + oz],
+                                [omx, 0, omz + oz],
+                                [-omx, 0, omz + oz],
                                 ])  # nm, OHHMM
 
         self.atoms_ = ["O", "H", "H", ".", "."]

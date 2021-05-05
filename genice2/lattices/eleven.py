@@ -3,10 +3,10 @@ import genice2.lattices
 import numpy as np
 from genice.cell import cellvectors
 import logging
-desc = {"ref": {},
-        "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h". Note: this is not guaranteed as the most stable structure.',
-        "brief": "Ice XI w/ stacking faults."
-        }
+desc = {
+    "ref": {},
+    "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h". Note: this is not guaranteed as the most stable structure.',
+    "brief": "Ice XI w/ stacking faults."}
 
 
 lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
@@ -21,7 +21,7 @@ class Lattice(genice2.lattices.Lattice):
         for k, v in kwargs.items():
             if k == 'layers':
                 arg = v
-            elif v == True:  # in case only the char string is given
+            elif v:  # in case only the char string is given
                 arg = k
             else:
                 logger.error(f"Unknown option for one plugin: {k}={v}")
@@ -40,7 +40,7 @@ class Lattice(genice2.lattices.Lattice):
                     right = (x, y)
                 grid[x, y] = N
                 N += 1
-            layer = (layer+dir+3) % 3
+            layer = (layer + dir + 3) % 3
             height += 1
             for x, y in lat[layer]:
                 L.append([x, y, height])
@@ -52,15 +52,15 @@ class Lattice(genice2.lattices.Lattice):
             # connection along x axis
             x, y = right
             dy = +1
-            if (x+1, y+dy) not in grid:
+            if (x + 1, y + dy) not in grid:
                 dy = -1
             for i in range(4):
                 A = grid[x, y]
-                y0 = (y-dy*2+6) % 6
+                y0 = (y - dy * 2 + 6) % 6
                 C = grid[x, y0]
                 edges.append((A, C))
-                x = (x+1) % 4
-                y = (y+dy+6) % 6
+                x = (x + 1) % 4
+                y = (y + dy + 6) % 6
                 B = grid[x, y]
                 edges.append((A, B))
                 dy = -dy
@@ -68,16 +68,16 @@ class Lattice(genice2.lattices.Lattice):
             dy = -dy
             for i in range(4):
                 A = grid[x, y]
-                x = (x-1+4) % 4
-                y = (y+dy+6) % 6
+                x = (x - 1 + 4) % 4
+                y = (y + dy + 6) % 6
                 B = grid[x, y]
                 edges.append((A, B))
                 dy = -dy
             # connection along z
-            edges.append((N-4, N))
-            edges.append((N-3, N+1))
-            edges.append((N+2, N-2))
-            edges.append((N+3, N-1))
+            edges.append((N - 4, N))
+            edges.append((N - 3, N + 1))
+            edges.append((N + 2, N - 2))
+            edges.append((N + 3, N - 1))
             assert ch in "CcHh"
             if ch in "Hh":
                 # hexagonal = alternative
@@ -90,8 +90,8 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "relative"
         LHB = 0.276
         self.bondlen = 0.3
-        y = LHB * (8**0.5 / 3)*3
+        y = LHB * (8**0.5 / 3) * 3
         x = y * 2 / 3**0.5
-        z = LHB*height/3
+        z = LHB * height / 3
         self.cell = cellvectors(x, y, z)
         self.density = 0.92

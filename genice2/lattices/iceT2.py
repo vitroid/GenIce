@@ -8,7 +8,7 @@ Reshaping the unit cell.
 """
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"T2":         'Yagasaki 2018'},
+desc = {"ref": {"T2": 'Yagasaki 2018'},
         "usage": "No options available.",
         "brief": "Hypothetical ice T2."
         }

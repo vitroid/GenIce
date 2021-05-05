@@ -12,7 +12,8 @@ import numpy as np
 import numpy.linalg
 import logging
 
-# Rigid.py uses vertical vectors while other pars of genice uses horizontal vectors.
+# Rigid.py uses vertical vectors while other pars of genice uses
+# horizontal vectors.
 
 # v1,v2,v3: numpy arrays
 # return value: fourth vector candidate
@@ -116,7 +117,8 @@ def quat2rotmat(q):
     sp31 = 2.0 * (a * c + b * d)
     sp32 = 2.0 * (a * b - c * d)
     sp33 = a * a + d * d - (b * b + c * c)
-    return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23], [sp31, sp32, sp33]]).transpose()
+    return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23],
+                    [sp31, sp32, sp33]]).transpose()
 
 
 # Vector function
@@ -125,16 +127,16 @@ def tRMfromQ(q):
     transposed Rotation matrix from Quaternion, multiple bodies at a time.
     """
     a, b, c, d = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
-    aa = a*a
-    bb = b*b
-    cc = c*c
-    dd = d*d
-    ab = a*b
-    ac = a*c
-    ad = a*d
-    bc = b*c
-    bd = b*d
-    cd = c*d
+    aa = a * a
+    bb = b * b
+    cc = c * c
+    dd = d * d
+    ab = a * b
+    ac = a * c
+    ad = a * d
+    bc = b * c
+    bd = b * d
+    cd = c * d
     t = np.zeros([q.shape[0], 3, 3])
     t[:, 0, 0] = (aa + bb - (cc + dd))
     t[:, 0, 1] = -2 * (ad + bc)
@@ -174,11 +176,11 @@ def EfromQ(q):
     P = np.arctan2(c, b)
     Q = np.arctan2(d, a)
     e = np.zeros([a.shape[0], 3])
-    e[:, 2] = P+Q
-    e[:, 1] = Q-P
-    ac = a/np.cos(Q)
-    bc = b/np.cos(P)
-    e[:, 0] = np.arctan2(bc, ac)*2
+    e[:, 2] = P + Q
+    e[:, 1] = Q - P
+    ac = a / np.cos(Q)
+    bc = b / np.cos(P)
+    e[:, 0] = np.arctan2(bc, ac) * 2
     return e
 
 
@@ -316,7 +318,8 @@ def rand_rotation_matrix(deflection=1.0, randnums=None):
     rotation. Small deflection => small perturbation.
     randnums: 3 random numbers in the range [0, 1]. If `None`, they will be auto-generated.
     """
-    # from http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
+    # from
+    # http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
 
     if randnums is None:
         randnums = np.random.uniform(size=(3,))

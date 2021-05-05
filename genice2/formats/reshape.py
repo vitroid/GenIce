@@ -39,7 +39,7 @@ def isZero(x):
 def FlagEquivCells(nv, flags, ijk):
     if nv not in flags:
         for d in it.product((-2, -1, 0, 1, 2), repeat=3):
-            vv = tuple(np.dot(d, ijk)+nv)
+            vv = tuple(np.dot(d, ijk) + nv)
             flags.add(vv)
 
 
@@ -76,7 +76,7 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
             # print("NV:",nv)
             FlagEquivCells(nv, flags, ijk)
             for xi, yi, zi in it.product((-1, 0, 1), repeat=3):
-                nei = nv[0]+xi, nv[1]+yi, nv[2]+zi
+                nei = nv[0] + xi, nv[1] + yi, nv[2] + zi
                 if nei not in flags:
                     #print("nei", nei)
                     queue.append(nei)
@@ -132,7 +132,7 @@ Options:
         newcell = np.dot(self.ijk, cellmat)
         # replication ratio.
         vol = abs(np.linalg.det(self.ijk))
-        vol = floor(vol*8192+0.5)/8192
+        vol = floor(vol * 8192 + 0.5) / 8192
         # Unit orthogonal vectors for the newcell.
         e1 = newcell[0].astype(float)
         e1 /= np.linalg.norm(e1)
@@ -165,7 +165,8 @@ Options:
         s += "    def __init__(self):\n"
         s += "        self.bondlen={0}\n".format(ice.bondlen)
         s += "        self.coord='relative'\n"
-        if isZero(regcell[1, 0]) and isZero(regcell[2, 0]) and isZero(regcell[2, 1]):
+        if isZero(regcell[1, 0]) and isZero(
+                regcell[2, 0]) and isZero(regcell[2, 1]):
             s += "        from genice2.cell import cellvectors\n"
             s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(
                 regcell[0, 0], regcell[1, 1], regcell[2, 2])
@@ -178,9 +179,9 @@ Options:
             s += "        ])\n"
         # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
         s += "        self.density={0}\n".format(ice.density)
-        s += '        self.waters="""'+"\n"
+        s += '        self.waters="""' + "\n"
         logger.info("  Total number of molecules: {0}".format(
-            vol*len(ice.reppositions)))
+            vol * len(ice.reppositions)))
 
         ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.reppositions)
         assert vol == ncell
@@ -188,10 +189,10 @@ Options:
         s += ss + '"""' + "\n\n"
 
         if ice.cagepos is not None:
-            s += '        self.cages="""'+"\n"
+            s += '        self.cages="""' + "\n"
             ncell, ss = FindEmptyCells(
                 cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
-            s += ss + '"""'+"\n\n"
+            s += ss + '"""' + "\n\n"
 
         self.output = s
 

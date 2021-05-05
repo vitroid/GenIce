@@ -69,7 +69,7 @@ class Lattice(genice2.lattices.Lattice):
         # All the self.pairs are self.fixed.
         self.fixed = self.pairs
 
-        self.density = 18*len(self.waters)/6.022e23 / \
-            (np.linalg.det(self.cell)*1e-21)
+        self.density = 18 * len(self.waters) / 6.022e23 / \
+            (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"

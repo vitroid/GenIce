@@ -2,10 +2,11 @@ from genice2.cell import rel_wrap
 import numpy as np
 import re
 from logging import getLogger
-desc = {"ref": {"exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
-        "brief": "Extended XYZ format.",
-        "usage": "No options available."
-        }
+desc = {
+    "ref": {
+        "exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
+    "brief": "Extended XYZ format.",
+    "usage": "No options available."}
 
 
 def readaline(file):
@@ -44,7 +45,7 @@ def load_iter(file, oname="O", hname=None):
             # each column width is fixed according to the refernce.
             atomname = cols[0]
             # atomid = int(line[15:20])
-            pos = np.array([float(x)/10 for x in cols[1:4]])  # in nm
+            pos = np.array([float(x) / 10 for x in cols[1:4]])  # in nm
             if re.fullmatch(oname, atomname):
                 oatoms.append(pos)
             elif hname is not None and re.fullmatch(hname, atomname):

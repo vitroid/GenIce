@@ -62,19 +62,20 @@ Options:
 
         L = 2.75
         self.bondlen = 3
-        R = L/2/sin(pi/sides)
-        self.density = sides*rows / (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
+        R = L / 2 / sin(pi / sides)
+        self.density = sides * rows / \
+            (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
 
         self.waters = []
         for j in range(rows):
             for i in range(sides):
-                x = R * cos(i*pi*2/sides)
-                y = R * sin(i*pi*2/sides)
+                x = R * cos(i * pi * 2 / sides)
+                y = R * sin(i * pi * 2 / sides)
                 z = j * L
                 self.waters.append([x, y, z])
 
         self.coord = "absolute"
 
-        self.cell = cellvectors(a=L*20,
-                                b=L*20,
-                                c=L*rows)
+        self.cell = cellvectors(a=L * 20,
+                                b=L * 20,
+                                c=L * rows)

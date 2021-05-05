@@ -59,7 +59,8 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
             suffix = Path(fname).suffix[1:]
         loader = safe_import("loader", suffix)
         file = open(fname)
-        for oatoms, hatoms, cellmat in loader.load_iter(file, oname=oname, hname=hname):
+        for oatoms, hatoms, cellmat in loader.load_iter(
+                file, oname=oname, hname=hname):
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
                 yield oatoms, hatoms, cellmat
@@ -87,9 +88,9 @@ def average(load_iter, span=0):
         elif span > 1:
             # displacements
             d = oatoms - ohist[-1]
-            d -= np.floor(d+0.5)
+            d -= np.floor(d + 0.5)
             # new positions
-            ohist.append(ohist[-1]+d)
+            ohist.append(ohist[-1] + d)
             # if too many storage
             if len(ohist) > span:
                 # drop the oldest one.
@@ -115,7 +116,12 @@ def make_lattice_info(oatoms, hatoms, cellmat):
         (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
 
     if hatoms is None:
-        return SimpleNamespace(waters=oatoms, coord=coord, density=density, bondlen=0.3, cell=cellmat)
+        return SimpleNamespace(
+            waters=oatoms,
+            coord=coord,
+            density=density,
+            bondlen=0.3,
+            cell=cellmat)
 
     rotmat = np.zeros((oatoms.shape[0], 3, 3))
     for i in range(oatoms.shape[0]):
@@ -146,4 +152,11 @@ def make_lattice_info(oatoms, hatoms, cellmat):
             pairs.append((h // 2, o))
     logger.debug("  # of pairs: {0} {1}".format(len(pairs), oatoms.shape[0]))
 
-    return SimpleNamespace(waters=oatoms, coord=coord, density=density, pairs=pairs, rotmat=rotmat, cell=cellmat, __doc__=None)
+    return SimpleNamespace(
+        waters=oatoms,
+        coord=coord,
+        density=density,
+        pairs=pairs,
+        rotmat=rotmat,
+        cell=cellmat,
+        __doc__=None)

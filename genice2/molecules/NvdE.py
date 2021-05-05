@@ -20,12 +20,12 @@ class Molecule(genice2.molecules.Molecule):
         hz = 0.512026264219221 / 10
         mz = 0.165996716972597 / 10
         lz = -0.567651708900964 / 10
-        self.sites_ = np.array([[0,  0,  oz],
-                                [0,  hy, hz],
+        self.sites_ = np.array([[0, 0, oz],
+                                [0, hy, hz],
                                 [0, -hy, hz],
-                                [0,  0,  mz],
-                                [lx, 0,  lz],
-                                [-lx, 0,  lz],
+                                [0, 0, mz],
+                                [lx, 0, lz],
+                                [-lx, 0, lz],
                                 ])  # nm, OHHMLL
 
         self.labels_ = ["O", "H", "H", "M", "L", "L"]

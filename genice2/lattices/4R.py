@@ -793,14 +793,14 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.waters = np.fromstring(self.waters, dtype='float', sep=" ")
-        self.waters = self.waters.reshape(self.waters.shape[0]//3, 3)
+        self.waters = self.waters.reshape(self.waters.shape[0] // 3, 3)
         self.waters -= np.floor(self.waters)
 
         halfwater = []
         for w in self.waters:
             if np.all(w < 0.5):
                 halfwater.append(w)
-        self.waters = np.array(halfwater)*2
+        self.waters = np.array(halfwater) * 2
 
         self.cell = cellvectors(a=16.919963345,
                                 b=8.65462208,
