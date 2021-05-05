@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1b6
+version 2.1b7
 
 
 ## New in GenIce2.1
@@ -22,7 +22,7 @@ The new GenIce works very well with interactive execution.
 
 ## Requirements
 
-* networkx>=2
+* networkx>=2.0.dev20160901144005
 * cycless
 * pairlist>=0.2.11.1
 * yaplotlib>=0.1
@@ -30,7 +30,7 @@ The new GenIce works very well with interactive execution.
 * wheel
 * openpyscad
 * graphstat
-* tilecycles>=0.1.2
+* tilecycles>=0.1.3
 
 
 ## Installation
@@ -54,7 +54,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1b6)
+    (version 2.1b7)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -170,7 +170,6 @@ Install with pip3.
                             c2te            Filled ice C2 (cubic ice) by
                                             Teeratchanan (Hydrogen disordered).
                                             (Positions of guests are supplied.)
-                            eleven          Ice XI w/ stacking faults.
                             i               Hypothetical ice "i".
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are
@@ -184,15 +183,13 @@ Install with pip3.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc ice1h_unit
-                            sIII sIV
+                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc eleven
+                            ice1h_unit sIII sIV
     
     
                             2. Lattice structures served by external plugins
     
-                            cif             Read a CIF file.
-                            zeolite         Retrieve a structure from the IZA
-                                            Zeolite DB.
+                            (None)
                             ----
     
     
@@ -248,13 +245,7 @@ Install with pip3.
     
                             2. Formatters served by external plugins
     
-                            _RDF            Radial Distribution Functions.
-                            cage            Cage analysis.
-                            mdanalysis      MDAnalysis integration.
-                            meshcat         Meshcat + Google Colab.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
-                            twist           Twist order parameter.
+                            (None)
                             ----
     
     
@@ -367,7 +358,7 @@ Use `./genice.x` instead of `genice2` if you want to use it inside the source tr
 
 ## Basics
 
-The program generates various ice lattice with proton disorder and without defect.  The total dipole moment is always set to zero (except in the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
+The program generates various ice lattice with proton disorder and without defect.  The total dipole moment is always set to zero (except in the case you specify `--depol` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
 
 * To get a large repetition of ice Ih in XYZ format,
 
@@ -443,38 +434,40 @@ Small ions may replace the host molecules.  In that case, you can use `-a` and `
 
 The following example replaces the `0`th water molecule (in the replicated lattice) with Na cation and `1`st water molecule with Cl anion.  The hydrogen bonds around the ions are organized appropriately.
 
-    genice2 CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+    genice2 CS2 --depol=optimal -c 0=Na -a 1=Cl > CS2.gro
 
 *Note 1*: The numbers of cations and anions must be the same.  Otherwise, the ice rule is never satisfied and the program does not stop.  
 
-*Note 2*: The option `--nodep` is also required because it is impossible to depolarize the structure containing ions.
+*Note 2*: The option `--depol=optimal` is also required because it is impossible to completely depolarize the structure containing ions.
 
 *Note 3*: Protonic defects (H<sub>3</sub>O<sup>+</sup> and OH<sup>-</sup>) are not yet implemented.
 
 ## Semiclathrate hydrates
 
-### Placement of a tetrabutylammonium ion
+### Placement of a tetrabutylammonium ion (testing)
 
 Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counter-ion Br.
 
-    genice2 HS1 -c 0=N -a 2=Br --nodep > HS1.gro
+    genice2 HS1 -c 0=N -a 2=Br --depol=optimal > HS1.gro
 
 Then you will see the following info.
 
 ```
 INFO   Hints:
 INFO     Cage types: ['12', '14', '15']
-INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+INFO     Cage type 12: {0, 1, 2, 3, 4, 5}
+INFO     Cage type 14: {8, 9, 6, 7}
+INFO     Cage type 15: {10, 11, 12, 13}
+...
+INFO Stage7: Arrange guest atoms.
+INFO     Cages adjacent to dopant 2: {0, 9, 2, 13}
+INFO     Cages adjacent to dopant 0: {0, 9, 2, 7}
 ```
 
-It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent to dopant 0.
+It indicates that the nitrogen is surrounded by cages with ids 0, 9, 2, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent to dopant 0.
 
 ```shell
-genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+genice2 HS1 -c 0=N -a 2=Br -H 0=Bu-:0 -H 9=Bu-:0 -H 2=Bu-:0 -H 7=Bu-:0 --depol=optimal > HS1.gro
 ```
 
 Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and the root is the nitrogen that is specified by `-c` (cation) option.
@@ -491,7 +484,7 @@ It is more convenient if the lattice of the semiclathrate hydrate contains molec
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
-`cif, cif2 |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
+`cif`, `cif2` |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none| Default format.
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
 `mdv_au`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto| In atomic unit.
@@ -543,14 +536,14 @@ Symbol | <div style="width:300px">Description</div>
 -------|------------
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Fan 2010,Jackson 1997]
-115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [Engel 2018,IZA Database,Kosyakov 1999,Jeffrey 1984]
-12, XII, ice12 | Metastable high-pressure ice XII. [Koza 2000,Lobban 1998]
+115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [Kosyakov 1999,IZA Database,Jeffrey 1984,Engel 2018]
+12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998,Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
-16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [IZA Database,Kosyakov 1999,Sikiric 2010,Jeffrey 1984,Falenty 2014]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Strobel 2016,Rosso 2016,Smirnov 2013]
+16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Kosyakov 1999,Sikiric 2010,Falenty 2014,IZA Database,Jeffrey 1984]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013,Rosso 2016,Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
-2, II, ice2 | Hydrogen-ordered ice II. [Kamb 2003,Londono 1988,Kamb 1964]
+2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964,Londono 1988,Kamb 2003]
 2D3 | Trilayer honeycomb ice.
 2d, ice2d, ice2rect | A hydrogen-disordered counterpart of ice II. [Nakamura 2015]
 3, III, ice3 | Ice III. [Petrenko 1999]
@@ -569,19 +562,18 @@ B, iceB | Hypothetical ice B. [Baez 1998]
 BSV, engel05 | Hypothetical zeolitic ice of the gyroid structure. [IZA Database,Engel 2018]
 C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [Sikiric 2010]
 CRN1, CRN2, CRN3 | A continuous random network of Sillium. [Mousseau 2001]
-CS1, MEP, sI | Clathrate hydrates sI. [IZA Database,Frank 1959,Kosyakov 1999,Jeffrey 1984]
+CS1, MEP, sI | Clathrate hydrates sI. [Kosyakov 1999,Frank 1959,IZA Database,Jeffrey 1984]
 DOH, HS3, sH | Clathrate type H.
-EMT | Hypothetical ice with a large cavity. [Liu 2019,IZA Database]
+EMT | Hypothetical ice with a large cavity. [IZA Database,Liu 2019]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [IZA Database,Huang 2017]
-RHO | Hypothetical ice at negative pressure ice 'sIII'. [IZA Database,Huang 2016]
+RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016,IZA Database]
 T | Hypothetical clathrate type T. [Sikiric 2010,Karttunen 2011]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
-eleven | Ice XI w/ stacking faults.
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
-iceR | Hypothetical ice R. [Maynard-Casely 2010,Mochizuki 2014]
+iceR | Hypothetical ice R. [Mochizuki 2014,Maynard-Casely 2010]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
 one | Ice I w/ stacking faults.
@@ -589,7 +581,7 @@ prism | Ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, HS1, Kcomp, TS1, dtc, eleven, ice1h_unit, sIII, sIV | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.
@@ -669,7 +661,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 
 | pip name | GenIce2 option | Description | output format | requirements |
 |----------|-------|-------------|---------------|--------------|
-|[`genice2-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json | `cycless` |
+|[`genice2-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json, gromacs | `cycless` |
 |[`genice2-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
