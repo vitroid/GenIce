@@ -99,8 +99,8 @@ class YaplotDraw(nx.DiGraph):
         cj = self.coord[j]
         d = cj - ci
         d -= np.floor(d + 0.5)
-        xi = np.dot(ci, self.cell)
-        xj = np.dot(ci + d, self.cell)
+        xi = ci @ self.cell
+        xj = (ci + d) @ self.cell
         if self.has_edge(i, j):
             return yp.Color(4) + yp.ArrowType(2) + yp.Arrow(xi, xj)
         elif self.has_edge(j, i):
@@ -113,9 +113,9 @@ class YaplotDraw(nx.DiGraph):
         ex = np.array([1., 0., 0.])
         ey = np.array([0., 1., 0.])
         ez = np.array([0., 0., 1.])
-        x = np.dot(ex, self.cell)
-        y = np.dot(ey, self.cell)
-        z = np.dot(ez, self.cell)
+        x = ex @ self.cell
+        y = ey @ self.cell
+        z = ez @ self.cell
         zero = np.zeros_like(x)
         for vx in (zero, x):
             for vy in (zero, y):
@@ -419,8 +419,8 @@ def find_apsis(vertices, coord, cell, distance, vertex, axis):
         p = coord[i]
         d = p - apsis
         d -= np.floor(d + 0.5)
-        a = np.dot(d, cell)
-        r = np.dot(a, a)
+        a = d @  cell
+        r = a @ a
         if r < min_r:
             min_a = i
             min_r = r
@@ -435,7 +435,7 @@ def estimate_edge_length(spaceicegraph, cell, vertex):
     nei = list(spaceicegraph.adj[vertex])[0]
     delta = spaceicegraph.coord[vertex] - spaceicegraph.coord[nei]
     delta -= np.floor(delta + 0.5)
-    delta = np.dot(delta, cell)  # distance in abs coord
+    delta = delta @ cell  # distance in abs coord
     distance = np.linalg.norm(delta)
     logger.debug("Distance={0}".format(distance))
     return distance
@@ -484,7 +484,7 @@ def traversing_cycles_iter(spaceicegraph, cell, axis):
         d = spaceicegraph.dipole_moment(cycle) - axis
         logger.debug("Axis: {0} {1}".format(
             axis, spaceicegraph.dipole_moment(cycle)))
-        rr = np.dot(d, d)
+        rr = d @ d
         if rr < 0.1:
             logger.debug("Dipole of the harvest: {0}".format(
                 spaceicegraph.dipole_moment(cycle)))
@@ -533,7 +533,7 @@ def depolarize_(
         reject_count = 10
         while reject_count > 0:
             net_polar = spaceicegraph.net_polarization()
-            if np.dot(net_polar, net_polar) < 0.05**2:
+            if net_polar @ net_polar < 0.05**2:
                 break  # without problem
             while True:
                 orig = defects[random.randint(0, len(defects) - 1)]

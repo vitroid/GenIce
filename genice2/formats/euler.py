@@ -42,7 +42,7 @@ No options available.
         s += "@NX3A\n"
         s += "{0}\n".format(len(ice.reppositions))
         for pos, rot in zip(ice.reppositions, ice.rotmatrices):
-            position = np.dot(pos, cellmat) * 10  # in Angstrom
+            position = pos @ cellmat * 10  # in Angstrom
             euler = rigid.quat2euler(rigid.rotmat2quat(rot.transpose()))
             s += "{0:9.4f} {1:9.4f} {2:9.4f}  {3:9.4f} {4:9.4f} {5:9.4f}\n".format(
                 position[0], position[1], position[2], euler[0], euler[1], euler[2])

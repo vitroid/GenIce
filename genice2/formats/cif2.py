@@ -12,7 +12,7 @@ from genice2.molecules import serialize
 
 
 def nearly_zero(x):
-    return np.dot(x, x) < 1e-10
+    return x**2 < 1e-10
 
 
 class Format(genice2.formats.Format):
@@ -39,13 +39,8 @@ class Format(genice2.formats.Format):
         s += "_cell_angle_beta              {0}\n".format(beta)
         s += "_cell_angle_gamma             {0}\n".format(gamma)
         s += "\n"
-        if nearly_zero(
-                alpha -
-                90) and nearly_zero(
-                beta -
-                90) and nearly_zero(
-                gamma -
-                90):
+        rights = np.array([alpha,beta,gamma]) - 90
+        if np.allclose(rights, np.zeros(3)):
             s += "_symmetry_cell_setting        'orthorhombic'\n"
             s += "_symmetry_space_group_name_H-M   'P 1 '\n"
         else:

@@ -75,7 +75,7 @@ def rotmat2quat0(i, j, k):
 
     i0 /= np.linalg.norm(i0)
     x0 /= np.linalg.norm(x0)
-    cosine = np.dot(i0, x0)
+    cosine = i0 @ x0
     if cosine < -1.0 or cosine > 1.0:
         cosh = 0.0
         sinh = 1.0
@@ -83,7 +83,7 @@ def rotmat2quat0(i, j, k):
         cosh = sqrt((1.0 + cosine) * 0.5)
         sinh = sqrt(1.0 - cosh * cosh)
     o = op(i0, x0, False)
-    if np.dot(o, a) < 0.0:
+    if o @ a < 0.0:
         sinh = -sinh
 
     return np.array((cosh, -sinh * a[0], +sinh * a[1], -sinh * a[2]))
@@ -301,9 +301,9 @@ def six2nine(a, b, c, alpha, beta, gamma):
     # LC = np.linalg.norm(C)
     # print(a,b,c)
     # print(LA,LB,LC)
-    # p = acos(np.dot(B,C)/(LB*LC))
-    # q = acos(np.dot(C,A)/(LC*LA))
-    # r = acos(np.dot(A,B)/(LA*LB))
+    # p = acos(B @ C/(LB*LC))
+    # q = acos(C @ A/(LC*LA))
+    # r = acos(A @ B/(LA*LB))
     # print(alpha, beta, gamma)
     # print(p,q,r)
     return np.vstack([A, B, C])
@@ -438,7 +438,7 @@ def test():
     print("e2", e2)
     r1 = euler2rotmat(e1)
     r2 = euler2rotmat(e2)
-    r12 = np.dot(r1, r2)
+    r12 = r1 @ r2
     print("r12", r12)
     q12 = rotmat2quat(r12)
     print("  q12", q12)

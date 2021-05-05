@@ -30,7 +30,7 @@ def fullatoms(atomd, sops):
             for n, f in atoms:
                 d = f - p
                 d -= np.floor(d + 0.5)
-                L2 = np.dot(d, d)
+                L2 = d @ d
                 if L2 < 0.0001:
                     # print(f,p)
                     logger.debug("Too close: {0} {1}".format(f, p))

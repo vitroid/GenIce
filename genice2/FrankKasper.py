@@ -21,8 +21,8 @@ def shortest_distance(atoms, cell):
     for a1, a2 in it.combinations(atoms, 2):
         d = a1 - a2
         d -= np.floor(d + 0.5)
-        dv = np.dot(d, cell)
-        dd = np.dot(dv, dv)
+        dv = d @ cell
+        dd = dv @ dv
         if dd < dmin:
             dmin = dd
     logger.debug("shortest_distance: {0}".format(dmin**0.5))
@@ -37,7 +37,7 @@ def estimate_density(atoms, cell, bondlen):
 
 
 def is_zero(v):
-    return np.dot(v, v) < 1e-10
+    return v @ v < 1e-10
 
 
 def equivalents(v, cell, rc):
@@ -53,8 +53,8 @@ def equivalents(v, cell, rc):
         for y in img[1]:
             for z in img[2]:
                 d = origin + np.array([x, y, z])
-                r = np.dot(d, cell)
-                if np.dot(r, r) < rc**2:
+                r = d @ cell
+                if r @ r < rc**2:
                     yield d
 
 
@@ -87,12 +87,12 @@ def tetrahedra(pairs, rc, coord, cell):
             if vi < v or vj < v or vk < v:
                 continue
             di, dj, dk = adjd[v][i], adjd[v][j], adjd[v][k]
-            dij = np.dot(di - dj, cell)
-            djk = np.dot(dj - dk, cell)
-            dki = np.dot(dk - di, cell)
-            if np.dot(dij, dij) < rc**2:
-                if np.dot(djk, djk) < rc**2:
-                    if np.dot(dki, dki) < rc**2:
+            dij = (di - dj) @ cell
+            djk = (dj - dk) @ cell
+            dki = (dk - di) @ cell
+            if dij @ dij < rc**2:
+                if djk @ djk < rc**2:
+                    if dki @ dki < rc**2:
                         logger.debug((v, vi, vj, vk))
                         yield (v, vi, vj, vk), (coord[v], di, dj, dk)
 

@@ -162,7 +162,7 @@ def shortest_distance(coord, cell, pairs=None):
 
     for c1, c2 in iter:
         r = cell.rel2abs(rel_wrap(c1 - c2))
-        rr = np.dot(r, r)
+        rr = r @ r
 
         if rr < dmin:
             dmin = rr
@@ -304,7 +304,7 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
         for i, pos in enumerate(cagepos):
             #Displacement (relative)
             a = cell.rel2abs(rel_wrap(pos - org))
-            sqdistance = np.dot(a, a)
+            sqdistance = a @ a
 
             if sqdistance < 0.57**2:
                 dnei[site].add(i)

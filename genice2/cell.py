@@ -48,9 +48,6 @@ def cellvectors(a, b, c, A=90, B=90, C=90):
     ecy = (cA - ecx * eb[0]) / eb[1]
     ecz = sqrt(1 - ecx**2 - ecy**2)
     ec = np.array([ecx, ecy, ecz])
-    # logger.info((cos(A), np.dot(eb, ec)))
-    # logger.info((cos(B), np.dot(ec, ea)))
-    # logger.info((cos(C), np.dot(ea, eb)))
     return np.vstack([ea * a, eb * b, ec * c])
 
 
@@ -75,10 +72,10 @@ class Cell():
         self.parse(desc)
 
     def abs2rel(self, absvecs):
-        return np.dot(absvecs, self.inv)
+        return absvecs @ self.inv
 
     def rel2abs(self, relvec):
-        return np.dot(relvec, self.mat)
+        return relvec @ self.mat
 
     def abs_wrap(self, absvec):
         return self.rel2abs(rel_wrap(self.abs2rel(absvec)))

@@ -42,7 +42,7 @@ encoded = []
 def encode(r):  #base 400000
     logger= logging.getLogger()
 #    r /= 800.0
-    
+
 #    x = (floor(r[0]+0.5) + 500) % 500 *800
 #    y = (floor(r[1]+0.5) + 500) % 500 *800
 #    z = (floor(r[2]+0.5) + 500) % 500 *800
@@ -56,7 +56,7 @@ def encode(r):  #base 400000
     for q in encoded:
         d = p - q
         d -= np.floor( d / 400000 + 0.5 ) * 400000
-        Ld = np.dot(d,d)
+        Ld = d @d
         if Ld < dmin:
             dmin = Ld
             qmin = q
@@ -73,8 +73,8 @@ def shortest_distance(relpos, box):
     for a1,a2 in it.combinations(relpos,2):
         d = a1-a2
         d -= np.floor( d + 0.5 )
-        d = np.dot(d, box)
-        dd = np.dot(d,d)
+        d = d @ box
+        dd = d @d
         if dd < dmin:
             dmin = dd
             amin = a1,a2
@@ -134,7 +134,7 @@ def lineparser(line):
 def main():
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)s %(message)s")
-    
+
     logger = logging.getLogger()
     x0=0
     y0=0
@@ -180,13 +180,13 @@ def main():
                 for a2 in atoms:
                     a3 = np.array(a2)
                     d  = a3-c2
-                    dd = np.dot(d,d)
+                    dd = d @d
                     if dd < dmin:
                         dmin = dd
                         dv = d
                 logger.debug("Closest:{0} {1} Center[{5}] {2} + delta {3} = cpos {4}".format(dmin,dv,apos,bvec,cpos,aord))
-                
-    
+
+
     alpha = box[3]*pi/180
     beta  = box[4]*pi/180
     gamma = box[5]*pi/180
@@ -194,7 +194,7 @@ def main():
     Rg = np.array([[cos(gamma),  sin(gamma), 0],
                    [-sin(gamma), cos(gamma), 0],
                    [0,0,1]])
-    B = np.dot(A,Rg)
+    B = A @Rg
     #print(B,box[5])
 
     #unknown C
@@ -207,9 +207,9 @@ def main():
     Cz = sqrt(1-Cx**2-Cy**2)
     C = np.array([Cx,Cy,Cz])
     #print(A,B,C)
-    #print(np.dot(B,C),cos(alpha))
-    #print(np.dot(C,A),cos(beta ))
-    #print(np.dot(A,B),cos(gamma))
+    #print(B @C,cos(alpha))
+    #print(C @A,cos(beta ))
+    #print(A @B,cos(gamma))
     #sys.exit(1)
     A *= box[0]
     B *= box[1]
@@ -219,7 +219,7 @@ def main():
     s = ""
     #for key in atoms:
     #    logger.debug("[{0},{1},{2}]".format(key[0], key[1], key[2]))
-        
+
     cagecounts = dict()
     for i in (12,14,15,16):
         cagecounts[i] = 0
@@ -271,14 +271,14 @@ def main():
                     nei[correct].append(bvec)
                     nedge +=1
                     nedge1 += 1
-                                
+
                     #test if there is really no vertex.
                     #dmin = 1e99
                     #c2 = np.array(cpos)
                     #for b2 in bonddest[aord]:
                     #    b3 = np.array(b2)
                     #    d  = b3-c2
-                    #    dd = np.dot(d,d)
+                    #    dd = d @d
                     #    if dd < dmin:
                     #        dmin = dd
                     #logger.debug("Closest:{0}".format(dd))
@@ -375,6 +375,6 @@ def main():
     header += ")\n"
     header += '"""\n\n'
     print(header+s)
-    
+
 if __name__ == "__main__":
     main()

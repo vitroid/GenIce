@@ -31,7 +31,7 @@ Calculate the Kirkwood G factor.
         "Kirkwood G."
         logger = getLogger()
         zvec = np.array([0., 0., 1.])
-        dipoles = np.dot(zvec, ice.rotmatrices)
+        dipoles = zvec @ ice.rotmatrices
         n = dipoles.shape[0]
         logger.info("  Inner products of the dipoles.")
         # inner products of dipole pairs
@@ -51,7 +51,7 @@ Calculate the Kirkwood G factor.
             d = x - xT
             d -= np.floor(d + 0.5)  # wrap
             delta[:, :, i] = d
-        delta = np.dot(delta, ice.repcell.mat)
+        delta = delta @ ice.repcell.mat
         delta = delta * delta
         delta = np.sum(delta, axis=2)
         delta = np.sqrt(delta).reshape(n * n)

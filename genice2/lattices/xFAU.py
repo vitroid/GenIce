@@ -102,7 +102,6 @@ class decorate():
             shadow = dij @ vec
             vec -= shadow * dij
             vec /= np.linalg.norm(vec)
-            # print(np.dot(vec,dij))
             vecs.append(vec)
         # 向きを同じにする。
         if np.linalg.det(np.vstack([dij, vecs[0], vecs[1]])) < 0:

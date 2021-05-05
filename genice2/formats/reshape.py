@@ -39,12 +39,12 @@ def isZero(x):
 def FlagEquivCells(nv, flags, ijk):
     if nv not in flags:
         for d in it.product((-2, -1, 0, 1, 2), repeat=3):
-            vv = tuple(np.dot(d, ijk) + nv)
+            vv = tuple(d @ ijk + nv)
             flags.add(vv)
 
 
 def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
-    newcell = np.dot(ijk, cellmat)
+    newcell = ijk @ cellmat
     newcelli = np.linalg.inv(newcell)
     L1 = np.linalg.norm(newcell[0])
     L2 = np.linalg.norm(newcell[1])
@@ -62,9 +62,9 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
             # Place atoms
             for i, xyz in enumerate(relpositions):
                 # rel to abs
-                xxv = np.dot(xyz + nv, cellmat)
+                xxv = (xyz + nv) @ cellmat
                 # inner products with axis vector of the newcell
-                pv = np.dot(xxv, newcelli)
+                pv = xxv @ newcelli
                 # print(pv,rL)
                 pv -= np.floor(pv)
                 # print(nv)
@@ -129,7 +129,7 @@ Options:
         logger.info("    j:{0}".format(self.ijk[1]))
         logger.info("    k:{0}".format(self.ijk[2]))
         # reshaped cell might not be rect.
-        newcell = np.dot(self.ijk, cellmat)
+        newcell = self.ijk @ cellmat
         # replication ratio.
         vol = abs(np.linalg.det(self.ijk))
         vol = floor(vol * 8192 + 0.5) / 8192
@@ -144,7 +144,7 @@ Options:
         # Regularization
         # Let x axis of the newcell be along e1
         # and let y axis of the newcell be on the e1-e2 plane.
-        regcell = np.dot(newcell, RI)
+        regcell = newcell @ RI
         a = (-torr < regcell)
         b = (regcell < torr)
         c = a & b

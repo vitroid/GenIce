@@ -95,8 +95,8 @@ No options available.
                 H1 = waters[i]["H1"]
                 d0 = H0 - O
                 d1 = H1 - O
-                rr0 = np.dot(d0, d0)
-                rr1 = np.dot(d1, d1)
+                rr0 = d0 @ d0
+                rr1 = d1 @ d1
                 if rr0 < rr1 and rr0 < 0.245**2:
                     s += Bond("HB", H0, O)
                 if rr1 < rr0 and rr1 < 0.245**2:

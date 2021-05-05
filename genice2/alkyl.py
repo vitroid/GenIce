@@ -31,12 +31,12 @@ def alkyl(direction, destination, tree, dest=None):
     # v2 is a vector from direction to the destination
     v2 = destination - direction
     v2 /= np.linalg.norm(v2)
-    v2d = np.dot(direction, v2)
+    v2d = direction @ v2
     while v2d > 0.999:
         # They are inline. It is not safe to determine the orientation.
         v2 = np.random.random(3)
         v2 /= np.linalg.norm(v2)
-        v2d = np.dot(direction, v2)
+        v2d = direction @ v2
 
     v2 -= v2d * direction
     v2 /= np.linalg.norm(v2)
@@ -50,21 +50,21 @@ def alkyl(direction, destination, tree, dest=None):
     s = sin(120 * pi / 180)
     v4 = v2 * c + v3 * s   # a branch vector
     v5 = v2 * c - v3 * s   # another branch vector
-    logger.debug("  {0} -0.5".format(np.dot(v2, v4)))
-    logger.debug("  {0} -0.5".format(np.dot(v4, v5)))
-    logger.debug("  {0} -0.5".format(np.dot(v5, v2)))
+    logger.debug("  {0} -0.5".format(v2 @ v4))
+    logger.debug("  {0} -0.5".format(v4 @ v5))
+    logger.debug("  {0} -0.5".format(v5 @ v2))
 
     c = cos(109.5 * pi / 180)
     s = sin(109.5 * pi / 180)
     v2 = -v1 * c + v2 * s
     v4 = -v1 * c + v4 * s
     v5 = -v1 * c + v5 * s
-    logger.debug("  {0} 1/3".format(np.dot(v1, v2)))
-    logger.debug("  {0} 1/3".format(np.dot(v1, v4)))
-    logger.debug("  {0} 1/3".format(np.dot(v1, v5)))
-    logger.debug("  {0} 1".format(np.dot(v2, v2)))
-    logger.debug("  {0} 1".format(np.dot(v4, v4)))
-    logger.debug("  {0} 1".format(np.dot(v5, v5)))
+    logger.debug("  {0} 1/3".format(v1 @ v2))
+    logger.debug("  {0} 1/3".format(v1 @ v4))
+    logger.debug("  {0} 1/3".format(v1 @ v5))
+    logger.debug("  {0} 1".format(v2 @ v2))
+    logger.debug("  {0} 1".format(v4 @ v4))
+    logger.debug("  {0} 1".format(v5 @ v5))
 
     #assert False
     atomname = tree[0]

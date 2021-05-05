@@ -195,7 +195,7 @@ class Format(genice2.formats.Format):
             com = ice.reppositions[ring[0]] + comofs
             com -= np.floor(com)
             # rel to abs
-            com = np.dot(com, cellmat)
-            deltas = np.dot(deltas, cellmat)
+            com = com @ cellmat
+            deltas = deltas @ cellmat
             face(self.p, com, deltas)
         self.output = self.p.Render()

@@ -128,13 +128,13 @@ Options:
                     (lower[0] < s2[0] < upper[0] and
                      lower[1] < s2[1] < upper[1] and
                      lower[2] < s2[2] < upper[2])):
-                    bonds.append((np.dot(s1, cellmat), np.dot(s2, cellmat)))
+                    bonds.append((s1 @ cellmat, s2 @ cellmat))
 
         nodes = []
         if rnode > 0.0:
             for s1 in ice.reppositions:
                 if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
-                    nodes.append(np.dot(s1, cellmat))
+                    nodes.append(s1 @ cellmat)
 
         objs = Union()
         for node in nodes:

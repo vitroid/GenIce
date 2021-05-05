@@ -128,8 +128,8 @@ def make_lattice_info(oatoms, hatoms, cellmat):
         ro = oatoms[i]
         rdh0 = rel_wrap(hatoms[i * 2] - ro)
         rdh1 = rel_wrap(hatoms[i * 2 + 1] - ro)
-        dh0 = np.dot(rdh0, cellmat)
-        dh1 = np.dot(rdh1, cellmat)
+        dh0 = rdh0 @ cellmat
+        dh1 = rdh1 @ cellmat
         y = dh0 - dh1
         y /= np.linalg.norm(y)
         z = dh0 + dh1
