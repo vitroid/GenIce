@@ -636,8 +636,8 @@ class GenIce():
                               "Ethyl-": ethyl}
 
     def generate_ice(self,
-                     water,
                      formatter,
+                     water=None,
                      guests={},
                      depol="strict",
                      noise=0.,
