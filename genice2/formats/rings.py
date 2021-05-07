@@ -185,7 +185,6 @@ class Format(genice2.formats.Format):
                             layer=2)
         for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             deltas = np.zeros((len(ring), 3))
-            d2 = np.zeros(3)
             for k, i in enumerate(ring):
                 d = ice.reppositions[i] - ice.reppositions[ring[0]]
                 d -= np.floor(d + 0.5)

@@ -67,7 +67,7 @@ def cellshape(cellmat):
 class Cell():
 
     def __init__(self, desc=None):
-        self.mat = np.zeros(9).reshape(3, 3)
+        self.mat = np.zeros([3,3])
         self.inv = None
         self.parse(desc)
 

@@ -247,6 +247,9 @@ class IceGraph(nx.DiGraph):
         return True
 
     def purgedefects(self, defects):
+        """
+        Buch's algorithm.
+        """
         d = defects[0]
         logger = getLogger()
         # logger.debug(self.ignores)
@@ -346,6 +349,7 @@ class SpaceIceGraph(IceGraph):
     ZAXIS = 3
 
     def __init__(self, data=None, coord=None, pbc=True, ignores=set()):
+        # Both of them are slow for a huge system.
         super(SpaceIceGraph, self).__init__(data)
         if coord is not None:
             self.add_vectors(coord, pbc)  # fractional coord
@@ -379,7 +383,7 @@ class SpaceIceGraph(IceGraph):
 
         For a cycle, the first element of the order must be the same as the last one.
         """
-        delta = np.zeros(3)
+        delta = 0
         for i in range(len(order) - 1):
             delta += self.get_edge_data(order[i], order[i + 1])["vector"]
         return delta
@@ -396,7 +400,7 @@ class SpaceIceGraph(IceGraph):
         self.add_edge(to_, from_, vector=-v, fixed=fixed)
 
     def net_polarization(self):
-        dipole = np.zeros(3)
+        dipole = 0
         for i, j, k in self.edges(data=True):
             dipole += k["vector"]
         return dipole
@@ -591,7 +595,7 @@ def depolarize_(
             # break this for-loop
 
     if depol == "strict":
-        if not np.allclose(net_polar, np.zeros(3)):
+        if not np.allclose(net_polar, 0):
             logger.error(
                 "  Gave up on total depolarization. Perhaps because they contain ions"
                 " or the cells are very small."

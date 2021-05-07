@@ -965,8 +965,6 @@ class GenIce():
     def Stage3D(self):
         """
         Tile the graph with directed cycles.
-
-        Implement using dict() instead of networkx.
         """
 
         # Cに書きかえるなら、この下の3つをおきかえる。
@@ -975,17 +973,21 @@ class GenIce():
                 yield cycle[i - 1], cycle[i]
 
         @timeit
+        @banner
         def spanningCycles(cycles):
+            """
+            Look up the traversal cycles.
+            """
             dipoles = []
             spanning = []
             for j, cycle in enumerate(cycles):
-                dipole = np.zeros(3)
+                dipole = 0
                 for a, b in cycle_edges(cycle):
                     # displacement vector
                     d = self.reppositions[b] - self.reppositions[a]
                     d -= np.floor(d + 0.5)
                     dipole += d
-                if not np.allclose(dipole, np.zeros(3)):
+                if not np.allclose(dipole, 0):
                     # it is a cell-spanning cycle
                     dipoles.append(dipole)
                     spanning.append(j)
@@ -993,7 +995,11 @@ class GenIce():
             return dipoles, spanning
 
         @timeit
+        @banner
         def direct(dipoles, spanning):
+            """
+            Re-orient the cycles so as to minimize the net polarization.
+            """
             bestm = 999999
             bestp = None
             dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
@@ -1013,7 +1019,11 @@ class GenIce():
             return dir
 
         @timeit
+        @banner
         def cycles2digraph(cycles):
+            """
+            Convert cycles to a digraph.
+            """
             d = dg.IceGraph()
             for cycle in cycles:
                 nx.add_cycle(d, cycle, fixed=False)
