@@ -1034,7 +1034,9 @@ class GenIce():
         pairs = np.array([(i, j)
                          for i, j in self.graph.edges()], dtype=np.int32)
         Nnode = len(self.reppositions)
-        cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
+        # cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
+        # Now uses the python version of tilecycles because it is fast enough.
+        cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode)]
 
         # evaluate the dipole of each cycle
         dipoles, spanning = spanningCycles(cycles)
