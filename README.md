@@ -567,7 +567,7 @@ C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, S
 CRN1, CRN2, CRN3 | A continuous random network of Sillium. [Mousseau 2001]
 CS1, MEP, sI | Clathrate hydrates sI. [Frank 1959,Jeffrey 1984,IZA Database,Kosyakov 1999]
 DOH, HS3, sH | Clathrate type H.
-EMT | Hypothetical ice with a large cavity. [Liu 2019,IZA Database]
+EMT | Hypothetical ice with a large cavity. [IZA Database,Liu 2019]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017,IZA Database]
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [IZA Database,Huang 2016]
 T | Hypothetical clathrate type T. [Sikiric 2010,Karttunen 2011]
@@ -576,7 +576,7 @@ c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guest
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
-iceR | Hypothetical ice R. [Maynard-Casely 2010,Mochizuki 2014]
+iceR | Hypothetical ice R. [Mochizuki 2014,Maynard-Casely 2010]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
 one | Ice I w/ stacking faults.
