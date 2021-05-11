@@ -74,8 +74,6 @@ def parse_guest(guests, arg):
     return guests
 
 
-
-
 def parse_pairs(values):
     if isinstance(values, str):
         lines = values.split("\n")
@@ -113,7 +111,7 @@ def plugin_option_parser(s):
     left = s.find("[")
     right = s.find("]")
     if 0 < left < len(s) and 0 < right < len(s) and left < right:
-        args = s[left+1:right]
+        args = s[left + 1:right]
         name = s[:left]
     else:
         return s, {}

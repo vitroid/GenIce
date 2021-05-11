@@ -12,7 +12,8 @@ import numpy as np
 import numpy.linalg
 import logging
 
-# Rigid.py uses vertical vectors while other pars of genice uses horizontal vectors.
+# Rigid.py uses vertical vectors while other pars of genice uses
+# horizontal vectors.
 
 # v1,v2,v3: numpy arrays
 # return value: fourth vector candidate
@@ -74,7 +75,7 @@ def rotmat2quat0(i, j, k):
 
     i0 /= np.linalg.norm(i0)
     x0 /= np.linalg.norm(x0)
-    cosine = np.dot(i0, x0)
+    cosine = i0 @ x0
     if cosine < -1.0 or cosine > 1.0:
         cosh = 0.0
         sinh = 1.0
@@ -82,7 +83,7 @@ def rotmat2quat0(i, j, k):
         cosh = sqrt((1.0 + cosine) * 0.5)
         sinh = sqrt(1.0 - cosh * cosh)
     o = op(i0, x0, False)
-    if np.dot(o, a) < 0.0:
+    if o @ a < 0.0:
         sinh = -sinh
 
     return np.array((cosh, -sinh * a[0], +sinh * a[1], -sinh * a[2]))
@@ -116,7 +117,8 @@ def quat2rotmat(q):
     sp31 = 2.0 * (a * c + b * d)
     sp32 = 2.0 * (a * b - c * d)
     sp33 = a * a + d * d - (b * b + c * c)
-    return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23], [sp31, sp32, sp33]]).transpose()
+    return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23],
+                    [sp31, sp32, sp33]]).transpose()
 
 
 # Vector function
@@ -124,27 +126,27 @@ def tRMfromQ(q):
     """
     transposed Rotation matrix from Quaternion, multiple bodies at a time.
     """
-    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
-    aa = a*a
-    bb = b*b
-    cc = c*c
-    dd = d*d
-    ab = a*b
-    ac = a*c
-    ad = a*d
-    bc = b*c
-    bd = b*d
-    cd = c*d
-    t = np.zeros([q.shape[0],3,3])
-    t[:,0,0] = (aa + bb - (cc + dd))
-    t[:,0,1] = -2 * (ad + bc)
-    t[:,0,2] = 2 * (bd - ac)
-    t[:,1,0] = 2 * (ad - bc)
-    t[:,1,1] = aa + cc - (bb + dd)
-    t[:,1,2] = -2 * (ab + cd)
-    t[:,2,0] = 2 * (ac + bd)
-    t[:,2,1] = 2 * (ab - cd)
-    t[:,2,2] = aa + dd - (bb + cc)
+    a, b, c, d = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
+    aa = a * a
+    bb = b * b
+    cc = c * c
+    dd = d * d
+    ab = a * b
+    ac = a * c
+    ad = a * d
+    bc = b * c
+    bd = b * d
+    cd = c * d
+    t = np.zeros([q.shape[0], 3, 3])
+    t[:, 0, 0] = (aa + bb - (cc + dd))
+    t[:, 0, 1] = -2 * (ad + bc)
+    t[:, 0, 2] = 2 * (bd - ac)
+    t[:, 1, 0] = 2 * (ad - bc)
+    t[:, 1, 1] = aa + cc - (bb + dd)
+    t[:, 1, 2] = -2 * (ab + cd)
+    t[:, 2, 0] = 2 * (ac + bd)
+    t[:, 2, 1] = 2 * (ab - cd)
+    t[:, 2, 2] = aa + dd - (bb + cc)
     return t
 
 
@@ -159,26 +161,26 @@ def euler2quat(e):
 
 # Vector function
 def QfromE(e):
-    ea, eb, ec = e[:,0], e[:,1], e[:,2]
-    q = np.zeros([e.shape[0],4])
-    q[:,0] = np.cos(ea / 2) * np.cos((ec + eb) / 2)
-    q[:,1] = np.sin(ea / 2) * np.cos((ec - eb) / 2)
-    q[:,2] = np.sin(ea / 2) * np.sin((ec - eb) / 2)
-    q[:,3] = np.cos(ea / 2) * np.sin((ec + eb) / 2)
+    ea, eb, ec = e[:, 0], e[:, 1], e[:, 2]
+    q = np.zeros([e.shape[0], 4])
+    q[:, 0] = np.cos(ea / 2) * np.cos((ec + eb) / 2)
+    q[:, 1] = np.sin(ea / 2) * np.cos((ec - eb) / 2)
+    q[:, 2] = np.sin(ea / 2) * np.sin((ec - eb) / 2)
+    q[:, 3] = np.cos(ea / 2) * np.sin((ec + eb) / 2)
     return q
 
 
 # Vector function
 def EfromQ(q):
-    a, b, c, d = q[:,0], q[:,1], q[:,2], q[:,3]
-    P = np.arctan2(c,b)
-    Q = np.arctan2(d,a)
-    e = np.zeros([a.shape[0],3])
-    e[:,2] = P+Q
-    e[:,1] = Q-P
-    ac = a/np.cos(Q)
-    bc = b/np.cos(P)
-    e[:,0] = np.arctan2(bc,ac)*2
+    a, b, c, d = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
+    P = np.arctan2(c, b)
+    Q = np.arctan2(d, a)
+    e = np.zeros([a.shape[0], 3])
+    e[:, 2] = P + Q
+    e[:, 1] = Q - P
+    ac = a / np.cos(Q)
+    bc = b / np.cos(P)
+    e[:, 0] = np.arctan2(bc, ac) * 2
     return e
 
 
@@ -299,9 +301,9 @@ def six2nine(a, b, c, alpha, beta, gamma):
     # LC = np.linalg.norm(C)
     # print(a,b,c)
     # print(LA,LB,LC)
-    # p = acos(np.dot(B,C)/(LB*LC))
-    # q = acos(np.dot(C,A)/(LC*LA))
-    # r = acos(np.dot(A,B)/(LA*LB))
+    # p = acos(B @ C/(LB*LC))
+    # q = acos(C @ A/(LC*LA))
+    # r = acos(A @ B/(LA*LB))
     # print(alpha, beta, gamma)
     # print(p,q,r)
     return np.vstack([A, B, C])
@@ -316,7 +318,8 @@ def rand_rotation_matrix(deflection=1.0, randnums=None):
     rotation. Small deflection => small perturbation.
     randnums: 3 random numbers in the range [0, 1]. If `None`, they will be auto-generated.
     """
-    # from http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
+    # from
+    # http://www.realtimerendering.com/resources/GraphicsGems/gemsiii/rand_rotation.c
 
     if randnums is None:
         randnums = np.random.uniform(size=(3,))
@@ -435,7 +438,7 @@ def test():
     print("e2", e2)
     r1 = euler2rotmat(e1)
     r2 = euler2rotmat(e2)
-    r12 = np.dot(r1, r2)
+    r12 = r1 @ r2
     print("r12", r12)
     q12 = rotmat2quat(r12)
     print("  q12", q12)
@@ -465,7 +468,7 @@ def test():
     print(qe4)
 
     print("test 6: array handling")
-    e = np.array([[0.01, 0.0, 0.3],[0.4, 0.5, 0.6]])
+    e = np.array([[0.01, 0.0, 0.3], [0.4, 0.5, 0.6]])
     q = QfromE(e)
     print("q", q)
     print(quat2euler(q[0]))
@@ -482,8 +485,6 @@ def test():
     m = tRMfromQ(QfromE(e))
     print(m)
     print(tRMfromQ(QfromE(EfromQ(QfromtRM(m)))))
-
-
 
 
 if __name__ == "__main__":

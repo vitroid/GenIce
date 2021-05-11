@@ -7,22 +7,20 @@ Reshaping the unit cell.
   k:[1 0 1]
 """
 
-desc={"ref": {},
-      "usage": "No options available.",
-      "brief": "Ice V with orthogonal unit cell. (testing)"
-      }
-
-
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Ice V with orthogonal unit cell. (testing)"
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=3.00000000000215
-        self.coord='relative'
-        self.density=1.23983176668
-        self.waters="""
+        self.bondlen = 3.00000000000215
+        self.coord = 'relative'
+        self.density = 1.23983176668
+        self.waters = """
             0.7375    0.1404    0.1618
             0.4292    0.1404    0.1715
             0.9292    0.8596    0.1715
@@ -109,7 +107,6 @@ class Lattice(genice2.lattices.Lattice):
             0.5833    0.8153    0.6667
         """
 
-
         self.cell = cellvectors(a=9.19977813,
-                           b=7.52346281,
-                           c=29.25857353)
+                                b=7.52346281,
+                                c=29.25857353)

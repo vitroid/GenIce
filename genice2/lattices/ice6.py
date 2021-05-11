@@ -1,25 +1,23 @@
 # coding: utf-8
 
-desc={"ref": {"VI": 'Petrenko 1999'},
-      "usage": "No options available.",
-      "brief": "Conventional high-pressure ice VI."
-      }
-
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"VI": 'Petrenko 1999'},
+        "usage": "No options available.",
+        "brief": "Conventional high-pressure ice VI."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 1.373     #default self.density
+        self.density = 1.373  # default self.density
 
-
-        self.bondlen = 3     #bond threshold
+        self.bondlen = 3  # bond threshold
         self.cell = """
         6.181 6.181 5.698
         """
 
-        double_network = True  #It is necessary only for ices 6 and 7
+        double_network = True  # It is necessary only for ices 6 and 7
 
         self.coord = "relative"
 
@@ -60,5 +58,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=6.181,
-                           b=6.181,
-                           c=5.698)
+                                b=6.181,
+                                c=5.698)

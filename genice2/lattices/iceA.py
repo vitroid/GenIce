@@ -1,20 +1,19 @@
 #!/usr/bin/python
 # coding: utf-8
 
-desc={"ref": {"A": 'Baez 1998'},
-      "usage": "No options available.",
-      "brief": "Hypothetical ice A."
-      }
-
-
-import genice2.lattices
-from genice2.cell import cellvectors
-from genice2 import CIF
 import numpy as np
+from genice2 import CIF
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"A": 'Baez 1998'},
+        "usage": "No options available.",
+        "brief": "Hypothetical ice A."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        atoms="""
+        atoms = """
         O1 0.0995 0.1901 0.2835
         O2 0.3431 0.3469 0.7598
         O3 0.4055 0.0558 0.5013
@@ -27,7 +26,7 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         # P4_1, No. 76
-        symops="""
+        symops = """
               x            y            z
              -x           -y          1/2+z
              -y            x          1/4+z
@@ -35,18 +34,19 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         # in nm
-        a,b,c = 0.6733, 0.6733, 0.7164
+        a, b, c = 0.6733, 0.6733, 0.7164
 
-        self.cell  = cellvectors(a,b,c)
+        self.cell = cellvectors(a, b, c)
 
         # helper routines to make from CIF-like data
         atomd = CIF.atomdic(atoms)
-        sops  = CIF.symmetry_operators(symops)
+        sops = CIF.symmetry_operators(symops)
         self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
 
         # set self.pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18*len(self.waters)/6.022e23 / (np.linalg.det(self.cell)*1e-21)
+        self.density = 18 * len(self.waters) / 6.022e23 / \
+            (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"

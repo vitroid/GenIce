@@ -12,9 +12,8 @@ class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-
     def hooks(self):
-        return {7:self.Hook7}
+        return {7: self.Hook7}
 
     @timeit
     @banner

@@ -5,17 +5,17 @@ Data source: Dutour Sikirić, Mathieu, Olaf Delgado-Friedrichs, and Michel Deza.
 Cage composition:
  (12,14,15,16) = (33,6,6,12,)
 """
-desc={"ref": {"SpaceFullerene": 'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "A space fullerene."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "A space fullerene."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.pairs="""
+        self.pairs = """
         253 286
         217 233
         212 123
@@ -666,7 +666,7 @@ class Lattice(genice2.lattices.Lattice):
         95 24
         """
 
-        self.waters="""
+        self.waters = """
         0.4597 0.91941 0.91853
         0.91941 0.4597 0.12847
         0.5403 0.0806 0.12847
@@ -993,9 +993,9 @@ class Lattice(genice2.lattices.Lattice):
         0.12363 0.24726 0.07806
         """
 
-        self.coord= "relative"
+        self.coord = "relative"
 
-        self.cages="""
+        self.cages = """
         14 1.0000033333333334 0.9999966666666668 0.5279066666666666
         14 1.3333366666666666 0.6666633333333333 -0.8054266666666667
         15 1.3333366666666666 1.6666633333333334 1.4995133333333335
@@ -1057,7 +1057,6 @@ class Lattice(genice2.lattices.Lattice):
 
         self.bondlen = 3
 
-
         self.cell = """
         12.79238210404658 0.0 0.0
         -6.396191052023287 11.078527877021768 0.0
@@ -1066,9 +1065,7 @@ class Lattice(genice2.lattices.Lattice):
 
         self.density = 0.6674659339153055
 
-
-
         self.cell = cellvectors(a=12.79238210404658,
-                           b=12.792382104046581,
-                           c=102.37977741546108,
-                           C=119.99999999999999)
+                                b=12.792382104046581,
+                                c=102.37977741546108,
+                                C=119.99999999999999)

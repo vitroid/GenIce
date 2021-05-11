@@ -24,6 +24,8 @@ The new GenIce works very well with interactive execution.
 
 {{requires}}
 
+**Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
+
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
 Install with pip3.
@@ -55,7 +57,7 @@ Use `./genice.x` instead of `genice2` if you want to use it inside the source tr
 
 ## Basics
 
-The program generates various ice lattice with proton disorder and without defect.  The total dipole moment is always set to zero (except in the case you specify `--nodep` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
+The program generates various ice lattice with proton disorder and without defect.  The total dipole moment is always set to zero (except in the case you specify `--depol` option).  The minimal structure (with --rep 1 1 1 option) is not always the unit cell of the lattice because it is difficult to deal with the hydrogen bond network topology of tiny lattice under periodic boundary condition.  Note that the generated structure is not optimal according to the potential energy.
 
 * To get a large repetition of ice Ih in XYZ format,
 
@@ -131,38 +133,40 @@ Small ions may replace the host molecules.  In that case, you can use `-a` and `
 
 The following example replaces the `0`th water molecule (in the replicated lattice) with Na cation and `1`st water molecule with Cl anion.  The hydrogen bonds around the ions are organized appropriately.
 
-    genice2 CS2 --nodep -c 0=Na -a 1=Cl > CS2.gro
+    genice2 CS2 --depol=optimal -c 0=Na -a 1=Cl > CS2.gro
 
 *Note 1*: The numbers of cations and anions must be the same.  Otherwise, the ice rule is never satisfied and the program does not stop.  
 
-*Note 2*: The option `--nodep` is also required because it is impossible to depolarize the structure containing ions.
+*Note 2*: The option `--depol=optimal` is also required because it is impossible to completely depolarize the structure containing ions.
 
 *Note 3*: Protonic defects (H<sub>3</sub>O<sup>+</sup> and OH<sup>-</sup>) are not yet implemented.
 
 ## Semiclathrate hydrates
 
-### Placement of a tetrabutylammonium ion
+### Placement of a tetrabutylammonium ion (testing)
 
 Let us assume that the id of the water molecule to be replaced by nitrogen of the TBA as zero.  Place the nitrogen as a cation and also replace the water 2 by the counter-ion Br.
 
-    genice2 HS1 -c 0=N -a 2=Br --nodep > HS1.gro
+    genice2 HS1 -c 0=N -a 2=Br --depol=optimal > HS1.gro
 
 Then you will see the following info.
 
 ```
 INFO   Hints:
 INFO     Cage types: ['12', '14', '15']
-INFO     Cage type 12: {0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18, 19, 28, 29, 30, 31, 32, 33, 42, 43, 44, 45, 46, 47, 56, 57, 58, 59, 60, 61, 70, 71, 72, 73, 74, 75, 84, 85, 86, 87, 88, 89, 98, 99, 100, 101, 102, 103}
-INFO     Cage type 14: {6, 7, 8, 9, 20, 21, 22, 23, 34, 35, 36, 37, 48, 49, 50, 51, 62, 63, 64, 65, 76, 77, 78, 79, 90, 91, 92, 93, 104, 105, 106, 107}
-INFO     Cage type 15: {10, 11, 12, 13, 24, 25, 26, 27, 38, 39, 40, 41, 52, 53, 54, 55, 66, 67, 68, 69, 80, 81, 82, 83, 94, 95, 96, 97, 108, 109, 110, 111}
-INFO     Cages adjacent to dopant 2: {9, 2, 28, 97}
-INFO     Cages adjacent to dopant 0: {9, 2, 28, 7}
+INFO     Cage type 12: {0, 1, 2, 3, 4, 5}
+INFO     Cage type 14: {8, 9, 6, 7}
+INFO     Cage type 15: {10, 11, 12, 13}
+...
+INFO Stage7: Arrange guest atoms.
+INFO     Cages adjacent to dopant 2: {0, 9, 2, 13}
+INFO     Cages adjacent to dopant 0: {0, 9, 2, 7}
 ```
 
-It indicates that the nitrogen is surrounded by cages with ids 9, 2, 28, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent to dopant 0.
+It indicates that the nitrogen is surrounded by cages with ids 0, 9, 2, and 7.  Types for these cages can also be found in the info.  Then, we put the Bu- group (minus does not mean ions) in these cages adjacent to dopant 0.
 
 ```shell
-genice2 HS1 -c 0=N -a 2=Br -H 9=Bu-:0 -H 2=Bu-:0 -H 28=Bu-:0 -H 7=Bu-:0 --nodep > HS1.gro
+genice2 HS1 -c 0=N -a 2=Br -H 0=Bu-:0 -H 9=Bu-:0 -H 2=Bu-:0 -H 7=Bu-:0 --depol=optimal > HS1.gro
 ```
 
 Here the option `-H` specifies the group by `-H (cage id)=(group name):(root)`, and the root is the nitrogen that is specified by `-c` (cation) option.
@@ -179,7 +183,7 @@ It is more convenient if the lattice of the semiclathrate hydrate contains molec
 
 Name |Application | extension | water | solute | HB | remarks
 -------|------------|-----------|----------|---------|-----|---
-`cif, cif2 |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
+`cif`, `cif2` |CIF         | `.cif`      | Atomic positions | Atomic positions | none |Experimental
 `g`, `gromacs`      |[Gromacs](http://www.gromacs.org)     | `.gro`      | Atomic positions | Atomic positions | none| Default format.
 `m`, `mdview`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto|
 `mdv_au`      |MDView      | `.mdv`      | Atomic positions | Atomic positions | auto| In atomic unit.
@@ -294,7 +298,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 
 | pip name | GenIce2 option | Description | output format | requirements |
 |----------|-------|-------------|---------------|--------------|
-|[`genice2-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json | `cycless` |
+|[`genice2-cage`](https://github.com/vitroid/genice-cage)|`-f _cage`| Detect cages and quasi-polyhedra (vitrites). | text, json, gromacs | `cycless` |
 |[`genice2-rdf`](https://github.com/vitroid/genice-rdf)|`-f _RDF`| Radial distribution functions. | text |  |
 |[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
@@ -320,6 +324,10 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 ## Faster, faster, faster.
 
 Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
+
+## And even faster!
+
+The core part of the new algorithm is separated as the TileCycles package and rewritten in C++. It becomes 40 times faster with the same algorithm.
 
 ## Colaboratory-ready!
 

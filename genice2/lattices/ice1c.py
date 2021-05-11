@@ -4,23 +4,23 @@ Data sources
 
 """
 
-desc={"ref": {"Ic": 'Vos 1993'},
-      "usage": "No options available.",
-      "brief": "Cubic type of ice I."
-      }
-
-from genice2.cell import cellvectors
 import genice2.lattices
+from genice2.cell import cellvectors
+desc = {"ref": {"Ic": 'Vos 1993'},
+        "usage": "No options available.",
+        "brief": "Cubic type of ice I."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.cell = cellvectors(a=4.0,
-                           b=4.0,
-                           c=4.0)
+                                b=4.0,
+                                c=4.0)
 
-        self.density = 0.92     #default density
+        self.density = 0.92  # default density
 
-        self.bondlen = 1.9      #bond threshold
+        self.bondlen = 1.9  # bond threshold
 
         self.waters = """
         0 0 0
@@ -34,7 +34,7 @@ class Lattice(genice2.lattices.Lattice):
         """
         self.coord = "relative"
 
-        self.pairs="""
+        self.pairs = """
         0 4
         0 5
         0 6

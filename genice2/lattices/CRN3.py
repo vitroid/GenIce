@@ -1,20 +1,20 @@
 # coding: utf-8
-desc={"ref": {"CRN": 'Mousseau 2001'},
-      "usage": "No options available.",
-      "brief": "A continuous random network of Sillium."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"CRN": 'Mousseau 2001'},
+        "usage": "No options available.",
+        "brief": "A continuous random network of Sillium."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.cell="""
+        self.cell = """
         43.274 43.274 43.274
         """
-        self.density=0.96
-        self.coord="absolute"
-        self.waters="""
+        self.density = 0.96
+        self.coord = "absolute"
+        self.waters = """
         1.3 20.49 19.52
         -7.38 5.07 -18.07
         7.43 2.0 21.28
@@ -4112,7 +4112,7 @@ class Lattice(genice2.lattices.Lattice):
         -21.13 15.28 -21.48
         -2.57 12.51 15.79
         """
-        self.pairs="""
+        self.pairs = """
         0 2143
         0 3105
         0 319
@@ -12307,7 +12307,6 @@ class Lattice(genice2.lattices.Lattice):
         4046 4061
         """
 
-
         self.cell = cellvectors(a=43.274,
-                           b=43.274,
-                           c=43.274)
+                                b=43.274,
+                                c=43.274)

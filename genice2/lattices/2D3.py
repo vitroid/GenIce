@@ -1,29 +1,26 @@
-desc={"ref": {},
-      "usage": "No options available.",
-      "brief": "Trilayer honeycomb ice."
-      }
-
+from genice2.cell import cellvectors
+import genice2.lattices
 import numpy as np
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Trilayer honeycomb ice."
+        }
 
-#Unnecessary when pairs are given.
+
+# Unnecessary when pairs are given.
 #bondlen = 2.0 * 3.0 / 8.0**0.5 * 1.1
 
 
-import genice2.lattices
-from genice2.cell import cellvectors
-
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.cell = [4*3**0.5, 6.0, 2/8**0.5*20]
+        self.cell = [4 * 3**0.5, 6.0, 2 / 8**0.5 * 20]
 
-        #Final self.density of ice.
+        # Final self.density of ice.
         self.density = 0.75
 
         self.coord = "relative"
 
-
-
-        self.waters="""
+        self.waters = """
         0.000	0.000	0.
         0.750	0.167	0.05
         0.250	0.167	0.05
@@ -50,7 +47,7 @@ class Lattice(genice2.lattices.Lattice):
         0.500	0.000	0.40
         """
 
-        self.pairs="""
+        self.pairs = """
         1 0
         1 3
         1 7
@@ -98,5 +95,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=6.928203230275509,
-                           b=6.0,
-                           c=14.14213562373095)
+                                b=6.0,
+                                c=14.14213562373095)

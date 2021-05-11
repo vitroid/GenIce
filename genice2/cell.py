@@ -28,15 +28,15 @@ def sincos(A):
 
 
 # moved from GenIce/cif/CIF.py
-def cellvectors(a,b,c,A=90,B=90,C=90):
+def cellvectors(a, b, c, A=90, B=90, C=90):
     """
     Generate cell vectors from a,b,c and alpha, beta, gamma.
     """
     # probably same as six2nine in rigid.py
     logger = logging.getLogger()
-    A *= pi/180
-    B *= pi/180
-    C *= pi/180
+    A *= pi / 180
+    B *= pi / 180
+    C *= pi / 180
     sA, cA = sincos(A)
     sB, cB = sincos(B)
     sC, cC = sincos(C)
@@ -45,13 +45,11 @@ def cellvectors(a,b,c,A=90,B=90,C=90):
     # ec.ea = ecx = cos(B)
     # ec.eb = ecx*ebx + ecy*eby = cos(A)
     ecx = cB
-    ecy = (cA - ecx*eb[0]) / eb[1]
-    ecz = sqrt(1-ecx**2-ecy**2)
+    ecy = (cA - ecx * eb[0]) / eb[1]
+    ecz = sqrt(1 - ecx**2 - ecy**2)
     ec = np.array([ecx, ecy, ecz])
-    # logger.info((cos(A), np.dot(eb, ec)))
-    # logger.info((cos(B), np.dot(ec, ea)))
-    # logger.info((cos(C), np.dot(ea, eb)))
-    return np.vstack([ea*a, eb*b, ec*c])
+    return np.vstack([ea * a, eb * b, ec * c])
+
 
 def cellshape(cellmat):
     """
@@ -60,23 +58,24 @@ def cellshape(cellmat):
     a = np.linalg.norm(cellmat[0])
     b = np.linalg.norm(cellmat[1])
     c = np.linalg.norm(cellmat[2])
-    alpha = degrees(acos((cellmat[1]@cellmat[2]) / (b*c)))
-    beta  = degrees(acos((cellmat[2]@cellmat[0]) / (c*a)))
-    gamma = degrees(acos((cellmat[0]@cellmat[1]) / (a*b)))
-    return a,b,c,alpha,beta,gamma
+    alpha = degrees(acos((cellmat[1] @ cellmat[2]) / (b * c)))
+    beta = degrees(acos((cellmat[2] @ cellmat[0]) / (c * a)))
+    gamma = degrees(acos((cellmat[0] @ cellmat[1]) / (a * b)))
+    return a, b, c, alpha, beta, gamma
+
 
 class Cell():
 
     def __init__(self, desc=None):
-        self.mat = np.zeros(9).reshape(3, 3)
+        self.mat = np.zeros([3, 3])
         self.inv = None
         self.parse(desc)
 
     def abs2rel(self, absvecs):
-        return np.dot(absvecs, self.inv)
+        return absvecs @ self.inv
 
     def rel2abs(self, relvec):
-        return np.dot(relvec, self.mat)
+        return relvec @ self.mat
 
     def abs_wrap(self, absvec):
         return self.rel2abs(rel_wrap(self.abs2rel(absvec)))
@@ -98,7 +97,7 @@ class Cell():
 
     def parse(self, mat):
         logger = logging.getLogger()
-        logger.debug(("MAT:",mat))
+        logger.debug(("MAT:", mat))
         self.mat = mat.copy()
         La = np.linalg.norm(self.mat[0])
         Lb = np.linalg.norm(self.mat[1])

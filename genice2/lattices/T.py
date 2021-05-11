@@ -1,26 +1,27 @@
 # coding: utf-8
-desc={"ref": {"II+IVa":         'Karttunen 2011',
-              "T":              'Sikiric 2010'},
-      "usage": "No options available.",
-      "brief": "Hypothetical clathrate type T."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"II+IVa": 'Karttunen 2011',
+                "T": 'Sikiric 2010'},
+        "usage": "No options available.",
+        "brief": "Hypothetical clathrate type T."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     """
 [T] A. J. Karttunen, T. F. Fässler, M. Linnolahti, T. A. Pakkanen, Inorg Chem, 2011, DOI:10.1021/ic102178d.
 """
+
     def __init__(self):
-        self.cell="""
+        self.cell = """
         2.75276384094 2.75276384094 2.75276384094
         """
 
-        self.bondlen=0.28
-        self.coord="relative"
+        self.bondlen = 0.28
+        self.coord = "relative"
 
-        self.waters="""
+        self.waters = """
         0.062500 0.937500 0.937500
         0.961373 0.898873 1.000000
         0.937500 0.937500 0.937500
@@ -944,5 +945,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=2.75276384094,
-                           b=2.75276384094,
-                           c=2.75276384094)
+                                b=2.75276384094,
+                                c=2.75276384094)

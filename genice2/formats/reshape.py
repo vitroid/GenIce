@@ -1,8 +1,15 @@
 # coding: utf-8
 
-desc = { "ref": {},
-         "brief": "Cell-reshaper.",
-         "usage": """
+from genice2.decorators import timeit, banner
+import genice2.formats
+from logging import getLogger
+import re
+from math import floor
+import itertools as it
+import numpy as np
+desc = {"ref": {},
+        "brief": "Cell-reshaper.",
+        "usage": """
 A formatter plugin for GenIce to produce a python lattice plugin.
 
 Usage:
@@ -18,18 +25,10 @@ Options:
         c' = o a + p b + q c
 
     Water molecules are relocated appropriately.
-""" }
-
-import numpy as np
-import itertools as it
-from math import floor
-import re
-from logging import getLogger
-import genice2.formats
-from genice2.decorators import timeit, banner
+"""}
 
 
-MAXCELL=11
+MAXCELL = 11
 torr = 1e-8
 
 
@@ -37,25 +36,24 @@ def isZero(x):
     return -torr < x < torr
 
 
-
 def FlagEquivCells(nv, flags, ijk):
     if nv not in flags:
-        for d in it.product((-2,-1,0,1,2), repeat=3):
-            vv = tuple(np.dot(d,ijk)+nv)
+        for d in it.product((-2, -1, 0, 1, 2), repeat=3):
+            vv = tuple(d @ ijk + nv)
             flags.add(vv)
 
 
 def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
-    newcell = np.dot(ijk, cellmat)
+    newcell = ijk @ cellmat
     newcelli = np.linalg.inv(newcell)
     L1 = np.linalg.norm(newcell[0])
     L2 = np.linalg.norm(newcell[1])
     L3 = np.linalg.norm(newcell[2])
-    rL = np.array([L1,L2,L3])
+    rL = np.array([L1, L2, L3])
     # print(rL)
     ncell = 0
     flags = set()
-    queue = [(0,0,0)]
+    queue = [(0, 0, 0)]
     s = ""
     while len(queue) > 0:
         nv = queue.pop(0)
@@ -64,25 +62,25 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
             # Place atoms
             for i, xyz in enumerate(relpositions):
                 # rel to abs
-                xxv = np.dot(xyz + nv, cellmat)
+                xxv = (xyz + nv) @ cellmat
                 # inner products with axis vector of the newcell
-                pv = np.dot(xxv, newcelli)
+                pv = xxv @ newcelli
                 # print(pv,rL)
                 pv -= np.floor(pv)
                 # print(nv)
                 label = ""
                 if labels is not None:
                     label = labels[i]
-                s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(pv[0],pv[1],pv[2], label)
-            #print("NV:",nv)
+                s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(
+                    pv[0], pv[1], pv[2], label)
+            # print("NV:",nv)
             FlagEquivCells(nv, flags, ijk)
-            for xi,yi,zi in it.product((-1,0,1), repeat=3):
-                nei = nv[0]+xi,nv[1]+yi,nv[2]+zi
+            for xi, yi, zi in it.product((-1, 0, 1), repeat=3):
+                nei = nv[0] + xi, nv[1] + yi, nv[2] + zi
                 if nei not in flags:
                     #print("nei", nei)
                     queue.append(nei)
     return ncell, s
-
 
 
 class Format(genice2.formats.Format):
@@ -107,18 +105,17 @@ Options:
         for k, v in kwargs.items():
             if re.match("^[-+0-9,]+$", k) is not None and v is True:
                 # for commandline use
-                self.ijk = np.array([int(x) for x in k.split(",")]).reshape(3,3)
+                self.ijk = np.array([int(x)
+                                    for x in k.split(",")]).reshape(3, 3)
             elif k == "reshape":
                 # for API
-                self.ijk = np.array(v, dtype=int).reshape(3,3)
+                self.ijk = np.array(v, dtype=int).reshape(3, 3)
             else:
                 unknown[k] = v
         super().__init__(**unknown)
 
-
     def hooks(self):
-        return {1:self.Hook1}
-
+        return {1: self.Hook1}
 
     @timeit
     @banner
@@ -132,22 +129,22 @@ Options:
         logger.info("    j:{0}".format(self.ijk[1]))
         logger.info("    k:{0}".format(self.ijk[2]))
         # reshaped cell might not be rect.
-        newcell = np.dot(self.ijk, cellmat)
+        newcell = self.ijk @ cellmat
         # replication ratio.
         vol = abs(np.linalg.det(self.ijk))
-        vol = floor(vol*8192+0.5)/8192
+        vol = floor(vol * 8192 + 0.5) / 8192
         # Unit orthogonal vectors for the newcell.
         e1 = newcell[0].astype(float)
         e1 /= np.linalg.norm(e1)
         e3 = np.cross(newcell[0], newcell[1]).astype(float)
         e3 /= np.linalg.norm(e3)
-        e2 = np.cross(e3,e1)
-        R = np.array([e1,e2,e3])
+        e2 = np.cross(e3, e1)
+        R = np.array([e1, e2, e3])
         RI = np.linalg.inv(R)
         # Regularization
         # Let x axis of the newcell be along e1
         # and let y axis of the newcell be on the e1-e2 plane.
-        regcell = np.dot(newcell, RI)
+        regcell = newcell @ RI
         a = (-torr < regcell)
         b = (regcell < torr)
         c = a & b
@@ -168,19 +165,23 @@ Options:
         s += "    def __init__(self):\n"
         s += "        self.bondlen={0}\n".format(ice.bondlen)
         s += "        self.coord='relative'\n"
-        if isZero(regcell[1,0]) and isZero(regcell[2,0]) and isZero(regcell[2,1]):
+        if isZero(regcell[1, 0]) and isZero(
+                regcell[2, 0]) and isZero(regcell[2, 1]):
             s += "        from genice2.cell import cellvectors\n"
-            s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(regcell[0,0],regcell[1,1],regcell[2,2])
+            s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(
+                regcell[0, 0], regcell[1, 1], regcell[2, 2])
         else:
             s += "\n        import numpy as np\n"
             s += "        self.cell=np.array(["
             for d in range(3):
-                s += "        [{0:.8f}, {1:.8f}, {2:.8f}], ".format(regcell[d,0],regcell[d,1],regcell[d,2])
+                s += "        [{0:.8f}, {1:.8f}, {2:.8f}], ".format(
+                    regcell[d, 0], regcell[d, 1], regcell[d, 2])
             s += "        ])\n"
         # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
         s += "        self.density={0}\n".format(ice.density)
-        s += '        self.waters="""'+"\n"
-        logger.info("  Total number of molecules: {0}".format(vol*len(ice.reppositions)))
+        s += '        self.waters="""' + "\n"
+        logger.info("  Total number of molecules: {0}".format(
+            vol * len(ice.reppositions)))
 
         ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.reppositions)
         assert vol == ncell
@@ -188,13 +189,12 @@ Options:
         s += ss + '"""' + "\n\n"
 
         if ice.cagepos is not None:
-            s += '        self.cages="""'+"\n"
-            ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
-            s += ss + '"""'+"\n\n"
+            s += '        self.cages="""' + "\n"
+            ncell, ss = FindEmptyCells(
+                cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
+            s += ss + '"""' + "\n\n"
 
         self.output = s
-
-
 
     # Reshaping matrix (Must be integers)
     # for now they are hardcoded.  It will be given as options for the plugin in the future.

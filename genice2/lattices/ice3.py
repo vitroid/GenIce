@@ -1,20 +1,20 @@
 
 
-desc={"ref": {"III": 'Petrenko 1999'},
-      "usage": "No options available.",
-      "brief": "Ice III."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"III": 'Petrenko 1999'},
+        "usage": "No options available.",
+        "brief": "Ice III."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=3.0
-        self.coord='relative'
-        self.cell='6.666 6.666 6.936'
-        self.density=1.165
-        self.waters="""
+        self.bondlen = 3.0
+        self.coord = 'relative'
+        self.cell = '6.666 6.666 6.936'
+        self.density = 1.165
+        self.waters = """
             0.3936    0.3939    0.0141
             0.6103    0.1988    0.4695
             0.8912    0.6997    0.7988
@@ -30,5 +30,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=6.666,
-                           b=6.666,
-                           c=6.936)
+                                b=6.666,
+                                c=6.936)

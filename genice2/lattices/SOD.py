@@ -1,6 +1,8 @@
 # coding: utf-8
 
-desc={
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {
     "ref": {
         "sVII": "Jeffrey 1984",
         "CS4": "Kosyakov 1999",
@@ -12,8 +14,6 @@ desc={
     "brief": "Hypothetical zeolitic ice"
 }
 
-import genice2.lattices
-from genice2.cell import cellvectors
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -38,11 +38,11 @@ class Lattice(genice2.lattices.Lattice):
         self.bondlen = 3
         self.density = 0.75396428378
 
-        self.cages="""
+        self.cages = """
         K 0 0 0
         K 0.5 0.5 0.5
         """
 
         self.cell = cellvectors(a=7.8064588643,
-                           b=7.8064588643,
-                           c=7.8064588643)
+                                b=7.8064588643,
+                                c=7.8064588643)

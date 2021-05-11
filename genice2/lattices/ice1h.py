@@ -1,21 +1,21 @@
 # coding: utf-8
 
-desc={"ref": {},
-      "usage": "No options available.",
-      "brief": "Most popular Ice I (hexagonal)"
-      }
-
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Most popular Ice I (hexagonal)"
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.92     #default self.density
+        self.density = 0.92  # default self.density
 
-        self.bondlen = 3        #bond threshold
+        self.bondlen = 3  # bond threshold
 
-        self.cell = cellvectors(a=7.84813412606925, b=7.37735062301457, c=9.06573834219084)
+        self.cell = cellvectors(
+            a=7.84813412606925, b=7.37735062301457, c=9.06573834219084)
 
         self.waters = """
         1.328 1.802 3.38

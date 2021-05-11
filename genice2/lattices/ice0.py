@@ -1,20 +1,21 @@
 # coding: utf-8
 
-desc={"ref": {"0": "Russo 2014",
-              },
-      "usage": "No options available.",
-      "brief": 'Metastable ice "0".'
-      }
+from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"0": "Russo 2014",
+                },
+        "usage": "No options available.",
+        "brief": 'Metastable ice "0".'
+        }
 
 # Keep this file as simple as possible for compatibility
-import genice2.lattices
-from genice2.cell import cellvectors
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.92     #default self.density
+        self.density = 0.92  # default self.density
 
-        self.bondlen = 3      #bond threshold
+        self.bondlen = 3  # bond threshold
         self.cell = """
         5.85695813012517 5.85695813012517 10.4558393727084
         """
@@ -37,5 +38,5 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "absolute"
 
         self.cell = cellvectors(a=5.85695813012517,
-                           b=5.85695813012517,
-                           c=10.4558393727084)
+                                b=5.85695813012517,
+                                c=10.4558393727084)

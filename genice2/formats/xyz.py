@@ -9,7 +9,7 @@ from genice2 import rigid
 from logging import getLogger
 from genice2.decorators import timeit, banner
 import genice2.formats
-from genice2.molecules  import serialize
+from genice2.molecules import serialize
 
 
 class Format(genice2.formats.Format):
@@ -17,13 +17,12 @@ class Format(genice2.formats.Format):
 The atomic positions of the molecules are output in a crude XYZ format.
 No options available.
     """
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-
     def hooks(self):
-        return {7:self.Hook7}
-
+        return {7: self.Hook7}
 
     @timeit
     @banner
@@ -40,6 +39,7 @@ No options available.
         for atom in atoms:
             molorder, resname, atomname, position, order = atom
             logger.info(atom)
-            s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(atomname,position[0]*10,position[1]*10,position[2]*10)
+            s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(
+                atomname, position[0] * 10, position[1] * 10, position[2] * 10)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         self.output = s

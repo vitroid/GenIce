@@ -46,32 +46,31 @@ Finally, dKL between expectiations and observations is also shown.
 
 """
 
-desc = { "ref": { "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)." },
-         "brief": "Bond direction statistics.",
-         "usage": __doc__ }
-
+from genice2.decorators import timeit, banner
+import genice2.formats
+from logging import getLogger
+import numpy as np
+import fractions
+from math import log
+import networkx as nx
+from collections import defaultdict
+import sys
+from cycless.cycles import cycles_iter
+import itertools as it
+desc = {
+    "ref": {
+        "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)."},
+    "brief": "Bond direction statistics.",
+    "usage": __doc__}
 
 
 # A directed cycle is expressed as an array of True and False.
 # For example,
 # --> --> <-- : [True, True, False]
 # --> <-- --> : [True, False, True]
-#They are isomorphic if they can be identical by rotations and inversions.
+# They are isomorphic if they can be identical by rotations and inversions.
 
 #
-
-
-import itertools as it
-from cycless.cycles import cycles_iter
-import sys
-from collections import defaultdict
-import networkx as nx
-from math import log
-import fractions
-import numpy as np
-from logging import getLogger
-import genice2.formats
-from genice2.decorators import timeit, banner
 
 
 def isomorphs(a):
@@ -81,12 +80,12 @@ def isomorphs(a):
     iso = set()
     aa = a + a
     for i in range(len(a)):
-        part = tuple(aa[i:i+len(a)])
+        part = tuple(aa[i:i + len(a)])
         iso.add(part)
     e = [not x for x in a]
     ee = e + e
     for i in range(len(a)):
-        part = tuple(ee[i:i+len(a)])
+        part = tuple(ee[i:i + len(a)])
         iso.add(part)
     return iso
 
@@ -98,7 +97,7 @@ def code(ori):
     s = 0
     for i in range(len(ori)):
         if ori[i]:
-            s += 1<<i
+            s += 1 << i
     return s
 
 
@@ -121,7 +120,7 @@ def freedom(a):
     """
     n = 1
     for i in range(len(a)):
-        if a[i-1] is a[i]:
+        if a[i - 1] is a[i]:
             n *= 2
     return n
 
@@ -131,7 +130,7 @@ def ideal_frequency(a):
     return symmetry(a) * freedom(a)
 
 
-def contains(a,b):
+def contains(a, b):
     """
     return True if one of the isomorphs of b is included in the set a.
     """
@@ -159,8 +158,8 @@ def probabilities(N):
 
 
 def orientations(members, digraph):
-    return [digraph.has_edge(members[i-1], members[i]) for i in range(len(members))]
-
+    return [digraph.has_edge(members[i - 1], members[i])
+            for i in range(len(members))]
 
 
 class Format(genice2.formats.Format):
@@ -190,63 +189,68 @@ Columns in the output:
 
 dKL between expectiations and observations is also calculated.
     """
-    largestring=8
+    largestring = 8
 
     def __init__(self, **kwargs):
         logger = getLogger()
         unknown = dict()
         for k, v in kwargs.items():
             if k == "max":
-                self.largestring=int(v)
+                self.largestring = int(v)
             else:
                 logger.error(f"Unknown keyword: {k}")
                 sys.exit(1)
         logger.info("  Largest ring: {0}.".format(self.largestring))
         super().__init__(**kwargs)
 
-
     def hooks(self):
-        return {4:self.Hook4}
-
+        return {4: self.Hook4}
 
     @timeit
     @banner
     def Hook4(self, ice):
         "Statistics on the HBs along a ring."
         logger = getLogger()
-        graph = nx.Graph(ice.spacegraph) #undirected
+        graph = nx.Graph(ice.spacegraph)  # undirected
         stat = dict()
         prob = defaultdict(int)
 
         # Ideal distributions
-        for n in range(3, self.largestring+1):
+        for n in range(3, self.largestring + 1):
             prob[n] = probabilities(n)
             stat[n] = defaultdict(int)
 
-        for ring in cycles_iter(graph, self.largestring,  pos=ice.reppositions):
+        for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             ori = orientations(ring, ice.spacegraph)
-            c   = encode(ori)
-            n   = len(ring)
+            c = encode(ori)
+            n = len(ring)
             stat[n][c] += 1
 
-        #size code code(binary) Approx. Stat.
+        # size code code(binary) Approx. Stat.
         logger.info("""
         """)
         s = ""
-        for n in range(3, self.largestring+1):
-            fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(n)
+        for n in range(3, self.largestring + 1):
+            fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(
+                n)
             denom = 0
             for c in stat[n]:
                 denom += stat[n][c]
             if denom > 0:
                 dKL = 0.0
                 for c in prob[n]:
-                    s += fmtstr.format(n,c,prob[n][c], float(prob[n][c]), stat[n][c]/denom, stat[n][c], denom) + "\n"
-                    q = stat[n][c]/denom
+                    s += fmtstr.format(n,
+                                       c,
+                                       prob[n][c],
+                                       float(prob[n][c]),
+                                       stat[n][c] / denom,
+                                       stat[n][c],
+                                       denom) + "\n"
+                    q = stat[n][c] / denom
                     p = prob[n][c]
                     if q > 0.0:
-                        dKL += q*(log(q) - log(p))
-                dKL /= log(2.0)  #bit
-                s += "{1} {0} dKL[{0}-ring]\n".format(n,dKL)
-                logger.info("  dKL[{0}-ring]={1}".format(n,dKL))
+                        dKL += q * (log(q) - log(p))
+                dKL /= log(2.0)  # bit
+                s += "{1} {0} dKL[{0}-ring]\n".format(n, dKL)
+                logger.info("  dKL[{0}-ring]={1}".format(n, dKL))
         self.output = s

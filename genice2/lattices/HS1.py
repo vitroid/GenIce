@@ -8,21 +8,20 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.density = 0.8     #default self.density
+        self.density = 0.8  # default self.density
 
-
-        self.bondlen = 3      #bond threshold
+        self.bondlen = 3  # bond threshold
 
         self.coord = "absolute"
 
-
-        self.cell="""
+        self.cell = """
         20.0715 11.588333333 11.754333333
         """
 
-        self.waters="""
+        self.waters = """
         -8.67219264749 8.15592694143 5.8771666665
         1.3635573525 9.22657305807 5.8771666665
         -7.9642708425 9.38220437473 8.14751614977
@@ -105,7 +104,6 @@ class Lattice(genice2.lattices.Lattice):
         -5.89269132751 5.79410872483 3.60681718323
         """
 
-
         self.cages = """
         12    0.5000    0.0000    0.5000
         12    0.2500    0.7500    0.5000
@@ -124,5 +122,5 @@ class Lattice(genice2.lattices.Lattice):
         """
 
         self.cell = cellvectors(a=20.0715,
-                           b=11.588333333,
-                           c=11.754333333)
+                                b=11.588333333,
+                                c=11.754333333)

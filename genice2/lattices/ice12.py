@@ -1,25 +1,25 @@
 # coding: utf-8
 
-desc={"ref": {"12(1)": "Lobban 1998",
-              "12(2)": 'Koza 2000'},
-      "usage": "No options available.",
-      "brief": "Metastable high-pressure ice XII."
-      }
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"12(1)": "Lobban 1998",
+                "12(2)": 'Koza 2000'},
+        "usage": "No options available.",
+        "brief": "Metastable high-pressure ice XII."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen = 3      #bond threshold
+        self.bondlen = 3  # bond threshold
 
         self.cell = """
         8.2816 8.2816 8.0722
         """
 
-        self.density=1.4397
+        self.density = 1.4397
 
-        self.waters="""
+        self.waters = """
         0.75 0.13356 0.1875
         0.75 0.13536 0.6875
         0.86464 0.75 0.3125
@@ -46,8 +46,8 @@ class Lattice(genice2.lattices.Lattice):
         0.63536 0.75 0.5625
         """
 
-        self.coord="relative"
+        self.coord = "relative"
 
         self.cell = cellvectors(a=8.2816,
-                           b=8.2816,
-                           c=8.0722)
+                                b=8.2816,
+                                c=8.0722)

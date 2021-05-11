@@ -15,6 +15,7 @@ import numpy as np
 from types import SimpleNamespace
 import pairlist as pl
 
+
 def str2rangevalues(s):
     values = s.split(":")
     assert len(values) > 0
@@ -34,7 +35,8 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
     logger = getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
-    logger.info("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
+    logger.info("  file number range: {0}:{1}:{2}".format(
+        *str2rangevalues(filerange)))
     logger.info("  frame number range: {0}:{1}:{2}".format(*rframe))
     # test whether filename has a regexp for enumeration
     logger.info(filename)
@@ -57,7 +59,8 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
             suffix = Path(fname).suffix[1:]
         loader = safe_import("loader", suffix)
         file = open(fname)
-        for oatoms, hatoms, cellmat in loader.load_iter(file, oname=oname, hname=hname):
+        for oatoms, hatoms, cellmat in loader.load_iter(
+                file, oname=oname, hname=hname):
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
                 yield oatoms, hatoms, cellmat
@@ -75,7 +78,7 @@ def average(load_iter, span=0):
         # pass through.
         yield from load_iter()
         return
-    ohist = [] # center-of-mass position (relative)
+    ohist = []  # center-of-mass position (relative)
     for oatoms, hatoms, cellmat in load_iter():
 
         # center of mass
@@ -85,9 +88,9 @@ def average(load_iter, span=0):
         elif span > 1:
             # displacements
             d = oatoms - ohist[-1]
-            d -= np.floor(d+0.5)
+            d -= np.floor(d + 0.5)
             # new positions
-            ohist.append(ohist[-1]+d)
+            ohist.append(ohist[-1] + d)
             # if too many storage
             if len(ohist) > span:
                 # drop the oldest one.
@@ -109,18 +112,24 @@ def make_lattice_info(oatoms, hatoms, cellmat):
     assert oatoms.shape[0] > 0
     assert hatoms is None or oatoms.shape[0] * 2 == hatoms.shape[0]
     coord = 'relative'
-    density = oatoms.shape[0] / (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
+    density = oatoms.shape[0] / \
+        (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
 
     if hatoms is None:
-        return SimpleNamespace(waters=oatoms, coord=coord, density=density, bondlen=0.3, cell=cellmat)
+        return SimpleNamespace(
+            waters=oatoms,
+            coord=coord,
+            density=density,
+            bondlen=0.3,
+            cell=cellmat)
 
-    rotmat = np.zeros((oatoms.shape[0],3,3))
+    rotmat = np.zeros((oatoms.shape[0], 3, 3))
     for i in range(oatoms.shape[0]):
         ro = oatoms[i]
         rdh0 = rel_wrap(hatoms[i * 2] - ro)
         rdh1 = rel_wrap(hatoms[i * 2 + 1] - ro)
-        dh0 = np.dot(rdh0, cellmat)
-        dh1 = np.dot(rdh1, cellmat)
+        dh0 = rdh0 @ cellmat
+        dh1 = rdh1 @ cellmat
         y = dh0 - dh1
         y /= np.linalg.norm(y)
         z = dh0 + dh1
@@ -143,4 +152,11 @@ def make_lattice_info(oatoms, hatoms, cellmat):
             pairs.append((h // 2, o))
     logger.debug("  # of pairs: {0} {1}".format(len(pairs), oatoms.shape[0]))
 
-    return SimpleNamespace(waters=oatoms, coord=coord, density=density, pairs=pairs, rotmat=rotmat, cell=cellmat, __doc__=None)
+    return SimpleNamespace(
+        waters=oatoms,
+        coord=coord,
+        density=density,
+        pairs=pairs,
+        rotmat=rotmat,
+        cell=cellmat,
+        __doc__=None)

@@ -1,6 +1,7 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.waters = """
@@ -50,6 +51,6 @@ class Lattice(genice2.lattices.Lattice):
         self.density = 0.610666558384
 
         self.cell = cellvectors(a=17.3705982487,
-                           b=17.370598248698347,
-                           c=7.49251160134,
-                           C=120.00000000004124)
+                                b=17.370598248698347,
+                                c=7.49251160134,
+                                C=120.00000000004124)

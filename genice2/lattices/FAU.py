@@ -3,11 +3,12 @@ import genice2.lattices
 from genice2.cell import cellvectors
 
 
-desc={"ref": {"sIII": 'Huang 2017',
-              "FAU": 'IZA Database'},
-      "usage": "No options available.",
-      "brief": "Hypothetical ice at negative pressure ice 'sIV'."
-      }
+desc = {"ref": {"sIII": 'Huang 2017',
+                "FAU": 'IZA Database'},
+        "usage": "No options available.",
+        "brief": "Hypothetical ice at negative pressure ice 'sIV'."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -213,5 +214,5 @@ class Lattice(genice2.lattices.Lattice):
         self.density = 0.535156176286
 
         self.cell = cellvectors(a=22.0521436845,
-                           b=22.0521436845,
-                           c=22.0521436845)
+                                b=22.0521436845,
+                                c=22.0521436845)

@@ -7,21 +7,21 @@ Reshaping the unit cell.
   k:[0 0 1]
 """
 
-desc={"ref": {"xdtc": 'Matsumoto 2021'},
-      "usage": "No options available.",
-      "brief": "A porous ice with cylindrical channels."
-      }
-
-
 import genice2.lattices
+desc = {"ref": {"xdtc": 'Matsumoto 2021'},
+        "usage": "No options available.",
+        "brief": "A porous ice with cylindrical channels."
+        }
+
+
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
-        self.bondlen=0.2810520357047384
-        self.coord='relative'
+        self.bondlen = 0.2810520357047384
+        self.coord = 'relative'
         from genice2.cell import cellvectors
         self.cell = cellvectors(a=2.04622653, b=3.54416832, c=0.70192855)
-        self.density=0.610666558384
-        self.waters="""
+        self.density = 0.610666558384
+        self.waters = """
     0.6023    0.1326    0.9343
     0.3977    0.1326    0.9343
     0.5000    0.2348    0.9343

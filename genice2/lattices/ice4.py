@@ -1,13 +1,11 @@
 
-desc={"ref": {"IV": 'Avogadro'},
-      "usage": "No options available.",
-      "brief": "Ice IV."
-      }
-
-
-
-import genice2.lattices
 from genice2.cell import cellvectors
+import genice2.lattices
+desc = {"ref": {"IV": 'Avogadro'},
+        "usage": "No options available.",
+        "brief": "Ice IV."
+        }
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -151,8 +149,8 @@ class Lattice(genice2.lattices.Lattice):
         self.density = 1.3072141048893433
 
         self.cell = cellvectors(a=15.070097094562836,
-                           b=15.070097094562836,
-                           c=15.070097094562838,
-                           A=70.1,
-                           B=70.1,
-                           C=70.1)
+                                b=15.070097094562836,
+                                c=15.070097094562838,
+                                A=70.1,
+                                B=70.1,
+                                C=70.1)

@@ -8,7 +8,7 @@ import numpy as np
 def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
     logger = getLogger()
 
-    name, labels, intra = molecule.get() #Molecule class
+    name, labels, intra = molecule.get()  # Molecule class
     mols = SimpleNamespace(resname=name,
                            atomnames=labels,
                            positions=[],         # atomic positions
@@ -24,16 +24,17 @@ def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
         mols.positions.append(abscom + rotated)
     return mols
 
+
 def monatom(coord, cell, name):
     logger = getLogger()
 
     mols = SimpleNamespace(resname=name,
                            atomnames=[name],
-                           positions=[np.array([cell.rel2abs(coord),])],         # atomic positions
+                           # atomic positions
+                           positions=[np.array([cell.rel2abs(coord), ])],
                            orig_order=[0],  #
                            )
     return mols
-
 
 
 def serialize(mols):
@@ -45,28 +46,28 @@ def serialize(mols):
     atoms = []
     for i, atompositions in enumerate(mols.positions):
         for j, atompos in enumerate(atompositions):
-            atoms.append([j, mols.resname, mols.atomnames[j], atompos, mols.orig_order[i]])
+            atoms.append([j, mols.resname, mols.atomnames[j],
+                         atompos, mols.orig_order[i]])
     return atoms
-
-
-
 
 
 class Molecule():
     """
     Base class of molecules
     """
+
     def __init__(self, **kwargs):
         assert len(kwargs) == 0
 
         # sites: positions of interaction sites relative to a center of molecule
         # a numpy array of rank (N, 3) where N is number of sites
-        self.sites_ = np.zeros([1,3])
+        self.sites_ = np.zeros([1, 3])
 
         # Labels of the interaction sites.
-        self.labels_ = ["Me",]
+        self.labels_ = ["Me", ]
 
-        # the name that represents the molecule. It is necessary for Gromacs format.
+        # the name that represents the molecule. It is necessary for Gromacs
+        # format.
         self.name_ = "MET"
 
     def get(self):
