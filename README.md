@@ -547,14 +547,14 @@ Symbol | <div style="width:300px">Description</div>
 -------|------------
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Fan 2010,Jackson 1997]
-115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984,Engel 2018,Kosyakov 1999,IZA Database]
+115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [IZA Database,Kosyakov 1999,Engel 2018,Jeffrey 1984]
 12, XII, ice12 | Metastable high-pressure ice XII. [Koza 2000,Lobban 1998]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
-16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984,Falenty 2014,Kosyakov 1999,Sikiric 2010,IZA Database]
+16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Falenty 2014,Kosyakov 1999,Sikiric 2010,Jeffrey 1984,IZA Database]
 17, XVII, ice17 | Ultralow-density Ice XVII. [Rosso 2016,Strobel 2016,Smirnov 2013]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
-2, II, ice2 | Hydrogen-ordered ice II. [Kamb 2003,Londono 1988,Kamb 1964]
+2, II, ice2 | Hydrogen-ordered ice II. [Londono 1988,Kamb 1964,Kamb 2003]
 2D3 | Trilayer honeycomb ice.
 2d, ice2d, ice2rect | A hydrogen-disordered counterpart of ice II. [Nakamura 2015]
 3, III, ice3 | Ice III. [Petrenko 1999]
@@ -570,12 +570,12 @@ Symbol | <div style="width:300px">Description</div>
 A, iceA | Hypothetical ice A. [Baez 1998]
 A15, Struct33 | Cubic Structure I of clathrate hydrate. [Sikiric 2010]
 B, iceB | Hypothetical ice B. [Baez 1998]
-BSV, engel05 | Hypothetical zeolitic ice of the gyroid structure. [IZA Database,Engel 2018]
+BSV, engel05 | Hypothetical zeolitic ice of the gyroid structure. [Engel 2018,IZA Database]
 C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [Sikiric 2010]
 CRN1, CRN2, CRN3 | A continuous random network of Sillium. [Mousseau 2001]
-CS1, MEP, sI | Clathrate hydrates sI. [Jeffrey 1984,Frank 1959,Kosyakov 1999,IZA Database]
+CS1, MEP, sI | Clathrate hydrates sI. [Kosyakov 1999,Jeffrey 1984,IZA Database,Frank 1959]
 DOH, HS3, sH | Clathrate type H.
-EMT | Hypothetical ice with a large cavity. [IZA Database,Liu 2019]
+EMT | Hypothetical ice with a large cavity. [Liu 2019,IZA Database]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [IZA Database,Huang 2017]
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016,IZA Database]
 T | Hypothetical clathrate type T. [Sikiric 2010,Karttunen 2011]
@@ -630,7 +630,7 @@ A water model can be chosen with `--water` option.
 symbol   | type
 ---------|-----
 3site, tip3p | A typical 3-site model.
-4site, tip4p | A typical 4-site model. [Jorgensen 1985,Jorgensen 1983]
+4site, tip4p | A typical 4-site model. [Jorgensen 1983,Jorgensen 1985]
 5site, tip5p | A typical 5-site model.
 6site, NvdE | A 6-site water model. [Nada 2003]
 7site | A seven-site water model. [Zhao 2019]
@@ -700,9 +700,9 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
 
-## And even faster!
+## Core algorithm is separated.
 
-The core part of the new algorithm is separated as the TileCycles package and rewritten in C++. It becomes 40 times faster with the same algorithm.
+The core part of the new algorithm is separated as the TileCycles package.
 
 ## Colaboratory-ready!
 

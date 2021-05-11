@@ -325,9 +325,9 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 
 Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
 
-## And even faster!
+## Core algorithm is separated.
 
-The core part of the new algorithm is separated as the TileCycles package and rewritten in C++. It becomes 40 times faster with the same algorithm.
+The core part of the new algorithm is separated as the TileCycles package.
 
 ## Colaboratory-ready!
 
