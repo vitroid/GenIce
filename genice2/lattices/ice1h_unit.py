@@ -9,7 +9,7 @@ class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.density = 0.92  # default self.density
 
-        self.bondlen = 3        #bond threshold
+        self.bondlen = 3  # bond threshold
 
         self.waters = """
         0.125 0.333 0.125
@@ -34,5 +34,5 @@ class Lattice(genice2.lattices.Lattice):
         self.coord = "relative"
 
         self.cell = cellvectors(a=4.5328691711 * 2,
-                           b=7.84813412606925,
-                           c=7.37735062301457)
+                                b=7.84813412606925,
+                                c=7.37735062301457)

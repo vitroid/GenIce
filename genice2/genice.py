@@ -646,13 +646,22 @@ class GenIce():
         """
         Generate an ice structure and dump it with the aid of a formatter plugin.
 
-            water:     genice2.molecules.Molecule() class
             formatter: genice2.format.Format() class
+            water:     genice2.molecules.Molecule() class
             assess_cages:   Cages will be assessed on the fly instead of
                         pre-specified in the lattice plugin.
         """
 
         logger = getLogger()
+
+        # in old syntax, the arguments water and formatter were mandatory, but
+        # in new syntax, water is optional and their order is exchanged.
+        # therefore i prepare a backward compatibility.
+        from genice2.molecules import Molecule
+        if isinstance(formatter, Molecule):
+            formatter, water = water, formatter
+            logger.warn("generate_ice(water, formatter) is deprecated. "
+                        "New syntax is: generate_ice(formatter, water=water).")
 
         def Stages():
             hooks = formatter.hooks()

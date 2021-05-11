@@ -43,7 +43,7 @@ No options available.
         s += "_cell_angle_beta              {0}\n".format(beta)
         s += "_cell_angle_gamma             {0}\n".format(gamma)
         s += "\n"
-        rights = np.array([alpha,beta,gamma]) - 90
+        rights = np.array([alpha, beta, gamma]) - 90
         if np.allclose(rights, np.zeros(3)):
             s += "_symmetry_cell_setting        'orthorhombic'\n"
             s += "_symmetry_space_group_name_H-M   'P 1 '\n"
