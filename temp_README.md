@@ -26,6 +26,13 @@ The new GenIce works very well with interactive execution.
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
 
+**Note 2**: There may be compatibility issues on numpy when you install GenIce in Apple M1. Try uninstalling and installing some packages.
+
+```shell
+% pip uninstall -y pairlist numpy
+% pip install --no-cache-dir numpy==1.19.3 pairlist
+```
+
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
 Install with pip3.
