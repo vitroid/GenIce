@@ -352,11 +352,11 @@ GenIce2 is now integrated with MDAnalysis.
 
 {{citationlist}}
 
-# Algorithm and how to cite it.
+# Algorithms and how to cite them.
 
-The algorithm to make a depolarized hydrogen-disordered ice is explained in our paper:
+The algorithms to make a depolarized hydrogen-disordered ice are explained in these papers:
 
-M. Masakazu, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
+M. Matsumoto, T. Yagasaki, and H. Tanaka,"GenIce: Hydrogen-Disordered
 Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](http://doi.org/10.1002/jcc.25077)
 
     @article{Matsumoto:2017bk,
@@ -366,6 +366,17 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
 		volume = {39},
 		pages = {61-64},
         year = {2017}
+    }
+
+M. Matsumoto, T. Yagasaki, and H. Tanaka, "Novel Algorithm to Generate Hydrogen-Disordered Ice Structures.", J. Chem. Info. Modeling, (2021). [DOI:10.1021/acs.jcim.1c00440](https://doi.org/10.1021/acs.jcim.1c00440)
+
+    @article{Matsumoto:2021,
+        author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
+        title = {Novel Algorithm to Generate Hydrogen-Disordered Ice Structures},
+        journal = {Journal of Chemical Information and Modeling},
+        volume = {},
+        pages = {},
+        year = {2021}
     }
 
 # How to contribute

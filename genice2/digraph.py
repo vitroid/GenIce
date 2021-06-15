@@ -63,12 +63,12 @@ def shortest_paths(G, start, ends, allowfixed=False):
     Returns:
     list of shortest paths from the start to one of the ends.
     """
-    logger = getLogger()
+    # logger = getLogger()
     q = [(0, [start, ])]  # Heap of (cost, path)
     visited = set()       # Visited vertices.
     cheapest = 999999
     paths = []
-    while len(q):
+    while len(q) > 0:
         # logger.debug(q)
         (cost, path) = heapq.heappop(q)
         if cost > cheapest:
@@ -251,7 +251,7 @@ class IceGraph(nx.DiGraph):
         Buch's algorithm.
         """
         d = defects[0]
-        logger = getLogger()
+        # logger = getLogger()
         # logger.debug(self.ignores)
         if d in self.ignores:
             defects.pop(0)
@@ -288,7 +288,7 @@ class IceGraph(nx.DiGraph):
 
         It also counts the "ignore_ice_rules" sites.
         """
-        logger = getLogger()
+        # logger = getLogger()
         defects = []
         for i in range(self.number_of_nodes()):
             if self.in_degree(i) != 2 or self.out_degree(i) != 2:
@@ -413,7 +413,7 @@ class SpaceIceGraph(IceGraph):
 
 
 def find_apsis(vertices, coord, cell, distance, vertex, axis):
-    logger = getLogger()
+    # logger = getLogger()
     # for Z case
     apsis = coord[vertex] + axis * 0.5
     # find the atoms near the apsis

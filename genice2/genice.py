@@ -43,10 +43,9 @@ def assume_tetrahedral_vectors(v):
     assert len(v) > 0
 
     if len(v) == 3:
-
         return [-(v[0] + v[1] + v[2])]
 
-    elif len(v) == 2:
+    if len(v) == 2:
         y = v[1] - v[0]
         y /= np.linalg.norm(y)
         z = v[1] + v[0]
@@ -54,10 +53,9 @@ def assume_tetrahedral_vectors(v):
         x = np.cross(y, z)
         v2 = (x * 8.0**0.5 - z) / 3.0
         v3 = (-x * 8.0**0.5 - z) / 3.0
-
         return [v2, v3]
 
-    elif len(v) == 1:
+    if len(v) == 1:
         vr = np.array([random.random() for i in range(3)])
         vr /= np.linalg.norm(vr)
         z = v[0] / np.linalg.norm(v[0])
@@ -65,7 +63,6 @@ def assume_tetrahedral_vectors(v):
         y = np.cross(z, x)
         x1 = -x / 2 + 3.0**0.5 * y / 2
         x2 = -x / 2 - 3.0**0.5 * y / 2
-
         return [x, x1, x2]
 
     return []
