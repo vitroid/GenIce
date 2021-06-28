@@ -1,6 +1,4 @@
 # coding: utf-8
-# This is not useful for generating the graph
-
 import genice2.lattices
 from genice2.cell import cellvectors
 

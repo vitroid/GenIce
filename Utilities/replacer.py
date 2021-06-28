@@ -10,16 +10,19 @@ from genice2.plugin import plugin_descriptors
 
 
 
+def make_citations(r):
+    if len(r) > 0:
+        return " [" + ", ".join(sorted(r, key=lambda x: x.split()[-1])) + "]"
+    return ""
+
+
 def system_ices(markdown=True, citations=None):
     desc = plugin_descriptors("lattice", groups=["system"])
     documented, undocumented, refss = desc["system"]
 
     s = ""
     for description, ices in documented.items():
-        if len(refss[description]) > 0:
-            citation = " [" + ",".join(refss[description]) + "]"
-        else:
-            citation = ""
+        citation = make_citations(refss[description])
         s += ", ".join(ices) + " | " + description + citation + "\n"
         if citations is not None:
             for ref in refss[description]:
@@ -33,10 +36,7 @@ def system_molecules(markdown=True, water=False, citations=None):
 
     s = ""
     for description, ices in documented.items():
-        if len(refss[description]) > 0:
-            citation = " [" + ",".join(refss[description]) + "]"
-        else:
-            citation = ""
+        citation = make_citations(refss[description])
         s += ", ".join(ices) + " | " + description + citation + "\n"
         if citations is not None:
             for ref in refss[description]:
