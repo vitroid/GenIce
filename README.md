@@ -26,7 +26,7 @@ The new GenIce works very well with interactive execution.
 * cycless
 * pairlist>=0.2.11.1
 * yaplotlib>=0.1
-* numpy==1.19.3
+* numpy
 * wheel
 * openpyscad
 * graphstat
@@ -35,12 +35,21 @@ The new GenIce works very well with interactive execution.
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
 
-**Note 2**: There may be compatibility issues on numpy when you install GenIce in Apple M1. Try uninstalling and installing some packages.
+**Note 2**: There may be compatibility issues when you install GenIce in Apple M1.
+
+1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1 
+
+2. Moreover, scipy requires pythran (I do not know what it is).
 
 ```shell
-% pip uninstall -y pairlist numpy
-% pip install --no-cache-dir numpy==1.19.3 pairlist
+pip install pythran
+pip3 install cython pybind11
+pip3 install --no-binary :all: --no-use-pep517 numpy
+brew install openblas gfortran
+export OPENBLAS=/opt/homebrew/opt/openblas/lib/
+pip3 install --no-binary :all: --no-use-pep517 scipy
 ```
+
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
@@ -549,7 +558,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
