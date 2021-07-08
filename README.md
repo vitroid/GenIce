@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.1
+version 2.1.2
 
 
 ## New in GenIce2.1
@@ -72,7 +72,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.1)
+    (version 2.1.2)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -188,6 +188,7 @@ Install with pip3.
                             c2te            Filled ice C2 (cubic ice) by
                                             Teeratchanan (Hydrogen disordered).
                                             (Positions of guests are supplied.)
+                            eleven          Ice XI w/ stacking faults.
                             i               Hypothetical ice "i".
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are
@@ -201,13 +202,15 @@ Install with pip3.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc eleven
-                            ice1h_unit sIII sIV
+                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc ice1h_unit
+                            sIII sIV
     
     
                             2. Lattice structures served by external plugins
     
-                            (None)
+                            cif             Read a CIF file.
+                            zeolite         Retrieve a structure from the IZA
+                                            Zeolite DB.
                             ----
     
     
@@ -589,6 +592,7 @@ T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
+eleven | Ice XI w/ stacking faults.
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
@@ -599,7 +603,7 @@ prism | Ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, Kcomp, TS1, dtc, eleven, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.
