@@ -1,7 +1,7 @@
 # coding: utf-8
 import genice2.lattices
 import numpy as np
-from genice.cell import cellvectors
+from genice2.cell import cellvectors
 import logging
 desc = {
     "ref": {},
