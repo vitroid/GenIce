@@ -42,7 +42,7 @@ The new GenIce works very well with interactive execution.
 2. Moreover, scipy requires pythran (I do not know what it is).
 
 ```shell
-pip install pythran
+pip3 install pythran
 pip3 install cython pybind11
 pip3 install --no-binary :all: --no-use-pep517 numpy
 brew install openblas gfortran
@@ -188,7 +188,6 @@ Install with pip3.
                             c2te            Filled ice C2 (cubic ice) by
                                             Teeratchanan (Hydrogen disordered).
                                             (Positions of guests are supplied.)
-                            eleven          Ice XI w/ stacking faults.
                             i               Hypothetical ice "i".
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are
@@ -197,20 +196,19 @@ Install with pip3.
                             iceT            Hypothetical ice T.
                             iceT2           Hypothetical ice T2.
                             one             Ice I w/ stacking faults.
+                            oprism          Hydrogen-ordered ice nanotubes.
                             prism           Ice nanotubes.
                             sTprime         Filled ice sT'.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc ice1h_unit
-                            sIII sIV
+                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc eleven
+                            ice1h_unit sIII sIV
     
     
                             2. Lattice structures served by external plugins
     
-                            cif             Read a CIF file.
-                            zeolite         Retrieve a structure from the IZA
-                                            Zeolite DB.
+                            (None)
                             ----
     
     
@@ -266,7 +264,8 @@ Install with pip3.
     
                             2. Formatters served by external plugins
     
-                            (None)
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
     
     
@@ -561,7 +560,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
@@ -592,7 +591,6 @@ T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
-eleven | Ice XI w/ stacking faults.
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
@@ -603,7 +601,7 @@ prism | Ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, HS1, Kcomp, TS1, dtc, eleven, ice1h_unit, sIII, sIV | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.

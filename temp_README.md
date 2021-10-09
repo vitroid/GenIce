@@ -33,7 +33,7 @@ The new GenIce works very well with interactive execution.
 2. Moreover, scipy requires pythran (I do not know what it is).
 
 ```shell
-pip install pythran
+pip3 install pythran
 pip3 install cython pybind11
 pip3 install --no-binary :all: --no-use-pep517 numpy
 brew install openblas gfortran

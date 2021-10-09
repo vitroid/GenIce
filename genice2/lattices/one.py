@@ -17,6 +17,8 @@ lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):
         logger = logging.getLogger()
+        assert len(kwargs) > 0, desc["usage"]
+
         for k, v in kwargs.items():
             if k == 'layers':
                 arg = v
@@ -42,6 +44,7 @@ class Lattice(genice2.lattices.Lattice):
                 dir = -dir
                 #cubic = progressive
         assert layer == 0 and dir == 1, "Incompatible number of layers."
+        assert len(L) > 0, "Stacking pattern must be specified."
         self.waters = np.array(L) / np.array([4.0, 6.0, height])
         self.coord = "relative"
         LHB = 0.276
