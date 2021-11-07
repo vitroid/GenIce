@@ -257,9 +257,13 @@ class IceGraph(nx.DiGraph):
             defects.pop(0)
             return
         if self.degree(d) != 4:  # TSL
-            assert self.degree(
-                d) < 4, "Degree {0} should be <4.".format(self.degree(d))
+            # assert self.degree(
+            #     d) < 4, "Degree {0} should be <4.".format(self.degree(d))
             # logger.warn("  Defect {0} {1} >>{2} <<{3}".format(d,self.degree(d),self.in_degree(d),self.out_degree(d)))
+            if self.degree(d) > 4 and self.out_degree(d) == 2:
+                # accept if out-degree is 2.
+                defects.pop(0)
+                return
             if self.in_degree(d) <= 2 and self.out_degree(
                     d) <= 2:  # acceptable
                 defects.pop(0)
@@ -530,9 +534,9 @@ def depolarize_(
     defects = []
     for node in spaceicegraph.nodes():
         if spaceicegraph.degree(node) != 4:
-            assert spaceicegraph.degree(node) < 4
+            # assert spaceicegraph.degree(node) < 4
             defects.append(node)
-    logger.info(f"  Non Z4: {defects}")
+    logger.info(f"  Defects that do not have 4 neighbors: {defects}")
     if len(defects) > 0:
         reject_count = 10
         while reject_count > 0:

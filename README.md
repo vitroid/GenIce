@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.3
+version 2.1.4
 
 
 ## New in GenIce2.1
@@ -72,7 +72,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.3)
+    (version 2.1.4)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -188,6 +188,7 @@ Install with pip3.
                             c2te            Filled ice C2 (cubic ice) by
                                             Teeratchanan (Hydrogen disordered).
                                             (Positions of guests are supplied.)
+                            eleven          Ice XI w/ stacking faults.
                             i               Hypothetical ice "i".
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are
@@ -202,8 +203,8 @@ Install with pip3.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc eleven
-                            ice1h_unit sIII sIV
+                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc ice1h_unit
+                            sIII sIV
     
     
                             2. Lattice structures served by external plugins
@@ -560,7 +561,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
