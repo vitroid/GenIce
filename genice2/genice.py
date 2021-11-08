@@ -19,6 +19,7 @@ from cycless.cycles import centerOfMass, cycles_iter
 import tilecycles as tc
 
 from genice2 import digraph as dg
+from genice2 import constants
 from genice2.plugin import safe_import
 from genice2.cell import rel_wrap, Cell
 from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten, plugin_option_parser
@@ -547,8 +548,7 @@ class GenIce():
 
         # Set density
         mass = 18  # water
-        NB = 6.022e23
-        density0 = mass * nmol / (NB * volume * 1e-21)
+        density0 = mass * nmol / (constants.NA * volume * 1e-21)
 
         if density <= 0:
             try:

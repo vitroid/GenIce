@@ -7,3 +7,4 @@ wheel
 openpyscad
 graphstat
 tilecycles>=0.1.4.3
+attrdict

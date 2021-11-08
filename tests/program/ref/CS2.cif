@@ -1,8 +1,8 @@
 data_genice
 #
-_cell_length_a                17.120977156117426
-_cell_length_b                17.120977156117426
-_cell_length_c                34.24195431223485
+_cell_length_a                17.120843761276774
+_cell_length_b                17.120843761276774
+_cell_length_c                34.24168752255355
 _cell_angle_alpha             90.0
 _cell_angle_beta              90.0
 _cell_angle_gamma             90.0
