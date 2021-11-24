@@ -6,6 +6,7 @@ import numpy as np
 import pairlist as pl
 
 from genice2.cell import Cell
+from genice2 import constants
 from genice2.genice import GenIce, put_in_array, shortest_distance
 from genice2.valueparser import parse_pairs
 from genice2 import digraph as dg
@@ -108,8 +109,7 @@ class AnalIce(GenIce):
 
         # Set density
         mass = 18  # water
-        NB = 6.022e23
-        density0 = mass * nmol / (NB * volume * 1e-21)
+        density0 = mass * nmol / (constants.NB * volume * 1e-21)
 
         if density <= 0:
             try:
