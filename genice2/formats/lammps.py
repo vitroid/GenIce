@@ -42,7 +42,7 @@ No options available.
         cellmat = ice.repcell.mat
         a,b,c,A,B,C = genice2.cell.cellshape(cellmat)
         # https://docs.lammps.org/Howto_triclinic.html
-        # I hope it works
+        # I hope it works.
         lx = a
         xy = b*cos(radians(C))
         xz = c*cos(radians(B))
