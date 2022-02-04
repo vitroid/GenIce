@@ -50,6 +50,7 @@ all: 0.exyz.test
 all: 2.exmol.test
 all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 all: CS2D.gro.test
+all: bilayer20.yap.test
 
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
@@ -145,6 +146,8 @@ prism7.ringtest: $(FMT)/_ringstat.py
 	$(GENICE) xFAU[3] --rep 1 1 1 --format yaplot | fgrep -v "Command line:" > $@
 7.gro: $(FMT)/gromacs.py
 	$(GENICE) 7 -r 2 2 2 | fgrep -v "Command line:" > $@
+bilayer20.yap: $(LTC)/bilayer.py
+	$(GENICE) bilayer[size=36,40:sw=0.2] -f y | fgrep -v "Command line:" > $@
 
 
 # they are now in a separate module.

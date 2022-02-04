@@ -149,7 +149,7 @@ Generate a hydrogen-disordered honeycomb bilayer ice.
 
 Options:
   size=x,y   x must be a multiple of 3.
-  sw=z         Z specifies the ratio of Stone-Wales defects to the number of
+  sw=0.0     Z specifies the ratio of Stone-Wales defects to the number of
                sites.
 
     """
