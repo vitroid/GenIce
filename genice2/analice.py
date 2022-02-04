@@ -109,7 +109,7 @@ class AnalIce(GenIce):
 
         # Set density
         mass = 18  # water
-        density0 = mass * nmol / (constants.NB * volume * 1e-21)
+        density0 = mass * nmol / (constants.NA * volume * 1e-21)
 
         if density <= 0:
             try:
