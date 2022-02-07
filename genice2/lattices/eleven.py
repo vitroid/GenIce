@@ -1,12 +1,29 @@
 # coding: utf-8
+"""
+Generate a hydrogen-ordered ice XI with stacking faults.
+
+Usage:
+  genice2 eleven[hcchchcc]            Specify layer types with "c" or "h".
+
+"""
+
+
 import genice2.lattices
 import numpy as np
 from genice2.cell import cellvectors
-import logging
+from logging import getLogger
+
+
+def usage():
+    logger = getLogger()
+    logger.info(__doc__)
+
+
 desc = {
     "ref": {},
-    "usage": 'genice eleven[hcchchcc]; Specify layer types with "c" or "h". Note: this is not guaranteed as the most stable structure.',
-    "brief": "Ice XI w/ stacking faults."}
+    "usage": usage(),
+    "brief": "Ice XI w/ stacking faults."
+}
 
 
 lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
@@ -16,7 +33,7 @@ lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):
-        logger = logging.getLogger()
+        logger = getLogger()
         arg = 'hh'
         for k, v in kwargs.items():
             if k == 'layers':

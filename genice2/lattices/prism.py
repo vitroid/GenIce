@@ -1,30 +1,35 @@
 # coding: utf-8
 """
-Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
+Generate a hydrogen-disordered prism ice. (Cylindrical ice)
+
+Usage:
+    genice2 prism       A prism of default sides and rows (6,10)
+    genice2 prism[5]    A pentagonal prism of 10 rows.
+    genice2 prism[8,6]  An octagonal prism of 6 rows.
+
+Options:
+    [sides[,rows]]    Number of sides and rows.
+
 """
 
 import genice2.lattices
 from genice2.cell import cellvectors
 from logging import getLogger
 from math import sin, pi, cos
-desc = {
-    "ref": {
-        "prism": "Koga 2001"
-    },
-    "usage": "No options available.",
-    "brief": "Ice nanotubes."
-}
 
 
 def usage():
     logger = getLogger()
-    logger.info("** prism module **")
-    logger.info("prism module accepts two arguments.")
-    logger.info("prism[sides,rows]")
-    logger.info("By default, sides are 6 and rows are 10.")
-    logger.info("prism[5] prepares pentagonal prism of 10 rows.")
-    logger.info("prism[8,5] prepares octagonal prism of 5 rows.")
-    logger.info("------------------")
+    logger.info(__doc__)
+
+
+desc = {
+    "ref": {
+        "prism": "Koga 2001"
+    },
+    "usage": usage(),
+    "brief": "Ice nanotubes."
+}
 
 
 class Lattice(genice2.lattices.Lattice):

@@ -1,12 +1,29 @@
 # coding: utf-8
+"""
+Generate a hydrogen-disordered ice I with stacking faults.
+
+Usage:
+  genice2 one[hcchchcc]            Specify layer types with "c" or "h".
+
+"""
+
+
 import genice2.lattices
-from genice2.cell import cellvectors
 import numpy as np
-import logging
-desc = {"ref": {},
-        "usage": 'genice one[hcchchcc]; Specify layer types with "c" or "h".',
-        "brief": "Ice I w/ stacking faults."
-        }
+from genice2.cell import cellvectors
+from logging import getLogger
+
+
+def usage():
+    logger = getLogger()
+    logger.info(__doc__)
+
+
+desc = {
+    "ref": {},
+    "usage": usage(),
+    "brief": "Ice I w/ stacking faults."
+}
 
 
 lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
@@ -16,7 +33,7 @@ lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):
-        logger = logging.getLogger()
+        logger = getLogger()
         assert len(kwargs) > 0, desc["usage"]
 
         for k, v in kwargs.items():

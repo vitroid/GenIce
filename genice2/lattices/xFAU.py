@@ -8,16 +8,25 @@ Usage:
 Options:
   n    Length of the hexagonal prism. (rep=1:FAU, rep=0:SOD, rep>1: aeroice)
 """
+
+
 from genice2.lattices import ice1c as ic  # base topology
 import genice2.lattices
 from genice2.cell import cellvectors
 import re
-import logging
+from logging import getLogger
 import numpy as np
 from collections import defaultdict
 from math import acos, pi, sin, cos
-desc = {"ref": {"T": 'Matsui 2017'},
-        "usage": __doc__,
+
+
+def usage():
+    logger = getLogger()
+    logger.info(__doc__)
+
+
+desc = {"ref": {"xFAU": 'Matsui 2017'},
+        "usage": usage(),
         "brief": "Aeroice xFAU."
         }
 # FAU Decoration of a 4-network
@@ -80,7 +89,7 @@ class decorate():
             self.one(pair)
 
     def one(self, pair):
-        logger = logging.getLogger()
+        logger = getLogger()
         i, j = pair
         dij = self.atoms[j] - self.atoms[i]
         dij -= np.floor(dij + 0.5)
@@ -156,7 +165,7 @@ Options:
     """
 
     def __init__(self, **kwargs):
-        logger = logging.getLogger()
+        logger = getLogger()
         ice1c = ic.Lattice()
         cell1c = ice1c.cell
         waters1c = np.fromstring(ice1c.waters, sep=" ")

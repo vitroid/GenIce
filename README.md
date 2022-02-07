@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.4
+version 2.1.5
 
 
 ## New in GenIce2.1
@@ -37,7 +37,7 @@ The new GenIce works very well with interactive execution.
 
 **Note 2**: There may be compatibility issues when you install GenIce in Apple M1.
 
-1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1 
+1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1
 
 2. Moreover, scipy requires pythran (I do not know what it is).
 
@@ -72,7 +72,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.4)
+    (version 2.1.5)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -179,6 +179,8 @@ Install with pip3.
                             RHO             Hypothetical ice at negative pressure
                                             ice 'sIII'.
                             T               Hypothetical clathrate type T.
+                            bilayer         A Bilayer Honeycomb Ice Phase in
+                                            Hydrophobic Nanopores.
                             c0te            Filled ice C0 by Teeratchanan
                                             (Hydrogen-disordered.) (Positions of
                                             guests are supplied.)
@@ -561,7 +563,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
@@ -592,17 +594,19 @@ T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
+eleven | Ice XI w/ stacking faults.
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
 one | Ice I w/ stacking faults.
+oprism | Hydrogen-ordered ice nanotubes. [Koga 2001]
 prism | Ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, Kcomp, TS1, dtc, eleven, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.
@@ -687,6 +691,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
 |[`genice2-mdanalysis`](https://github.com/vitroid/genice-mdanalysis)|`-f mdanalysis`| Output the atoms in various file formats that are served by [MDAnalysis](https://github.com/MDAnalysis/mdanalysis).| text, binary | `mdanalysis` |
+
 ## Input plugins
 
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
@@ -762,6 +767,9 @@ HUANG, Yingying, ZHU, Chongqin, WANG, Lu, ZHAO, Jijun and ZENG, Xiao Cheng, 2017
 * [Kamb 2003] Kamb, B., Hamilton, W. C., LaPlaca, S. J. & Prakash, A. Ordered Proton Configuration in Ice II, from Single‐Crystal Neutron Diffraction. J. Chem. Phys. 55, 1934–1945 (2003).
 * [Karttunen 2011] 
 KARTTUNEN, Antti J., FÄSSLER, Thomas F., LINNOLAHTI, Mikko and PAKKANEN, Tapani A., 2011, Structural Principles of Semiconducting Group 14 Clathrate Frameworks. Inorganic Chemistry [online]. 7 March 2011. Vol. 50, no. 5, p. 1733–1742. DOI 10.1021/ic102178d. Available from: http://dx.doi.org/10.1021/ic102178d
+
+* [Koga 1997] 
+KOGA, Kenichiro, ZENG, X. C. and TANAKA, Hideki, 1997. Freezing of Confined Water: A Bilayer Ice Phase in Hydrophobic Nanopores. Physical Review Letters [online]. 29 December 1997. Vol. 79, no. 26, p. 5262–5265. DOI 10.1103/physrevlett.79.5262. Available from: http://dx.doi.org/10.1103/PhysRevLett.79.5262
 
 * [Koga 2001] 
 KOGA, Kenichiro, GAO, G. T., TANAKA, Hideki and ZENG, X. C., 2001, Formation of ordered ice nanotubes inside carbon nanotubes. Nature [online]. August 2001. Vol. 412, no. 6849, p. 802–805. DOI 10.1038/35090532. Available from: http://dx.doi.org/10.1038/35090532

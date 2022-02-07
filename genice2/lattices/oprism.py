@@ -1,42 +1,39 @@
 # coding: utf-8
 """
-Note: Due to the technical limitation in the GenIce algorithm, the minimum lattice size is larger than the crystallographic unit cell size.
+Generate a hydrogen-ordered prism ice. (Cylindrical ice)
+
+Usage:
+    genice2 oprism       A prism of default sides and rows (6,10)
+    genice2 oprism[5]    A pentagonal prism of 10 rows.
+    genice2 oprism[8,6]  An octagonal prism of 6 rows.
+
+Options:
+    [sides[,rows]]    Number of sides and rows.
+
 """
+
 
 import genice2.lattices
 from genice2.cell import cellvectors
 from logging import getLogger
 from math import sin, pi, cos
-desc = {
-    "ref": {
-        "prism": "Koga 2001"
-    },
-    "usage": "No options available.",
-    "brief": "Hydrogen-ordered ice nanotubes."
-}
 
 
 def usage():
     logger = getLogger()
-    logger.info("** prism module **")
-    logger.info("prism module accepts two arguments.")
-    logger.info("prism[sides,rows]")
-    logger.info("By default, sides are 6 and rows are 10.")
-    logger.info("Number of rows must be even.")
-    logger.info("prism[5] prepares pentagonal prism of 10 rows.")
-    logger.info("prism[8,6] prepares octagonal prism of 6 rows.")
-    logger.info("------------------")
+    logger.info(__doc__)
+
+
+desc = {
+    "ref": {
+        "prism": "Koga 2001"
+    },
+    "usage": usage(),
+    "brief": "Hydrogen-ordered ice nanotubes."
+}
 
 
 class Lattice(genice2.lattices.Lattice):
-    """
-Generate a hydrogen-ordered prism ice.
-
-Options:
-  rows=r
-  sides=s
-    """
-
     def __init__(self, **kwargs):
         logger = getLogger()
         # global sides, rows, bondlen, density, cell, waters, coord
@@ -46,7 +43,7 @@ Options:
         for k, v in kwargs.items():
             if k == "rows":
                 rows = int(v)
-                assert rows%2 == 0, "Number of rows nums be even."
+                assert rows % 2 == 0, "Number of rows nums be even."
             elif k == "sides":
                 sides = int(v)
             elif v is True:
@@ -77,17 +74,17 @@ Options:
                 z = j * L
                 self.waters.append([x, y, z])
             for i in range(sides):
-                p = j*sides + i
-                q = j*sides + (i+1) % sides
-                if j%2 == 0:
-                    self.fixed.append([p,q])
+                p = j * sides + i
+                q = j * sides + (i + 1) % sides
+                if j % 2 == 0:
+                    self.fixed.append([p, q])
                 else:
-                    self.fixed.append([q,p])
-                q = ((j+1) % rows)*sides + i
-                if i%2 == 0:
-                    self.fixed.append([p,q])
+                    self.fixed.append([q, p])
+                q = ((j + 1) % rows) * sides + i
+                if i % 2 == 0:
+                    self.fixed.append([p, q])
                 else:
-                    self.fixed.append([q,p])
+                    self.fixed.append([q, p])
         self.pairs = self.fixed
         logger.debug(self.fixed)
 

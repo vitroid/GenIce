@@ -28,7 +28,7 @@ The new GenIce works very well with interactive execution.
 
 **Note 2**: There may be compatibility issues when you install GenIce in Apple M1.
 
-1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1 
+1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1
 
 2. Moreover, scipy requires pythran (I do not know what it is).
 
@@ -319,6 +319,7 @@ Analysis plugin is a kind of output plugin (specified with -f option).
 |[`genice2-svg`](https://github.com/vitroid/genice-svg)|`-f svg`<br />`-f png` | 2D graphics in SVG format.<br /> ... in PNG format.| SVG<br />PNG | `svgwrite` |
 |[`genice2-twist`](https://github.com/vitroid/genice-twist)|`-f twist`| Calculate the twist order parameter (and visualize) [Matsumoto 2019]| text (@BTWC)<br />SVG<br />PNG <br />yaplot | `twist-op`, `genice2-svg` |
 |[`genice2-mdanalysis`](https://github.com/vitroid/genice-mdanalysis)|`-f mdanalysis`| Output the atoms in various file formats that are served by [MDAnalysis](https://github.com/MDAnalysis/mdanalysis).| text, binary | `mdanalysis` |
+
 ## Input plugins
 
 Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
