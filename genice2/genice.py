@@ -434,7 +434,7 @@ class GenIce():
                  spot_groups=dict(),
                  asis=False,
                  shift=(0., 0., 0.),
-                 seed=1000,
+                 # seed=1000,
                  ):
         """
         Constructor of GenIce.
@@ -450,7 +450,6 @@ class GenIce():
             spot_groups:Labels of cages in which a group is placed.
             asis:       Do not modify the orientations of the hydrogen bonds.
             shift:      A fractional value to be added to the positions.
-            seed:       A random seed.
 
         """
         logger = getLogger()
@@ -460,13 +459,8 @@ class GenIce():
         self.anions = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+
         # Show the document of the module
-
-        # Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-        self.seed = seed  # used in tilecycles
-
         try:
             self.doc = lat.__doc__.splitlines()
         except BaseException:

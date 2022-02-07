@@ -6,6 +6,8 @@ from genice2 import __version__, load, analice
 #from genice2.plugin import descriptions
 from genice2.plugin import safe_import, descriptions
 from genice2.valueparser import plugin_option_parser
+import random
+import numpy as np
 
 
 def help_file():
@@ -82,6 +84,11 @@ def getoptions():
                         action='store_true',
                         dest='quiet',
                         help='Do not output progress messages.')
+    parser.add_argument('--seed',
+                        type=int,
+                        dest='seed',
+                        default=1000,
+                        help='Random seed [1000]')
     parser.add_argument(
         '--add_noise',
         type=float,
@@ -123,6 +130,12 @@ def main():
     water_type, water_options = plugin_option_parser(options.water)
     logger.debug("Water type: {0}".format(water_type))
     water = safe_import("molecule", water_type).Molecule(**water_options)
+
+    seed = options.seed
+    # The random seed must be set before any modules are imported via
+    # importlib.
+    random.seed(seed)
+    np.random.seed(seed)
 
     oname = options.oatom
     hname = options.hatom

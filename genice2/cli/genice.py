@@ -9,55 +9,66 @@ from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
+import random
+import numpy as np
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
+
+
 def help_type():
     return 'R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\nIf you want to analyze your own structures, please try analice tool.\n\n' + descriptions("lattice", width=55)
 
-def help_guest():
-    return 'R|Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n'+descriptions("molecule", water=False, width=55)
 
-# def getoptions():
-#     parser = ap.ArgumentParser(description=f'GenIce is a swiss army knife to '
-#     'generate hydrogen-disordered ice structures. (version '
-#         ' {__version__})', prog='genice2')
-#     # parser.add_argument('Type',
-#     #                     help=help_type)
-#     return parser.parse_args()
+def help_guest():
+    return 'R|Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n' + \
+        descriptions("molecule", water=False, width=55)
+
 
 def getoptions():
-    parser = ap.ArgumentParser(description=f'GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {__version__})',
-        prog='genice2', formatter_class=SmartFormatter)
+    parser = ap.ArgumentParser(
+        description=f'GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {__version__})',
+        prog='genice2',
+        formatter_class=SmartFormatter)
     parser.add_argument('--version',
                         '-V',
                         action='version',
                         version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--rep',
-                        '-r',
-                        nargs=3,
-                        type=int,
-                        dest='rep',
-                        default=[1, 1, 1],
-                        help='Repeat the unit cell along a, b, and c axes. [1,1,1]')
-    parser.add_argument('--shift',
-                        '-S',
-                        nargs=3,
-                        type=float,
-                        dest='shift',
-                        default=[0., 0., 0.],
-                        help='Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]')
-    parser.add_argument('--dens',
-                        '-d',
-                        type=float,
-                        dest='dens',
-                        default=-1,
-                        help='Specify the ice density in g/cm3 (Guests are not included.)')
-    parser.add_argument('--add_noise',
-                        type=float,
-                        dest='noise',
-                        default=0.,
-                        metavar='percent',
-                        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
+    parser.add_argument(
+        '--rep',
+        '-r',
+        nargs=3,
+        type=int,
+        dest='rep',
+        default=[
+            1,
+            1,
+            1],
+        help='Repeat the unit cell along a, b, and c axes. [1,1,1]')
+    parser.add_argument(
+        '--shift',
+        '-S',
+        nargs=3,
+        type=float,
+        dest='shift',
+        default=[
+            0.,
+            0.,
+            0.],
+        help='Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]')
+    parser.add_argument(
+        '--dens',
+        '-d',
+        type=float,
+        dest='dens',
+        default=-1,
+        help='Specify the ice density in g/cm3 (Guests are not included.)')
+    parser.add_argument(
+        '--add_noise',
+        type=float,
+        dest='noise',
+        default=0.,
+        metavar='percent',
+        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
     parser.add_argument('--seed',
                         '-s',
                         type=int,
@@ -85,28 +96,28 @@ def getoptions():
                         help=help_guest())
     parser.add_argument('--Guest',
                         '-G',
-                        #nargs=1,
+                        # nargs=1,
                         dest='spot_guests',
                         metavar="13=me",
                         action="append",
                         help='Specify guest in the specific cage. (13=me, 32=co2, etc.)')
     parser.add_argument('--Group',
                         '-H',
-                        #nargs=1,
+                        # nargs=1,
                         dest='groups',
                         metavar="13=bu-:0",
                         action="append",
                         help='Specify the group. (-H 13=bu-:0, etc.)')
     parser.add_argument('--anion',
                         '-a',
-                        #nargs=1,
+                        # nargs=1,
                         dest='anions',
                         metavar="3=Cl",
                         action="append",
                         help='Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)')
     parser.add_argument('--cation',
                         '-c',
-                        #nargs=1,
+                        # nargs=1,
                         dest='cations',
                         metavar="3=Na",
                         action="append",
@@ -115,16 +126,18 @@ def getoptions():
     #                     dest='visual',
     #                     default="",
     #                     metavar="visual",
-    #                     help='Specify the yaplot file to store the depolarization paths. [""]')
-    parser.add_argument('--depol',
-                        dest='depol',
-                        default="strict",
-                        help='Depolarization. (strict, optimal, or none) ["strict"]')
-    parser.add_argument('--asis',
-                        action='store_true',
-                        dest='asis',
-                        default=False,
-                        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
+    # help='Specify the yaplot file to store the depolarization paths. [""]')
+    parser.add_argument(
+        '--depol',
+        dest='depol',
+        default="strict",
+        help='Depolarization. (strict, optimal, or none) ["strict"]')
+    parser.add_argument(
+        '--asis',
+        action='store_true',
+        dest='asis',
+        default=False,
+        help='Assumes all given HB pairs to be fixed. No shuffle and no depolarization.')
     parser.add_argument('--debug',
                         '-D',
                         action='store_true',
@@ -135,15 +148,15 @@ def getoptions():
                         action='store_true',
                         dest='quiet',
                         help='Do not output progress messages.')
-    parser.add_argument('--assess_cages',
-                        '-A',
-                        action='store_true',
-                        dest='assess_cages',
-                        help='Assess the locations of cages based on the HB network topology. Note: it may fail when the unit cell is too small.')
+    parser.add_argument(
+        '--assess_cages',
+        '-A',
+        action='store_true',
+        dest='assess_cages',
+        help='Assess the locations of cages based on the HB network topology. Note: it may fail when the unit cell is too small.')
     parser.add_argument('Type',
                         help=help_type())
     return parser.parse_args()
-
 
 
 @timeit
@@ -164,9 +177,15 @@ def main():
     logger.debug("Debug mode.")
 
     lattice_type = options.Type
+
     seed = options.seed
+    # The random seed must be set before any modules are imported via
+    # importlib.
+    random.seed(seed)
+    np.random.seed(seed)
+    # self.seed = seed  # used in tilecycles
     rep = options.rep
-    sh  = options.shift
+    sh = options.shift
     density = options.dens
     asis = options.asis
     anions = dict()
@@ -197,18 +216,22 @@ def main():
 
     signature = "Command line: {0}".format(" ".join(sys.argv))
 
-    # Initialize the Lattice class with arguments which are required for plugins.
-    lat = GenIce(safe_import("lattice", lattice_type).Lattice(**lattice_options),
-                signature=signature,
-                density=density,
-                rep=rep,
-                cations=cations,
-                anions=anions,
-                spot_guests=spot_guests,
-                spot_groups=groups,
-                asis=asis,
-                shift=sh,
-                seed=seed,
+    # Initialize the Lattice class with arguments which are required for
+    # plugins.
+    lat = GenIce(
+        safe_import(
+            "lattice",
+            lattice_type).Lattice(
+            **lattice_options),
+        signature=signature,
+        density=density,
+        rep=rep,
+        cations=cations,
+        anions=anions,
+        spot_guests=spot_guests,
+        spot_groups=groups,
+        asis=asis,
+        shift=sh,
     )
 
     guests = defaultdict(dict)
@@ -225,7 +248,8 @@ def main():
     logger.debug("Water type: {0}".format(water_type))
     water = safe_import("molecule", water_type).Molecule(**water_options)
 
-    # Main part of the program is contained in th Formatter object. (See formats/)
+    # Main part of the program is contained in th Formatter object. (See
+    # formats/)
     logger.debug("Output file format: {0}".format(file_format))
     formatter_module = safe_import("format", file_format)
     formatter = formatter_module.Format(**format_options)
@@ -233,15 +257,15 @@ def main():
     del options  # Dispose for safety.
 
     result = lat.generate_ice(water=water,
-                     guests=guests,
-                     formatter=formatter,
-                     noise=noise,
-                     depol=depol,
-                     assess_cages = assess_cages,
-                     )
-    if type(result) is bytes:
+                              guests=guests,
+                              formatter=formatter,
+                              noise=noise,
+                              depol=depol,
+                              assess_cages=assess_cages,
+                              )
+    if isinstance(result, bytes):
         sys.stdout.buffer.write(result)
-    elif type(result) is str:
+    elif isinstance(result, str):
         sys.stdout.write(result)
     elif result is not None:
         pickle.dump(result, sys.stdout.buffer)

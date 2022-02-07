@@ -13,7 +13,7 @@ from genice2.decorators import timeit, banner
 
 
 class AnalIce(GenIce):
-    def __init__(self, lat, signature="", seed=1000):
+    def __init__(self, lat, signature=""):
 
         logger = getLogger()
         self.rep = (1, 1, 1)
@@ -23,12 +23,8 @@ class AnalIce(GenIce):
         #         spot_guests=dict(),
         #         spot_groups=dict(),
         self.asis = False
+
         # Show the document of the module
-
-        # Set random seeds
-        random.seed(seed)
-        np.random.seed(seed)
-
         try:
             self.doc = lat.__doc__.splitlines()
         except BaseException:
