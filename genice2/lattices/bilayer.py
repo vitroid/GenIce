@@ -17,10 +17,11 @@ import genice2.lattices
 
 import networkx as nx
 import numpy as np
-import random  # not a good manner to initialize its own random generator.
+# import random # not a good manner to initialize its own random generator.
 import itertools as it
 from cycless.cycles import cycles_iter
 from logging import getLogger
+import random
 
 
 def usage():
