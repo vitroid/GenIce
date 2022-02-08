@@ -27,7 +27,8 @@ def usage():
 
 desc = {"ref": {"xFAU": 'Matsui 2017'},
         "usage": usage(),
-        "brief": "Aeroice xFAU."
+        "brief": "Aeroice xFAU.",
+        "test": ("[0]", "[1]", "[2]", "[4]", "[8]")
         }
 # FAU Decoration of a 4-network
 # 読みこんだAR3Rの座標を、FAU構造における多面体vertexの位置とみなし、

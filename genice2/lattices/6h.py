@@ -3,7 +3,9 @@ from genice2.cell import cellvectors
 import genice2.lattices
 desc = {"ref": {},
         "usage": "No options available.",
-        "brief": "Half lattice of ice VI."
+        "brief": "Half lattice of ice VI.",
+        "test": ({"args": "",
+                  "options": "-r 2 2 2"},)
         }
 
 

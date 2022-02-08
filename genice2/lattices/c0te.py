@@ -16,7 +16,9 @@ def usage():
 
 desc = {"ref": {"C0": "Teeratchanan 2015"},
         "usage": usage(),
-        "brief": "Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.)"
+        "brief": "Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.)",
+        "test": ({"args": "",
+                  "options": "-r 2 2 2"},)
         }
 
 

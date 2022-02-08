@@ -22,7 +22,9 @@ def usage():
 desc = {
     "ref": {},
     "usage": usage(),
-    "brief": "Ice I w/ stacking faults."
+    "brief": "Ice I w/ stacking faults.",
+    "test": ("[ccchchc]",)
+
 }
 
 

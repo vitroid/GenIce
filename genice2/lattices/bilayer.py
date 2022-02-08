@@ -31,7 +31,8 @@ def usage():
 
 desc = {"ref": {"bilayer": "Koga 1997"},
         "usage": usage(),
-        "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores."
+        "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.",
+        "test": ("", "[size=6,10]", "[size=15,18:sw=0.2]")
         }
 
 

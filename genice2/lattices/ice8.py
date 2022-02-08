@@ -7,7 +7,9 @@ from genice2.cell import cellvectors
 import genice2.lattices
 desc = {"ref": {"VIII": 'Kuhs 1998'},
         "usage": "No options available.",
-        "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII."
+        "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII.",
+        "test": ({"args": "",
+                  "options": "--depol=none"},)
         }
 
 

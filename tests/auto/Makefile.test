@@ -1,0 +1,478 @@
+all: 0_0.gro 11_0.gro 115_2_114_0.gro 12_0.gro 12_1_11_0.gro 13_0.gro 144_2_7301_0.gro 151_2_4949650_0.gro 153_2_155471_0.gro 16_0.gro 17_0.gro 176_2_5256_0.gro 1c_0.gro 1h_0.gro 1h_unit_0.gro 2_0.gro 207_1_4435_0.gro 2D3_0.gro 2_2_623457_0.gro 2d_0.gro 3_0.gro 4_0.gro 4R_0.gro 5_0.gro 5R_0.gro 6_0.gro 6h_0.gro 7_0.gro 8_0.gro 9_0.gro A_0.gro A15_0.gro ACO_0.gro B_0.gro BSV_0.gro C14_0.gro C15_0.gro C36_0.gro CRN1_0.gro CRN2_0.gro CRN3_0.gro CS1_0.gro CS2_0.gro CS4_0.gro DDR_0.gro DOH_0.gro EMT_0.gro FAU_0.gro FK6layers_0.gro FK9layers_0.gro HS1_0.gro HS2_0.gro HS3_0.gro Hcomp_0.gro II_0.gro III_0.gro IV_0.gro IWV_0.gro IX_0.gro Ic_0.gro Ih_0.gro LTA_0.gro MAR_0.gro MEP_0.gro MTN_0.gro NON_0.gro PCOD8007225_0.gro PCOD8036144_0.gro PCOD8204698_0.gro PCOD8301974_0.gro PCOD8321499_0.gro PCOD8324623_0.gro RHO_0.gro SGT_0.gro SOD_0.gro Struct01_0.gro Struct02_0.gro Struct03_0.gro Struct04_0.gro Struct05_0.gro Struct06_0.gro Struct07_0.gro Struct08_0.gro Struct09_0.gro Struct10_0.gro Struct11_0.gro Struct12_0.gro Struct13_0.gro Struct14_0.gro Struct15_0.gro Struct16_0.gro Struct17_0.gro Struct18_0.gro Struct19_0.gro Struct20_0.gro Struct21_0.gro Struct22_0.gro Struct23_0.gro Struct24_0.gro Struct25_0.gro Struct26_0.gro Struct27_0.gro Struct28_0.gro Struct29_0.gro Struct30_0.gro Struct31_0.gro Struct32_0.gro Struct33_0.gro Struct34_0.gro Struct35_0.gro Struct36_0.gro Struct37_0.gro Struct38_0.gro Struct39_0.gro Struct40_0.gro Struct41_0.gro Struct42_0.gro Struct43_0.gro Struct44_0.gro Struct45_0.gro Struct46_0.gro Struct47_0.gro Struct48_0.gro Struct49_0.gro Struct50_0.gro Struct51_0.gro Struct52_0.gro Struct53_0.gro Struct54_0.gro Struct55_0.gro Struct56_0.gro Struct57_0.gro Struct58_0.gro Struct59_0.gro Struct60_0.gro Struct61_0.gro Struct62_0.gro Struct63_0.gro Struct64_0.gro Struct65_0.gro Struct66_0.gro Struct67_0.gro Struct68_0.gro Struct69_0.gro Struct70_0.gro Struct71_0.gro Struct72_0.gro Struct73_0.gro Struct74_0.gro Struct75_0.gro Struct76_0.gro Struct77_0.gro Struct78_0.gro Struct79_0.gro Struct80_0.gro Struct81_0.gro Struct82_0.gro Struct83_0.gro Struct84_0.gro T_0.gro TS1_0.gro V_0.gro VI_0.gro VII_0.gro VIII_0.gro XI_0.gro XII_0.gro XIII_0.gro XVI_0.gro XVII_0.gro Z_0.gro bilayer_0.gro bilayer_1.gro bilayer_2.gro c0te_0.gro c1te_0.gro c2te_0.gro delta_0.gro dtc_0.gro eleven_0.gro engel01_0.gro engel03_0.gro engel04_0.gro engel05_0.gro engel17_0.gro engel20_0.gro engel23_0.gro engel24_0.gro engel26_0.gro engel29_0.gro engel30_0.gro engel31_0.gro engel34_0.gro i_0.gro ice0_0.gro ice11_0.gro ice12_0.gro ice13_0.gro ice16_0.gro ice17_0.gro ice1c_0.gro ice1h_0.gro ice1h_unit_0.gro ice1hte_0.gro ice2_0.gro ice2d_0.gro ice2rect_0.gro ice3_0.gro ice4_0.gro ice5_0.gro ice6_0.gro ice7_0.gro ice8_0.gro ice9_0.gro iceA_0.gro iceB_0.gro iceT_0.gro iceT2_0.gro mu_0.gro one_0.gro oprism_0.gro psigma_0.gro sH_0.gro sI_0.gro sII_0.gro sIII_0.gro sIV_0.gro sTprime_0.gro sV_0.gro sVII_0.gro sigma_0.gro xFAU_0.gro xFAU_1.gro xFAU_2.gro xFAU_3.gro xFAU_4.gro xdtc_0.gro zra-d_0.gro
+0_0.gro: ../../genice2/lattices/0.py
+	../../genice.x 0  > $@
+11_0.gro: ../../genice2/lattices/11.py
+	../../genice.x 11  > $@
+115_2_114_0.gro: ../../genice2/lattices/115_2_114.py
+	../../genice.x 115_2_114  > $@
+12_0.gro: ../../genice2/lattices/12.py
+	../../genice.x 12  > $@
+12_1_11_0.gro: ../../genice2/lattices/12_1_11.py
+	../../genice.x 12_1_11  > $@
+13_0.gro: ../../genice2/lattices/13.py
+	../../genice.x 13  > $@
+144_2_7301_0.gro: ../../genice2/lattices/144_2_7301.py
+	../../genice.x 144_2_7301  > $@
+151_2_4949650_0.gro: ../../genice2/lattices/151_2_4949650.py
+	../../genice.x 151_2_4949650  > $@
+153_2_155471_0.gro: ../../genice2/lattices/153_2_155471.py
+	../../genice.x 153_2_155471  > $@
+16_0.gro: ../../genice2/lattices/16.py
+	../../genice.x 16  > $@
+17_0.gro: ../../genice2/lattices/17.py
+	../../genice.x 17  > $@
+176_2_5256_0.gro: ../../genice2/lattices/176_2_5256.py
+	../../genice.x 176_2_5256  > $@
+1c_0.gro: ../../genice2/lattices/1c.py
+	../../genice.x 1c  > $@
+1h_0.gro: ../../genice2/lattices/1h.py
+	../../genice.x 1h  > $@
+1h_unit_0.gro: ../../genice2/lattices/1h_unit.py
+	../../genice.x 1h_unit  > $@
+2_0.gro: ../../genice2/lattices/2.py
+	../../genice.x 2  > $@
+207_1_4435_0.gro: ../../genice2/lattices/207_1_4435.py
+	../../genice.x 207_1_4435  > $@
+2D3_0.gro: ../../genice2/lattices/2D3.py
+	../../genice.x 2D3  > $@
+2_2_623457_0.gro: ../../genice2/lattices/2_2_623457.py
+	../../genice.x 2_2_623457  > $@
+2d_0.gro: ../../genice2/lattices/2d.py
+	../../genice.x 2d  > $@
+3_0.gro: ../../genice2/lattices/3.py
+	../../genice.x 3  > $@
+4_0.gro: ../../genice2/lattices/4.py
+	../../genice.x 4  > $@
+4R_0.gro: ../../genice2/lattices/4R.py
+	../../genice.x 4R  > $@
+5_0.gro: ../../genice2/lattices/5.py
+	../../genice.x 5  > $@
+5R_0.gro: ../../genice2/lattices/5R.py
+	../../genice.x 5R  > $@
+6_0.gro: ../../genice2/lattices/6.py
+	../../genice.x 6  > $@
+6h_0.gro: ../../genice2/lattices/6h.py
+	../../genice.x 6h -r 2 2 2 > $@
+7_0.gro: ../../genice2/lattices/7.py
+	../../genice.x 7  > $@
+8_0.gro: ../../genice2/lattices/8.py
+	../../genice.x 8 --depol=none > $@
+9_0.gro: ../../genice2/lattices/9.py
+	../../genice.x 9  > $@
+A_0.gro: ../../genice2/lattices/A.py
+	../../genice.x A  > $@
+A15_0.gro: ../../genice2/lattices/A15.py
+	../../genice.x A15  > $@
+ACO_0.gro: ../../genice2/lattices/ACO.py
+	../../genice.x ACO  > $@
+B_0.gro: ../../genice2/lattices/B.py
+	../../genice.x B  > $@
+BSV_0.gro: ../../genice2/lattices/BSV.py
+	../../genice.x BSV  > $@
+C14_0.gro: ../../genice2/lattices/C14.py
+	../../genice.x C14  > $@
+C15_0.gro: ../../genice2/lattices/C15.py
+	../../genice.x C15  > $@
+C36_0.gro: ../../genice2/lattices/C36.py
+	../../genice.x C36  > $@
+CRN1_0.gro: ../../genice2/lattices/CRN1.py
+	../../genice.x CRN1  > $@
+CRN2_0.gro: ../../genice2/lattices/CRN2.py
+	../../genice.x CRN2  > $@
+CRN3_0.gro: ../../genice2/lattices/CRN3.py
+	../../genice.x CRN3  > $@
+CS1_0.gro: ../../genice2/lattices/CS1.py
+	../../genice.x CS1  > $@
+CS2_0.gro: ../../genice2/lattices/CS2.py
+	../../genice.x CS2  > $@
+CS4_0.gro: ../../genice2/lattices/CS4.py
+	../../genice.x CS4  > $@
+DDR_0.gro: ../../genice2/lattices/DDR.py
+	../../genice.x DDR  > $@
+DOH_0.gro: ../../genice2/lattices/DOH.py
+	../../genice.x DOH  > $@
+EMT_0.gro: ../../genice2/lattices/EMT.py
+	../../genice.x EMT  > $@
+FAU_0.gro: ../../genice2/lattices/FAU.py
+	../../genice.x FAU  > $@
+FK6layers_0.gro: ../../genice2/lattices/FK6layers.py
+	../../genice.x FK6layers  > $@
+FK9layers_0.gro: ../../genice2/lattices/FK9layers.py
+	../../genice.x FK9layers  > $@
+HS1_0.gro: ../../genice2/lattices/HS1.py
+	../../genice.x HS1  > $@
+HS2_0.gro: ../../genice2/lattices/HS2.py
+	../../genice.x HS2  > $@
+HS3_0.gro: ../../genice2/lattices/HS3.py
+	../../genice.x HS3  > $@
+Hcomp_0.gro: ../../genice2/lattices/Hcomp.py
+	../../genice.x Hcomp  > $@
+II_0.gro: ../../genice2/lattices/II.py
+	../../genice.x II  > $@
+III_0.gro: ../../genice2/lattices/III.py
+	../../genice.x III  > $@
+IV_0.gro: ../../genice2/lattices/IV.py
+	../../genice.x IV  > $@
+IWV_0.gro: ../../genice2/lattices/IWV.py
+	../../genice.x IWV  > $@
+IX_0.gro: ../../genice2/lattices/IX.py
+	../../genice.x IX  > $@
+Ic_0.gro: ../../genice2/lattices/Ic.py
+	../../genice.x Ic  > $@
+Ih_0.gro: ../../genice2/lattices/Ih.py
+	../../genice.x Ih  > $@
+LTA_0.gro: ../../genice2/lattices/LTA.py
+	../../genice.x LTA  > $@
+MAR_0.gro: ../../genice2/lattices/MAR.py
+	../../genice.x MAR  > $@
+MEP_0.gro: ../../genice2/lattices/MEP.py
+	../../genice.x MEP  > $@
+MTN_0.gro: ../../genice2/lattices/MTN.py
+	../../genice.x MTN  > $@
+NON_0.gro: ../../genice2/lattices/NON.py
+	../../genice.x NON  > $@
+PCOD8007225_0.gro: ../../genice2/lattices/PCOD8007225.py
+	../../genice.x PCOD8007225  > $@
+PCOD8036144_0.gro: ../../genice2/lattices/PCOD8036144.py
+	../../genice.x PCOD8036144  > $@
+PCOD8204698_0.gro: ../../genice2/lattices/PCOD8204698.py
+	../../genice.x PCOD8204698  > $@
+PCOD8301974_0.gro: ../../genice2/lattices/PCOD8301974.py
+	../../genice.x PCOD8301974  > $@
+PCOD8321499_0.gro: ../../genice2/lattices/PCOD8321499.py
+	../../genice.x PCOD8321499  > $@
+PCOD8324623_0.gro: ../../genice2/lattices/PCOD8324623.py
+	../../genice.x PCOD8324623  > $@
+RHO_0.gro: ../../genice2/lattices/RHO.py
+	../../genice.x RHO  > $@
+SGT_0.gro: ../../genice2/lattices/SGT.py
+	../../genice.x SGT  > $@
+SOD_0.gro: ../../genice2/lattices/SOD.py
+	../../genice.x SOD  > $@
+Struct01_0.gro: ../../genice2/lattices/Struct01.py
+	../../genice.x Struct01  > $@
+Struct02_0.gro: ../../genice2/lattices/Struct02.py
+	../../genice.x Struct02  > $@
+Struct03_0.gro: ../../genice2/lattices/Struct03.py
+	../../genice.x Struct03  > $@
+Struct04_0.gro: ../../genice2/lattices/Struct04.py
+	../../genice.x Struct04  > $@
+Struct05_0.gro: ../../genice2/lattices/Struct05.py
+	../../genice.x Struct05  > $@
+Struct06_0.gro: ../../genice2/lattices/Struct06.py
+	../../genice.x Struct06  > $@
+Struct07_0.gro: ../../genice2/lattices/Struct07.py
+	../../genice.x Struct07  > $@
+Struct08_0.gro: ../../genice2/lattices/Struct08.py
+	../../genice.x Struct08  > $@
+Struct09_0.gro: ../../genice2/lattices/Struct09.py
+	../../genice.x Struct09  > $@
+Struct10_0.gro: ../../genice2/lattices/Struct10.py
+	../../genice.x Struct10  > $@
+Struct11_0.gro: ../../genice2/lattices/Struct11.py
+	../../genice.x Struct11  > $@
+Struct12_0.gro: ../../genice2/lattices/Struct12.py
+	../../genice.x Struct12  > $@
+Struct13_0.gro: ../../genice2/lattices/Struct13.py
+	../../genice.x Struct13  > $@
+Struct14_0.gro: ../../genice2/lattices/Struct14.py
+	../../genice.x Struct14  > $@
+Struct15_0.gro: ../../genice2/lattices/Struct15.py
+	../../genice.x Struct15  > $@
+Struct16_0.gro: ../../genice2/lattices/Struct16.py
+	../../genice.x Struct16  > $@
+Struct17_0.gro: ../../genice2/lattices/Struct17.py
+	../../genice.x Struct17  > $@
+Struct18_0.gro: ../../genice2/lattices/Struct18.py
+	../../genice.x Struct18  > $@
+Struct19_0.gro: ../../genice2/lattices/Struct19.py
+	../../genice.x Struct19  > $@
+Struct20_0.gro: ../../genice2/lattices/Struct20.py
+	../../genice.x Struct20  > $@
+Struct21_0.gro: ../../genice2/lattices/Struct21.py
+	../../genice.x Struct21  > $@
+Struct22_0.gro: ../../genice2/lattices/Struct22.py
+	../../genice.x Struct22  > $@
+Struct23_0.gro: ../../genice2/lattices/Struct23.py
+	../../genice.x Struct23  > $@
+Struct24_0.gro: ../../genice2/lattices/Struct24.py
+	../../genice.x Struct24  > $@
+Struct25_0.gro: ../../genice2/lattices/Struct25.py
+	../../genice.x Struct25  > $@
+Struct26_0.gro: ../../genice2/lattices/Struct26.py
+	../../genice.x Struct26  > $@
+Struct27_0.gro: ../../genice2/lattices/Struct27.py
+	../../genice.x Struct27  > $@
+Struct28_0.gro: ../../genice2/lattices/Struct28.py
+	../../genice.x Struct28  > $@
+Struct29_0.gro: ../../genice2/lattices/Struct29.py
+	../../genice.x Struct29  > $@
+Struct30_0.gro: ../../genice2/lattices/Struct30.py
+	../../genice.x Struct30  > $@
+Struct31_0.gro: ../../genice2/lattices/Struct31.py
+	../../genice.x Struct31  > $@
+Struct32_0.gro: ../../genice2/lattices/Struct32.py
+	../../genice.x Struct32  > $@
+Struct33_0.gro: ../../genice2/lattices/Struct33.py
+	../../genice.x Struct33  > $@
+Struct34_0.gro: ../../genice2/lattices/Struct34.py
+	../../genice.x Struct34  > $@
+Struct35_0.gro: ../../genice2/lattices/Struct35.py
+	../../genice.x Struct35  > $@
+Struct36_0.gro: ../../genice2/lattices/Struct36.py
+	../../genice.x Struct36  > $@
+Struct37_0.gro: ../../genice2/lattices/Struct37.py
+	../../genice.x Struct37  > $@
+Struct38_0.gro: ../../genice2/lattices/Struct38.py
+	../../genice.x Struct38  > $@
+Struct39_0.gro: ../../genice2/lattices/Struct39.py
+	../../genice.x Struct39  > $@
+Struct40_0.gro: ../../genice2/lattices/Struct40.py
+	../../genice.x Struct40  > $@
+Struct41_0.gro: ../../genice2/lattices/Struct41.py
+	../../genice.x Struct41  > $@
+Struct42_0.gro: ../../genice2/lattices/Struct42.py
+	../../genice.x Struct42  > $@
+Struct43_0.gro: ../../genice2/lattices/Struct43.py
+	../../genice.x Struct43  > $@
+Struct44_0.gro: ../../genice2/lattices/Struct44.py
+	../../genice.x Struct44  > $@
+Struct45_0.gro: ../../genice2/lattices/Struct45.py
+	../../genice.x Struct45  > $@
+Struct46_0.gro: ../../genice2/lattices/Struct46.py
+	../../genice.x Struct46  > $@
+Struct47_0.gro: ../../genice2/lattices/Struct47.py
+	../../genice.x Struct47  > $@
+Struct48_0.gro: ../../genice2/lattices/Struct48.py
+	../../genice.x Struct48  > $@
+Struct49_0.gro: ../../genice2/lattices/Struct49.py
+	../../genice.x Struct49  > $@
+Struct50_0.gro: ../../genice2/lattices/Struct50.py
+	../../genice.x Struct50  > $@
+Struct51_0.gro: ../../genice2/lattices/Struct51.py
+	../../genice.x Struct51  > $@
+Struct52_0.gro: ../../genice2/lattices/Struct52.py
+	../../genice.x Struct52  > $@
+Struct53_0.gro: ../../genice2/lattices/Struct53.py
+	../../genice.x Struct53  > $@
+Struct54_0.gro: ../../genice2/lattices/Struct54.py
+	../../genice.x Struct54  > $@
+Struct55_0.gro: ../../genice2/lattices/Struct55.py
+	../../genice.x Struct55  > $@
+Struct56_0.gro: ../../genice2/lattices/Struct56.py
+	../../genice.x Struct56  > $@
+Struct57_0.gro: ../../genice2/lattices/Struct57.py
+	../../genice.x Struct57  > $@
+Struct58_0.gro: ../../genice2/lattices/Struct58.py
+	../../genice.x Struct58  > $@
+Struct59_0.gro: ../../genice2/lattices/Struct59.py
+	../../genice.x Struct59  > $@
+Struct60_0.gro: ../../genice2/lattices/Struct60.py
+	../../genice.x Struct60  > $@
+Struct61_0.gro: ../../genice2/lattices/Struct61.py
+	../../genice.x Struct61  > $@
+Struct62_0.gro: ../../genice2/lattices/Struct62.py
+	../../genice.x Struct62  > $@
+Struct63_0.gro: ../../genice2/lattices/Struct63.py
+	../../genice.x Struct63  > $@
+Struct64_0.gro: ../../genice2/lattices/Struct64.py
+	../../genice.x Struct64  > $@
+Struct65_0.gro: ../../genice2/lattices/Struct65.py
+	../../genice.x Struct65  > $@
+Struct66_0.gro: ../../genice2/lattices/Struct66.py
+	../../genice.x Struct66  > $@
+Struct67_0.gro: ../../genice2/lattices/Struct67.py
+	../../genice.x Struct67  > $@
+Struct68_0.gro: ../../genice2/lattices/Struct68.py
+	../../genice.x Struct68  > $@
+Struct69_0.gro: ../../genice2/lattices/Struct69.py
+	../../genice.x Struct69  > $@
+Struct70_0.gro: ../../genice2/lattices/Struct70.py
+	../../genice.x Struct70  > $@
+Struct71_0.gro: ../../genice2/lattices/Struct71.py
+	../../genice.x Struct71  > $@
+Struct72_0.gro: ../../genice2/lattices/Struct72.py
+	../../genice.x Struct72  > $@
+Struct73_0.gro: ../../genice2/lattices/Struct73.py
+	../../genice.x Struct73  > $@
+Struct74_0.gro: ../../genice2/lattices/Struct74.py
+	../../genice.x Struct74  > $@
+Struct75_0.gro: ../../genice2/lattices/Struct75.py
+	../../genice.x Struct75  > $@
+Struct76_0.gro: ../../genice2/lattices/Struct76.py
+	../../genice.x Struct76  > $@
+Struct77_0.gro: ../../genice2/lattices/Struct77.py
+	../../genice.x Struct77  > $@
+Struct78_0.gro: ../../genice2/lattices/Struct78.py
+	../../genice.x Struct78  > $@
+Struct79_0.gro: ../../genice2/lattices/Struct79.py
+	../../genice.x Struct79  > $@
+Struct80_0.gro: ../../genice2/lattices/Struct80.py
+	../../genice.x Struct80  > $@
+Struct81_0.gro: ../../genice2/lattices/Struct81.py
+	../../genice.x Struct81  > $@
+Struct82_0.gro: ../../genice2/lattices/Struct82.py
+	../../genice.x Struct82  > $@
+Struct83_0.gro: ../../genice2/lattices/Struct83.py
+	../../genice.x Struct83  > $@
+Struct84_0.gro: ../../genice2/lattices/Struct84.py
+	../../genice.x Struct84  > $@
+T_0.gro: ../../genice2/lattices/T.py
+	../../genice.x T  > $@
+TS1_0.gro: ../../genice2/lattices/TS1.py
+	../../genice.x TS1  > $@
+V_0.gro: ../../genice2/lattices/V.py
+	../../genice.x V  > $@
+VI_0.gro: ../../genice2/lattices/VI.py
+	../../genice.x VI  > $@
+VII_0.gro: ../../genice2/lattices/VII.py
+	../../genice.x VII  > $@
+VIII_0.gro: ../../genice2/lattices/VIII.py
+	../../genice.x VIII --depol=none > $@
+XI_0.gro: ../../genice2/lattices/XI.py
+	../../genice.x XI  > $@
+XII_0.gro: ../../genice2/lattices/XII.py
+	../../genice.x XII  > $@
+XIII_0.gro: ../../genice2/lattices/XIII.py
+	../../genice.x XIII  > $@
+XVI_0.gro: ../../genice2/lattices/XVI.py
+	../../genice.x XVI  > $@
+XVII_0.gro: ../../genice2/lattices/XVII.py
+	../../genice.x XVII  > $@
+Z_0.gro: ../../genice2/lattices/Z.py
+	../../genice.x Z  > $@
+bilayer_0.gro: ../../genice2/lattices/bilayer.py
+	../../genice.x bilayer  > $@
+bilayer_1.gro: ../../genice2/lattices/bilayer.py
+	../../genice.x bilayer[size=6,10]  > $@
+bilayer_2.gro: ../../genice2/lattices/bilayer.py
+	../../genice.x bilayer[size=15,18:sw=0.2]  > $@
+c0te_0.gro: ../../genice2/lattices/c0te.py
+	../../genice.x c0te -r 2 2 2 > $@
+c1te_0.gro: ../../genice2/lattices/c1te.py
+	../../genice.x c1te  > $@
+c2te_0.gro: ../../genice2/lattices/c2te.py
+	../../genice.x c2te  > $@
+delta_0.gro: ../../genice2/lattices/delta.py
+	../../genice.x delta  > $@
+dtc_0.gro: ../../genice2/lattices/dtc.py
+	../../genice.x dtc  > $@
+eleven_0.gro: ../../genice2/lattices/eleven.py
+	../../genice.x eleven[ccchchc]  > $@
+engel01_0.gro: ../../genice2/lattices/engel01.py
+	../../genice.x engel01  > $@
+engel03_0.gro: ../../genice2/lattices/engel03.py
+	../../genice.x engel03  > $@
+engel04_0.gro: ../../genice2/lattices/engel04.py
+	../../genice.x engel04  > $@
+engel05_0.gro: ../../genice2/lattices/engel05.py
+	../../genice.x engel05  > $@
+engel17_0.gro: ../../genice2/lattices/engel17.py
+	../../genice.x engel17  > $@
+engel20_0.gro: ../../genice2/lattices/engel20.py
+	../../genice.x engel20  > $@
+engel23_0.gro: ../../genice2/lattices/engel23.py
+	../../genice.x engel23  > $@
+engel24_0.gro: ../../genice2/lattices/engel24.py
+	../../genice.x engel24  > $@
+engel26_0.gro: ../../genice2/lattices/engel26.py
+	../../genice.x engel26  > $@
+engel29_0.gro: ../../genice2/lattices/engel29.py
+	../../genice.x engel29  > $@
+engel30_0.gro: ../../genice2/lattices/engel30.py
+	../../genice.x engel30  > $@
+engel31_0.gro: ../../genice2/lattices/engel31.py
+	../../genice.x engel31  > $@
+engel34_0.gro: ../../genice2/lattices/engel34.py
+	../../genice.x engel34  > $@
+i_0.gro: ../../genice2/lattices/i.py
+	../../genice.x i  > $@
+ice0_0.gro: ../../genice2/lattices/ice0.py
+	../../genice.x ice0  > $@
+ice11_0.gro: ../../genice2/lattices/ice11.py
+	../../genice.x ice11  > $@
+ice12_0.gro: ../../genice2/lattices/ice12.py
+	../../genice.x ice12  > $@
+ice13_0.gro: ../../genice2/lattices/ice13.py
+	../../genice.x ice13  > $@
+ice16_0.gro: ../../genice2/lattices/ice16.py
+	../../genice.x ice16  > $@
+ice17_0.gro: ../../genice2/lattices/ice17.py
+	../../genice.x ice17  > $@
+ice1c_0.gro: ../../genice2/lattices/ice1c.py
+	../../genice.x ice1c  > $@
+ice1h_0.gro: ../../genice2/lattices/ice1h.py
+	../../genice.x ice1h  > $@
+ice1h_unit_0.gro: ../../genice2/lattices/ice1h_unit.py
+	../../genice.x ice1h_unit  > $@
+ice1hte_0.gro: ../../genice2/lattices/ice1hte.py
+	../../genice.x ice1hte  > $@
+ice2_0.gro: ../../genice2/lattices/ice2.py
+	../../genice.x ice2  > $@
+ice2d_0.gro: ../../genice2/lattices/ice2d.py
+	../../genice.x ice2d  > $@
+ice2rect_0.gro: ../../genice2/lattices/ice2rect.py
+	../../genice.x ice2rect  > $@
+ice3_0.gro: ../../genice2/lattices/ice3.py
+	../../genice.x ice3  > $@
+ice4_0.gro: ../../genice2/lattices/ice4.py
+	../../genice.x ice4  > $@
+ice5_0.gro: ../../genice2/lattices/ice5.py
+	../../genice.x ice5  > $@
+ice6_0.gro: ../../genice2/lattices/ice6.py
+	../../genice.x ice6  > $@
+ice7_0.gro: ../../genice2/lattices/ice7.py
+	../../genice.x ice7  > $@
+ice8_0.gro: ../../genice2/lattices/ice8.py
+	../../genice.x ice8 --depol=none > $@
+ice9_0.gro: ../../genice2/lattices/ice9.py
+	../../genice.x ice9  > $@
+iceA_0.gro: ../../genice2/lattices/iceA.py
+	../../genice.x iceA  > $@
+iceB_0.gro: ../../genice2/lattices/iceB.py
+	../../genice.x iceB  > $@
+iceT_0.gro: ../../genice2/lattices/iceT.py
+	../../genice.x iceT  > $@
+iceT2_0.gro: ../../genice2/lattices/iceT2.py
+	../../genice.x iceT2 --depol=optimal > $@
+mu_0.gro: ../../genice2/lattices/mu.py
+	../../genice.x mu  > $@
+one_0.gro: ../../genice2/lattices/one.py
+	../../genice.x one[ccchchc]  > $@
+oprism_0.gro: ../../genice2/lattices/oprism.py
+	../../genice.x oprism  > $@
+psigma_0.gro: ../../genice2/lattices/psigma.py
+	../../genice.x psigma  > $@
+sH_0.gro: ../../genice2/lattices/sH.py
+	../../genice.x sH  > $@
+sI_0.gro: ../../genice2/lattices/sI.py
+	../../genice.x sI  > $@
+sII_0.gro: ../../genice2/lattices/sII.py
+	../../genice.x sII  > $@
+sIII_0.gro: ../../genice2/lattices/sIII.py
+	../../genice.x sIII  > $@
+sIV_0.gro: ../../genice2/lattices/sIV.py
+	../../genice.x sIV  > $@
+sTprime_0.gro: ../../genice2/lattices/sTprime.py
+	../../genice.x sTprime  > $@
+sV_0.gro: ../../genice2/lattices/sV.py
+	../../genice.x sV  > $@
+sVII_0.gro: ../../genice2/lattices/sVII.py
+	../../genice.x sVII  > $@
+sigma_0.gro: ../../genice2/lattices/sigma.py
+	../../genice.x sigma  > $@
+xFAU_0.gro: ../../genice2/lattices/xFAU.py
+	../../genice.x xFAU[0]  > $@
+xFAU_1.gro: ../../genice2/lattices/xFAU.py
+	../../genice.x xFAU[1]  > $@
+xFAU_2.gro: ../../genice2/lattices/xFAU.py
+	../../genice.x xFAU[2]  > $@
+xFAU_3.gro: ../../genice2/lattices/xFAU.py
+	../../genice.x xFAU[4]  > $@
+xFAU_4.gro: ../../genice2/lattices/xFAU.py
+	../../genice.x xFAU[8]  > $@
+xdtc_0.gro: ../../genice2/lattices/xdtc.py
+	../../genice.x xdtc  > $@
+zra-d_0.gro: ../../genice2/lattices/zra-d.py
+	../../genice.x zra-d  > $@
+

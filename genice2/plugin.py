@@ -29,6 +29,7 @@ def scan(category):
     desc = dict()
     iswater = dict()
     refs = dict()
+    tests = dict()
 
     logger.info("\nPredefined {0}s".format(category))
     module = importlib.import_module("genice2.{0}s".format(category))
@@ -49,6 +50,8 @@ def scan(category):
                 desc[mod] = module.desc["brief"]
                 if "ref" in module.desc:
                     refs[mod] = module.desc["ref"]
+                if "test" in module.desc:
+                    tests[mod] = module.desc["test"]
             iswater[mod] = "water" in module.__dict__
         except BaseException:
             pass
@@ -65,6 +68,8 @@ def scan(category):
                 desc[label] = module.desc["brief"]
                 if "ref" in module.desc:
                     refs[label] = module.desc["ref"]
+                if "test" in module.desc:
+                    tests[mod] = module.desc["test"]
             iswater[label] = "water" in module.__dict__
         except BaseException:
             pass
@@ -80,12 +85,15 @@ def scan(category):
             desc[mod] = module.desc["brief"]
             if "ref" in module.desc:
                 refs[mod] = module.desc["ref"]
+            if "test" in module.desc:
+                tests[mod] = module.desc["test"]
         iswater[mod] = "water" in module.__dict__
     logger.info(mods)
     modules["local"] = mods
     modules["desc"] = desc
     modules["iswater"] = iswater
     modules["refs"] = refs
+    modules["tests"] = tests
 
     return modules
 

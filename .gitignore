@@ -53,6 +53,7 @@ tests/*.done
 tests/sort_tmp/*
 tests/trash/*
 tests-local/
+tests/auto/*.gro
 
 genice2/*/_original
 genice2/*/_original2

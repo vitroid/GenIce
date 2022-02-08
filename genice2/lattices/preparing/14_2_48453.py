@@ -7,7 +7,9 @@ desc = {
         "engel33": "Engel 2018"
     },
     "usage": "No options available.",
-    "brief": "Hypothetical zeolitic ice"
+    "brief": "Hypothetical zeolitic ice",
+    "test": ({"args": "",
+             "options": "-r 2 2 2"},)
 }
 
 
