@@ -54,6 +54,7 @@ tests/sort_tmp/*
 tests/trash/*
 tests-local/
 tests/auto/*.gro
+tests/auto/Makefile.*
 
 genice2/*/_original
 genice2/*/_original2
