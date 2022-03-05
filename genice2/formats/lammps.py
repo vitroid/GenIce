@@ -109,7 +109,7 @@ No options available.
         s += "Atoms\n"
         s += "\n"
         for i, atom in enumerate(atoms):
-            s += f"{i+1} {i+1} 1 0 {atom[0]} {atom[1]} {atom[2]}\n"
+            s += f"{i+1} 1 {atom[0]} {atom[1]} {atom[2]}\n"
         self.output = s
         return True
 
