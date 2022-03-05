@@ -64,3 +64,5 @@ genice2/lattices/engel/diverse_ice_structures
 .ipynb_checkpoints/
 
 old.citations.json
+
+tests/auto/*.gro
