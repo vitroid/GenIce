@@ -66,3 +66,4 @@ genice2/lattices/engel/diverse_ice_structures
 old.citations.json
 
 tests/auto/*.gro
+tests/auto/Makefile.*
