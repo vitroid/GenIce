@@ -144,7 +144,10 @@ No options available.
         s += "\n"
         s += "Atoms\n"
         s += "\n"
+        resorder = 0
         for i, atom in enumerate(atoms):
             molorder, resname, atomname, position, order = atom
-            s += f"{i+1} {atomdic[atomname]} {position[0] / AA} {position[1] / AA} {position[2] / AA}\n"
+            if molorder == 0:
+                resorder += 1
+            s += f"{i+1} {resorder} {molorder+1} q{atomname} {position[0] / AA} {position[1] / AA} {position[2] / AA}\n"
         self.output = s
