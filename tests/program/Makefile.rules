@@ -29,7 +29,7 @@ all: 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
 all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro
 all: 7.mdva.test
 #all: test19.done
-all: 1hreshape.py.test 2D3.ringtest.test prism7.ringtest.test
+all: 1hreshape.py.test 2D3.ringtest.test 
 all: 3xFAU.yap.test
 all: T.pov.test
 # all: MTN.gro MTN.re.gro.test
@@ -106,8 +106,8 @@ test4.done: $(FMT)/gromacs.py
 	$(GENICE) 1c --rep 1 1 2 --format r | fgrep -v "Command line:" > $@
 CS1.cif: $(FMT)/cif.py
 	$(GENICE) CS1 --guest 14=uathf*0.5 -G 0=me --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
-CS2.cif: $(FMT)/cif2.py
-	$(GENICE) CS2 --depol=none -c 0=Na -a 1=Cl --rep 1 1 2 --format cif2 | fgrep -v "Command line:" > $@
+CS2.cif: $(FMT)/cif.py
+	$(GENICE) CS2 --depol=none -c 0=Na -a 1=Cl --rep 1 1 2 --format cif | fgrep -v "Command line:" > $@
 #;$(UTIL)/cifdiff.sh $(REFD)/$@ $@
 
 #tests for molecules
@@ -141,8 +141,6 @@ T.pov: $(FMT)/povray.py
 	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@
 2D3.ringtest: $(FMT)/_ringstat.py
 	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
-prism7.ringtest: $(FMT)/_ringstat.py
-	$(GENICE) prism[7] --rep 1 1 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 oprism7.yap: $(FMT)/yaplot.py
 	$(GENICE) oprism[7] --rep 1 1 1 --format yaplot --depol=none | fgrep -v "Command line:" > $@
 3xFAU.yap: $(FMT)/yaplot.py
@@ -177,13 +175,23 @@ eleven.yap: $(LTC)/eleven.py $(FMT)/yaplot.py
 #%.ar3r_gro: %.ar3r $(LDR)/ar3r.py
 #	$(ANALICE) $< | fgrep -v "Command line:" > $@
 %.mdva_gro: %.mdva $(LDR)/mdva.py
-	$(ANALICE) $< | fgrep -v "Command line:" > $@
+	cat $< $< $< > rep3.$<
+	$(ANALICE) rep3.$< | fgrep -v "Command line:" > $@
+	-rm rep3.$<
 %.mdv_gro: %.mdv $(LDR)/mdv.py
-	$(ANALICE) $< | fgrep -v "Command line:" > $@
+	cat $< $< $< > rep3.$<
+	$(ANALICE) rep3.$< | fgrep -v "Command line:" > $@
+	-rm rep3.$<
 %.gro_gro: %.gro $(LDR)/gro.py
-	$(ANALICE) $< -O O -H H | fgrep -v "Command line:" > $@
+	cat $< $< $< > rep3.$<
+	$(ANALICE) rep3.$< -O O -H H | fgrep -v "Command line:" > $@
+	-rm rep3.$<
 %.nx3a_gro: %.nx3a $(LDR)/nx3a.py
-	$(ANALICE) $< --debug | fgrep -v "Command line:" > $@
+	cat $< $< $< > rep3.$<
+	$(ANALICE) rep3.$< --debug | fgrep -v "Command line:" > $@
+	-rm rep3.$<
+
+
 
 # reshape debug
 5x3R.py:
@@ -193,3 +201,4 @@ lattices/5x3R.py: 5x3R.py
 	cp $< lattices
 5x3R.yap: lattices/5x3R.py
 	$(GENICE) 5x3R -f y | fgrep -v "Command line:" > $@
+

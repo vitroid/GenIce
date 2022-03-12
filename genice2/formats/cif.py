@@ -63,15 +63,45 @@ _atom_site_fract_x
 _atom_site_fract_y
 _atom_site_fract_z
 """
+        cellmat = ice.repcell.mat
+
+        for i,pos in enumerate(ice.reppositions):
+            atomname = "O"
+            label = f"{atomname}{i}"
+            s += f"{label:>6}{atomname:>6}{pos[0]:10.4f}{pos[1]:10.4f}{pos[2]:10.4f}\n"
+        s += "\n"
+        self.output = s
+        return True #terminate
+
+
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output in CIF format."
+        logger = getLogger()
+
+        s = self.format_cell_shape(ice)
+
+        s += """
+loop_
+  _symmetry_equiv_pos_as_xyz
+X,Y,Z
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+"""
         atoms = []
         for mols in ice.universe:
             atoms += serialize(mols)
 
         for i, atom in enumerate(atoms):
             molorder, resname, atomname, position, order = atom
-            position = ice.repcell.abs2rel(position)
-            label = atomname + "{0}".format(i)
-            s += "{4:>6}{0:>6}{1:10.4f}{2:10.4f}{3:10.4f}\n".format(
-                atomname, position[0], position[1], position[2], label)
+            pos = ice.repcell.abs2rel(position)
+            label = f"{atomname}{i}"
+            s += f"{label:>6}{atomname:>6}{pos[0]:10.4f}{pos[1]:10.4f}{pos[2]:10.4f}\n"
         s += "\n"
         self.output = s
