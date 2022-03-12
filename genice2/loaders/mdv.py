@@ -18,29 +18,30 @@ def load_iter(file, oname, hname=None):
         conv = 0.052917721067  # au in nm
     else:
         conv = 0.1             # AA in nm
-    while True:
-        line = file.readline()  # 1st line:comment
-        if len(line) == 0:
-            return
-        cols = line.split()
-        assert cols[0] == '#'  # yaga style
-        c = [float(x) for x in cols[1:4]]
-        cellmat = np.array([[c[0], 0., 0.],
-                            [0., c[1], 0.],
-                            [0., 0., c[2]]])
-        cellmat *= conv
-        celli = np.linalg.inv(cellmat)
-        while True:
-            line = file.readline()
-            if line[0] != "-":
-                break
 
-        natom = int(line)
-        hatoms = []
-        oatoms = []
-        skipped = set()
-        for i in range(natom):
-            line = file.readline()
+    natom = -100
+    lineno = 0
+    for line in iter(file.readline, ""):
+        lineno += 1
+        if lineno == 1:
+            # first line
+            cols = line.split()
+            assert cols[0] == '#'  # yaga style
+            c = [float(x) for x in cols[1:4]]
+            cellmat = np.array([[c[0], 0., 0.],
+                                [0., c[1], 0.],
+                                [0., 0., c[2]]])
+            cellmat *= conv
+            celli = np.linalg.inv(cellmat)
+        elif line[0] == "-":
+            continue
+        elif natom < 0:
+            natom = int(line)
+            hatoms = []
+            oatoms = []
+            skipped = set()
+        elif natom > 0:
+            natom -= 1
             cols = line.split()
             atomname = cols[0]
             # atomid = int(line[15:20])
@@ -53,11 +54,15 @@ def load_iter(file, oname, hname=None):
                 if atomname not in skipped:
                     logger.info("Skip {0}".format(atomname))
                     skipped.add(atomname)
-        # fractional coordinate
-        oatoms = np.array(oatoms) @ celli
-        if len(hatoms) > 0:
-            hatoms = np.array(hatoms) @ celli
-        else:
-            hatoms = None
+            # finalize the frame
+            if natom == 0:
+                # fractional coordinate
+                oatoms = np.array(oatoms) @ celli
+                if len(hatoms) > 0:
+                    hatoms = np.array(hatoms) @ celli
+                else:
+                    hatoms = None
 
-        yield oatoms, hatoms, cellmat
+                yield oatoms, hatoms, cellmat
+                natom = -100
+                lineno = 0

@@ -73,6 +73,29 @@ _atom_site_fract_z
         self.output = s
         return True #terminate
 
+    def format_cell_shape(self, ice):
+        aL, bL, cL, alpha, beta, gamma = ice.repcell.shape()
+
+        s = ""
+        s += "data_genice\n"
+        s += '#' + "\n#".join(ice.doc) + "\n"
+        s += "_cell_length_a                {0}\n".format(aL * 10)
+        s += "_cell_length_b                {0}\n".format(bL * 10)
+        s += "_cell_length_c                {0}\n".format(cL * 10)
+        s += "_cell_angle_alpha             {0}\n".format(alpha)
+        s += "_cell_angle_beta              {0}\n".format(beta)
+        s += "_cell_angle_gamma             {0}\n".format(gamma)
+        s += "\n"
+        rights = np.array([alpha, beta, gamma]) - 90
+        if np.allclose(rights, 0):
+            s += "_symmetry_cell_setting        'orthorhombic'\n"
+            s += "_symmetry_space_group_name_H-M   'P 1 '\n"
+        else:
+            # for now it is always triclinic
+            s += "_symmetry_cell_setting        'triclinic'\n"
+            s += "_symmetry_space_group_name_H-M   'P 1 '\n"
+        return s
+
 
     @timeit
     @banner

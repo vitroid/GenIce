@@ -22,9 +22,6 @@ def load_iter(file, oname="O", hname=None):
     logger = logging.getLogger()
 
     natom = -100
-    hatoms = []
-    oatoms = []
-    skipped = set()
     lineno = 0
     for line in iter(file.readline, ""):
         # skip whenever the line starts from "#"
@@ -32,14 +29,20 @@ def load_iter(file, oname="O", hname=None):
             continue
         lineno += 1
         if lineno == 1:
+            logging.debug(f"COMMENT {line.rstrip()}")
             # the first line is a comment
             continue
         elif lineno == 2:
             # the second line is th enumber of atoms
             natom = int(line)
+            logger.debug(f"NATOM {natom}")
+            hatoms = []
+            oatoms = []
+            skipped = set()
         elif natom > 0:
             # count down the natom to read atoms
             natom -= 1
+            logger.debug(f"NATOM {natom}")
             atomname = line[10:15].replace(' ', '')
             pos = np.array([float(x)
                            for x in line[20:].split()[:3]])  # drop velocity
@@ -51,7 +54,8 @@ def load_iter(file, oname="O", hname=None):
                 skipped.add(atomname)
                 if atomname not in skipped:
                     logger.info("Skip {0}".format(atomname))
-        else:
+
+        elif natom == 0:
             # the last line is the cell dimension
             c = [float(x) for x in line.split()]
             if len(c) == 3:
@@ -70,7 +74,4 @@ def load_iter(file, oname="O", hname=None):
 
             # reset everything
             natom = -100
-            hatoms = []
-            oatoms = []
-            skipped = set()
             lineno = 0
