@@ -122,8 +122,9 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
     oh = defaultdict(list)
     parent = dict()
     # find covalent OH bonds
+    rc_OH = 0.15
     for i, j in pl.pairs_iter(oxygens,
-                              rc=0.15,
+                              rc_OH,
                               cell=cell,
                               pos2=hydrogens,
                               distance=False):
@@ -131,8 +132,10 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
         parent[j] = i
     pairs = []
     # find HBs
+    rc_HB = 0.20
     for i, j in pl.pairs_iter(oxygens,
-                              rc=0.20, cell=cell,
+                              rc_HB,
+                              cell=cell,
                               pos2=hydrogens,
                               distance=False):
         if j not in oh[i]:

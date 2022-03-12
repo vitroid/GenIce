@@ -532,7 +532,7 @@ class GenIce():
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
             p = pl.pairs_iter(self.waters,
-                              rc=rc,
+                              rc,
                               cell=self.cell.mat,
                               distance=False)
             self.bondlen = 1.1 * \
