@@ -1,5 +1,6 @@
 # test of tests
 import sys
+sys.path.append("/Users/matto/Dropbox/gitbox/GenIce2")
 from genice2.plugin import scan
 import json
 
