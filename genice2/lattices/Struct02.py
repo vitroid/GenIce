@@ -9,7 +9,7 @@ from genice2.cell import cellvectors
 import genice2.lattices
 desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
         "usage": "No options available.",
-        "brief": "A space fullerene."
+        "brief": "A space fullerene. (I phase?)"
         }
 
 

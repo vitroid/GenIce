@@ -31,8 +31,8 @@ def scan(category):
     refs = dict()
     tests = dict()
 
-    logger.info("\nPredefined {0}s".format(category))
-    module = importlib.import_module("genice2.{0}s".format(category))
+    logger.info(f"\nPredefined {category}s")
+    module = importlib.import_module(f"genice2.{category}s")
     mods = []
     for path in module.__path__:
         for mod in sorted(glob.glob(path + "/*.py")):
@@ -45,7 +45,7 @@ def scan(category):
     for mod in modules["system"]:
         try:
             module = importlib.import_module(
-                "genice2.{0}s.{1}".format(category, mod))
+               f"genice2.{category}s.{mod}")
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
                 if "ref" in module.desc:
@@ -56,8 +56,8 @@ def scan(category):
         except BaseException:
             pass
 
-    logger.info("Extra {0}s".format(category))
-    groupname = 'genice2_{0}'.format(category)
+    logger.info(f"Extra {category}s")
+    groupname = f'genice2_{category}'
     mods = []
     for ep in pr.iter_entry_points(group=groupname):
         label, m = str(ep).split("=")
@@ -76,11 +76,12 @@ def scan(category):
     logger.info(mods)
     modules["extra"] = mods
 
-    logger.info("Local {0}s".format(category))
+    logger.info(f"Local {category}s")
     mods = [os.path.basename(mod)[:-3]
-            for mod in sorted(glob.glob("./{0}s/*.py".format(category)))]
+            for mod in sorted(glob.glob(f"./{category}s/*.py"))]
+    logger.info(mods)
     for mod in mods:
-        module = importlib.import_module("{0}s.{1}".format(category, mod))
+        module = importlib.import_module(f"{category}s.{mod}")
         if "desc" in module.__dict__:
             desc[mod] = module.desc["brief"]
             if "ref" in module.desc:
@@ -136,7 +137,7 @@ def descriptions(
             "title": "[Available molecules]"},
     }
     mods = scan(category)
-    catalog = " \n \n{0}\n \n".format(titles[category]["title"])
+    catalog = f" \n \n{titles[category]["title"]}\n \n"
     desc = mods["desc"]
     iswater = mods["iswater"]
     for group in groups:
@@ -156,10 +157,10 @@ def descriptions(
                 undesc.append(L)
         for dd in desced:
             desced[dd] = ", ".join(desced[dd])
-        catalog += "{0}\n \n".format(titles[category][group])
+        catalog += f"{titles[category][group]}\n \n"
         table = ""
         for dd in sorted(desced, key=lambda x: desced[x]):
-            table += "{0}\t{1}\n".format(desced[dd], dd)
+            table += f"{desced[dd]}\t{dd}\n"
         if table == "":
             table = "(None)\n"
         table = [
@@ -235,12 +236,12 @@ def import_extra(category, name):
     groupname = f'genice2_{category}'
     module = None
     for ep in pr.iter_entry_points(group=groupname):
-        logger.debug("    Entry point: {0}".format(ep))
+        logger.debug(f"    Entry point: {ep}")
         if ep.name == name:
-            logger.debug("      Loading {0}...".format(name))
+            logger.debug(f"      Loading {name}...")
             module = ep.load()
     if module is None:
-        logger.error("Nonexistent module: {0}".format(name))
+        logger.error(f"Nonexistent module: {name}")
         sys.exit(1)
     return module
 
@@ -268,7 +269,7 @@ def safe_import(category, name):
         usage = True
         name = name[:-1]
 
-    assert audit_name(name), "Dubious {0} name: {1}".format(category, name)
+    assert audit_name(name), f"Dubious {category} name: {name}"
 
     module = None
     try:
@@ -278,7 +279,7 @@ def safe_import(category, name):
         pass
     if module is None:
         fullname = "genice2." + category + "s." + name
-        logger.debug("Load module: {0}".format(fullname))
+        logger.debug(f"Load module: {fullname}")
         try:
             module = importlib.import_module(fullname)
         except BaseException:
@@ -288,7 +289,7 @@ def safe_import(category, name):
 
     if usage:
         if "desc" in module.__dict__:
-            logger.info("Usage for '{0}' plugin".format(name))
+            logger.info(f"Usage for '{name}' plugin")
             print(module.desc["usage"])
             sys.exit(0)
 

@@ -259,22 +259,22 @@ You can prepare your own ice structures. Create a folder named `lattices` in the
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
 module in the path above.
 
-Note: Some structures in different frameworks are identical.
+Note: Different names are given in different nomenclature.
 
-CH/FI|CH  |ice|FK |Zeo|
------|----|---|---|---|
-sI   |CS1 |-  |A15|MEP|
-sII  |CS2 |16 |C15|MTN|
-sIII |TS1 |-  |sigma|-  |
-sIV  |HS1 |-  |Z  |-  |
-sV   |HS2 |-  |*  |-  |
-sVII |CS4 |-  |*  |SOD|
-sH   |HS3 |-  |*  |DOH|
-C0   |-   |17 |*  |-  |
-C1   |-   |2  |*  |-  |
-C2   |-   |1c |*  |-  |
+CH/FI|CH  |ice|FK |Zeo|Foam|
+-----|----|---|---|---|----|
+sI   |CS1 |-  |A15|MEP|Weaire-Phelan|
+sII  |CS2 |16 |C15|MTN|    |
+sIII |TS1 |-  |sigma|-  |    |
+sIV  |HS1 |-  |Z  |-  |    |
+sV   |HS2 |-  |*  |-  |    |
+sVII |CS4 |-  |*  |SOD|Kelvin|
+sH   |HS3 |-  |*  |DOH|    |
+C0   |-   |17 |*  |-  |    |
+C1   |-   |2  |*  |-  |    |
+C2   |-   |1c |*  |-  |    |
 
-FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
+FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites; Foam: foam crystals (Weaire 1994).
 
 -: No correspondence; *: Non-FK types.
 

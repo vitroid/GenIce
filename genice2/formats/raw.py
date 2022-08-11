@@ -7,7 +7,7 @@ import numpy as np
 from logging import getLogger
 from collections import defaultdict
 desc = {"ref": {},
-        "brief": "Raw data.",
+        "brief": "Raw data. (For use with Jupyter)",
         "usage": """
 It is convenient to select the raw data format when you call GenIce from
 Jupyter and Google Colab environment. Raw data is not available in the command line.

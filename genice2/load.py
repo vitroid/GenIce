@@ -142,7 +142,8 @@ def make_lattice_info(oatoms, hatoms, cellmat):
     # 水素結合は原子の平均位置で定義している。
     pairs = []
     logger.debug("  Make pair list.")
-    for o, h in pl.pairs_iter(oatoms, rc=0.245,
+    for o, h in pl.pairs_iter(oatoms, 
+                              maxdist=0.245,
                               cell=cellmat,
                               pos2=hatoms,
                               distance=False):

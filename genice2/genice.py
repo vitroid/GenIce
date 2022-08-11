@@ -5,31 +5,26 @@
 GenIce class
 """
 
-from logging import getLogger
-from collections import defaultdict
-import random
 import itertools as it
-import string
+import random
+from collections import defaultdict
+from logging import getLogger
 from types import SimpleNamespace
 
 import numpy as np
 import pairlist as pl
-from cycless.polyhed import polyhedra_iter, cage_to_graph
-from cycless.cycles import centerOfMass, cycles_iter
 import tilecycles as tc
 
-from genice2 import digraph as dg
-from genice2.plugin import safe_import
-from genice2.cell import rel_wrap, Cell
-from genice2.valueparser import parse_cages, parse_pairs, put_in_array, flatten, plugin_option_parser
-from genice2.decorators import timeit, banner
 # for alkyl groups (Experimental)
-from genice2 import alkyl
+from genice2 import alkyl, cage
+from genice2 import digraph as dg
+from genice2.cell import Cell, rel_wrap
+from genice2.decorators import banner, timeit
 # A virtual monatomic molecule
-from genice2.molecules import one, arrange, monatom
-
-# for cage assessment
-from graphstat import GraphStat
+from genice2.molecules import arrange, monatom, one
+from genice2.plugin import safe_import
+from genice2.valueparser import (flatten, parse_cages, parse_pairs,
+                                 plugin_option_parser, put_in_array)
 
 
 def assume_tetrahedral_vectors(v):
@@ -781,60 +776,15 @@ class GenIce():
 
         if noise > 0.0:
             logger.info(f"  Add noise: {noise}.")
-            perturb = np.random.normal(loc=0.0,
-                                       scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
-                                       size=self.reppositions.shape)
+            perturb = np.random.normal(
+                loc=0.0,
+                scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
+                size=self.reppositions.shape)
             self.reppositions += self.repcell.abs2rel(perturb)
 
         if assess_cages:
-            import networkx as nx
             logger.info("  Assessing the cages...")
-            # Prepare the list of rings
-            ringlist = [[int(x) for x in ring] for ring in cycles_iter(
-                nx.Graph(self.graph), 8, pos=self.waters)]
-            # Positions of the centers of the rings.
-            ringpos = [centerOfMass(ringnodes, self.waters)
-                       for ringnodes in ringlist]
-            maxcagesize = 22
-            cagepos = []
-            cagetypes = []
-            # Detect cages and classify
-            db = GraphStat()
-            labels = set()
-            g_id2label = dict()
-            for cage in polyhedra_iter(ringlist, maxcagesize):
-                cagepos.append(centerOfMass(list(cage), ringpos))
-                g = cage_to_graph(cage, ringlist)
-                cagesize = len(cage)
-                g_id = db.query_id(g)
-                if g_id < 0:
-                    g_id = db.register()
-                    enum = 0
-                    label = f"A{cagesize}"
-                    while label in labels:
-                        char = string.ascii_lowercase[enum]
-                        label = f"A{cagesize}{char}"
-                        enum += 1
-                    g_id2label[g_id] = label
-                    labels.add(label)
-                    ringcount = [0 for i in range(9)]
-                    for ring in cage:
-                        ringcount[len(ringlist[ring])] += 1
-                    index = []
-                    for i in range(9):
-                        if ringcount[i] > 0:
-                            index.append(f"{i}^{ringcount[i]}")
-                    index = " ".join(index)
-                    logger.info(f"    Cage type: {label} ({index})")
-
-                else:
-                    label = g_id2label[g_id]
-                cagetypes.append(label)
-            if len(cagepos) > 0:
-                self.cagepos = np.array(cagepos)
-                self.cagetype = cagetypes
-            else:
-                logger.info("    No cages detected.")
+            self.cagepos, self.cagetype = cage.assess_cages( self.graph, self.waters )
             logger.info("  Done assessment.")
 
         if self.cagepos is not None:

@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+networkx = ">=2.0.dev20160901144005"
+cycless = "*"
+yaplotlib = ">=0.1"
+numpy = "*"
+openpyscad = "*"
+graphstat = "*"
+PairList = ">=0.2.12.4"
+TileCycles = ">=0.1.4.3"
+
+[dev-packages]
+genice2-svg = "*"
+requests = "*"
+genice2 = "*"
+
+[requires]
+python_version = "3.9"
