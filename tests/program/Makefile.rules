@@ -29,7 +29,7 @@ all: 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
 all: CS2.cif.test HS1.xyz.test TS1.yap.test 2dL.gro
 all: 7.mdva.test
 #all: test19.done
-all: 1hreshape.py.test 2D3.ringtest.test 
+all: 1hreshape.py.test 2D3.ringtest.test
 all: 3xFAU.yap.test
 all: T.pov.test
 # all: MTN.gro MTN.re.gro.test
@@ -52,6 +52,17 @@ all: CS2A.gro.test CS2B.gro.test CS2C.gro.test
 all: CS2D.gro.test
 all: bilayer20.yap.test oprism7.yap
 all: one.yap eleven.yap
+all: 11-1.nx3a.test 11-5.nx3a.test 11-9.nx3a.test 11-13.nx3a.test
+all: 11-2.nx3a.test 11-6.nx3a.test 11-10.nx3a.test 11-14.nx3a.test
+all: 11-3.nx3a.test 11-7.nx3a.test 11-11.nx3a.test 11-15.nx3a.test
+all: 11-4.nx3a.test 11-8.nx3a.test 11-12.nx3a.test 11-16.nx3a.test
+
+
+
+# ice XI polymorphs
+11-%.nx3a:
+	$(GENICE) --depol=none 11i[$*] -f euler > $@
+
 
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
@@ -201,4 +212,3 @@ lattices/5x3R.py: 5x3R.py
 	cp $< lattices
 5x3R.yap: lattices/5x3R.py
 	$(GENICE) 5x3R -f y | fgrep -v "Command line:" > $@
-

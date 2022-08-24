@@ -5,16 +5,18 @@
 Plugin handler.
 """
 
-from logging import getLogger, basicConfig, INFO, DEBUG
-import re
-import pkg_resources as pr
 import glob
-import os
 import importlib
+import os
+import re
 import sys
 from collections import defaultdict
+from logging import DEBUG, INFO, basicConfig, getLogger
 from textwrap import fill
-from genice2.decorators import timeit, banner
+
+import pkg_resources as pr
+
+from genice2.decorators import banner, timeit
 
 
 @timeit
@@ -137,7 +139,7 @@ def descriptions(
             "title": "[Available molecules]"},
     }
     mods = scan(category)
-    catalog = f" \n \n{titles[category]["title"]}\n \n"
+    catalog = f" \n \n{titles[category]['title']}\n \n"
     desc = mods["desc"]
     iswater = mods["iswater"]
     for group in groups:

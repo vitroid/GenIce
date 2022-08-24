@@ -7,18 +7,20 @@ Graph variants with geometrical information
 
 
 from __future__ import print_function
-import sys
+
+import heapq
 import math
-import networkx as nx
 import random
+import sys
+from logging import DEBUG, basicConfig, getLogger
+
+import networkx as nx
 import numpy as np
-from logging import getLogger, DEBUG, basicConfig
 import yaplotlib as yp
 
 # Dijkstra
 
 
-import heapq
 
 
 def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
@@ -523,10 +525,11 @@ def depolarize_(
         logger.info("  Skip depolarization by request.")
         return subgraph
 
-    spaceicegraph = SpaceIceGraph(subgraph,
-                                  coord=coord,
-                                  pbc=pbc,
-                                  ignores=ignores)
+    spaceicegraph = SpaceIceGraph(
+        subgraph,
+        coord=coord,
+        pbc=pbc,
+        ignores=ignores)
     spaceicegraph.vector_check()
 
     # TSL

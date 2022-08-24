@@ -1,7 +1,7 @@
-#!/usr/bin/python
-from genice2.cell import cellvectors
+#!/usr/bin/env python
 import genice2.lattices
 import numpy as np
+from genice2.cell import cellvectors
 
 desc = {"ref": {"11#19": "Fan 2010",
                 "11": "Jackson 1997"},

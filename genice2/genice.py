@@ -669,19 +669,19 @@ class GenIce():
             self.Stage2()
 
             # Count bonds
-            nrandom = 0
+            num_hb_disorder = 0
             nfixed = 0
             for i, j, data in self.graph.edges(data=True):
                 if self.graph[i][j]['fixed']:  # fixed pair
                     nfixed += 1
                 else:
-                    nrandom += 1
+                    num_hb_disorder += 1
             logger.info(
                 f"  Number of pre-oriented hydrogen bonds: {nfixed}")
             logger.info(
-                f"  Number of unoriented hydrogen bonds: {nrandom}")
+                f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
             logger.info("  Number of hydrogen bonds: {0} (regular num: {1})".format(
-                nfixed + nrandom, len(self.reppositions) * 2))
+                nfixed + num_hb_disorder, len(self.reppositions) * 2))
 
             # test2==True means it is a z=4 graph.
             test2 = self.test_undirected_graph(self.graph)
@@ -693,15 +693,15 @@ class GenIce():
                 if maxstage < 3 or abort:
                     return
 
-            # cyclefiller == fast algorithm
-            cyclefiller = True
+            # new_algorithm == fast algorithm
+            new_algorithm = True
             # it makes the digraph obeying ice rule with zero net polarization
             # but it works only for a perfect 4-graph.
             if not test2 or self.asis or nfixed > 0 or depol != "strict":
                 # The network is not 4-connected.
-                cyclefiller = False
+                new_algorithm = False
 
-            if cyclefiller:
+            if new_algorithm:
                 # Fast track
                 self.Stage3D()
             else:
@@ -716,7 +716,10 @@ class GenIce():
             # spacegraph might be already set in Stage3D.
             if self.spacegraph is None:
                 logger.debug(f"  graph? {self.spacegraph}")
-                self.Stage4(depol=depol)
+                if num_hb_disorder == 0:
+                    self.Stage4(depol="none")
+                else:
+                    self.Stage4(depol=depol)
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -787,7 +790,7 @@ class GenIce():
             self.cagepos, self.cagetype = cage.assess_cages( self.graph, self.waters )
             logger.info("  Done assessment.")
 
-        if self.cagepos is not None:
+        if self.cagepos is not None and self.cagepos.shape[0] > 0:
             logger.info("  Hints:")
             self.repcagepos = replicate_positions(self.cagepos, self.rep)
             nrepcages = self.repcagepos.shape[0]

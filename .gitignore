@@ -33,6 +33,7 @@ cages.py
 /*.cif
 /*.png
 /*.pdf
+/*.tgz
 benchmark\.txt
 README\.md\.1
 
@@ -66,3 +67,7 @@ genice2/lattices/engel/diverse_ice_structures
 .ipynb_checkpoints/
 
 old.citations.json
+.vscode/configurationCache.log
+.vscode/dryrun.log
+.vscode/settings.json
+.vscode/targets.log
