@@ -24,7 +24,7 @@ The new GenIce works very well with interactive execution.
 
 * networkx>=2.0.dev20160901144005
 * cycless
-* pairlist>=0.2.11.1
+* pairlist>=0.2.12.4
 * yaplotlib>=0.1
 * numpy
 * wheel
@@ -89,29 +89,17 @@ Install with pip3.
                             0, ice0         Metastable ice "0".
                             11, XI, ice11   A candidate for an antiferroelectric
                                             Ice XI #19.
-                            115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449,
-                                             144_2_7301, 14_2_48453, 151_2_4949650,
-                                             152_2_118474, 153_2_155471,
-                                            15_2_201714, 169_2_10608, 169_2_7915,
-                                            176_2_5256, 207_1_4435, 20_2_26425,
-                                            20_2_28176, 2_2_342692, 2_2_623457,
-                                            53_3_726600, 58_2_511, 61_2_8842,
-                                            67_2_1444, 67_2_1563, 84_2_1419,
-                                            91_2_8335121, ACO, CS4, DDR, IRR, IWV,
-                                            LTA, MAR, NON, PCOD8007225,
-                                            PCOD8036144, PCOD8045578, PCOD8047078,
-                                            PCOD8047931, PCOD8172143, PCOD8204698,
-                                            PCOD8301974, PCOD8321499, PCOD8324623,
-                                            SGT, SOD, engel01, engel02, engel03,
-                                            engel04, engel06, engel07, engel08,
-                                            engel09, engel10, engel11, engel12,
-                                            engel13, engel14, engel15, engel16,
-                                            engel17, engel18, engel19, engel20,
-                                            engel21, engel22, engel23, engel24,
-                                            engel25, engel26, engel27, engel28,
-                                            engel29, engel30, engel31, engel32,
-                                            engel33, engel34, sVII     Hypothetical
-                                             zeolitic ice
+                            115_2_114, 12_1_11, 144_2_7301, 151_2_4949650,
+                                            153_2_155471, 176_2_5256, 207_1_4435,
+                                            2_2_623457, ACO, CS4, DDR, IWV, LTA,
+                                            MAR, NON, PCOD8007225, PCOD8036144,
+                                            PCOD8204698, PCOD8301974, PCOD8321499,
+                                            PCOD8324623, SGT, SOD, engel01,
+                                            engel03, engel04, engel17, engel20,
+                                            engel23, engel24, engel26, engel29,
+                                            engel30, engel31, engel34, sVII
+                                            Hypothetical zeolitic ice
+                            11i             Sixteen candidates for Ice XI.
                             12, XII, ice12  Metastable high-pressure ice XII.
                             13, XIII, ice13 Ice XIII, a hydrogen-ordered
                                             counterpart of ice V.
@@ -143,32 +131,31 @@ Install with pip3.
                             BSV, engel05    Hypothetical zeolitic ice of the gyroid
                                              structure.
                             C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp,
-                                            Struct01, Struct02, Struct03, Struct04,
-                                             Struct05, Struct06, Struct07,
-                                            Struct08, Struct09, Struct10, Struct11,
-                                             Struct12, Struct13, Struct14,
-                                            Struct15, Struct16, Struct17, Struct18,
-                                             Struct19, Struct20, Struct21,
-                                            Struct22, Struct23, Struct24, Struct25,
-                                             Struct26, Struct27, Struct28,
-                                            Struct29, Struct30, Struct31, Struct32,
-                                             Struct34, Struct35, Struct36,
-                                            Struct37, Struct38, Struct39, Struct40,
-                                             Struct41, Struct42, Struct43,
-                                            Struct44, Struct45, Struct46, Struct47,
-                                             Struct48, Struct49, Struct50,
-                                            Struct51, Struct52, Struct53, Struct54,
-                                             Struct55, Struct56, Struct57,
-                                            Struct58, Struct59, Struct60, Struct61,
-                                             Struct62, Struct63, Struct64,
-                                            Struct65, Struct66, Struct67, Struct68,
-                                             Struct69, Struct70, Struct71,
-                                            Struct72, Struct73, Struct74, Struct75,
-                                             Struct76, Struct77, Struct78,
-                                            Struct79, Struct80, Struct81, Struct82,
-                                             Struct83, Struct84, Z, delta, mu,
-                                            psigma, sV, sigma, zra-d           A
-                                            space fullerene.
+                                            Struct01, Struct03, Struct04, Struct05,
+                                             Struct06, Struct07, Struct08,
+                                            Struct09, Struct10, Struct11, Struct12,
+                                             Struct13, Struct14, Struct15,
+                                            Struct16, Struct17, Struct18, Struct19,
+                                             Struct20, Struct21, Struct22,
+                                            Struct23, Struct24, Struct25, Struct26,
+                                             Struct27, Struct28, Struct29,
+                                            Struct30, Struct31, Struct32, Struct34,
+                                             Struct35, Struct36, Struct37,
+                                            Struct38, Struct39, Struct40, Struct41,
+                                             Struct42, Struct43, Struct44,
+                                            Struct45, Struct46, Struct47, Struct48,
+                                             Struct49, Struct50, Struct51,
+                                            Struct52, Struct53, Struct54, Struct55,
+                                             Struct56, Struct57, Struct58,
+                                            Struct59, Struct60, Struct61, Struct62,
+                                             Struct63, Struct64, Struct65,
+                                            Struct66, Struct67, Struct68, Struct69,
+                                             Struct70, Struct71, Struct72,
+                                            Struct73, Struct74, Struct75, Struct76,
+                                             Struct77, Struct78, Struct79,
+                                            Struct80, Struct81, Struct82, Struct83,
+                                             Struct84, Z, delta, mu, psigma, sV,
+                                            sigma, zra-d     A space fullerene.
                             CRN1, CRN2, CRN3                A continuous random
                                             network of Sillium.
                             CS1, MEP, sI    Clathrate hydrates sI.
@@ -178,6 +165,7 @@ Install with pip3.
                                             ice 'sIV'.
                             RHO             Hypothetical ice at negative pressure
                                             ice 'sIII'.
+                            Struct02        A space fullerene. (I phase?)
                             T               Hypothetical clathrate type T.
                             bilayer         A Bilayer Honeycomb Ice Phase in
                                             Hydrophobic Nanopores.
@@ -200,19 +188,18 @@ Install with pip3.
                             iceT2           Hypothetical ice T2.
                             one             Ice I w/ stacking faults.
                             oprism          Hydrogen-ordered ice nanotubes.
-                            prism           Ice nanotubes.
                             sTprime         Filled ice sT'.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 Kcomp TS1 dtc ice1h_unit
-                            sIII sIV
+                            (Undocumented) 1h_unit HS1 TS1 dtc ice1h_unit sIII sIV
     
     
                             2. Lattice structures served by external plugins
     
                             (None)
                             ----
+                            (Undocumented) cif  zeolite
     
     
                             3. Lattice structures served locally
@@ -258,7 +245,7 @@ Install with pip3.
                             p, python, reshape              Cell-reshaper.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
-                            raw             Raw data.
+                            raw             Raw data. (For use with Jupyter)
                             rings           Show rings in Yaplot.
                             y, yaplot       Yaplot.
                             ----
@@ -267,9 +254,9 @@ Install with pip3.
     
                             2. Formatters served by external plugins
     
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
+                            (None)
                             ----
+                            (Undocumented) _RDF  png  svg
     
     
                             3. Formatters served locally
@@ -320,6 +307,7 @@ Install with pip3.
     
                             H2              Hydrogen molecule.
                             ch4             An all-atom methane model.
+                            et              A united-atom ethane model.
                             me              A united-atom methane model.
                             mol             Loader for MOL files (generated by
                                             MolView.org), e.g. mol[THF.mol].
@@ -559,7 +547,8 @@ Symbol | <div style="width:300px">Description</div>
 -------|------------
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Jackson 1997, Fan 2010]
-115_2_114, 11_2_15848, 12_1_11, 12_2_29187, 12_2_32449, 144_2_7301, 14_2_48453, 151_2_4949650, 152_2_118474, 153_2_155471, 15_2_201714, 169_2_10608, 169_2_7915, 176_2_5256, 207_1_4435, 20_2_26425, 20_2_28176, 2_2_342692, 2_2_623457, 53_3_726600, 58_2_511, 61_2_8842, 67_2_1444, 67_2_1563, 84_2_1419, 91_2_8335121, ACO, CS4, DDR, IRR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8045578, PCOD8047078, PCOD8047931, PCOD8172143, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel02, engel03, engel04, engel06, engel07, engel08, engel09, engel10, engel11, engel12, engel13, engel14, engel15, engel16, engel17, engel18, engel19, engel20, engel21, engel22, engel23, engel24, engel25, engel26, engel27, engel28, engel29, engel30, engel31, engel32, engel33, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984, Kosyakov 1999, Engel 2018, IZA Database]
+115_2_114, 12_1_11, 144_2_7301, 151_2_4949650, 153_2_155471, 176_2_5256, 207_1_4435, 2_2_623457, ACO, CS4, DDR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel03, engel04, engel17, engel20, engel23, engel24, engel26, engel29, engel30, engel31, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984, Kosyakov 1999, Engel 2018, IZA Database]
+11i | Sixteen candidates for Ice XI. [Hirsch 2004]
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
@@ -583,14 +572,16 @@ A, iceA | Hypothetical ice A. [Baez 1998]
 A15, Struct33 | Cubic Structure I of clathrate hydrate. [Sikiric 2010]
 B, iceB | Hypothetical ice B. [Baez 1998]
 BSV, engel05 | Hypothetical zeolitic ice of the gyroid structure. [Engel 2018, IZA Database]
-C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct02, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [Sikiric 2010]
+C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp, Struct01, Struct03, Struct04, Struct05, Struct06, Struct07, Struct08, Struct09, Struct10, Struct11, Struct12, Struct13, Struct14, Struct15, Struct16, Struct17, Struct18, Struct19, Struct20, Struct21, Struct22, Struct23, Struct24, Struct25, Struct26, Struct27, Struct28, Struct29, Struct30, Struct31, Struct32, Struct34, Struct35, Struct36, Struct37, Struct38, Struct39, Struct40, Struct41, Struct42, Struct43, Struct44, Struct45, Struct46, Struct47, Struct48, Struct49, Struct50, Struct51, Struct52, Struct53, Struct54, Struct55, Struct56, Struct57, Struct58, Struct59, Struct60, Struct61, Struct62, Struct63, Struct64, Struct65, Struct66, Struct67, Struct68, Struct69, Struct70, Struct71, Struct72, Struct73, Struct74, Struct75, Struct76, Struct77, Struct78, Struct79, Struct80, Struct81, Struct82, Struct83, Struct84, Z, delta, mu, psigma, sV, sigma, zra-d | A space fullerene. [Sikiric 2010]
 CRN1, CRN2, CRN3 | A continuous random network of Sillium. [Mousseau 2001]
 CS1, MEP, sI | Clathrate hydrates sI. [Frank 1959, Jeffrey 1984, Kosyakov 1999, IZA Database]
 DOH, HS3, sH | Clathrate type H.
 EMT | Hypothetical ice with a large cavity. [Liu 2019, IZA Database]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017, IZA Database]
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Database]
+Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
 T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
+bilayer | A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores. [Koga 1997]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
 c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
@@ -602,11 +593,10 @@ iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
 one | Ice I w/ stacking faults.
 oprism | Hydrogen-ordered ice nanotubes. [Koga 2001]
-prism | Ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, Kcomp, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, HS1, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.
@@ -617,22 +607,22 @@ You can prepare your own ice structures. Create a folder named `lattices` in the
 cif file of zeolite from [IZA structure database](http://www.iza-structure.org/databases) and prepare a lattice
 module in the path above.
 
-Note: Some structures in different frameworks are identical.
+Note: Different names are given in different nomenclature.
 
-CH/FI|CH  |ice|FK |Zeo|
------|----|---|---|---|
-sI   |CS1 |-  |A15|MEP|
-sII  |CS2 |16 |C15|MTN|
-sIII |TS1 |-  |sigma|-  |
-sIV  |HS1 |-  |Z  |-  |
-sV   |HS2 |-  |*  |-  |
-sVII |CS4 |-  |*  |SOD|
-sH   |HS3 |-  |*  |DOH|
-C0   |-   |17 |*  |-  |
-C1   |-   |2  |*  |-  |
-C2   |-   |1c |*  |-  |
+CH/FI|CH  |ice|FK |Zeo|Foam|
+-----|----|---|---|---|----|
+sI   |CS1 |-  |A15|MEP|Weaire-Phelan|
+sII  |CS2 |16 |C15|MTN|    |
+sIII |TS1 |-  |sigma|-  |    |
+sIV  |HS1 |-  |Z  |-  |    |
+sV   |HS2 |-  |*  |-  |    |
+sVII |CS4 |-  |*  |SOD|Kelvin|
+sH   |HS3 |-  |*  |DOH|    |
+C0   |-   |17 |*  |-  |    |
+C1   |-   |2  |*  |-  |    |
+C2   |-   |1c |*  |-  |    |
 
-FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites.
+FI: Filled ices; CH: Clathrate hydrates; FK:Frank-Kasper duals; Zeo: Zeolites; Foam: foam crystals (Weaire 1994).
 
 -: No correspondence; *: Non-FK types.
 
@@ -657,6 +647,7 @@ symbol | type
 -------|---------
 H2 | Hydrogen molecule. [https://www.britannica.com/science/hydrogen]
 ch4 | An all-atom methane model.
+et | A united-atom ethane model.
 me | A united-atom methane model.
 mol | Loader for MOL files (generated by MolView.org), e.g. mol[THF.mol].
 thf | An all-atom tetrahydrofuran (THF) model.
@@ -736,6 +727,9 @@ GenIce2 is now integrated with MDAnalysis.
 * [Baez 1998] 
 BÁEZ, Luis A. and CLANCY, Paulette, 1995, Phase equilibria in extended simple point charge ice‐water systems. The Journal of Chemical Physics [online]. 8 December 1995. Vol. 103, no. 22, p. 9744–9755. DOI 10.1063/1.469938. Available from: http://dx.doi.org/10.1063/1.469938
 
+* [Cockayne 1995] 
+COCKAYNE, Eric, 1995. Dense quasiperiodic decagonal disc packing. Physical Review B [online]. 1 June 1995. Vol. 51, no. 21, p. 14958–14961. DOI 10.1103/physrevb.51.14958. Available from: http://dx.doi.org/10.1103/PhysRevB.51.14958
+
 * [Engel 2018] 
 ENGEL, Edgar A., ANELLI, Andrea, CERIOTTI, Michele, PICKARD, Chris J. and NEEDS, Richard J., 2018, Mapping uncharted territory in ice from zeolite networks to ice structures. Nature Communications [online]. 5 June 2018. Vol. 9, no. 1. DOI 10.1038/s41467-018-04618-6. Available from: http://dx.doi.org/10.1038/s41467-018-04618-6
 
@@ -752,6 +746,7 @@ FENNELL, Christopher J. and GEZELTER, J. Daniel, 2005, Computational Free Energy
 * [Hirata 2017] 
 HIRATA, Masanori, YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2017, Phase Diagram of TIP4P/2005 Water at High Pressure. Langmuir [online]. 24 August 2017. Vol. 33, no. 42, p. 11561–11569. DOI 10.1021/acs.langmuir.7b01764. Available from: http://dx.doi.org/10.1021/acs.langmuir.7b01764
 
+* [Hirsch 2004] Hirsch, T. K. & Ojamäe, L. Quantum-Chemical and Force-Field Investigations of Ice Ih: Computation of Proton-Ordered Structures and Prediction of Their Lattice Energies. J. Phys. Chem. B 108, 15856-15864 (2004)
 * [Huang 2016] 
 HUANG, Yingying, ZHU, Chongqin, WANG, Lu, CAO, Xiaoxiao, SU, Yan, JIANG, Xue, MENG, Sheng, ZHAO, Jijun and ZENG, Xiao Cheng, 2016, A new phase diagram of water under negative pressure: The rise of the lowest-density clathrate s-III. Science Advances [online]. February 2016. Vol. 2, no. 2, p. e1501010. DOI 10.1126/sciadv.1501010. Available from: http://dx.doi.org/10.1126/sciadv.1501010
 
@@ -836,12 +831,16 @@ DUTOUR SIKIRIĆ, Mathieu, DELGADO-FRIEDRICHS, Olaf and DEZA, Michel, 2010, Space
 * [Smirnov 2013] 
 SMIRNOV, Grigory S. and STEGAILOV, Vladimir V., 2013, Toward Determination of the New Hydrogen Hydrate Clathrate Structures. The Journal of Physical Chemistry Letters [online]. 9 October 2013. Vol. 4, no. 21, p. 3560–3564. DOI 10.1021/jz401669d. Available from: http://dx.doi.org/10.1021/jz401669d
 
+* [Stampfli 1986] Stampfli, P. A dodecagonal quasi-periodic lattice in 2 dimensions. Helv. Phys. Acta 59, 1260–1263 (1986).
 * [Strobel 2016] Strobel, Timothy A et al. “Hydrogen-Stuffed, Quartz-Like Water Ice.” Journal of the American Chemical Society 138.42 (2016): 13786–13789.
 * [Teeratchanan 2015] 
 TEERATCHANAN, Pattanasak and HERMANN, Andreas, 2015, Computational phase diagrams of noble gas hydrates under pressure. The Journal of Chemical Physics [online]. 21 October 2015. Vol. 143, no. 15, p. 154507. DOI 10.1063/1.4933371. Available from: http://dx.doi.org/10.1063/1.4933371
 
 * [Vos 1993] 
 VOS, Willem L., FINGER, Larry W., HEMLEY, Russell J. and MAO, Ho-kwang, 1993, NovelH2-H2O clathrates at high pressures. Physical Review Letters [online]. 8 November 1993. Vol. 71, no. 19, p. 3150–3153. DOI 10.1103/physrevlett.71.3150. Available from: http://dx.doi.org/10.1103/PhysRevLett.71.3150
+
+* [Weaire 1994] 
+WEAIRE, D. and FHELAN, R., 1994. The structure of monodisperse foam. Philosophical Magazine Letters [online]. November 1994. Vol. 70, no. 5, p. 345–350. DOI 10.1080/09500839408240997. Available from: http://dx.doi.org/10.1080/09500839408240997
 
 * [Yagasaki 2018] 
 YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2018, Phase Diagrams of TIP4P/2005, SPC/E, and TIP5P Water at High Pressure. The Journal of Physical Chemistry B [online]. 17 July 2018. Vol. 122, no. 31, p. 7718–7725. DOI 10.1021/acs.jpcb.8b04441. Available from: http://dx.doi.org/10.1021/acs.jpcb.8b04441

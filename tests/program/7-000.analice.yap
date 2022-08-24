@@ -1725,7 +1725,7 @@ s 1.1184 1.2240 0.8890 1.0030 1.3303 1.0030
 s 0.9490 0.9490 1.0546 0.8421 0.8360 1.1700 
 s 1.0560 1.0560 1.0546 1.1639 1.1700 1.1700 
 #
-#Command line: ../../analice.x --debug 7.gro -f yaplot --debug -o 7-%03d.analice.yap
+#Command line: /Users/matto/venvs/genice2/bin/analice2 7.gro -f yaplot --debug -o 7-%03d.analice.yap
 y 4
 a 1
 
