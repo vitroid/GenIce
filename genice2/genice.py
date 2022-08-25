@@ -721,6 +721,10 @@ class GenIce():
                 else:
                     self.Stage4(depol=depol)
 
+            dipole = self.spacegraph.net_polarization()
+            logger.info(f"Residual net polarization: {dipole[0]:.2f} {dipole[1]:.2f} {dipole[2]:.2f}")
+
+
             if 4 in hooks:
                 abort = hooks[4](self)
                 if maxstage < 5 or abort:

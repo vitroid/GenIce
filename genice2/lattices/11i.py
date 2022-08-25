@@ -250,6 +250,7 @@ class Lattice(genice2.lattices.Lattice):
         # The default is ferroelectric #1
         typ = 1
 
+        # parse options
         for k, v in kwargs.items():
             if k == "type":
                 typ = int(v)
@@ -259,37 +260,21 @@ class Lattice(genice2.lattices.Lattice):
 
         data = elevens[typ]
         spaceg = data["spaceg"]
-        symops = operations(spaceg)
-        # atoms = fullatoms(data["atomd"], symops)
-        # logger.info(len(atoms))
 
-        # logger.info(data["cell"])
-        # logger.info(data["atomd"])
-        rep = (1,1,1)
-        # if typ in (1,15,):
-        #     rep = (2,1,1)
-        # if typ in (9,):
-        #     rep = (1,2,1)
-        # if typ in (10,14,):
-        #     rep = (1,1,2)
+        # When the cell is too thin, it is doubled.
+        rep = [1,1,1]
+        for d in range(3):
+            if data["cell"][d,d] < 0.5:
+                rep[d] = 2
+        if typ == 10:
+            rep = [2,1,2]
 
+        # molecular positions and the HB network
         self.waters, self.fixed = waters_and_pairs(data["cell"], data["atomd"], operations(spaceg), rep=rep)
-        logger.info(f"BONDS {len(self.fixed)}")
-        nb = [0 for x in range(len(self.waters))]
-        for i,j in self.fixed:
-            nb[i] += 1
-        logger.info(nb)
-        logger.info(f"BONDS {len(self.fixed)}")
         self.pairs = self.fixed
 
+        # define other parameters
         self.cell = data["cell"]
-        # logger.info(self.cell)
         self.density = 18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
-        logger.info(self.density)
 
         self.coord = "relative"
-
-
-# failed:
-# error 4 Pbn21
-# 10,11まだおかしい。
