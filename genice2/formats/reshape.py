@@ -151,7 +151,6 @@ Options:
         b = (regcell < torr)
         c = a & b
         regcell[c] = 0.0
-        regcell = np.abs(regcell)
 
         # header
         s = ""
@@ -172,7 +171,7 @@ Options:
                 regcell[2, 0]) and isZero(regcell[2, 1]):
             s += "        from genice2.cell import cellvectors\n"
             s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(
-                regcell[0, 0], regcell[1, 1], regcell[2, 2])
+                abs(regcell[0, 0]), abs(regcell[1, 1]), abs(regcell[2, 2]))
         else:
             s += "\n        import numpy as np\n"
             s += "        self.cell=np.array(["
