@@ -1,12 +1,14 @@
 # coding: utf-8
 
-from genice2.decorators import timeit, banner
-import genice2.formats
-from logging import getLogger
-import re
-from math import floor
 import itertools as it
+import re
+from logging import getLogger
+from math import floor
+
+import genice2.formats
 import numpy as np
+from genice2.decorators import banner, timeit
+
 desc = {"ref": {},
         "brief": "Cell-reshaper.",
         "usage": """
@@ -149,6 +151,7 @@ Options:
         b = (regcell < torr)
         c = a & b
         regcell[c] = 0.0
+        regcell = np.abs(regcell)
 
         # header
         s = ""
