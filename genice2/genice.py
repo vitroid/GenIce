@@ -10,6 +10,7 @@ import random
 from collections import defaultdict
 from logging import getLogger
 from types import SimpleNamespace
+from typing import Type, Union
 
 import numpy as np
 import pairlist as pl
@@ -20,8 +21,10 @@ from genice2 import alkyl, cage
 from genice2 import digraph as dg
 from genice2.cell import Cell, rel_wrap
 from genice2.decorators import banner, timeit
+from genice2.formats import Format
+from genice2.lattices import Lattice
 # A virtual monatomic molecule
-from genice2.molecules import arrange, monatom, one
+from genice2.molecules import Molecule, arrange, monatom, one
 from genice2.plugin import safe_import
 from genice2.valueparser import (flatten, parse_cages, parse_pairs,
                                  plugin_option_parser, put_in_array)
@@ -74,7 +77,7 @@ def orientations(coord, graph, cell):
 
     # 通常の氷であればアルゴリズムを高速化できる。
 
-    if graph.isZ22() and len(graph.ignores) == 0:
+    if graph.isZ22() and len(graph.immutables) == 0:
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
@@ -104,7 +107,7 @@ def orientations(coord, graph, cell):
     else:
         rotmatrices = []
         for node in range(graph.number_of_nodes()):
-            if node in graph.ignores:
+            if node in graph.immutables:
                 # for dopants; do not rotate
                 rotmat = np.identity(3)
             else:
@@ -143,8 +146,8 @@ def orientations(coord, graph, cell):
 
     return rotmatrices
 
-
 def shortest_distance(coord, cell, pairs=None):
+
     dmin = 1e99
 
     if pairs is None:
@@ -226,7 +229,7 @@ def replicate_labels(labels, nmol, rep):
 
     return newlabels
 
-
+@timeit
 def replicate_graph(graph, positions, rep):
     repgraph = dg.IceGraph()
     nmol = positions.shape[0]
@@ -235,17 +238,18 @@ def replicate_graph(graph, positions, rep):
         # positions in the unreplicated cell
         vec = positions[j] - positions[i]
         delta = np.floor(vec + 0.5).astype(int)
+        edge_fixed = graph[i][j]['fixed']
 
         for x in range(rep[0]):
             for y in range(rep[1]):
                 for z in range(rep[2]):
-                    xi = (x + delta[0] + rep[0]) % rep[0]
-                    yi = (y + delta[1] + rep[1]) % rep[1]
-                    zi = (z + delta[2] + rep[2]) % rep[2]
+                    xi = (x + delta[0]) % rep[0]
+                    yi = (y + delta[1]) % rep[1]
+                    zi = (z + delta[2]) % rep[2]
                     newi = i + nmol * (xi + rep[0] * (yi + rep[1] * zi))
                     newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
 
-                    if graph[i][j]['fixed']:  # fixed pair
+                    if edge_fixed:  # fixed pair
                         repgraph.add_edge(newi, newj, fixed=True)
                     else:
 
@@ -255,8 +259,8 @@ def replicate_graph(graph, positions, rep):
                         else:
                             repgraph.add_edge(newj, newi, fixed=False)
 
-    # replicate "ignores" == dopants list in the graph
-    repgraph.ignores = replicate_labels(graph.ignores, nmol, rep)
+    # replicate "immutables" == dopants list in the graph
+    repgraph.immutables = replicate_labels(graph.immutables, nmol, rep)
 
     return repgraph
 
@@ -419,15 +423,15 @@ class GenIce():
     @timeit
     @banner
     def __init__(self,
-                 lat,
-                 signature="",
-                 density=0,
+                 lat: Type[Lattice],
+                 signature: str="",
+                 density: float=0,
                  rep=(1, 1, 1),
-                 cations=dict(),
-                 anions=dict(),
-                 spot_guests=dict(),
-                 spot_groups=dict(),
-                 asis=False,
+                 cations:dict={},
+                 anions:dict={},
+                 spot_guests:dict={},
+                 spot_groups:dict={},
+                 asis:bool=False,
                  shift=(0., 0., 0.),
                  # seed=1000,
                  ):
@@ -447,6 +451,9 @@ class GenIce():
             shift:      A fractional value to be added to the positions.
 
         """
+
+        # このconstructorが大きすぎ、複雑すぎ。
+        # self変数も多すぎ。
         logger = getLogger()
         self.rep = rep
         self.asis = asis
@@ -476,6 +483,12 @@ class GenIce():
             logger.info("No rotmatrices in lattice")
             self.rotmatrices = None
         # ================================================================
+        # cell: cell dimension
+        #   see parse_cell for syntax.
+        #
+        self.cell = Cell(lat.cell)
+
+        # ================================================================
         # waters: positions of water molecules
         #
         self.waters = put_in_array(lat.waters)
@@ -483,19 +496,15 @@ class GenIce():
         self.waters = self.waters.reshape((self.waters.size // 3, 3))
 
         # ================================================================
-        # cell: cell dimension
-        #   see parse_cell for syntax.
-        #
-        self.cell = Cell(lat.cell)
-
-        # ================================================================
         # coord: "relative" or "absolute"
-        #   Inside genice, molecular positions are always treated as "relative"
+        #   Inside genice, molecular positions are always treated as "relative", i.e. in fractional coordinates
         #
         if lat.coord == "absolute":
             self.waters = self.cell.abs2rel(self.waters)
 
+        # shift of the origin
         self.waters = np.array(self.waters) + np.array(shift)
+        # fractional coordinate between [0, 1)
         self.waters -= np.floor(self.waters)
 
         # ================================================================
@@ -524,7 +533,7 @@ class GenIce():
             logger.info(f"Bond length (specified): {self.bondlen}")
         except AttributeError:
             logger.debug("  Estimating the bond threshold length...")
-            # assume that the particles distribute homogeneously.
+            # very rough estimate of the pair distances assuming that the particles distribute homogeneously.
             rc = (volume / nmol)**(1 / 3) * 1.5
             p = pl.pairs_iter(self.waters,
                               rc=rc,
@@ -622,8 +631,8 @@ class GenIce():
                               "Ethyl-": ethyl}
 
     def generate_ice(self,
-                     formatter,
-                     water=None,
+                     formatter:Type[Format],
+                     water:Union[Type[Molecule], None]=None,
                      guests={},
                      depol="strict",
                      noise=0.,
@@ -900,22 +909,22 @@ class GenIce():
 
         # self.spacegraph = dg.SpaceIceGraph(self.graph,
         #                                    coord=self.reppositions,
-        #                                    ignores=self.graph.ignores)
+        #                                    immutables=self.graph.immutables)
         # dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
         digraph = dg.depolarize(self.graph,
                                 coord=self.reppositions,
-                                ignores=self.graph.ignores,
+                                immutables=self.graph.immutables,
                                 cell=self.repcell.mat,
                                 depol=depol)
         # for debug
         # digraph = dg.depolarize(digraph,
         #                         coord=self.reppositions,
-        #                         ignores=self.graph.ignores,
+        #                         immutables=self.graph.immutables,
         #                         cell=self.repcell.mat,
         #                         depol=depol)
         self.spacegraph = dg.SpaceIceGraph(digraph,
                                            coord=self.reppositions,
-                                           ignores=self.graph.ignores)
+                                           immutables=self.graph.immutables)
 
     @timeit
     @banner
@@ -1022,7 +1031,7 @@ class GenIce():
             logger.debug("  Depolarized in Stage3D.")
             self.spacegraph = dg.SpaceIceGraph(d,
                                                coord=self.reppositions,
-                                               ignores=self.graph.ignores)
+                                               immutables=self.graph.immutables)
 
     @timeit
     @banner
@@ -1075,7 +1084,7 @@ class GenIce():
                                      self.repcell,
                                      self.rotmatrices,
                                      water,
-                                     ignores=set(self.dopants)))
+                                     immutables=set(self.dopants)))
 
     @timeit
     @banner

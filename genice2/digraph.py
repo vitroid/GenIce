@@ -150,7 +150,7 @@ class IceGraph(nx.DiGraph):
         super(IceGraph, self).__init__(data)
         # set of nodes that ignore the ice rule.
         # is added automatically in cationize/anionize
-        self.ignores = set()
+        self.immutables = set()
 
     def cationize(self, which):
         invert = set()
@@ -165,7 +165,7 @@ class IceGraph(nx.DiGraph):
             self.invert_edge(i, j)
         for i, j in fix:
             self[i][j]['fixed'] = True
-        self.ignores.add(which)
+        self.immutables.add(which)
 
     def anionize(self, which):
         invert = set()
@@ -180,7 +180,7 @@ class IceGraph(nx.DiGraph):
             self.invert_edge(i, j)
         for i, j in fix:
             self[i][j]['fixed'] = True
-        self.ignores.add(which)
+        self.immutables.add(which)
 
     def invert_edge(self, from_, to_, forced=False):
         """
@@ -254,8 +254,8 @@ class IceGraph(nx.DiGraph):
         """
         d = defects[0]
         # logger = getLogger()
-        # logger.debug(self.ignores)
-        if d in self.ignores:
+        # logger.debug(self.immutables)
+        if d in self.immutables:
             defects.pop(0)
             return
         if self.degree(d) != 4:  # TSL
@@ -333,7 +333,7 @@ class IceGraph(nx.DiGraph):
                 logger.info("  Defects remaining: {0}".format(len(defects)))
                 target //= 2
         # TSL
-        # assert set(defects) == self.ignores, "Some water molecules do not obey the ice rule. {0} {1}".format(defects, self.ignores)
+        # assert set(defects) == self.immutables, "Some water molecules do not obey the ice rule. {0} {1}".format(defects, self.immutables)
 
     def is_homodromic(self, path):
         for i in range(1, len(path)):
@@ -354,12 +354,12 @@ class SpaceIceGraph(IceGraph):
     YAXIS = 2
     ZAXIS = 3
 
-    def __init__(self, data=None, coord=None, pbc=True, ignores=set()):
+    def __init__(self, data=None, coord=None, pbc=True, immutables=set()):
         # Both of them are slow for a huge system.
         super(SpaceIceGraph, self).__init__(data)
         if coord is not None:
             self.add_vectors(coord, pbc)  # fractional coord
-        self.ignores = ignores
+        self.immutables = immutables
 
     def add_vectors(self, coord, pbc=True):
         """
@@ -504,7 +504,7 @@ def traversing_cycles_iter(spaceicegraph, cell, axis):
 def depolarize_(
         subgraph,
         coord,
-        ignores=[],
+        immutables=[],
         pbc=True,
         cell=np.identity(3),
         depol="strict"):
@@ -529,7 +529,7 @@ def depolarize_(
         subgraph,
         coord=coord,
         pbc=pbc,
-        ignores=ignores)
+        immutables=immutables)
     spaceicegraph.vector_check()
 
     # TSL
@@ -614,7 +614,7 @@ def depolarize_(
 def depolarize(
         digraph,
         coord,
-        ignores=[],
+        immutables=[],
         pbc=True,
         cell=np.identity(3),
         depol="strict"):
@@ -627,7 +627,7 @@ def depolarize(
         newsubdigraph = depolarize_(
             subdigraph,
             coord=coord,
-            ignores=ignores,
+            immutables=immutables,
             pbc=pbc,
             cell=cell,
             depol=depol)

@@ -1,15 +1,15 @@
-from logging import getLogger
-from collections import defaultdict
 import random
+from collections import defaultdict
+from logging import getLogger
 
 import numpy as np
 import pairlist as pl
 
+from genice2 import digraph as dg
 from genice2.cell import Cell
+from genice2.decorators import banner, timeit
 from genice2.genice import GenIce, put_in_array, shortest_distance
 from genice2.valueparser import parse_pairs
-from genice2 import digraph as dg
-from genice2.decorators import timeit, banner
 
 
 class AnalIce(GenIce):
@@ -280,4 +280,4 @@ class AnalIce(GenIce):
         self.yapresult = ""
         self.spacegraph = dg.SpaceIceGraph(self.graph,
                                            coord=self.reppositions,
-                                           ignores=self.graph.ignores)
+                                           immutables=self.graph.immutables)

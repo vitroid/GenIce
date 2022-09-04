@@ -1,11 +1,11 @@
 # coding: utf-8
-from types import SimpleNamespace
 from logging import getLogger
+from types import SimpleNamespace
 
 import numpy as np
 
 
-def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
+def arrange(coord, cell, rotmatrices, molecule, immutables=set()):
     logger = getLogger()
 
     name, labels, intra = molecule.get()  # Molecule class
@@ -15,7 +15,7 @@ def arrange(coord, cell, rotmatrices, molecule, ignores=set()):
                            orig_order=[],  #
                            )
     for order, pos in enumerate(coord):
-        if order in ignores:
+        if order in immutables:
             continue
         mols.orig_order.append(order)
 
