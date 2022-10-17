@@ -5,10 +5,15 @@
 Helper functions to read various value types.
 """
 
-import numpy as np
 import logging
-from collections import Iterable
 
+import numpy as np
+
+# workaround for python 3.10 and newer
+try:
+    from collections.abc import Iterable
+except ImportError:
+    from collections import Iterable
 
 def flatten(item):
     """Yield items from any nested iterable; see REF."""
