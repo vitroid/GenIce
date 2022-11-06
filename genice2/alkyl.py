@@ -64,19 +64,14 @@ def Alkyl(cage_center, root_position, cell, molname, tree, bondlen, origin_atom=
         # v2 is a vector from pivot to the aim
         v2 = cell.abs_wrap(aim - (origin + e1))
         e2 = v2 / np.linalg.norm(v2)
-        logger.info(e2@e2)
         e2d = e1 @ e2
-        logger.info(e2d)
         while abs(e2d) > 0.999:
             # They are inline. It is not safe to determine the orientation.
             v2 = np.random.random(3)
             e2 = v2 / np.linalg.norm(v2)
             e2d = e1 @ e2
         v2 = e2 - e2d * e1
-        logger.info(v2@e1)
         e2 = v2 / np.linalg.norm(v2)
-        logger.info([e2@e1, e2, v2])
-
 
         e3 = np.cross(e1, e2)     # the thild unit vector
 
@@ -84,7 +79,7 @@ def Alkyl(cage_center, root_position, cell, molname, tree, bondlen, origin_atom=
         s = sin(radians(120))
         e4 = e2 * c + e3 * s   # a branch vector
         e5 = e2 * c - e3 * s   # another branch vector
-        logger.info([e2@e2, e3@e3, e1@e2,e2@e3,e3@e1,e4@e1, e5@e1])
+
         c = cos(radians(109.5))
         s = sin(radians(109.5))
         e2 = -e1 * c + e2 * s
