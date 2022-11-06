@@ -13,7 +13,7 @@ develop:
 clean:
 	-rm test* *~ @* # Makefile
 	-rm -rf sort_tmp lattices
-	-rm *.cif *.test *.gro *.nx3a *.ar3a *.ringtest *.pov *.nx3a *.ar3a *.ar3r *.nx4a *.xyz *.mdv *.mdva *.py *.scad *.ngph *.rings *.kg *.ringstat *_gro *.png *.svg *.exyz *.exmol *.graph
+	-rm *.cif *.test *.gro *.nx3a *.ar3a *.ringtest *.pov *.nx3a *.ar3a *.ar3r *.nx4a *.xyz *.mdv *.mdva *.py *.scad *.ngph *.rings *.kg *.ringstat *_gro *.png *.svg *.exyz *.exmol *.graph *.yap
 
 
 
@@ -25,7 +25,7 @@ all: A.nx3a.test   B.nx3a.test  13.nx3a.test
 all: 3.ar3a.test   0.nx3a.test  5.gro.test   7.mdv.test
 all: 5.gro_gro.test 7.mdva_gro.test 0.nx3a_gro.test 7.mdv_gro.test
 all: 16.py   17.nx4a.test 1c.ar3r.test CS1.cif.test
-all: CS2.cif.test HS1.xyz.test TS1.nx3a.test 2dL.gro
+all: CS2.cif.test HS1.yap.test TS1.nx3a.test 2dL.gro
 all: 7.mdva.test
 all: 1hreshape.py.test 2D3.ringtest.test
 all: 3xFAU.nx3a.test
@@ -129,9 +129,9 @@ CS2C.gro: $(FMT)/gromacs.py
 CS2D.gro: $(FMT)/gromacs.py
 	$(GENICE) CS2 -A -g A12=me --rep 1 1 2 --water ice  | fgrep -v "Command line:" > $@
 
-HS1.xyz: $(FMT)/xyz.py
+HS1.yap: $(FMT)/yaplot.py $(GRP)/CH3CH2CH2CH2.py $(GRP)/Bu.py $(LIB)/alkyl.py
 #test for spot semiclathrate (TBAB)
-	$(GENICE) HS1 --depol=none -c 3=N -a 1=Br -H 11=Bu-:3 -H 23=Bu-:3 -H 13=Bu-:3 -H 7=Bu-:3 --rep 1 1 2 --format xyz | fgrep -v "Command line:" > $@
+	$(GENICE) HS1 -s 1001 --shift 0 0.75 0.5 --depol=none -c 3=N -a 1=Br -H 11=CH3CH2CH2CH2:3 -H 9=CH3CH2CH2CH2:3 -H 13=Bu:3 -H 7=Bu:3 --rep 1 1 2 --format yaplot | fgrep -v "Command line:" > $@
 TS1.nx3a: $(FMT)/euler.py
 	$(GENICE) TS1 --guest 14=mol[THF.mol] --rep 1 1 2 --format euler | fgrep -v "Command line:" > $@
 c0te.nx3a: $(FMT)/euler.py

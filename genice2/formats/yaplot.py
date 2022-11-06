@@ -1,12 +1,16 @@
 # coding: utf-8
 
-from genice2.molecules import serialize
-import genice2.formats
-from genice2.decorators import timeit, banner
-import yaplotlib as yp
-import numpy as np
-from logging import getLogger
+import itertools as it
 from collections import defaultdict
+from logging import getLogger
+
+import numpy as np
+import yaplotlib as yp
+
+import genice2.formats
+from genice2.decorators import banner, timeit
+from genice2.molecules import serialize
+
 desc = {"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
         "brief": "Yaplot.",
         "usage": """
@@ -135,7 +139,7 @@ Options:
     @timeit
     @banner
     def Hook7(self, ice):
-        "Output water molecules in Yaplot format."
+        "Output other molecules in Yaplot format."
         logger = getLogger()
         gatoms = []
         for mols in ice.universe[1:]:  # 0 is water
@@ -154,8 +158,17 @@ Options:
                 pal = 4 + len(palettes)
                 palettes[atomname] = pal
             s += yp.Color(pal)
-            s += yp.Size(0.04)
+            if atomname[0] == "H":
+                s += yp.Size(0.02)
+            else:
+                s += yp.Size(0.04)
             s += yp.Circle(position)
+        for a, b in it.combinations(gatoms, 2):
+            resno, resname, atomname, position1, order = a
+            resno, resname, atomname, position2, order = b
+            d = position1 - position2
+            if d@d < 0.16**2:
+                s += yp.Line(position1, position2)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         s += yp.NewPage()
         self.output += s
