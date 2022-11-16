@@ -118,32 +118,3 @@ def Alkyl(cage_center, root_position, cell, molname, tree, bondlen, origin_atom=
                            orig_order=order,  #
                            )
     return mols
-
-
-def test():
-    basicConfig(level=DEBUG,
-                        format="%(asctime)s %(levelname)s %(message)s")
-    pivot = np.array([1.0, 0.0, 0.0])  # must be a unit vector
-    # All the branches direct to this point.
-    aim = np.array([10.0, 10.0, 0.0])
-    bondlen={("C", "C"): 0.153,
-             ("C", "N"): 0.1471,
-             ("N", "C"): 0.1471,
-             ("H", "C"): 0.1090,
-             ("C", "H"): 0.1090,
-              }
-    tree = ["C1", ["C2", "C3",
-                        ["C4", "C5",
-                               ["C6", ["C7", ["C8", ["C9", ["C10"]]]]]]]]
-    atoms = alkyl_(
-        pivot, aim, tree, bondlen, origin_atom="N")
-    # in yaplot format
-    print("t 0 0 0 N")
-    print("t", aim[0], aim[1], aim[2], "@")
-    for atom in atoms:
-        name, pos = atom
-        print("t", pos[0], pos[1], pos[2], name)
-
-
-if __name__ == "__main__":
-    test()
