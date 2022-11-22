@@ -17,7 +17,7 @@ with codecs.open(os.path.join(os.path.dirname(__file__), 'genice2', '__init__.py
             r"""__([a-z]+)__ = "([^"]+)""",
             version_file.read()))
 
-long_desc = "".join(open("README.md").readlines())
+long_desc = "".join(open("README.md", encoding="utf-8").readlines())
 
 with open("requirements.txt") as f:
     requires = [x.strip() for x in f.readlines()]
