@@ -78,7 +78,7 @@ def orientations(coord, graph, cell):
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
-        neis = np.zeros([len(list(graph)), 2], dtype=np.int)
+        neis = np.zeros([len(list(graph)), 2], dtype=int)
         for node in graph:
             neis[node] = list(graph.successors(node))
         # array of donating vectors

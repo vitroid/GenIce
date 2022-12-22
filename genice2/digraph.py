@@ -539,7 +539,7 @@ def depolarize_(
         if spaceicegraph.degree(node) != 4:
             # assert spaceicegraph.degree(node) < 4
             defects.append(node)
-    logger.info(f"  Defects that do not have 4 neighbors: {defects}")
+    logger.info(f"  Water molecules that do not have 4 neighbors: {defects}")
     if len(defects) > 0:
         reject_count = 10
         while reject_count > 0:
