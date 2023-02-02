@@ -13,6 +13,8 @@ validate: 1h.ringstat 2.ringstat 2d.ringstat 3.ringstat 4.ringstat 5.ringstat 6.
 # also certifies the zero net dipole moment and Bernal-Fowler-Pauling
 # ice rule in terms of the validity in global and local structures.
 
+1h.%.ringstat:
+	$(GENICE) 1h -r 24 24 24 -s $* -f _ringstat[max=6] > $@
 %.ringstat:
 	$(GENICE) $* -r 2 2 2  -f _ringstat[9] > $@
 3.ringstat:

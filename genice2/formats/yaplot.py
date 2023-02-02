@@ -66,13 +66,23 @@ Options:
             return
         # prepare the reverse dict
         waters = defaultdict(dict)
-        pos = ice.reppositions @ ice.repcell.mat
+        pos = ice.reppositions
         s = ""
+        s += yp.Layer(4)
+        s += yp.Color(3)
+        s += yp.Size(0.03)
         for p in pos:
-            s += yp.Layer(4)
-            s += yp.Color(3)
-            s += yp.Size(0.03)
-            s += yp.Circle(p)
+            s += yp.Circle(p @ ice.repcell.mat)
+        s += yp.Layer(5)
+        s += yp.Color(4)
+        # s += yp.Size(0.03)
+        for i, j in ice.graph.edges(data=False):
+            # if i in waters and j in waters:  # edge may connect to the dopant
+            O1, O2 = pos[i], pos[j]
+            d = O2 - O1
+            d -= np.floor(d+0.5)
+            O2 = O1 + d
+            s += yp.Line(O1 @ ice.repcell.mat, O2 @ ice.repcell.mat)
         self.output += s + yp.NewPage()
         return True
 

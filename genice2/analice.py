@@ -164,6 +164,12 @@ class AnalIce(GenIce):
         # groups info
         self.groups = defaultdict(dict)
 
+        # unused but required
+        self.anions = []
+        self.cations = []
+
+
+
     def analyze_ice(self, water, formatter, noise=0.):
         """
         Protocol for analice
