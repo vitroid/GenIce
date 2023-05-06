@@ -12,6 +12,7 @@ openpyscad = "*"
 graphstat = "*"
 PairList = ">=0.2.12.4"
 TileCycles = ">=0.1.4.3"
+genice2 = "*"
 
 [dev-packages]
 requests = "*"
