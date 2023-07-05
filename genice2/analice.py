@@ -14,7 +14,6 @@ from genice2.valueparser import parse_pairs
 
 class AnalIce(GenIce):
     def __init__(self, lat, signature=""):
-
         logger = getLogger()
         self.rep = (1, 1, 1)
         density = 0.0
@@ -93,13 +92,13 @@ class AnalIce(GenIce):
         except AttributeError:
             logger.debug("  Estimating the bond threshold length...")
             # assume that the particles distribute homogeneously.
-            rc = (volume / nmol)**(1 / 3) * 1.5
-            p = pl.pairs_iter(self.waters,
-                              rc=rc,
-                              cell=self.cell.mat,
-                              distance=False)
-            self.bondlen = 1.1 * \
-                shortest_distance(self.waters, self.cell, pairs=p)
+            rc = (volume / nmol) ** (1 / 3) * 1.5
+            p = pl.pairs_iter(
+                self.waters, maxdist=rc, cell=self.cell.mat, distance=False
+            )
+            self.bondlen = 1.1 * shortest_distance(
+                self.waters, self.cell, pairs=p
+            )
             logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
@@ -112,11 +111,15 @@ class AnalIce(GenIce):
                 self.density = lat.density
             except AttributeError:
                 logger.info(
-                    "Density is not specified. Assume the density from lattice.")
+                    "Density is not specified. Assume the density from lattice."
+                )
                 dmin = shortest_distance(self.waters, self.cell)
                 logger.info(
-                    "Closest pair distance: {0} (should be around 0.276 nm)".format(dmin))
-                self.density = density0 / (0.276 / dmin)**3
+                    "Closest pair distance: {0} (should be around 0.276 nm)".format(
+                        dmin
+                    )
+                )
+                self.density = density0 / (0.276 / dmin) ** 3
                 # self.density = density0
         else:
             self.density = density
@@ -125,7 +128,7 @@ class AnalIce(GenIce):
         logger.info("Original Density: {0}".format(density0))
 
         # scale the cell according to the (specified) density
-        ratio = (density0 / self.density)**(1.0 / 3.0)
+        ratio = (density0 / self.density) ** (1.0 / 3.0)
         self.cell.scale(ratio)
 
         if self.bondlen is not None:
@@ -164,7 +167,7 @@ class AnalIce(GenIce):
         # groups info
         self.groups = defaultdict(dict)
 
-    def analyze_ice(self, water, formatter, noise=0.):
+    def analyze_ice(self, water, formatter, noise=0.0):
         """
         Protocol for analice
         """
@@ -235,8 +238,7 @@ class AnalIce(GenIce):
 
     @timeit
     @banner
-    def Stage1(self,
-               noise=0.):
+    def Stage1(self, noise=0.0):
         """Preparation.
 
         Provided variables:
@@ -248,8 +250,9 @@ class AnalIce(GenIce):
         self.reppositions = self.waters
 
         # This must be done before the replication of the cell.
-        logger.info("  Number of water molecules: {0}".format(
-            len(self.reppositions)))
+        logger.info(
+            "  Number of water molecules: {0}".format(len(self.reppositions))
+        )
 
         # self.graph = self.prepare_random_graph(self.fixed)
         self.graph = self.prepare_random_graph(self.pairs)
@@ -261,9 +264,11 @@ class AnalIce(GenIce):
         # add small perturbations to the molecular positions.
         if noise > 0.0:
             logger.info("  Add noise: {0}.".format(noise))
-            perturb = np.random.normal(loc=0.0,
-                                       scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
-                                       size=self.reppositions.shape)
+            perturb = np.random.normal(
+                loc=0.0,
+                scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
+                size=self.reppositions.shape,
+            )
             self.reppositions += self.repcell.abs2rel(perturb)
 
     @timeit
@@ -278,6 +283,8 @@ class AnalIce(GenIce):
 
         logger = getLogger()
         self.yapresult = ""
-        self.spacegraph = dg.SpaceIceGraph(self.graph,
-                                           coord=self.reppositions,
-                                           immutables=self.graph.immutables)
+        self.spacegraph = dg.SpaceIceGraph(
+            self.graph,
+            coord=self.reppositions,
+            immutables=self.graph.immutables,
+        )

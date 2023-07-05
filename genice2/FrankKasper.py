@@ -32,8 +32,9 @@ def shortest_distance(atoms, cell):
 def estimate_density(atoms, cell, bondlen):
     dmin = shortest_distance(atoms, cell)
     scale = bondlen / dmin
-    return 18 / 6.022e23 * len(atoms) / \
-        (np.linalg.det(cell) * 1e-24 * scale**3)
+    return (
+        18 / 6.022e23 * len(atoms) / (np.linalg.det(cell) * 1e-24 * scale**3)
+    )
 
 
 def is_zero(v):
@@ -45,7 +46,7 @@ def equivalents(v, cell, rc):
     yield a set of vectors pointing to the image of the original point v.
     """
     origin = v.copy()
-    img = [[0., 1.], [0., 1.], [0., 1.]]
+    img = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
     for d in range(3):
         if origin[d] > 0.0:
             origin[d] -= 1.0
@@ -104,8 +105,7 @@ def toWater(coord, cell, tolerance=1.4):
     """
     logger = logging.getLogger()
     dmin = shortest_distance(coord, cell) * tolerance
-    pairs = pl.pairs_iter(coord, rc=dmin, cell=cell,
-                          distance=False)
+    pairs = pl.pairs_iter(coord, maxdist=dmin, cell=cell, distance=False)
     for vtet, dtet in tetrahedra(pairs, dmin, coord, cell):
         p = dtet[0] + (dtet[1] + dtet[2] + dtet[3]) / 4
         p -= np.floor(p)
