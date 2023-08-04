@@ -85,7 +85,7 @@ def orientations(coord, graph, cell):
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
-        neis = np.zeros([len(list(graph)), 2], dtype=np.int)
+        neis = np.zeros([len(list(graph)), 2], dtype=int)
         for node in graph:
             neis[node] = list(graph.successors(node))
         # array of donating vectors
@@ -976,7 +976,7 @@ class GenIce:
 
         logger = getLogger()
 
-        pairs = np.array([(i, j) for i, j in self.graph.edges()], dtype=np.int32)
+        pairs = np.array([(i, j) for i, j in self.graph.edges()], dtype=int)
         Nnode = len(self.reppositions)
         # cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
         # Now uses the python version of tilecycles because it is fast enough.
@@ -1174,7 +1174,7 @@ class GenIce:
                     logger.info("  " + line)
                 cage_center = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
-                self.universe.append(arrange(cpos, self.repcell, cmat, gmol))
+                self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
 
         # Assume the dopant is monatomic and replaces one water molecule
         atomset = defaultdict(set)

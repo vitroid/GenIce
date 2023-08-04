@@ -39,7 +39,7 @@ all: 9.nx3a.test dtc.nx3a.test
 all: 2d.gro.test
 all: 4.ngph.test
 all: test1.done   test2.done   test3.done   test4.done
-all: 12.scad.test HS3.rings.nx3a.test
+all: 12.scad.test HS3.rings.yap.test
 all: c0te.nx3a.test c1te.nx3a.test ice1hte.nx3a.test
 all: i.graph.test
 all: 0.exyz.test
@@ -63,8 +63,8 @@ all: 11-4.nx3a.test 11-8.nx3a.test 11-12.nx3a.test 11-16.nx3a.test
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
 #	touch $@
-%.rings.nx3a: $(FMT)/rings.py
-	$(GENICE) $* -f rings | fgrep -v "Command line:" > $@
+%.rings.yap: $(FMT)/rings.py
+	$(GENICE) $* -r 2 2 2 -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py
 	$(GENICE) $* -f _ringstat -r 2 2 2 | fgrep -v "Command line:" > $@
 %.kg: $(FMT)/_KG.py
