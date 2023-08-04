@@ -87,7 +87,7 @@ def orientations(coord, graph, cell):
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
-        neis = np.zeros([len(list(graph)), 2], dtype=np.int)
+        neis = np.zeros([len(list(graph)), 2], dtype=np.int32)
         for node in graph:
             neis[node] = list(graph.successors(node))
         # array of donating vectors
@@ -201,9 +201,7 @@ def replicate_groups(groups, waters, cagepos, rep):
                     for z in range(rep[2]):
                         r = np.array((x, y, z))
                         # label of the root (water) in the replica
-                        newroot = root + len(waters) * (
-                            x + rep[0] * (y + rep[1] * z)
-                        )
+                        newroot = root + len(waters) * (x + rep[0] * (y + rep[1] * z))
                         # replicated cell in which the cage resides.
                         # modulo by positive number is always positive.
                         cr = (r + gcell) % rep
@@ -333,9 +331,7 @@ def pentyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(
-        cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]]
-    )
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
 
 
 def propyl(cpos, root, cell, molname):
@@ -357,9 +353,7 @@ def _2_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(
-        cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]]
-    )
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
 
 
 def _3_methylbutyl(cpos, root, cell, molname):
@@ -373,9 +367,7 @@ def _3_3_dimethylbutyl(cpos, root, cell, molname):
     """
     put a butyl group rooted at root toward cpos.
     """
-    return Alkyl(
-        cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]]
-    )
+    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
 
 
 def Alkyl(cpos, root, cell, molname, backbone):
@@ -546,9 +538,7 @@ class GenIce:
             p = pl.pairs_iter(
                 self.waters, maxdist=rc, cell=self.cell.mat, distance=False
             )
-            self.bondlen = 1.1 * shortest_distance(
-                self.waters, self.cell, pairs=p
-            )
+            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             logger.info(f"Bond length (estim.): {self.bondlen}")
 
         # Set density
@@ -701,9 +691,7 @@ class GenIce:
                 else:
                     num_hb_disorder += 1
             logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
-            logger.info(
-                f"  Number of unoriented hydrogen bonds: {num_hb_disorder}"
-            )
+            logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
             logger.info(
                 "  Number of hydrogen bonds: {0} (regular num: {1})".format(
                     nfixed + num_hb_disorder, len(self.reppositions) * 2
@@ -799,9 +787,7 @@ class GenIce:
         self.reppositions = replicate_positions(self.waters, self.rep)
 
         # This must be done before the replication of the cell.
-        logger.info(
-            "  Number of water molecules: {0}".format(len(self.reppositions))
-        )
+        logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
         self.graph = self.prepare_random_graph(self.fixed)
 
         # scale the cell
@@ -819,9 +805,7 @@ class GenIce:
 
         if assess_cages:
             logger.info("  Assessing the cages...")
-            self.cagepos, self.cagetype = cage.assess_cages(
-                self.graph, self.waters
-            )
+            self.cagepos, self.cagetype = cage.assess_cages(self.graph, self.waters)
             logger.info("  Done assessment.")
 
         if self.cagepos is not None and self.cagepos.shape[0] > 0:
@@ -867,12 +851,8 @@ class GenIce:
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(
-            self.dopants, len(self.waters), self.rep
-        )
-        self.groups = replicate_groups(
-            self.groups, self.waters, self.cagepos, self.rep
-        )
+        self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
+        self.groups = replicate_groups(self.groups, self.waters, self.cagepos, self.rep)
 
         # self.groups_info(self.groups)
         for root, cages in self.groups.items():
@@ -1023,9 +1003,7 @@ class GenIce:
 
         logger = getLogger()
 
-        pairs = np.array(
-            [(i, j) for i, j in self.graph.edges()], dtype=np.int32
-        )
+        pairs = np.array([(i, j) for i, j in self.graph.edges()], dtype=np.int32)
         Nnode = len(self.reppositions)
         # cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
         # Now uses the python version of tilecycles because it is fast enough.
@@ -1153,9 +1131,7 @@ class GenIce:
 
             # process the -g option
             for cagetype, contents in guests.items():
-                assert (
-                    cagetype in self.cagetypes
-                ), f"Nonexistent cage type: {cagetype}"
+                assert cagetype in self.cagetypes, f"Nonexistent cage type: {cagetype}"
                 resident = dict()
                 rooms = list(self.cagetypes[cagetype] - self.filled_cages)
 
@@ -1206,18 +1182,14 @@ class GenIce:
                     assert cage in dopants_neighbors[root]
                     cpos = self.repcagepos[cage]
                     self.universe.append(
-                        self.groups_placer[group](
-                            cpos, pos, self.repcell, molname
-                        )
+                        self.groups_placer[group](cpos, pos, self.repcell, molname)
                     )
 
             # molecular guests
             for molec, cages in molecules.items():
                 guest_type, guest_options = plugin_option_parser(molec)
                 logger.debug(f"Guest type: {guest_type}")
-                gmol = safe_import("molecule", guest_type).Molecule(
-                    **guest_options
-                )
+                gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
 
                 try:
                     mdoc = gmol.__doc__.splitlines()
@@ -1244,9 +1216,7 @@ class GenIce:
         logger = getLogger()
         if self.pairs is None:
             logger.info("  Pairs are not given explicitly.")
-            logger.info(
-                "  Estimating the bonds according to the pair distances."
-            )
+            logger.info("  Estimating the bonds according to the pair distances.")
 
             logger.debug(f"Bondlen: {self.bondlen}")
             # make bonded pairs according to the pair distance.
@@ -1340,9 +1310,7 @@ class GenIce:
         if cell is None:
             cell = self.cell
 
-        dopants_neighbors = neighbor_cages_of_dopants(
-            dopants, waters, cagepos, cell
-        )
+        dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
 
         for dopant, cages in dopants_neighbors.items():
             logger.info(f"    Cages adjacent to dopant {dopant}: {cages}")
@@ -1353,9 +1321,7 @@ class GenIce:
         logger = getLogger()
         for root, cages in groups.items():
             for cage, group in cages.items():
-                logger.info(
-                    f"    Group {group} of dopant {root} in cage {cage}"
-                )
+                logger.info(f"    Group {group} of dopant {root} in cage {cage}")
 
     def guests_info(self, cagetypes, molecules):
         logger = getLogger()
