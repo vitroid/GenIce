@@ -1,12 +1,16 @@
 # coding: utf-8
 
-from genice2.molecules import serialize
-import genice2.formats
-from genice2.decorators import timeit, banner
-import yaplotlib as yp
-import numpy as np
-from logging import getLogger
+import itertools as it
 from collections import defaultdict
+from logging import getLogger
+
+import numpy as np
+import yaplotlib as yp
+
+import genice2.formats
+from genice2.decorators import banner, timeit
+from genice2.molecules import serialize
+
 desc = {"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
         "brief": "Yaplot.",
         "usage": """
@@ -62,13 +66,23 @@ Options:
             return
         # prepare the reverse dict
         waters = defaultdict(dict)
-        pos = ice.reppositions @ ice.repcell.mat
+        pos = ice.reppositions
         s = ""
+        s += yp.Layer(4)
+        s += yp.Color(3)
+        s += yp.Size(0.03)
         for p in pos:
-            s += yp.Layer(4)
-            s += yp.Color(3)
-            s += yp.Size(0.03)
-            s += yp.Circle(p)
+            s += yp.Circle(p @ ice.repcell.mat)
+        s += yp.Layer(5)
+        s += yp.Color(4)
+        # s += yp.Size(0.03)
+        for i, j in ice.graph.edges(data=False):
+            # if i in waters and j in waters:  # edge may connect to the dopant
+            O1, O2 = pos[i], pos[j]
+            d = O2 - O1
+            d -= np.floor(d+0.5)
+            O2 = O1 + d
+            s += yp.Line(O1 @ ice.repcell.mat, O2 @ ice.repcell.mat)
         self.output += s + yp.NewPage()
         return True
 
@@ -135,7 +149,7 @@ Options:
     @timeit
     @banner
     def Hook7(self, ice):
-        "Output water molecules in Yaplot format."
+        "Output other molecules in Yaplot format."
         logger = getLogger()
         gatoms = []
         for mols in ice.universe[1:]:  # 0 is water
@@ -154,8 +168,17 @@ Options:
                 pal = 4 + len(palettes)
                 palettes[atomname] = pal
             s += yp.Color(pal)
-            s += yp.Size(0.04)
+            if atomname[0] == "H":
+                s += yp.Size(0.02)
+            else:
+                s += yp.Size(0.04)
             s += yp.Circle(position)
+        for a, b in it.combinations(gatoms, 2):
+            resno, resname, atomname, position1, order = a
+            resno, resname, atomname, position2, order = b
+            d = position1 - position2
+            if d@d < 0.16**2:
+                s += yp.Line(position1, position2)
         s = '#' + "\n#".join(ice.doc) + "\n" + s
         s += yp.NewPage()
         self.output += s

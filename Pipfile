@@ -12,11 +12,13 @@ openpyscad = "*"
 graphstat = "*"
 PairList = ">=0.2.12.4"
 TileCycles = ">=0.1.4.3"
+genice2 = "*"
 
 [dev-packages]
-genice2-svg = "*"
 requests = "*"
 genice2 = "*"
+genice2-svg = "*"
+genice2-cif = "*"
 
 [requires]
 python_version = "3.9"

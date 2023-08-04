@@ -96,9 +96,7 @@ class AnalIce(GenIce):
             p = pl.pairs_iter(
                 self.waters, maxdist=rc, cell=self.cell.mat, distance=False
             )
-            self.bondlen = 1.1 * shortest_distance(
-                self.waters, self.cell, pairs=p
-            )
+            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
             logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
@@ -166,6 +164,10 @@ class AnalIce(GenIce):
 
         # groups info
         self.groups = defaultdict(dict)
+
+        # unused but required
+        self.anions = []
+        self.cations = []
 
     def analyze_ice(self, water, formatter, noise=0.0):
         """
@@ -250,9 +252,7 @@ class AnalIce(GenIce):
         self.reppositions = self.waters
 
         # This must be done before the replication of the cell.
-        logger.info(
-            "  Number of water molecules: {0}".format(len(self.reppositions))
-        )
+        logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
 
         # self.graph = self.prepare_random_graph(self.fixed)
         self.graph = self.prepare_random_graph(self.pairs)

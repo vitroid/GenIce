@@ -259,7 +259,7 @@ def safe_import(category, name):
     name:     The name of the plugin.
     """
     logger = getLogger()
-    assert category in ("lattice", "format", "molecule", "loader")
+    assert category in ("lattice", "format", "molecule", "loader", "group")
 
     # single \? as a plugin name ==> show descriptions
     if name == "?":
@@ -326,11 +326,18 @@ def Loader(name, **kwargs):
     return safe_import("loader", name).Loader(**kwargs)
 
 
+def Group(name, **kwargs):
+    """
+    Shortcut for safe_import.
+    """
+    return safe_import("group", name).Group(**kwargs)
+
+
 if __name__ == "__main__":
     basicConfig(level=INFO)
     if len(sys.argv) == 1:
         cats = ("lattice", "format", "molecule", "loader")
     else:
-        cats = argv[1:]
+        cats = sys.argv[1:]
     modules = {cat: scan(cat) for cat in cats}
     print(modules)

@@ -9,15 +9,13 @@ import itertools as it
 import random
 from collections import defaultdict
 from logging import getLogger
-from types import SimpleNamespace
 from typing import Type, Union
 
 import numpy as np
 import pairlist as pl
 import tilecycles as tc
 
-# for alkyl groups (Experimental)
-from genice2 import alkyl, cage
+from genice2 import cage
 from genice2 import digraph as dg
 from genice2.cell import Cell, rel_wrap
 from genice2.decorators import banner, timeit
@@ -26,7 +24,7 @@ from genice2.lattices import Lattice
 
 # A virtual monatomic molecule
 from genice2.molecules import Molecule, arrange, monatom, one
-from genice2.plugin import safe_import
+from genice2.plugin import Group, safe_import
 from genice2.valueparser import (
     flatten,
     parse_cages,
@@ -87,7 +85,7 @@ def orientations(coord, graph, cell):
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
-        neis = np.zeros([len(list(graph)), 2], dtype=np.int32)
+        neis = np.zeros([len(list(graph)), 2], dtype=np.int)
         for node in graph:
             neis[node] = list(graph.successors(node))
         # array of donating vectors
@@ -320,85 +318,62 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
 
 
 # They should be separate plugins in the future.
-def butyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md"]]])
 
 
-def pentyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", ["Md", "Me"]]]])
+# def pentyl(cage_center, root_position, cell, molname):
+#     """
+#     put a butyl group rooted at root_position toward cage_center.
+#     """
+#     return Alkyl(
+#         cage_center, root_position, cell, molname, [
+#             "Ma", [
+#                 "Mb", [
+#                     "Mc", [
+#                         "Md", "Me"]]]])
 
 
-def propyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc"]])
+# def propyl(cage_center, root_position, cell, molname):
+#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc"]])
 
 
-def ethyl(cpos, root, cell, molname):
-    return Alkyl(cpos, root, cell, molname, ["Ma", "Mb"])
+# def ethyl(cage_center, root_position, cell, molname):
+#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", "Mb"])
 
 
-def _2_2_dimethylpropyl(cpos, root, cell, molname):
-    """
-    2,2-dimethylpropyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
+# def _2_2_dimethylpropyl(cage_center, root_position, cell, molname):
+#     """
+#     2,2-dimethylpropyl group rooted at root_position toward cage_center.
+#     """
+#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
 
 
-def _2_3_dimethylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"], "Mf"]])
+# def _2_3_dimethylbutyl(cage_center, root_position, cell, molname):
+#     """
+#     put a butyl group rooted at root_position toward cage_center.
+#     """
+#     return Alkyl(
+#         cage_center, root_position, cell, molname, [
+#             "Ma", [
+#                 "Mb", [
+#                     "Mc", "Md", "Me"], "Mf"]])
 
 
-def _3_methylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
+# def _3_methylbutyl(cage_center, root_position, cell, molname):
+#     """
+#     put a butyl group rooted at root_position toward cage_center.
+#     """
+#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
 
 
-def _3_3_dimethylbutyl(cpos, root, cell, molname):
-    """
-    put a butyl group rooted at root toward cpos.
-    """
-    return Alkyl(cpos, root, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me", "Mf"]]])
-
-
-def Alkyl(cpos, root, cell, molname, backbone):
-    """
-    put a normal-alkyl group rooted at root and growing toward cpos.
-    """
-    logger = getLogger()
-    # logger.info("  Put butyl at {0}".format(molname))
-    v1abs = cell.rel2abs(rel_wrap(cpos - root))
-    v1 = v1abs / np.linalg.norm(v1abs)
-
-    origin = cell.rel2abs(root)
-    CC = 0.154
-    rawatoms = alkyl.alkyl(v1, v1abs * 1.5 / CC, backbone)
-
-    atomnames = []
-    atompos = []
-    order = []
-    # atoms = []
-    for i, atom in enumerate(rawatoms):
-        atomname, pos = atom
-        atomnames.append(atomname)
-        atompos.append(cell.abs_wrapf(pos * CC + origin))
-        order.append(i)
-    mols = SimpleNamespace(
-        resname=molname,
-        atomnames=atomnames,
-        positions=[atompos],  # atomic positions
-        orig_order=order,  #
-    )
-    return mols
+# def _3_3_dimethylbutyl(cage_center, root_position, cell, molname):
+#     """
+#     put a butyl group rooted at root_position toward cage_center.
+#     """
+#     return Alkyl(
+#         cage_center, root_position, cell, molname, [
+#             "Ma", [
+#                 "Mb", [
+#                     "Mc", "Md", "Me", "Mf"]]])
 
 
 class GenIce:
@@ -620,17 +595,15 @@ class GenIce:
 
         # groups for the semi-guest
         # experimental; there are many variation of semi-guest inclusion.
-        self.groups_placer = {
-            "Bu-": butyl,
-            "Butyl-": butyl,
-            "Pentyl-": pentyl,
-            "Propyl-": propyl,
-            "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
-            "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
-            "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
-            "3-methylbutyl-": _3_methylbutyl,
-            "Ethyl-": ethyl,
-        }
+        # self.groups_placer = {"Bu-": butyl,
+        #                       "Butyl-": butyl,
+        #                       "Pentyl-": pentyl,
+        #                       "Propyl-": propyl,
+        #                       "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
+        #                       "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
+        #                       "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
+        #                       "3-methylbutyl-": _3_methylbutyl,
+        #                       "Ethyl-": ethyl}
 
     def generate_ice(
         self,
@@ -1178,11 +1151,13 @@ class GenIce:
                 logger.debug((root, cages, name, molname, pos, rot))
 
                 for cage, group in cages.items():
-                    assert group in self.groups_placer
+                    # assert group in self.groups_placer
                     assert cage in dopants_neighbors[root]
-                    cpos = self.repcagepos[cage]
+                    cage_center = self.repcagepos[cage]
                     self.universe.append(
-                        self.groups_placer[group](cpos, pos, self.repcell, molname)
+                        Group(group).arrange_atoms(
+                            cage_center, pos, self.repcell, molname, origin_atom=name
+                        )
                     )
 
             # molecular guests
@@ -1197,7 +1172,7 @@ class GenIce:
                     mdoc = []
                 for line in mdoc:
                     logger.info("  " + line)
-                cpos = [self.repcagepos[i] for i in cages]
+                cage_center = [self.repcagepos[i] for i in cages]
                 cmat = [np.identity(3) for i in cages]
                 self.universe.append(arrange(cpos, self.repcell, cmat, gmol))
 

@@ -36,6 +36,9 @@ cages.py
 /*.tgz
 benchmark\.txt
 README\.md\.1
+/*.lock
+/*.mp4
+
 
 # folders ####################
 docs/*.svg

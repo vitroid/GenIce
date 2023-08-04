@@ -5,6 +5,7 @@ LIB=$(BASE)/genice2
 FMT=$(LIB)/formats
 LTC=$(LIB)/lattices
 LDR=$(LIB)/loaders
+GRP=$(LIB)/groups
 UTIL=.
 REFD=ref
 .DELETE_ON_ERROR:
