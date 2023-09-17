@@ -1,9 +1,11 @@
 import sys
-#import logging
+
+# import logging
 import argparse as ap
 from genice2.cli import SmartFormatter, help_format, logger_setup
 from genice2 import __version__, load, analice
-#from genice2.plugin import descriptions
+
+# from genice2.plugin import descriptions
 from genice2.plugin import safe_import, descriptions
 from genice2.valueparser import plugin_option_parser
 import random
@@ -11,101 +13,114 @@ import numpy as np
 
 
 def help_file():
-    return 'R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n' + descriptions("loader")
+    return (
+        "R|Input file(s). File type is estimated from the suffix. Files of different types cannot be read at a time. File type can be specified explicitly with -s option.\n\n"
+        + descriptions("loader")
+    )
 
 
 def getoptions():
     parser = ap.ArgumentParser(
-        description='GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {0})'.format(__version__),
-        prog='analice2',
-        usage='%(prog)s [options]',
-        formatter_class=SmartFormatter)
-    parser.add_argument('--version',
-                        '-V',
-                        action='version',
-                        version='%(prog)s {0}'.format(__version__))
-    parser.add_argument('--format',
-                        '-f',
-                        dest='format',
-                        default="gromacs",
-                        metavar="name",
-                        help=help_format)
-    parser.add_argument('--output',
-                        '-o',
-                        dest='output',
-                        metavar="%04d.gro",
-                        help='Output in separate files.')
+        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {__version__})",
+        prog="analice2",
+        usage="%(prog)s [options]",
+        formatter_class=SmartFormatter,
+    )
     parser.add_argument(
-        '--water',
-        '-w',
-        dest='water',
+        "--version", "-V", action="version", version="%(prog)s {0}".format(__version__)
+    )
+    parser.add_argument(
+        "--format",
+        "-f",
+        dest="format",
+        default="gromacs",
+        metavar="name",
+        help=help_format(),
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        dest="output",
+        metavar="%04d.gro",
+        help="Output in separate files.",
+    )
+    parser.add_argument(
+        "--water",
+        "-w",
+        dest="water",
         default="tip3p",
         metavar="model",
-        help='Replace water model. (tip3p, tip4p, etc.) [tip3p]')
+        help="Replace water model. (tip3p, tip4p, etc.) [tip3p]",
+    )
     parser.add_argument(
-        '--oxygen',
-        '-O',
-        dest='oatom',
+        "--oxygen",
+        "-O",
+        dest="oatom",
         metavar="OW",
         default="O",
-        help='Specify atom name of oxygen in input Gromacs file. ("O")')
+        help='Specify atom name of oxygen in input Gromacs file. ("O")',
+    )
     parser.add_argument(
-        '--hydrogen',
-        '-H',
-        dest='hatom',
+        "--hydrogen",
+        "-H",
+        dest="hatom",
         metavar="HW[12]",
         default="H",
-        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")')
-    parser.add_argument('--suffix',
-                        '-s',
-                        dest='suffix',
-                        metavar="gro",
-                        default=None,
-                        help='Specify the file suffix explicitly. ((None)')
+        help='Specify atom name (regexp) of hydrogen in input Gromacs file. ("H")',
+    )
     parser.add_argument(
-        '--filerange',
-        dest='filerange',
+        "--suffix",
+        "-s",
+        dest="suffix",
+        metavar="gro",
+        default=None,
+        help="Specify the file suffix explicitly. ((None)",
+    )
+    parser.add_argument(
+        "--filerange",
+        dest="filerange",
         metavar="[from:]below[:interval]",
         default="0:1000000",
-        help='Specify the number range for the input filename. ("0:1000000")')
+        help='Specify the number range for the input filename. ("0:1000000")',
+    )
     parser.add_argument(
-        '--framerange',
-        dest='framerange',
+        "--framerange",
+        dest="framerange",
         metavar="[from:]below[:interval]",
         default="0:1000000",
-        help='Specify the number range for the input frames. ("0:1000000")')
-    parser.add_argument('--debug',
-                        '-D',
-                        action='count',
-                        dest='debug',
-                        help='Output debugging info.')
-    parser.add_argument('--quiet',
-                        '-q',
-                        action='store_true',
-                        dest='quiet',
-                        help='Do not output progress messages.')
-    parser.add_argument('--seed',
-                        type=int,
-                        dest='seed',
-                        default=1000,
-                        help='Random seed [1000]')
+        help='Specify the number range for the input frames. ("0:1000000")',
+    )
     parser.add_argument(
-        '--add_noise',
-        type=float,
-        dest='noise',
-        default=0.,
-        metavar='percent',
-        help='Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.')
+        "--debug", "-D", action="count", dest="debug", help="Output debugging info."
+    )
     parser.add_argument(
-        '--avgspan',
-        '-v',
+        "--quiet",
+        "-q",
+        action="store_true",
+        dest="quiet",
+        help="Do not output progress messages.",
+    )
+    parser.add_argument(
+        "--seed", type=int, dest="seed", default=1000, help="Random seed [1000]"
+    )
+    parser.add_argument(
+        "--add_noise",
         type=float,
-        dest='avgspan',
+        dest="noise",
+        default=0.0,
+        metavar="percent",
+        help="Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.",
+    )
+    parser.add_argument(
+        "--avgspan",
+        "-v",
+        type=float,
+        dest="avgspan",
         default=0,
-        metavar='1',
-        help='Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.')
-    parser.add_argument('File',
-                        help=help_file)
+        metavar="1",
+        help="Output mean atomic positions of a given time span so as to remove fast librational motions and to make a smooth video. The values 0 and 1 specify no averaging.",
+    )
+    parser.add_argument("File", help=help_file())
     return parser.parse_args()
 
 
@@ -162,13 +177,21 @@ def main():
 
     del options  # Dispose for safety.
 
-    for i, (oatoms, hatoms, cellmat) in enumerate(load.average(lambda: load.iterate(
-            filename, oname, hname, filerange, framerange, suffix=suffix), span=avgspan)):
+    for i, (oatoms, hatoms, cellmat) in enumerate(
+        load.average(
+            lambda: load.iterate(
+                filename, oname, hname, filerange, framerange, suffix=suffix
+            ),
+            span=avgspan,
+        )
+    ):
         lattice_info = load.make_lattice_info(oatoms, hatoms, cellmat)
 
-        result = analice.AnalIce(
-            lattice_info, signature=signature).analyze_ice(
-            water=water, formatter=formatter, noise=noise, )
+        result = analice.AnalIce(lattice_info, signature=signature).analyze_ice(
+            water=water,
+            formatter=formatter,
+            noise=noise,
+        )
 
         if result is not None:
             if output is not None:
