@@ -46,8 +46,7 @@ def scan(category):
 
     for mod in modules["system"]:
         try:
-            module = importlib.import_module(
-               f"genice2.{category}s.{mod}")
+            module = importlib.import_module(f"genice2.{category}s.{mod}")
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
                 if "ref" in module.desc:
@@ -59,7 +58,7 @@ def scan(category):
             pass
 
     logger.info(f"Extra {category}s")
-    groupname = f'genice2_{category}'
+    groupname = f"genice2_{category}"
     mods = []
     for ep in pr.iter_entry_points(group=groupname):
         label, m = str(ep).split("=")
@@ -79,10 +78,13 @@ def scan(category):
     modules["extra"] = mods
 
     logger.info(f"Local {category}s")
-    mods = [os.path.basename(mod)[:-3]
-            for mod in sorted(glob.glob(f"./{category}s/*.py"))]
+    mods = [
+        os.path.basename(mod)[:-3]
+        for mod in sorted(glob.glob(f"./{category}s/[A-Za-z0-9]*.py"))
+    ]
     logger.info(mods)
     for mod in mods:
+        logger.debug(f"Loading {category}s.{mod} ...")
         module = importlib.import_module(f"{category}s.{mod}")
         if "desc" in module.__dict__:
             desc[mod] = module.desc["brief"]
@@ -101,14 +103,7 @@ def scan(category):
     return modules
 
 
-def descriptions(
-    category,
-    width=72,
-    water=False,
-    groups=(
-        "system",
-        "extra",
-        "local")):
+def descriptions(category, width=72, water=False, groups=("system", "extra", "local")):
     """
     Show the list of available plugins in the category.
 
@@ -121,22 +116,26 @@ def descriptions(
             "system": "1. Lattice structures served with GenIce",
             "extra": "2. Lattice structures served by external plugins",
             "local": "3. Lattice structures served locally",
-            "title": "[Available lattice structures]"},
+            "title": "[Available lattice structures]",
+        },
         "format": {
             "system": "1. Formatters served with GenIce",
             "extra": "2. Formatters served by external plugins",
             "local": "3. Formatters served locally",
-            "title": "[Available formatters]"},
+            "title": "[Available formatters]",
+        },
         "loader": {
             "system": "1. File types served with GenIce",
             "extra": "2. File types served by external eplugins",
             "local": "3. File types served locally",
-            "title": "[Available input file types]"},
+            "title": "[Available input file types]",
+        },
         "molecule": {
             "system": "1. Molecules served with GenIce",
             "extra": "2. Molecules served by external plugins",
             "local": "3. Molecules served locally",
-            "title": "[Available molecules]"},
+            "title": "[Available molecules]",
+        },
     }
     mods = scan(category)
     catalog = f" \n \n{titles[category]['title']}\n \n"
@@ -172,8 +171,10 @@ def descriptions(
                 drop_whitespace=False,
                 expand_tabs=True,
                 tabsize=16,
-                subsequent_indent=" " *
-                16) for line in table.splitlines()]
+                subsequent_indent=" " * 16,
+            )
+            for line in table.splitlines()
+        ]
         table = "\n".join(table) + "\n"
         undesc = " ".join(undesc)
         if undesc != "":
@@ -182,13 +183,7 @@ def descriptions(
     return catalog
 
 
-def plugin_descriptors(
-    category,
-    water=False,
-    groups=(
-        "system",
-        "extra",
-        "local")):
+def plugin_descriptors(category, water=False, groups=("system", "extra", "local")):
     """
     Show the list of available plugins in the category.
 
@@ -217,8 +212,7 @@ def plugin_descriptors(
                 # L is the name of module (name of ice)
                 desced[desc[L]].append(L)
                 if L in refs:
-                    refss[desc[L]] |= set(
-                        [label for key, label in refs[L].items()])
+                    refss[desc[L]] |= set([label for key, label in refs[L].items()])
             else:
                 undesc.append(L)
         catalog[group] = [desced, undesc, refss]
@@ -229,13 +223,13 @@ def audit_name(name):
     """
     Audit the mol name to avoid the access to external files
     """
-    return re.match('^[A-Za-z0-9-_]+$', name) is not None
+    return re.match("^[A-Za-z0-9-_]+$", name) is not None
 
 
 def import_extra(category, name):
     logger = getLogger()
     logger.info(f"Extra {category} plugin: {name}")
-    groupname = f'genice2_{category}'
+    groupname = f"genice2_{category}"
     module = None
     for ep in pr.iter_entry_points(group=groupname):
         logger.debug(f"    Entry point: {ep}")
@@ -275,8 +269,7 @@ def safe_import(category, name):
 
     module = None
     try:
-        module = importlib.import_module(
-            category + "s." + name)  # at ~/.genice
+        module = importlib.import_module(category + "s." + name)  # at ~/.genice
     except ImportError as e:
         pass
     if module is None:

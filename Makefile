@@ -1,6 +1,7 @@
-all: README.md
+all:
+	which python
 	echo Hello.
-%: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
+%: temp_% Utilities/replacer.py genice2/plugin.py citations.json pyproject.toml
 	-pip install jinja2
 	python Utilities/replacer.py < $< > $@
 	-fgrep '{{' $@
@@ -27,8 +28,7 @@ install:
 uninstall:
 	-pip uninstall -y genice2
 build: $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
-	./setup.py sdist # bdist_wheel
-
+	python -m build
 
 deploy: build
 	twine upload dist/*

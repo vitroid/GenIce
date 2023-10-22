@@ -3,11 +3,14 @@ import sys
 import os
 
 # from genice2.tool import line_replacer
-import distutils.core
-from logging import getLogger, INFO, basicConfig
+# import genice
+# import distutils.core
+from logging import getLogger, INFO, DEBUG, basicConfig
 from jinja2 import Template
 import json
 from genice2.plugin import plugin_descriptors
+import toml
+import genice2
 
 
 def make_citations(r):
@@ -46,7 +49,7 @@ def system_molecules(markdown=True, water=False, citations=None):
     return s
 
 
-basicConfig(level=INFO, format="%(levelname)s %(message)s")
+basicConfig(level=DEBUG, format="%(levelname)s %(message)s")
 logger = getLogger()
 logger.debug("Debug mode.")
 
@@ -60,21 +63,22 @@ def prefix(L, pre):
     return pre + ("\n" + pre).join(L) + "\n"
 
 
-setup = distutils.core.run_setup("setup.py")
+setup = toml.load("pyproject.toml")
+project = setup["project"]
 
 d = {
     "usage": prefix(
         [x.rstrip() for x in os.popen("./genice.x -h").readlines()], "    "
     ),
-    "version": setup.get_version(),
-    "package": setup.get_name(),
-    "url": setup.get_url(),
-    "genice": "[GenIce](" + setup.get_url() + ")",
-    "requires": prefix(setup.install_requires, "* "),
-    "ices": system_ices(),  # citations=[key for key, doi, desc in citations]),
+    "version": genice2.__version__,
+    "package": project["name"],
+    "url": project["urls"]["Homepage"],
+    "genice": "[GenIce](" + project["urls"]["Homepage"] + ")",
+    "requires": prefix(project["dependencies"], "* "),
     "waters": system_molecules(water=True),
     "guests": system_molecules(water=False),
     "citationlist": prefix(citationlist, "* "),
+    "ices": system_ices(),  # citations=[key for key, doi, desc in citations]),
 }
 
 
