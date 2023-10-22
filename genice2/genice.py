@@ -672,52 +672,54 @@ class GenIce:
             )
 
             # test2==True means it is a z=4 graph.
-            test2 = self.test_undirected_graph(self.graph)
-            if not test2:
-                logger.warn("Ice rule is not satisfied.")
+            # test2 = self.test_undirected_graph(self.graph)
+            # if not test2:
+            #     logger.warn("Ice rule is not satisfied.")
 
             if 2 in hooks:
                 abort = hooks[2](self)
                 if maxstage < 3 or abort:
                     return
 
-            # new_algorithm == fast algorithm
-            new_algorithm = True
-            # it makes the digraph obeying ice rule with zero net polarization
-            # but it works only for a perfect 4-graph.
-            if not test2 or self.asis or nfixed > 0 or depol != "strict":
-                # The network is not 4-connected.
-                new_algorithm = False
-
-            if new_algorithm:
-                # Fast track
-                self.Stage3D()
-            else:
-                # Normal path; make it random, and then remove the defects.
+            if self.asis or nfixed > 0:
                 self.Stage3()
 
-            if 3 in hooks:
-                abort = hooks[3](self)
-                if maxstage < 4 or abort:
-                    return
+                if 3 in hooks:
+                    abort = hooks[3](self)
+                    if maxstage < 4 or abort:
+                        return
 
-            # spacegraph might be already set in Stage3D.
-            if self.spacegraph is None:
-                logger.debug(f"  graph? {self.spacegraph}")
-                if num_hb_disorder == 0:
-                    self.Stage4(depol="none")
-                else:
-                    self.Stage4(depol=depol)
+                # spacegraph might be already set in Stage3D.
+                if self.spacegraph is None:
+                    logger.debug(f"  graph? {self.spacegraph}")
+                    if num_hb_disorder == 0:
+                        self.Stage4(depol="none")
+                    else:
+                        self.Stage4(depol=depol)
 
-            dipole = self.spacegraph.net_polarization()
-            logger.info(
-                f"Residual net polarization: {dipole[0]:.2f} {dipole[1]:.2f} {dipole[2]:.2f}"
-            )
+                dipole = self.spacegraph.net_polarization()
+                logger.info(
+                    f"Residual net polarization: {dipole[0]:.2f} {dipole[1]:.2f} {dipole[2]:.2f}"
+                )
 
-            if 4 in hooks:
-                abort = hooks[4](self)
-                if maxstage < 5 or abort:
-                    return
+                if 4 in hooks:
+                    abort = hooks[4](self)
+                    if maxstage < 5 or abort:
+                        return
+
+            else:
+                # GenIce-core
+                self.Stage34E(depol=depol)
+
+                if 3 in hooks:
+                    abort = hooks[3](self)
+                    if maxstage < 4 or abort:
+                        return
+
+                if 4 in hooks:
+                    abort = hooks[4](self)
+                    if maxstage < 5 or abort:
+                        return
 
             self.Stage5()
 
@@ -907,109 +909,97 @@ class GenIce:
 
     @timeit
     @banner
-    def Stage3D(self):
+    def Stage34E(self, depol: str = "none"):
         """
-        Tile the graph with directed cycles.
+        Make a directed ice graph from an undirected ice graph.
         """
+        # """
+        # Tile the graph with directed cycles.
+        # """
 
-        # Cに書きかえるなら、この下の3つをおきかえる。
-        def cycle_edges(cycle):
-            for i in range(len(cycle)):
-                yield cycle[i - 1], cycle[i]
+        # # Cに書きかえるなら、この下の3つをおきかえる。
+        # def cycle_edges(cycle):
+        #     for i in range(len(cycle)):
+        #         yield cycle[i - 1], cycle[i]
 
-        @timeit
-        @banner
-        def spanningCycles(cycles):
-            """
-            Look up the traversal cycles.
-            """
-            dipoles = []
-            spanning = []
-            for j, cycle in enumerate(cycles):
-                dipole = 0
-                for a, b in cycle_edges(cycle):
-                    # displacement vector
-                    d = self.reppositions[b] - self.reppositions[a]
-                    d -= np.floor(d + 0.5)
-                    dipole += d
-                if not np.allclose(dipole, 0):
-                    # it is a cell-spanning cycle
-                    dipoles.append(dipole)
-                    spanning.append(j)
-            dipoles = np.array(dipoles)
-            return dipoles, spanning
+        # @timeit
+        # @banner
+        # def spanningCycles(cycles):
+        #     """
+        #     Look up the traversal cycles.
+        #     """
+        #     dipoles = []
+        #     spanning = []
+        #     for j, cycle in enumerate(cycles):
+        #         dipole = 0
+        #         for a, b in cycle_edges(cycle):
+        #             # displacement vector
+        #             d = self.reppositions[b] - self.reppositions[a]
+        #             d -= np.floor(d + 0.5)
+        #             dipole += d
+        #         if not np.allclose(dipole, 0):
+        #             # it is a cell-spanning cycle
+        #             dipoles.append(dipole)
+        #             spanning.append(j)
+        #     dipoles = np.array(dipoles)
+        #     return dipoles, spanning
 
-        @timeit
-        @banner
-        def direct(dipoles, spanning):
-            """
-            Re-orient the cycles so as to minimize the net polarization.
-            """
-            bestm = 999999
-            bestp = None
-            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
-            pol = dipoles.T @ dir
-            pol2 = pol @ pol
-            for i in range(len(dipoles) * 2):
-                r = random.randint(0, len(dipoles) - 1)
-                newpol = pol - 2 * dir[r] * dipoles[r]
-                newpol2 = newpol @ newpol
-                if newpol2 <= pol2:
-                    dir[r] = -dir[r]
-                    pol = newpol
-                    pol2 = newpol2
-                    if pol2 < 1e-6:
-                        break
-            logger.debug(f"  Depolarized to {pol} in {i} steps")
-            return dir
+        # @timeit
+        # @banner
+        # def direct(dipoles, spanning):
+        #     """
+        #     Re-orient the cycles so as to minimize the net polarization.
+        #     """
+        #     bestm = 999999
+        #     bestp = None
+        #     dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
+        #     pol = dipoles.T @ dir
+        #     pol2 = pol @ pol
+        #     for i in range(len(dipoles) * 2):
+        #         r = random.randint(0, len(dipoles) - 1)
+        #         newpol = pol - 2 * dir[r] * dipoles[r]
+        #         newpol2 = newpol @ newpol
+        #         if newpol2 <= pol2:
+        #             dir[r] = -dir[r]
+        #             pol = newpol
+        #             pol2 = newpol2
+        #             if pol2 < 1e-6:
+        #                 break
+        #     logger.debug(f"  Depolarized to {pol} in {i} steps")
+        #     return dir
 
-        @timeit
-        @banner
-        def cycles2digraph(cycles):
-            """
-            Convert cycles to a digraph.
-            """
-            d = dg.IceGraph()
-            for cycle in cycles:
-                nx.add_cycle(d, cycle, fixed=False)
-            return d
+        # @timeit
+        # @banner
+        # def cycles2digraph(cycles):
+        #     """
+        #     Convert cycles to a digraph.
+        #     """
+        #     d = dg.IceGraph()
+        #     for cycle in cycles:
+        #         nx.add_cycle(d, cycle, fixed=False)
+        #     return d
+
+        import genice_core
 
         logger = getLogger()
 
-        pairs = np.array([(i, j) for i, j in self.graph.edges()], dtype=int)
-        Nnode = len(self.reppositions)
-        # cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
-        # Now uses the python version of tilecycles because it is fast enough.
-        cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode)]
-
-        # evaluate the dipole of each cycle
-        dipoles, spanning = spanningCycles(cycles)
-        logger.debug(f"  {len(spanning)} spanning cycles.")
-
-        # invert randomly to eliminate the net polarization.
-        # Rarely, it cannot be depolarized.
-
-        dir = direct(dipoles, spanning)
-        pol = dipoles.T @ dir
-        pol2 = pol @ pol
-
-        # invert cycles
-        for i, p in enumerate(dir):
-            if p < 0:
-                cycles[spanning[i]].reverse()
-
-        import networkx as nx
-
-        d = cycles2digraph(cycles)
+        if depol == "none":
+            iter = 0
+        else:
+            iter = 1000
+        d = genice_core.ice_graph(
+            self.graph.to_undirected(),
+            vertexPositions=self.reppositions,
+            isPeriodicBoundary=True,
+            dipoleOptimizationCycles=iter,
+        )
 
         self.graph = d
         self.spacegraph = None
-        if pol2 < 1e-6:
-            # Skip Stage4
-            logger.debug("  Depolarized in Stage3D.")
-            self.spacegraph = dg.SpaceIceGraph(
-                d, coord=self.reppositions, immutables=self.graph.immutables
-            )
+
+        logger.debug("  Depolarized in Stage3D.")
+        # no immutable edges
+        self.spacegraph = dg.SpaceIceGraph(d, coord=self.reppositions, immutables=set())
 
     @timeit
     @banner

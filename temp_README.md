@@ -18,7 +18,7 @@ to generate a PDB file.
 ## Demo
 
 The new GenIce works very well with interactive execution.
-[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colab.
+[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colaboratory.
 
 ## Requirements
 
