@@ -5,8 +5,8 @@ authors:
   given-names: "Masakazu"
   orcid: "https://orcid.org/0000-0002-6799-6813"
 title: "GenIce: Hydrogen-Disordered Ice Generator"
-version: 2.1.7.1
-# date-released: 
+version: {{version}}
+# date-released: {{date}}
 url: "https://github.com/vitroid/GenIce"
 preferred-citation:
   type: article
