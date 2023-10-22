@@ -21,12 +21,11 @@ import yaplotlib as yp
 # Dijkstra
 
 
-
-
-def flatten(L):       # Flatten linked list of form [0,[1,[2,[]]]]
+def flatten(L):  # Flatten linked list of form [0,[1,[2,[]]]]
     while len(L) > 0:
         yield L[0]
         L = L[1]
+
 
 # modified from http://code.activestate.com/recipes/119466/
 # for networkx
@@ -41,7 +40,7 @@ def shortest_path(G, start, ends):
     list of nodes on the shortest path from the start to one of the ends.
     """
     q = [(0, start, ())]  # Heap of (cost, path_head, path_rest).
-    visited = set()       # Visited vertices.
+    visited = set()  # Visited vertices.
     while True:
         try:
             ppap = heapq.heappop(q)
@@ -54,7 +53,7 @@ def shortest_path(G, start, ends):
                 return list(flatten(path))[::-1] + [v1]
             path = (v1, path)
             for v2 in G[v1]:
-                if v2 not in visited and not G[v1][v2]['fixed']:
+                if v2 not in visited and not G[v1][v2]["fixed"]:
                     heapq.heappush(q, (cost + 1, v2, path))
 
 
@@ -66,8 +65,15 @@ def shortest_paths(G, start, ends, allowfixed=False):
     list of shortest paths from the start to one of the ends.
     """
     # logger = getLogger()
-    q = [(0, [start, ])]  # Heap of (cost, path)
-    visited = set()       # Visited vertices.
+    q = [
+        (
+            0,
+            [
+                start,
+            ],
+        )
+    ]  # Heap of (cost, path)
+    visited = set()  # Visited vertices.
     cheapest = 999999
     paths = []
     while len(q) > 0:
@@ -85,7 +91,7 @@ def shortest_paths(G, start, ends, allowfixed=False):
             visited.add(v0)
             for v1 in G[v0]:
                 if v1 not in visited:
-                    if allowfixed or not G[v0][v1]['fixed']:
+                    if allowfixed or not G[v0][v1]["fixed"]:
                         heapq.heappush(q, (cost + 1, path + [v1]))
     return paths
 
@@ -112,9 +118,9 @@ class YaplotDraw(nx.DiGraph):
 
     def draw_cell(self):
         s = yp.Color(2)
-        ex = np.array([1., 0., 0.])
-        ey = np.array([0., 1., 0.])
-        ez = np.array([0., 0., 1.])
+        ex = np.array([1.0, 0.0, 0.0])
+        ey = np.array([0.0, 1.0, 0.0])
+        ez = np.array([0.0, 0.0, 1.0])
         x = ex @ self.cell
         y = ey @ self.cell
         z = ez @ self.cell
@@ -164,7 +170,7 @@ class IceGraph(nx.DiGraph):
         for i, j in invert:
             self.invert_edge(i, j)
         for i, j in fix:
-            self[i][j]['fixed'] = True
+            self[i][j]["fixed"] = True
         self.immutables.add(which)
 
     def anionize(self, which):
@@ -179,7 +185,7 @@ class IceGraph(nx.DiGraph):
         for i, j in invert:
             self.invert_edge(i, j)
         for i, j in fix:
-            self[i][j]['fixed'] = True
+            self[i][j]["fixed"] = True
         self.immutables.add(which)
 
     def invert_edge(self, from_, to_, forced=False):
@@ -187,8 +193,8 @@ class IceGraph(nx.DiGraph):
         also invert the attribute vector
         """
         assert self.has_edge(from_, to_)
-        assert forced or not self[from_][to_]['fixed']
-        fix = self[from_][to_]['fixed']
+        assert forced or not self[from_][to_]["fixed"]
+        fix = self[from_][to_]["fixed"]
         self.remove_edge(from_, to_)
         self.add_edge(to_, from_, fixed=fix)
 
@@ -199,7 +205,9 @@ class IceGraph(nx.DiGraph):
             self.invert_edge(f, t, forced)  # also invert the attribute vector
 
     def invert_cycle(self, path, forced=False):
-        p = path + [path[0], ]
+        p = path + [
+            path[0],
+        ]
         if not self.has_edge(p[0], p[1]):
             p = list(reversed(p))
         self.invert_path(p, forced=forced)
@@ -214,7 +222,7 @@ class IceGraph(nx.DiGraph):
             node = nei[next]
         # a cyclic path is found.
         # trim the uncyclic part
-        order = order[marks[node]:]
+        order = order[marks[node] :]
         # add the node at the last again
         order.append(node)
         return order
@@ -243,8 +251,10 @@ class IceGraph(nx.DiGraph):
         Reply whether all the vertices have two incomings and two outgoings.
         """
         for node in self:
-            if len(list(self.successors(node))) != 2 or len(
-                    list(self.predecessors(node))) != 2:
+            if (
+                len(list(self.successors(node))) != 2
+                or len(list(self.predecessors(node))) != 2
+            ):
                 return False
         return True
 
@@ -266,8 +276,7 @@ class IceGraph(nx.DiGraph):
                 # accept if out-degree is 2.
                 defects.pop(0)
                 return
-            if self.in_degree(d) <= 2 and self.out_degree(
-                    d) <= 2:  # acceptable
+            if self.in_degree(d) <= 2 and self.out_degree(d) <= 2:  # acceptable
                 defects.pop(0)
                 return
         if self.in_degree(d) == 2 and self.out_degree(d) == 2:
@@ -277,14 +286,14 @@ class IceGraph(nx.DiGraph):
             nodes = list(self.predecessors(d))
             i = random.randint(0, len(nodes) - 1)
             node = nodes[i]
-            if not self[node][d]['fixed']:
+            if not self[node][d]["fixed"]:
                 self.invert_edge(node, d)
                 defects.append(node)
         if self.out_degree(d) > 2:
             nodes = list(self.successors(d))
             i = random.randint(0, len(nodes) - 1)
             node = nodes[i]
-            if not self[d][node]['fixed']:
+            if not self[d][node]["fixed"]:
                 self.invert_edge(d, node)
                 defects.append(node)
 
@@ -342,7 +351,9 @@ class IceGraph(nx.DiGraph):
         return True
 
     def is_cyclic_homodromic(self, path):
-        p = path + [path[0], ]
+        p = path + [
+            path[0],
+        ]
         return self.is_homodromic(p) or self.is_homodromic(list(reversed(p)))
 
 
@@ -350,6 +361,7 @@ class SpaceIceGraph(IceGraph):
     """
     Digraph with geometrical info
     """
+
     XAXIS = 1
     YAXIS = 2
     ZAXIS = 3
@@ -429,7 +441,7 @@ def find_apsis(vertices, coord, cell, distance, vertex, axis):
         p = coord[i]
         d = p - apsis
         d -= np.floor(d + 0.5)
-        a = d @  cell
+        a = d @ cell
         r = a @ a
         if r < min_r:
             min_a = i
@@ -462,29 +474,55 @@ def traversing_cycles_iter(spaceicegraph, cell, axis):
     # 近傍の定義のために結合距離が必要。
     distance = 0
     while distance == 0:
-        vertex = random.sample(spaceicegraph.nodes(), 1)[0]
+        vertex = random.sample(sorted(spaceicegraph.nodes()), 1)[0]
         distance = estimate_edge_length(spaceicegraph, cell, vertex)
     # すべての頂点を順番にあたる。
-    for vertex in random.sample(spaceicegraph.nodes(), Nnode):
-        apsis = find_apsis(spaceicegraph.nodes(
-        ), spaceicegraph.coord, cell, distance * 1.3, vertex, axis)
+    for vertex in random.sample(sorted(spaceicegraph.nodes()), Nnode):
+        apsis = find_apsis(
+            spaceicegraph.nodes(),
+            spaceicegraph.coord,
+            cell,
+            distance * 1.3,
+            vertex,
+            axis,
+        )
         logger.debug("Apsis of {0}: {1}".format(vertex, apsis))
-        path1 = shortest_path(spaceicegraph, vertex, [apsis, ])
+        path1 = shortest_path(
+            spaceicegraph,
+            vertex,
+            [
+                apsis,
+            ],
+        )
         logger.debug("Path1: {0}".format(path1))
-        paths = shortest_paths(spaceicegraph, vertex, [apsis, ])
+        paths = shortest_paths(
+            spaceicegraph,
+            vertex,
+            [
+                apsis,
+            ],
+        )
         logger.debug("paths1: {0}".format(paths))
         if path1 is None:
             # No path found, probably because of the double networks
             continue
-        logger.debug("Dipole of the path1: {0}".format(
-            spaceicegraph.dipole_moment(path1)))
-        path2 = shortest_path(spaceicegraph, apsis, [vertex, ])
+        logger.debug(
+            "Dipole of the path1: {0}".format(spaceicegraph.dipole_moment(path1))
+        )
+        path2 = shortest_path(
+            spaceicegraph,
+            apsis,
+            [
+                vertex,
+            ],
+        )
         logger.debug("Path2: {0}".format(path2))
         if path2 is None:
             # No path found, probably because of the double networks
             continue
-        logger.debug("Dipole of the path2: {0}".format(
-            spaceicegraph.dipole_moment(path2)))
+        logger.debug(
+            "Dipole of the path2: {0}".format(spaceicegraph.dipole_moment(path2))
+        )
         # they should make a cycle.
         # It should go across the cell with a probability of 0.5.
         # It should g across the cell in an expected direction
@@ -492,22 +530,18 @@ def traversing_cycles_iter(spaceicegraph, cell, axis):
         # So we need some loops to get the expected one.
         cycle = path1 + path2[1:]
         d = spaceicegraph.dipole_moment(cycle) - axis
-        logger.debug("Axis: {0} {1}".format(
-            axis, spaceicegraph.dipole_moment(cycle)))
+        logger.debug("Axis: {0} {1}".format(axis, spaceicegraph.dipole_moment(cycle)))
         rr = d @ d
         if rr < 0.1:
-            logger.debug("Dipole of the harvest: {0}".format(
-                spaceicegraph.dipole_moment(cycle)))
+            logger.debug(
+                "Dipole of the harvest: {0}".format(spaceicegraph.dipole_moment(cycle))
+            )
             yield cycle
 
 
 def depolarize_(
-        subgraph,
-        coord,
-        immutables=[],
-        pbc=True,
-        cell=np.identity(3),
-        depol="strict"):
+    subgraph, coord, immutables=[], pbc=True, cell=np.identity(3), depol="strict"
+):
     """
     Receives a connected component of a large graph.
     Find a farthest atom (apsis) from the given atom, and
@@ -525,11 +559,7 @@ def depolarize_(
         logger.info("  Skip depolarization by request.")
         return subgraph
 
-    spaceicegraph = SpaceIceGraph(
-        subgraph,
-        coord=coord,
-        pbc=pbc,
-        immutables=immutables)
+    spaceicegraph = SpaceIceGraph(subgraph, coord=coord, pbc=pbc, immutables=immutables)
     spaceicegraph.vector_check()
 
     # TSL
@@ -554,38 +584,43 @@ def depolarize_(
                 dest = defects[random.randint(0, len(defects) - 1)]
                 if spaceicegraph.in_degree(dest) == 2:
                     break
-            path = shortest_path(spaceicegraph, orig, [dest, ])
+            path = shortest_path(
+                spaceicegraph,
+                orig,
+                [
+                    dest,
+                ],
+            )
             if path is None:
                 continue
-            logger.debug("  Dipole moment = {0}".format(
-                spaceicegraph.dipole_moment(path)))
+            logger.debug(
+                "  Dipole moment = {0}".format(spaceicegraph.dipole_moment(path))
+            )
             new_net_polar = net_polar - spaceicegraph.dipole_moment(path) * 2
             if np.linalg.norm(new_net_polar) < np.linalg.norm(net_polar):
                 spaceicegraph.invert_path(path)
                 net_polar = new_net_polar
                 logger.info(
-                    "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
-                        *net_polar))
+                    "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar)
+                )
                 reject_count = 10
             else:
                 logger.debug("  Reject inversion")
                 reject_count -= 1
 
-    for axis_ in ([1, 0, 0], [-1, 0, 0], [0, 1, 0],
-                  [0, -1, 0], [0, 0, 1], [0, 0, -1]):
+    for axis_ in ([1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]):
         net_polar = spaceicegraph.net_polarization()
         logger.debug(f"Net polarization: {net_polar}")
         axis = np.array(axis_, dtype=float)
         L1 = (net_polar**2).sum()
-        L2 = ((net_polar - axis * 2)**2).sum()
+        L2 = ((net_polar - axis * 2) ** 2).sum()
         if L2 < L1:
             logger.info(
-                "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
-                    *net_polar))
+                "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(*net_polar)
+            )
             for cycle in traversing_cycles_iter(spaceicegraph, cell, axis):
                 if cycle is not None:
-                    edges = [(cycle[i], cycle[i + 1])
-                             for i in range(len(cycle) - 1)]
+                    edges = [(cycle[i], cycle[i + 1]) for i in range(len(cycle) - 1)]
                     if len(edges) != len(set(edges)):
                         logger.debug("The cycle is entangled.")
                     else:
@@ -594,9 +629,11 @@ def depolarize_(
                         net_polar = spaceicegraph.net_polarization()
                         logger.info(
                             "  Net polarization: [{0:.2f} {1:.2f} {2:.2f}]".format(
-                                *net_polar))
+                                *net_polar
+                            )
+                        )
                         L1 = (net_polar**2).sum()
-                        L2 = ((net_polar - axis * 2)**2).sum()
+                        L2 = ((net_polar - axis * 2) ** 2).sum()
                         if L2 > L1:
                             break
             # break this for-loop
@@ -606,18 +643,15 @@ def depolarize_(
             logger.error(
                 "  Gave up on total depolarization. Perhaps because they contain ions"
                 " or the cells are very small."
-                " Use --depol=optimal or --depol=none instead.")
+                " Use --depol=optimal or --depol=none instead."
+            )
             sys.exit(1)
     return spaceicegraph.digraph()
 
 
 def depolarize(
-        digraph,
-        coord,
-        immutables=[],
-        pbc=True,
-        cell=np.identity(3),
-        depol="strict"):
+    digraph, coord, immutables=[], pbc=True, cell=np.identity(3), depol="strict"
+):
     logger = getLogger()
     graph = nx.Graph(digraph)
     newdigraph = nx.DiGraph()
@@ -630,7 +664,8 @@ def depolarize(
             immutables=immutables,
             pbc=pbc,
             cell=cell,
-            depol=depol)
+            depol=depol,
+        )
         newdigraph = nx.union(newdigraph, newsubdigraph)
     return newdigraph
 
@@ -642,12 +677,17 @@ def purge_ice_defects(icegraph):
     """
     logger = getLogger()
     while len(icegraph.bernal_fowler_defects()) > 0:
-        logger.info("# of defects: {0}".format(
-            len(icegraph.bernal_fowler_defects())))
+        logger.info("# of defects: {0}".format(len(icegraph.bernal_fowler_defects())))
         ins = set(icegraph.excess_in_defects())
         for out in icegraph.excess_out_defects():
             while icegraph.out_degree(out) > 2:
-                path = shortest_path(icegraph, out, [ins, ])
+                path = shortest_path(
+                    icegraph,
+                    out,
+                    [
+                        ins,
+                    ],
+                )
                 if path is not None:
                     logger.debug("# of in defects: {0}".format(len(ins)))
                     icegraph.invert_path(path)
@@ -661,8 +701,8 @@ def purge_ice_defects(icegraph):
 def test():
     # logger
     basicConfig(
-        level=DEBUG,
-        format='%(asctime)s- %(name)s - %(levelname)s - %(message)s')
+        level=DEBUG, format="%(asctime)s- %(name)s - %(levelname)s - %(message)s"
+    )
     logger = getLogger(__name__)
     logger.setLevel(DEBUG)
     g = nx.Graph()
@@ -670,7 +710,16 @@ def test():
     for i in range(5):
         g.add_edge(i, i + 1)
     g.add_edge(0, 5)
-    print(shortest_paths(g, 0, [3, ], allowfixed=True))
+    print(
+        shortest_paths(
+            g,
+            0,
+            [
+                3,
+            ],
+            allowfixed=True,
+        )
+    )
 
 
 if __name__ == "__main__":
