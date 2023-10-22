@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Matsumoto"
+  given-names: "Masakazu"
+  orcid: "https://orcid.org/0000-0002-6799-6813"
+- family-names: "Yagasaki"
+  given-names: "Takuma"
+  orcid: "https://orcid.org/0000-0002-4969-4715"
+- family-names: "Tanaka"
+  given-names: "Hideki"
+  orcid: "https://orcid.org/0000-0003-2099-8990"
+title: "GenIce: Hydrogen-Disordered Ice Generator"
+doi: 10.1002/jcc.25077
+date-released: 2018-01-05
+journal: "Journal of Computational Chemistry"
+volume: 39
+start: 61
+end: 64
+year: 2017
