@@ -3,7 +3,6 @@ GenIce class
 """
 
 import itertools as it
-import random
 from collections import defaultdict
 from logging import getLogger
 from typing import Type, Union
@@ -258,7 +257,7 @@ def replicate_graph(graph, positions, rep):
                         repgraph.add_edge(newi, newj, fixed=True)
                     else:
                         # shuffle the bond directions
-                        if 0 == random.randint(0, 1):
+                        if np.random.random(1) < 0.5:
                             repgraph.add_edge(newi, newj, fixed=False)
                         else:
                             repgraph.add_edge(newj, newi, fixed=False)
@@ -1105,7 +1104,7 @@ class GenIce:
                     movedin = []
 
                     while remain > 0:
-                        r = random.randint(0, len(rooms) - 1)
+                        r = np.random.randint(0, len(rooms))
                         room = rooms[r]
 
                         if resident[room] is None:
@@ -1180,36 +1179,12 @@ class GenIce:
             logger.debug(f"Bondlen: {self.bondlen}")
             # make bonded pairs according to the pair distance.
             # make before replicating them.
-            grid = pl.determine_grid(self.cell.mat, self.bondlen)
-            assert (
-                np.product(grid) > 0
-            ), "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            self.pairs = pl.pairs_fine(
-                self.waters, self.bondlen, self.cell.mat, grid, distance=False
-            )
-
-            # self.pairs = [v for v in zip(j0,j1)]
-            # Check using a simpler algorithm.
-            # Do not use it for normal debug because it is too slow
-            if False:  # logger.level <= logging.DEBUG:
-                pairs1 = self.pairs
-                pairs2 = [
-                    v
-                    for v in pl.pairs_crude(
-                        self.waters,
-                        self.bondlen,
-                        self.cell.mat,
-                        distance=False,
-                    )
-                ]
-                logger.debug(f"pairs1: {len(pairs1)}")
-                logger.debug(f"pairs2: {len(pairs2)}")
-                for pair in pairs1:
-                    i, j = pair
-                    assert (i, j) in pairs2 or (j, i) in pairs2
-                for pair in pairs2:
-                    i, j = pair
-                    assert (i, j) in pairs1 or (j, i) in pairs1
+            self.pairs = [
+                (i, j)
+                for i, j in pl.pairs_iter(
+                    self.waters, self.bondlen, self.cell.mat, distance=False
+                )
+            ]
 
         graph = dg.IceGraph()
         if fixed is not None:
@@ -1217,13 +1192,14 @@ class GenIce:
                 graph.add_edge(i, j, fixed=True)
 
         # Fixed pairs are default.
-        for pair in self.pairs:
+
+        for pair, rnd in zip(self.pairs, np.random.random(len(self.pairs))):
             i, j = pair
 
             if graph.has_edge(i, j) or graph.has_edge(j, i):
                 pass
             else:
-                if random.randint(0, 1) == 0:
+                if rnd < 0.5:
                     graph.add_edge(i, j, fixed=False)
                 else:
                     graph.add_edge(j, i, fixed=False)

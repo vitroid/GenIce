@@ -6,7 +6,6 @@ Graph variants with geometrical information
 from __future__ import print_function
 
 import heapq
-import random
 import sys
 from logging import DEBUG, basicConfig, getLogger
 
@@ -280,14 +279,14 @@ class IceGraph(nx.DiGraph):
             return
         if self.in_degree(d) > 2:
             nodes = list(self.predecessors(d))
-            i = random.randint(0, len(nodes) - 1)
+            i = np.random.randint(0, len(nodes))
             node = nodes[i]
             if not self[node][d]["fixed"]:
                 self.invert_edge(node, d)
                 defects.append(node)
         if self.out_degree(d) > 2:
             nodes = list(self.successors(d))
-            i = random.randint(0, len(nodes) - 1)
+            i = np.random.randint(0, len(nodes))
             node = nodes[i]
             if not self[d][node]["fixed"]:
                 self.invert_edge(d, node)

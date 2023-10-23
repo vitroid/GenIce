@@ -8,7 +8,6 @@ from genice2 import __version__, load, analice
 # from genice2.plugin import descriptions
 from genice2.plugin import safe_import, descriptions
 from genice2.valueparser import plugin_option_parser
-import random
 import numpy as np
 
 
@@ -147,9 +146,6 @@ def main():
     water = safe_import("molecule", water_type).Molecule(**water_options)
 
     seed = options.seed
-    # The random seed must be set before any modules are imported via
-    # importlib.
-    random.seed(seed)
     np.random.seed(seed)
 
     oname = options.oatom
