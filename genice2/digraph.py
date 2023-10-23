@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Graph variants with geometrical information
 """
@@ -9,7 +6,6 @@ Graph variants with geometrical information
 from __future__ import print_function
 
 import heapq
-import math
 import random
 import sys
 from logging import DEBUG, basicConfig, getLogger

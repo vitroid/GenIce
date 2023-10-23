@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 GenIce class
 """
@@ -13,7 +10,6 @@ from typing import Type, Union
 
 import numpy as np
 import pairlist as pl
-import tilecycles as tc
 
 from genice2 import cage
 from genice2 import digraph as dg
@@ -21,12 +17,12 @@ from genice2.cell import Cell, rel_wrap
 from genice2.decorators import banner, timeit
 from genice2.formats import Format
 from genice2.lattices import Lattice
+import genice_core
 
 # A virtual monatomic molecule
 from genice2.molecules import Molecule, arrange, monatom, one
 from genice2.plugin import Group, safe_import
 from genice2.valueparser import (
-    flatten,
     parse_cages,
     parse_pairs,
     plugin_option_parser,
@@ -978,8 +974,6 @@ class GenIce:
         #     for cycle in cycles:
         #         nx.add_cycle(d, cycle, fixed=False)
         #     return d
-
-        import genice_core
 
         logger = getLogger()
 

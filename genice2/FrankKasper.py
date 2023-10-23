@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 Making a dual from a Frank-Kasper (Tetrahedrally close-packed) alloy structure.
 """
@@ -8,7 +5,6 @@ Making a dual from a Frank-Kasper (Tetrahedrally close-packed) alloy structure.
 # Standard libs
 import itertools as it
 import logging
-from collections import defaultdict
 
 # non-standard libs
 import numpy as np
@@ -32,9 +28,7 @@ def shortest_distance(atoms, cell):
 def estimate_density(atoms, cell, bondlen):
     dmin = shortest_distance(atoms, cell)
     scale = bondlen / dmin
-    return (
-        18 / 6.022e23 * len(atoms) / (np.linalg.det(cell) * 1e-24 * scale**3)
-    )
+    return 18 / 6.022e23 * len(atoms) / (np.linalg.det(cell) * 1e-24 * scale**3)
 
 
 def is_zero(v):

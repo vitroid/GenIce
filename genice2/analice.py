@@ -1,4 +1,3 @@
-import random
 from collections import defaultdict
 from logging import getLogger
 

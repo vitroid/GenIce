@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Iterative file loader for analice.
 """
@@ -35,15 +32,16 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
     logger = getLogger()
     rfile = str2range(filerange)
     rframe = str2rangevalues(framerange)
-    logger.info("  file number range: {0}:{1}:{2}".format(
-        *str2rangevalues(filerange)))
+    logger.info("  file number range: {0}:{1}:{2}".format(*str2rangevalues(filerange)))
     logger.info("  frame number range: {0}:{1}:{2}".format(*rframe))
     # test whether filename has a regexp for enumeration
     logger.info(filename)
     m = re.search("%[0-9]*d", filename)
     # prepare file list
     if m is None:
-        filelist = [filename, ]
+        filelist = [
+            filename,
+        ]
     else:
         filelist = []
         for num in rfile:
@@ -59,8 +57,7 @@ def iterate(filename, oname, hname, filerange, framerange, suffix=None):
             suffix = Path(fname).suffix[1:]
         loader = safe_import("loader", suffix)
         file = open(fname)
-        for oatoms, hatoms, cellmat in loader.load_iter(
-                file, oname=oname, hname=hname):
+        for oatoms, hatoms, cellmat in loader.load_iter(file, oname=oname, hname=hname):
             if frame == rframe[0]:
                 logger.info("Frame: {0}".format(frame))
                 yield oatoms, hatoms, cellmat
@@ -80,7 +77,6 @@ def average(load_iter, span=0):
         return
     ohist = []  # center-of-mass position (relative)
     for oatoms, hatoms, cellmat in load_iter():
-
         # center of mass
         if len(ohist) == 0:
             # first ohist; just store
@@ -111,17 +107,13 @@ def make_lattice_info(oatoms, hatoms, cellmat):
 
     assert oatoms.shape[0] > 0
     assert hatoms is None or oatoms.shape[0] * 2 == hatoms.shape[0]
-    coord = 'relative'
-    density = oatoms.shape[0] / \
-        (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
+    coord = "relative"
+    density = oatoms.shape[0] / (np.linalg.det(cellmat) * 1e-21) * 18 / 6.022e23
 
     if hatoms is None:
         return SimpleNamespace(
-            waters=oatoms,
-            coord=coord,
-            density=density,
-            bondlen=0.3,
-            cell=cellmat)
+            waters=oatoms, coord=coord, density=density, bondlen=0.3, cell=cellmat
+        )
 
     rotmat = np.zeros((oatoms.shape[0], 3, 3))
     for i in range(oatoms.shape[0]):
@@ -137,16 +129,14 @@ def make_lattice_info(oatoms, hatoms, cellmat):
         x = np.cross(y, z)
         rotmat[i] = np.vstack([x, y, z])
         # 重心位置を補正。
-        oatoms[i] += (rdh0 + rdh1) * 1. / 18.
+        oatoms[i] += (rdh0 + rdh1) * 1.0 / 18.0
     # remove intramolecular OHs
     # 水素結合は原子の平均位置で定義している。
     pairs = []
     logger.debug("  Make pair list.")
-    for o, h in pl.pairs_iter(oatoms, 
-                              maxdist=0.245,
-                              cell=cellmat,
-                              pos2=hatoms,
-                              distance=False):
+    for o, h in pl.pairs_iter(
+        oatoms, maxdist=0.245, cell=cellmat, pos2=hatoms, distance=False
+    ):
         if not (h == o * 2 or h == o * 2 + 1):
             # hとoは別の分子の上にあって近い。
             # register a new intermolecular pair
@@ -160,4 +150,5 @@ def make_lattice_info(oatoms, hatoms, cellmat):
         pairs=pairs,
         rotmat=rotmat,
         cell=cellmat,
-        __doc__=None)
+        __doc__=None,
+    )

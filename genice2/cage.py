@@ -1,5 +1,3 @@
-
-
 import string
 from logging import getLogger
 
@@ -7,6 +5,7 @@ import networkx as nx
 import numpy as np
 from cycless.cycles import centerOfMass, cycles_iter
 from cycless.polyhed import cage_to_graph, polyhedra_iter
+
 # for cage assessment
 from graphstat import GraphStat
 
@@ -44,7 +43,9 @@ def assess_cages(graph, node_pos):
 
     # Prepare the list of rings
     # taking the positions in PBC into account.
-    ringlist = [[int(x) for x in ring] for ring in cycles_iter(nx.Graph(graph), 8, pos=node_pos)]
+    ringlist = [
+        [int(x) for x in ring] for ring in cycles_iter(nx.Graph(graph), 8, pos=node_pos)
+    ]
 
     # Positions of the centers of the rings.
     ringpos = [centerOfMass(ringnodes, node_pos) for ringnodes in ringlist]
@@ -59,7 +60,7 @@ def assess_cages(graph, node_pos):
 
     # Detect cages and classify
     cages = [cage for cage in polyhedra_iter(ringlist, MaxCageSize)]
-    cagepos = [ centerOfMass(list(cage), ringpos) for cage in cages ]
+    cagepos = [centerOfMass(list(cage), ringpos) for cage in cages]
     for cage in cages:
         g = cage_to_graph(cage, ringlist)
         cagesize = len(cage)
