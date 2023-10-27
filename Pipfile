@@ -18,7 +18,6 @@ genice-core = "*"
 [dev-packages]
 requests = "*"
 genice2-svg = "*"
-genice2-cif = "*"
 genice2-cage = "*"
 
 [requires]
