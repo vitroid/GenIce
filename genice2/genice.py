@@ -9,9 +9,11 @@ from typing import Type, Union
 
 import numpy as np
 import pairlist as pl
+import networkx as nx
 
 from genice2 import cage
-from genice2 import digraph as dg
+
+# from genice2 import digraph_unused as dg
 from genice2.cell import Cell, rel_wrap
 from genice2.decorators import banner, timeit
 from genice2.formats import Format
@@ -65,18 +67,30 @@ def assume_tetrahedral_vectors(v):
     return []
 
 
-def orientations(coord, graph, cell):
+def ice_rule(dg: nx.DiGraph, strict=False) -> bool:
+    if strict:
+        for node in dg:
+            if dg.in_degree(node) != 2 or dg.out_degree(node) != 2:
+                return False
+    else:
+        for node in dg:
+            if dg.in_degree(node) > 2 or dg.out_degree(node) > 2:
+                return False
+    return True
+
+
+def orientations(coord, graph, cell, immutables: set):
     """
     Does not work when two OHs are colinear
     """
 
     logger = getLogger()
     # just for a test of pure water
-    assert len(coord) == graph.number_of_nodes()
+    assert len(coord) == graph.number_of_nodes(), (len(coord), graph.number_of_nodes())
 
     # 通常の氷であればアルゴリズムを高速化できる。
 
-    if graph.isZ22() and len(graph.immutables) == 0:
+    if ice_rule(graph, strict=True) and len(immutables) == 0:
         # fast track
         rotmatrices = np.zeros([len(list(graph)), 3, 3])
 
@@ -106,7 +120,7 @@ def orientations(coord, graph, cell):
     else:
         rotmatrices = []
         for node in range(graph.number_of_nodes()):
-            if node in graph.immutables:
+            if node in immutables:
                 # for dopants; do not rotate
                 rotmat = np.identity(3)
             else:
@@ -234,15 +248,24 @@ def replicate_labels(labels, nmol, rep):
 
 
 @timeit
-def replicate_graph(graph, positions, rep):
-    repgraph = dg.IceGraph()
+def replicate_graph(graph, positions, rep, fixed: list):
+    # repgraph = dg.IceGraph()
+    repgraph = nx.Graph()
+    fixed = nx.DiGraph(fixed)
+    fixedEdges = nx.DiGraph()
     nmol = positions.shape[0]
 
     for i, j in graph.edges(data=False):
+        if fixed.has_edge(i, j):
+            edge_fixed = True
+        elif fixed.has_edge(j, i):
+            edge_fixed = True
+            i, j = j, i
+        else:
+            edge_fixed = False
         # positions in the unreplicated cell
         vec = positions[j] - positions[i]
         delta = np.floor(vec + 0.5).astype(int)
-        edge_fixed = graph[i][j]["fixed"]
 
         for x in range(rep[0]):
             for y in range(rep[1]):
@@ -254,18 +277,10 @@ def replicate_graph(graph, positions, rep):
                     newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
 
                     if edge_fixed:  # fixed pair
-                        repgraph.add_edge(newi, newj, fixed=True)
-                    else:
-                        # shuffle the bond directions
-                        if np.random.random(1) < 0.5:
-                            repgraph.add_edge(newi, newj, fixed=False)
-                        else:
-                            repgraph.add_edge(newj, newi, fixed=False)
+                        fixedEdges.add_edge(newi, newj)
+                    repgraph.add_edge(newi, newj)
 
-    # replicate "immutables" == dopants list in the graph
-    repgraph.immutables = replicate_labels(graph.immutables, nmol, rep)
-
-    return repgraph
+    return repgraph, fixedEdges
 
 
 def replicate_positions(positions, rep):
@@ -578,6 +593,8 @@ class GenIce:
             self.dopeIonsToUnitCell = None
         self.dopants = set()
 
+        self.immutables = set(self.dopants)
+
         # if asis, make pairs to be fixed.
         if self.asis and len(self.fixed) == 0:
             self.fixed = self.pairs
@@ -651,13 +668,13 @@ class GenIce:
             self.Stage2()
 
             # Count bonds
-            num_hb_disorder = 0
-            nfixed = 0
-            for i, j, data in self.graph.edges(data=True):
-                if self.graph[i][j]["fixed"]:  # fixed pair
-                    nfixed += 1
-                else:
-                    num_hb_disorder += 1
+            nfixed = self.fixedEdges.number_of_edges()
+            num_hb_disorder = self.graph.number_of_edges() - nfixed
+            # for i, j, data in self.graph.edges(data=True):
+            #     if self.graph[i][j]["fixed"]:  # fixed pair
+            #         nfixed += 1
+            #     else:
+            #         num_hb_disorder += 1
             logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
             logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
             logger.info(
@@ -676,45 +693,18 @@ class GenIce:
                 if maxstage < 3 or abort:
                     return
 
-            if self.asis or nfixed > 0:
-                self.Stage3()
+            # GenIce-core
+            self.Stage34E(depol=depol)
 
-                if 3 in hooks:
-                    abort = hooks[3](self)
-                    if maxstage < 4 or abort:
-                        return
+            if 3 in hooks:
+                abort = hooks[3](self)
+                if maxstage < 4 or abort:
+                    return
 
-                # spacegraph might be already set in Stage3D.
-                if self.spacegraph is None:
-                    logger.debug(f"  graph? {self.spacegraph}")
-                    if num_hb_disorder == 0:
-                        self.Stage4(depol="none")
-                    else:
-                        self.Stage4(depol=depol)
-
-                dipole = self.spacegraph.net_polarization()
-                logger.info(
-                    f"Residual net polarization: {dipole[0]:.2f} {dipole[1]:.2f} {dipole[2]:.2f}"
-                )
-
-                if 4 in hooks:
-                    abort = hooks[4](self)
-                    if maxstage < 5 or abort:
-                        return
-
-            else:
-                # GenIce-core
-                self.Stage34E(depol=depol)
-
-                if 3 in hooks:
-                    abort = hooks[3](self)
-                    if maxstage < 4 or abort:
-                        return
-
-                if 4 in hooks:
-                    abort = hooks[4](self)
-                    if maxstage < 5 or abort:
-                        return
+            if 4 in hooks:
+                abort = hooks[4](self)
+                if maxstage < 5 or abort:
+                    return
 
             self.Stage5()
 
@@ -830,77 +820,32 @@ class GenIce:
 
         # logger.info(("filled",self.filled_cages))
         # Replicate the graph
-        self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        self.graph, self.fixedEdges = replicate_graph(
+            self.graph, self.waters, self.rep, self.fixed
+        )
+        # replicate "immutables" == dopants list in the graph
+        self.repimmutables = replicate_labels(
+            self.immutables, self.waters.shape[0], self.rep
+        )
 
         # Dope ions by options.
         if len(self.anions) > 0:
             logger.info(f"  Anionize: {self.anions}.")
 
             for site, name in self.anions.items():
-                self.graph.anionize(site)
+                # self.graph.anionize(site)
+                for nei in self.graph[site]:
+                    self.fixedEdges.add_edge(nei, site)
                 self.dopants[site] = name
 
         if len(self.cations) > 0:
             logger.info(f"  Cationize: {self.cations}.")
 
             for site, name in self.cations.items():
-                self.graph.cationize(site)
+                # self.graph.cationize(site)
+                for nei in self.graph[site]:
+                    self.fixedEdges.add_edge(site, nei)
                 self.dopants[site] = name
-
-    @timeit
-    @banner
-    def Stage3(self):
-        """
-        Make a graph obeying the ice rule.
-
-        Provided variables:
-        graph: network obeying B-F rule.
-        """
-
-        logger = getLogger()
-
-        if self.asis:
-            logger.info("  Skip applying the ice rule by request.")
-        else:
-            self.graph.purge_ice_defects()
-
-        self.spacegraph = None
-
-    @timeit
-    @banner
-    def Stage4(self, depol="strict"):
-        """
-        Depolarize.
-
-        Provided variables:
-        spacegraph: depolarized network with node positions.
-        """
-
-        logger = getLogger()
-
-        if self.asis:
-            depol = "none"
-
-        # self.spacegraph = dg.SpaceIceGraph(self.graph,
-        #                                    coord=self.reppositions,
-        #                                    immutables=self.graph.immutables)
-        # dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
-        digraph = dg.depolarize(
-            self.graph,
-            coord=self.reppositions,
-            immutables=self.graph.immutables,
-            cell=self.repcell.mat,
-            depol=depol,
-        )
-        # for debug
-        # digraph = dg.depolarize(digraph,
-        #                         coord=self.reppositions,
-        #                         immutables=self.graph.immutables,
-        #                         cell=self.repcell.mat,
-        #                         depol=depol)
-        self.spacegraph = dg.SpaceIceGraph(
-            digraph, coord=self.reppositions, immutables=self.graph.immutables
-        )
 
     @timeit
     @banner
@@ -908,71 +853,6 @@ class GenIce:
         """
         Make a directed ice graph from an undirected ice graph.
         """
-        # """
-        # Tile the graph with directed cycles.
-        # """
-
-        # # Cに書きかえるなら、この下の3つをおきかえる。
-        # def cycle_edges(cycle):
-        #     for i in range(len(cycle)):
-        #         yield cycle[i - 1], cycle[i]
-
-        # @timeit
-        # @banner
-        # def spanningCycles(cycles):
-        #     """
-        #     Look up the traversal cycles.
-        #     """
-        #     dipoles = []
-        #     spanning = []
-        #     for j, cycle in enumerate(cycles):
-        #         dipole = 0
-        #         for a, b in cycle_edges(cycle):
-        #             # displacement vector
-        #             d = self.reppositions[b] - self.reppositions[a]
-        #             d -= np.floor(d + 0.5)
-        #             dipole += d
-        #         if not np.allclose(dipole, 0):
-        #             # it is a cell-spanning cycle
-        #             dipoles.append(dipole)
-        #             spanning.append(j)
-        #     dipoles = np.array(dipoles)
-        #     return dipoles, spanning
-
-        # @timeit
-        # @banner
-        # def direct(dipoles, spanning):
-        #     """
-        #     Re-orient the cycles so as to minimize the net polarization.
-        #     """
-        #     bestm = 999999
-        #     bestp = None
-        #     dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
-        #     pol = dipoles.T @ dir
-        #     pol2 = pol @ pol
-        #     for i in range(len(dipoles) * 2):
-        #         r = random.randint(0, len(dipoles) - 1)
-        #         newpol = pol - 2 * dir[r] * dipoles[r]
-        #         newpol2 = newpol @ newpol
-        #         if newpol2 <= pol2:
-        #             dir[r] = -dir[r]
-        #             pol = newpol
-        #             pol2 = newpol2
-        #             if pol2 < 1e-6:
-        #                 break
-        #     logger.debug(f"  Depolarized to {pol} in {i} steps")
-        #     return dir
-
-        # @timeit
-        # @banner
-        # def cycles2digraph(cycles):
-        #     """
-        #     Convert cycles to a digraph.
-        #     """
-        #     d = dg.IceGraph()
-        #     for cycle in cycles:
-        #         nx.add_cycle(d, cycle, fixed=False)
-        #     return d
 
         logger = getLogger()
 
@@ -985,14 +865,12 @@ class GenIce:
             vertexPositions=self.reppositions,
             isPeriodicBoundary=True,
             dipoleOptimizationCycles=iter,
+            fixedEdges=self.fixedEdges,
         )
 
-        self.graph = d
-        self.spacegraph = None
+        self.digraph = nx.compose(d, self.fixedEdges)
 
-        logger.debug("  Depolarized in Stage3D.")
-        # no immutable edges
-        self.spacegraph = dg.SpaceIceGraph(d, coord=self.reppositions, immutables=set())
+        logger.debug("  Depolarized in Stage34E.")
 
     @timeit
     @banner
@@ -1010,7 +888,7 @@ class GenIce:
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
-            self.reppositions, self.spacegraph, self.repcell
+            self.reppositions, self.digraph, self.repcell, self.repimmutables
         )
 
         # Activate it.
@@ -1186,23 +1064,25 @@ class GenIce:
                 )
             ]
 
-        graph = dg.IceGraph()
-        if fixed is not None:
-            for i, j in fixed:
-                graph.add_edge(i, j, fixed=True)
+        graph = nx.Graph(self.pairs)
 
-        # Fixed pairs are default.
+        # graph = dg.IceGraph()
+        # if fixed is not None:
+        #     for i, j in fixed:
+        #         graph.add_edge(i, j, fixed=True)
 
-        for pair, rnd in zip(self.pairs, np.random.random(len(self.pairs))):
-            i, j = pair
+        # # Fixed pairs are default.
 
-            if graph.has_edge(i, j) or graph.has_edge(j, i):
-                pass
-            else:
-                if rnd < 0.5:
-                    graph.add_edge(i, j, fixed=False)
-                else:
-                    graph.add_edge(j, i, fixed=False)
+        # for pair, rnd in zip(self.pairs, np.random.random(len(self.pairs))):
+        #     i, j = pair
+
+        #     if graph.has_edge(i, j) or graph.has_edge(j, i):
+        #         pass
+        #     else:
+        #         if rnd < 0.5:
+        #             graph.add_edge(i, j, fixed=False)
+        #         else:
+        #             graph.add_edge(j, i, fixed=False)
 
         logger.info(f"  Number of water nodes: {graph.number_of_nodes()}")
 

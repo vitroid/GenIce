@@ -11,23 +11,26 @@ import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
 
-desc = {"ref": {"Codes": "https://github.com/vitroid/Yaplot"},
-        "brief": "Yaplot.",
-        "usage": """
+desc = {
+    "ref": {"Codes": "https://github.com/vitroid/Yaplot"},
+    "brief": "Yaplot.",
+    "usage": """
 Usage: genice2 icename -f yaplot[options]
 
 options:
     H=x   Set the radius of H to be x.
-"""}
+""",
+}
 
 
 class Format(genice2.formats.Format):
     """
-Output the atomic positions in Yaplot format.
+    Output the atomic positions in Yaplot format.
 
-Options:
-    H=x   Set the radius of H to be x
+    Options:
+        H=x   Set the radius of H to be x
     """
+
     size_H = 0.01
 
     def __init__(self, **kwargs):
@@ -40,10 +43,7 @@ Options:
         super().__init__(**unknown)
 
     def hooks(self):
-        return {1: self.Hook1,
-                2: self.Hook2,
-                6: self.Hook6,
-                7: self.Hook7}
+        return {1: self.Hook1, 2: self.Hook2, 6: self.Hook6, 7: self.Hook7}
 
     @timeit
     @banner
@@ -80,7 +80,7 @@ Options:
             # if i in waters and j in waters:  # edge may connect to the dopant
             O1, O2 = pos[i], pos[j]
             d = O2 - O1
-            d -= np.floor(d+0.5)
+            d -= np.floor(d + 0.5)
             O2 = O1 + d
             s += yp.Line(O1 @ ice.repcell.mat, O2 @ ice.repcell.mat)
         self.output += s + yp.NewPage()
@@ -130,7 +130,7 @@ Options:
         s += yp.Color(4)
         s += yp.ArrowType(1)
         s += yp.Size(0.03)
-        for i, j in ice.spacegraph.edges(data=False):
+        for i, j in ice.digraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -177,8 +177,8 @@ Options:
             resno, resname, atomname, position1, order = a
             resno, resname, atomname, position2, order = b
             d = position1 - position2
-            if d@d < 0.16**2:
+            if d @ d < 0.16**2:
                 s += yp.Line(position1, position2)
-        s = '#' + "\n#".join(ice.doc) + "\n" + s
+        s = "#" + "\n#".join(ice.doc) + "\n" + s
         s += yp.NewPage()
         self.output += s

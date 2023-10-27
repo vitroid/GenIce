@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.7
+version 2.2
 
 
 ## New in GenIce2.1
@@ -18,7 +18,7 @@ to generate a PDB file.
 ## Demo
 
 The new GenIce works very well with interactive execution.
-[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colab.
+[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colaboratory.
 
 ## Requirements
 
@@ -30,7 +30,7 @@ The new GenIce works very well with interactive execution.
 * wheel
 * openpyscad
 * graphstat
-* tilecycles>=0.1.5.6
+* genice-core
 
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
@@ -72,7 +72,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.7)
+    (version 2.2)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -199,7 +199,6 @@ Install with pip3.
     
                             (None)
                             ----
-                            (Undocumented) cif  zeolite
     
     
                             3. Lattice structures served locally
@@ -209,7 +208,7 @@ Install with pip3.
     
     
     
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
@@ -256,7 +255,7 @@ Install with pip3.
     
                             (None)
                             ----
-                            (Undocumented) png  svg
+                            (Undocumented) cage  png  svg
     
     
                             3. Formatters served locally

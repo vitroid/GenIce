@@ -6,51 +6,51 @@ from genice2.decorators import timeit, banner
 import numpy as np
 from logging import getLogger
 from collections import defaultdict
-desc = {"ref": {},
-        "brief": "Raw data. (For use with Jupyter)",
-        "usage": """
+
+desc = {
+    "ref": {},
+    "brief": "Raw data. (For use with Jupyter)",
+    "usage": """
 It is convenient to select the raw data format when you call GenIce from
 Jupyter and Google Colab environment. Raw data is not available in the command line.
-"""}
+""",
+}
 
 
 class Format(genice2.formats.Format):
     """
-For convenience, the internal data can be obtained.
+    For convenience, the internal data can be obtained.
 
-Options:
-  stages=[1,2,3]  Stages from which internal data are obtained.
+    Options:
+      stages=[1,2,3]  Stages from which internal data are obtained.
 
-Available data in each stage:
+    Available data in each stage:
 
-Stage 1:
-  reppositions: Fractional coordinates of the water molecules in the replicated cell.
-  repcell:      Shape of the replicated simulation cell.
-  repcagetype:  Types of the cages in the replicated cell.
-  repcagepos:   Fractional coordinates of the center of the cages in the replicated cell.
-  cagetypes:    List of the cage types.
+    Stage 1:
+      reppositions: Fractional coordinates of the water molecules in the replicated cell.
+      repcell:      Shape of the replicated simulation cell.
+      repcagetype:  Types of the cages in the replicated cell.
+      repcagepos:   Fractional coordinates of the center of the cages in the replicated cell.
+      cagetypes:    List of the cage types.
 
-Stage 2:
-  dopants
-  groups
-  filled_cages
-  graph:        Topology of the hydrogen bond network (an undirected graph).
+    Stage 2:
+      dopants
+      groups
+      filled_cages
+      graph:        Topology of the hydrogen bond network (an undirected graph).
 
-Stage 3:
-  digraph:      Topology of the hydrogen bond network (directed graph obeying the ice rule).
+    Stage 3,4: (merged)
+      digraph:      Topology of the hydrogen bond network (Depolarized).
 
-Stage 4:
-  spacegraph:   Topology of the hydrogen bond network (Depolarized).
+    Stage 5:
+      reppositions: Fractional coordinates of the water molecules in the replicated cell.
+      rotmatrices:  Rotation matrices of the water molecules.
 
-Stage 5:
-  reppositions: Fractional coordinates of the water molecules in the replicated cell.
-  rotmatrices:  Rotation matrices of the water molecules.
+    Stage 6:
+      atoms:        Positions of atoms of the water molecules.
 
-Stage 6:
-  atoms:        Positions of atoms of the water molecules.
-
-Stage 7:
-  atoms:        Positions of atoms of all molecules.
+    Stage 7:
+      atoms:        Positions of atoms of all molecules.
     """
 
     def __init__(self, **kwargs):
@@ -113,7 +113,7 @@ Stage 7:
     def Hook4(self, ice):
         "Depolarize."
         logger = getLogger()
-        self.output["spacegraph"] = ice.spacegraph
+        self.output["digraph"] = ice.digraph
 
     @timeit
     @banner

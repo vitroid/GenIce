@@ -57,11 +57,14 @@ from collections import defaultdict
 import sys
 from cycless.cycles import cycles_iter
 import itertools as it
+
 desc = {
     "ref": {
-        "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)."},
+        "Hollins1964": "Hollins, G. T. Configurational statistics and the dielectric constant of ice. Proc. Phys. Soc. 84, 1001–1016 (1964)."
+    },
     "brief": "Bond direction statistics.",
-    "usage": __doc__}
+    "usage": __doc__,
+}
 
 
 # A directed cycle is expressed as an array of True and False.
@@ -80,12 +83,12 @@ def isomorphs(a):
     iso = set()
     aa = a + a
     for i in range(len(a)):
-        part = tuple(aa[i:i + len(a)])
+        part = tuple(aa[i : i + len(a)])
         iso.add(part)
     e = [not x for x in a]
     ee = e + e
     for i in range(len(a)):
-        part = tuple(ee[i:i + len(a)])
+        part = tuple(ee[i : i + len(a)])
         iso.add(part)
     return iso
 
@@ -158,37 +161,37 @@ def probabilities(N):
 
 
 def orientations(members, digraph):
-    return [digraph.has_edge(members[i - 1], members[i])
-            for i in range(len(members))]
+    return [digraph.has_edge(members[i - 1], members[i]) for i in range(len(members))]
 
 
 class Format(genice2.formats.Format):
     """
-_ringstat plugin makes the statistics of bond orientations along each
-HB ring and compare the distribution with that of an ideal (isolated
-random) ring. The difference in the distribution is evaluated by
-Kullback-Leibler divergence, d_{KL}.
-A typical dKL is zero for hydrogen-disordered ices, while it is
-larger than 1 for hydrogen-ordered ones like ices 2 and 9.
+    _ringstat plugin makes the statistics of bond orientations along each
+    HB ring and compare the distribution with that of an ideal (isolated
+    random) ring. The difference in the distribution is evaluated by
+    Kullback-Leibler divergence, d_{KL}.
+    A typical dKL is zero for hydrogen-disordered ices, while it is
+    larger than 1 for hydrogen-ordered ones like ices 2 and 9.
 
-Ringstat analysis validates the ring-scale randomness. GenIce tool
-also certifies the zero net dipole moment and Bernal-Fowler-Pauling
-ice rule in terms of the validity in global and local structures.
+    Ringstat analysis validates the ring-scale randomness. GenIce tool
+    also certifies the zero net dipole moment and Bernal-Fowler-Pauling
+    ice rule in terms of the validity in global and local structures.
 
-Options:
-  max=8     Size of the largest cycle to be examined.
+    Options:
+      max=8     Size of the largest cycle to be examined.
 
-Columns in the output:
-  ring size
-  code (decimal) indicating the orientations of the bonds.
-  code (binary)
-  expectation (fractional) for an isolated random ring
-  expectation (numerical)
-  observation (fractional) in the given structure
-  observation (numerical)
+    Columns in the output:
+      ring size
+      code (decimal) indicating the orientations of the bonds.
+      code (binary)
+      expectation (fractional) for an isolated random ring
+      expectation (numerical)
+      observation (fractional) in the given structure
+      observation (numerical)
 
-dKL between expectiations and observations is also calculated.
+    dKL between expectiations and observations is also calculated.
     """
+
     largestring = 8
 
     def __init__(self, **kwargs):
@@ -211,7 +214,7 @@ dKL between expectiations and observations is also calculated.
     def Hook4(self, ice):
         "Statistics on the HBs along a ring."
         logger = getLogger()
-        graph = nx.Graph(ice.spacegraph)  # undirected
+        graph = nx.Graph(ice.digraph)  # undirected
         stat = dict()
         prob = defaultdict(int)
 
@@ -221,31 +224,41 @@ dKL between expectiations and observations is also calculated.
             stat[n] = defaultdict(int)
 
         for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
-            ori = orientations(ring, ice.spacegraph)
+            ori = orientations(ring, ice.digraph)
             c = encode(ori)
             n = len(ring)
             stat[n][c] += 1
 
         # size code code(binary) Approx. Stat.
-        logger.info("""
-        """)
+        logger.info(
+            """
+        """
+        )
         s = ""
         for n in range(3, self.largestring + 1):
-            fmtstr = "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(
-                n)
+            fmtstr = (
+                "{{0}} {{1}} {{1:0{0}b}} {{2}} {{3:.5f}} {{5}}/{{6}} {{4:.5f}} ".format(
+                    n
+                )
+            )
             denom = 0
             for c in stat[n]:
                 denom += stat[n][c]
             if denom > 0:
                 dKL = 0.0
                 for c in prob[n]:
-                    s += fmtstr.format(n,
-                                       c,
-                                       prob[n][c],
-                                       float(prob[n][c]),
-                                       stat[n][c] / denom,
-                                       stat[n][c],
-                                       denom) + "\n"
+                    s += (
+                        fmtstr.format(
+                            n,
+                            c,
+                            prob[n][c],
+                            float(prob[n][c]),
+                            stat[n][c] / denom,
+                            stat[n][c],
+                            denom,
+                        )
+                        + "\n"
+                    )
                     q = stat[n][c] / denom
                     p = prob[n][c]
                     if q > 0.0:

@@ -96,7 +96,7 @@ test4.done: $(FMT)/gromacs.py
 %.exmol: $(FMT)/exyz.py
 	$(GENICE) $*  --rep 2 2 2 --format exmol --water 6site | fgrep -v "Command line:" > $@
 %.nx3a:  $(FMT)/euler.py
-	$(GENICE) $* --rep 2 2 3 --format e | fgrep -v "Command line:" > $@
+	$(GENICE) $* --rep 2 2 3 --debug --format e | fgrep -v "Command line:" > $@
 5.gro: $(FMT)/gromacs.py
 	$(GENICE) 5  --rep 2 2 4 --format g --water physical_water | fgrep -v "Command line:" > $@
 7.mdv: $(FMT)/mdview.py
@@ -181,6 +181,8 @@ eleven.nx3a: $(LTC)/eleven.py $(FMT)/euler.py
 # 現時点ではar3aの読み込みは公式にはサポートしない。
 #%.ar3r_gro: %.ar3r $(LDR)/ar3r.py
 #	$(ANALICE) $< | fgrep -v "Command line:" > $@
+
+
 %.mdva_gro: %.mdva $(LDR)/mdva.py
 	cat $< $< $< > rep3.$<
 	$(ANALICE) rep3.$< | fgrep -v "Command line:" > $@

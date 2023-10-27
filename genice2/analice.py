@@ -3,8 +3,9 @@ from logging import getLogger
 
 import numpy as np
 import pairlist as pl
+import networkx as nx
 
-from genice2 import digraph as dg
+# from genice2 import digraph_unused as dg
 from genice2.cell import Cell
 from genice2.decorators import banner, timeit
 from genice2.genice import GenIce, put_in_array, shortest_distance
@@ -158,6 +159,9 @@ class AnalIce(GenIce):
         if self.asis and len(self.fixed) == 0:
             self.fixed = self.pairs
 
+        # analiceではセルの複製はしない?
+        self.fixedEdges = nx.DiGraph(self.fixed)
+
         # filled cages
         self.filled_cages = set()
 
@@ -198,15 +202,28 @@ class AnalIce(GenIce):
                 if maxstage < 3 or abort:
                     return
 
-            if self.rotmatrices is None:
-                self.Stage3()
+            # if self.rotmatrices is None:
+            #     self.Stage3()
+
+            # if 3 in hooks:
+            #     abort = hooks[3](self)
+            #     if maxstage < 4 or abort:
+            #         return
+
+            # self.Stage4()
+
+            # if 4 in hooks:
+            #     abort = hooks[4](self)
+            #     if maxstage < 5 or abort:
+            #         return
+
+            # GenIce-core
+            self.Stage34E()
 
             if 3 in hooks:
                 abort = hooks[3](self)
                 if maxstage < 4 or abort:
                     return
-
-            self.Stage4()
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -280,10 +297,5 @@ class AnalIce(GenIce):
         yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
-        logger = getLogger()
         self.yapresult = ""
-        self.spacegraph = dg.SpaceIceGraph(
-            self.graph,
-            coord=self.reppositions,
-            immutables=self.graph.immutables,
-        )
+        self.digraph = self.graph
