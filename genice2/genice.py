@@ -327,65 +327,6 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
-# They should be separate plugins in the future.
-
-
-# def pentyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", [
-#                         "Md", "Me"]]]])
-
-
-# def propyl(cage_center, root_position, cell, molname):
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc"]])
-
-
-# def ethyl(cage_center, root_position, cell, molname):
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", "Mb"])
-
-
-# def _2_2_dimethylpropyl(cage_center, root_position, cell, molname):
-#     """
-#     2,2-dimethylpropyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
-
-
-# def _2_3_dimethylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", "Md", "Me"], "Mf"]])
-
-
-# def _3_methylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
-
-
-# def _3_3_dimethylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", "Md", "Me", "Mf"]]])
-
-
 class GenIce:
     """
     The core of GenIce.
@@ -461,15 +402,6 @@ class GenIce:
             logger.info("  " + line)
 
         # 変数名に1がついているのはunit cell
-
-        # ================================================================
-        # rotmatrices (analice)
-        #
-        # try:
-        #     self.rotmatrices = lat.rotmat
-        # except BaseException:
-        #     logger.info("No rotmatrices in lattice")
-        #     self.rotmatrices = None
 
         # ================================================================
         # cell: cell dimension
@@ -608,18 +540,6 @@ class GenIce:
 
         # groups info
         self.groups1 = defaultdict(dict)
-
-        # groups for the semi-guest
-        # experimental; there are many variation of semi-guest inclusion.
-        # self.groups_placer = {"Bu-": butyl,
-        #                       "Butyl-": butyl,
-        #                       "Pentyl-": pentyl,
-        #                       "Propyl-": propyl,
-        #                       "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
-        #                       "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
-        #                       "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
-        #                       "3-methylbutyl-": _3_methylbutyl,
-        #                       "Ethyl-": ethyl}
 
     def generate_ice(
         self,
@@ -1075,48 +995,6 @@ class GenIce:
             )
         ]
 
-        # graph = dg.IceGraph()
-        # if fixed is not None:
-        #     for i, j in fixed:
-        #         graph.add_edge(i, j, fixed=True)
-
-        # # Fixed pairs are default.
-
-        # for pair, rnd in zip(self.pairs, np.random.random(len(self.pairs))):
-        #     i, j = pair
-
-        #     if graph.has_edge(i, j) or graph.has_edge(j, i):
-        #         pass
-        #     else:
-        #         if rnd < 0.5:
-        #             graph.add_edge(i, j, fixed=False)
-        #         else:
-        #             graph.add_edge(j, i, fixed=False)
-
-        # return graph
-
-    # def test_undirected_graph(self, graph):
-    #     # Test
-
-    #     logger = getLogger()
-    #     undir = graph.to_undirected()
-    #     for node in range(undir.number_of_nodes()):
-    #         if node not in undir:
-    #             logger.debug(f"z=0 at {node}")
-    #         else:
-    #             z = len(list(undir.neighbors(node)))
-    #             if z != 4:
-    #                 logger.debug(f"z={z} at {node}")
-
-    #     if graph.number_of_edges() != len(self.reppositions) * 2:
-    #         logger.info(
-    #             "Inconsistent number of HBs {0} for number of molecules {1}.".format(
-    #                 graph.number_of_edges(), len(self.reppositions)
-    #             )
-    #         )
-    #         return False
-
-    #     return True
     def add_group(self, cage, group, root):
         self.groups[root][cage] = group
         self.filled_cages.add(cage)
