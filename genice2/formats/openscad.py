@@ -6,9 +6,11 @@ from math import atan2, pi, degrees
 from openpyscad import *
 from logging import getLogger
 import numpy as np
-desc = {"ref": {},
-        "brief": "OpenSCAD.",
-        "usage": """
+
+desc = {
+    "ref": {},
+    "brief": "OpenSCAD.",
+    "usage": """
 Usage: genice2 icename -f openscad[options]
 
 Options:
@@ -16,8 +18,8 @@ Options:
     rnode=0.07
     rbond=0.06
     fn=20
-"""
-        }
+""",
+}
 
 
 # from cycles.cycles import cycles_iter
@@ -26,12 +28,24 @@ Options:
 # primitives
 def rhomb(cell):
     origin = np.zeros(3)
-    points = [x + y + z for x in (origin, cell[0])
-              for y in (origin, cell[1]) for z in (origin, cell[2])]
-    faces = [[0, 1, 3, 2], [0, 4, 5, 1], [0, 2, 6, 4],
-             [5, 4, 6, 7], [6, 2, 3, 7], [3, 1, 5, 7]]
-    return Polyhedron(points=[list(point) for point in points],
-                      faces=[face for face in faces])
+    points = [
+        x + y + z
+        for x in (origin, cell[0])
+        for y in (origin, cell[1])
+        for z in (origin, cell[2])
+    ]
+    faces = [
+        [0, 1, 3, 2],
+        [0, 4, 5, 1],
+        [0, 2, 6, 4],
+        [5, 4, 6, 7],
+        [6, 2, 3, 7],
+        [3, 1, 5, 7],
+    ]
+    return Polyhedron(
+        points=[list(point) for point in points], faces=[face for face in faces]
+    )
+
 
 # it becomes much easier if the openpyscad supports multmatrix.
 # def rhomb(cell):
@@ -48,8 +62,9 @@ def bond(p1, p2, r):
     R = np.linalg.norm(d[:2])
     theta = pi / 2 - atan2(d[2], R)
     phi = atan2(d[1], d[0])
-    return Cylinder(r=r, h=H).rotate(
-        [0, degrees(theta), degrees(phi)]).translate(list(p1))
+    return (
+        Cylinder(r=r, h=H).rotate([0, degrees(theta), degrees(phi)]).translate(list(p1))
+    )
 
 
 def test():
@@ -59,22 +74,21 @@ def test():
 
 class Format(genice2.formats.Format):
     """
-The positions of the water molecules are output in OpenSCAD format.
+    The positions of the water molecules are output in OpenSCAD format.
 
-Options:
-  scale=50    Scaling factor.
-  rnode=0.07  Radius of the nodes.
-  rbond=0.06  Radius of the bonds.
-  fn=20       Number of divisions for a curved surface.
-  # cycle=False Draw a polygon at each cycle in the HB network.
+    Options:
+      scale=50    Scaling factor.
+      rnode=0.07  Radius of the nodes.
+      rbond=0.06  Radius of the bonds.
+      fn=20       Number of divisions for a curved surface.
+      # cycle=False Draw a polygon at each cycle in the HB network.
     """
 
     def __init__(self, **kwargs):
-        self.options = dict(scale=50, rnode=0.07,
-                            rbond=0.06, fn=20, cycle=False)
+        self.options = dict(scale=50, rnode=0.07, rbond=0.06, fn=20, cycle=False)
         unknown = dict()
         for k, v in kwargs.items():
-            if k in ("scale", "rnode", "rbond", 'fn'):
+            if k in ("scale", "rnode", "rbond", "fn"):
                 self.options[k] = float(v)
             # elif k == "cycle":
             #     self.options[k] = bool(v)
@@ -104,8 +118,8 @@ Options:
         # cycle = self.options["cycle"]
         cellmat = ice.repcell.mat
         rep = np.array(ice.rep)
-        trimbox = ice.cell.mat * np.array([(rep[i] - 2) for i in range(3)])
-        trimoffset = ice.cell.mat[0] + ice.cell.mat[1] + ice.cell.mat[2]
+        trimbox = ice.cell1.mat * np.array([(rep[i] - 2) for i in range(3)])
+        trimoffset = ice.cell1.mat[0] + ice.cell1.mat[1] + ice.cell1.mat[2]
         # logger.info(ice.repcell.mat)
         # logger.info(ice.cell.mat)
 
@@ -122,18 +136,25 @@ Options:
                 d -= np.floor(d + 0.5)
                 logger.debug("Len {0}-{1}={2}".format(i, j, np.linalg.norm(d)))
                 s2 = s1 + d
-                if ((lower[0] < s1[0] < upper[0] and
-                     lower[1] < s1[1] < upper[1] and
-                     lower[2] < s1[2] < upper[2]) or
-                    (lower[0] < s2[0] < upper[0] and
-                     lower[1] < s2[1] < upper[1] and
-                     lower[2] < s2[2] < upper[2])):
+                if (
+                    lower[0] < s1[0] < upper[0]
+                    and lower[1] < s1[1] < upper[1]
+                    and lower[2] < s1[2] < upper[2]
+                ) or (
+                    lower[0] < s2[0] < upper[0]
+                    and lower[1] < s2[1] < upper[1]
+                    and lower[2] < s2[2] < upper[2]
+                ):
                     bonds.append((s1 @ cellmat, s2 @ cellmat))
 
         nodes = []
         if rnode > 0.0:
             for s1 in ice.reppositions:
-                if lower[0] < s1[0] < upper[0] and lower[1] < s1[1] < upper[1] and lower[2] < s1[2] < upper[2]:
+                if (
+                    lower[0] < s1[0] < upper[0]
+                    and lower[1] < s1[1] < upper[1]
+                    and lower[2] < s1[2] < upper[2]
+                ):
                     nodes.append(s1 @ cellmat)
 
         objs = Union()
@@ -148,8 +169,9 @@ Options:
         # 文法的に間違ってないようだが、表示されない。
         # Renderボタンを押すと時間がかかるので、
         # ちゃんとRenderすれば表示される、はず。
-        self.output = s + \
-            i.translate(list(-trimoffset)).scale([scale, scale, scale]).dumps()
+        self.output = (
+            s + i.translate(list(-trimoffset)).scale([scale, scale, scale]).dumps()
+        )
 
 
 if __name__ == "__main__":

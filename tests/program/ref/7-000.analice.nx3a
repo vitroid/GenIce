@@ -1,5 +1,5 @@
 
-Command line: ../../analice.x --debug 7.gro -f euler --debug -o 7-%03d.analice.nx3a
+Command line: ../../analice.x 7.gro -f euler --debug -o 7-%03d.analice.nx3a
 @BOX3
 13.372334999999998 13.372334999999998 13.372334999999998
 @NX3A

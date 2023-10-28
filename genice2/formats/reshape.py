@@ -9,9 +9,10 @@ import genice2.formats
 import numpy as np
 from genice2.decorators import banner, timeit
 
-desc = {"ref": {},
-        "brief": "Cell-reshaper.",
-        "usage": """
+desc = {
+    "ref": {},
+    "brief": "Cell-reshaper.",
+    "usage": """
 A formatter plugin for GenIce to produce a python lattice plugin.
 
 Usage:
@@ -27,7 +28,8 @@ Options:
         c' = o a + p b + q c
 
     Water molecules are relocated appropriately.
-"""}
+""",
+}
 
 
 MAXCELL = 11
@@ -74,31 +76,32 @@ def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
                 if labels is not None:
                     label = labels[i]
                 s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(
-                    pv[0], pv[1], pv[2], label)
+                    pv[0], pv[1], pv[2], label
+                )
             # print("NV:",nv)
             FlagEquivCells(nv, flags, ijk)
             for xi, yi, zi in it.product((-1, 0, 1), repeat=3):
                 nei = nv[0] + xi, nv[1] + yi, nv[2] + zi
                 if nei not in flags:
-                    #print("nei", nei)
+                    # print("nei", nei)
                     queue.append(nei)
     return ncell, s
 
 
 class Format(genice2.formats.Format):
     """
-A formatter plugin to produce a python lattice plugin.
+    A formatter plugin to produce a python lattice plugin.
 
-Options:
-    reshape=[i,j,k,l,m,n,o,p,q]  Nine integers separated by commas.
+    Options:
+        reshape=[i,j,k,l,m,n,o,p,q]  Nine integers separated by commas.
 
-    Cell vectors of the reshaped cell, a', b' and c' is calculated by linear combinations of the original cell vectors, a, b, and c, as
+        Cell vectors of the reshaped cell, a', b' and c' is calculated by linear combinations of the original cell vectors, a, b, and c, as
 
-        a' = i a + j b + k c
-        b' = l a + m b + n c
-        c' = o a + p b + q c
+            a' = i a + j b + k c
+            b' = l a + m b + n c
+            c' = o a + p b + q c
 
-    Water molecules are relocated appropriately.
+        Water molecules are relocated appropriately.
     """
 
     def __init__(self, **kwargs):
@@ -107,8 +110,7 @@ Options:
         for k, v in kwargs.items():
             if re.match("^[-+0-9,]+$", k) is not None and v is True:
                 # for commandline use
-                self.ijk = np.array([int(x)
-                                    for x in k.split(",")]).reshape(3, 3)
+                self.ijk = np.array([int(x) for x in k.split(",")]).reshape(3, 3)
             elif k == "reshape":
                 # for API
                 self.ijk = np.array(v, dtype=int).reshape(3, 3)
@@ -147,8 +149,8 @@ Options:
         # Let x axis of the newcell be along e1
         # and let y axis of the newcell be on the e1-e2 plane.
         regcell = newcell @ RI
-        a = (-torr < regcell)
-        b = (regcell < torr)
+        a = -torr < regcell
+        b = regcell < torr
         c = a & b
         regcell[c] = 0.0
 
@@ -167,33 +169,36 @@ Options:
         s += "    def __init__(self):\n"
         s += "        self.bondlen={0}\n".format(ice.bondlen)
         s += "        self.coord='relative'\n"
-        if isZero(regcell[1, 0]) and isZero(
-                regcell[2, 0]) and isZero(regcell[2, 1]):
+        if isZero(regcell[1, 0]) and isZero(regcell[2, 0]) and isZero(regcell[2, 1]):
             s += "        from genice2.cell import cellvectors\n"
             s += "        self.cell = cellvectors(a={0:.8f}, b={1:.8f}, c={2:.8f})\n".format(
-                abs(regcell[0, 0]), abs(regcell[1, 1]), abs(regcell[2, 2]))
+                abs(regcell[0, 0]), abs(regcell[1, 1]), abs(regcell[2, 2])
+            )
         else:
             s += "\n        import numpy as np\n"
             s += "        self.cell=np.array(["
             for d in range(3):
                 s += "        [{0:.8f}, {1:.8f}, {2:.8f}], ".format(
-                    regcell[d, 0], regcell[d, 1], regcell[d, 2])
+                    regcell[d, 0], regcell[d, 1], regcell[d, 2]
+                )
             s += "        ])\n"
         # s += "cell='{0} {1} {2}'\n".format(ri,rj,rk)
         s += "        self.density={0}\n".format(ice.density)
         s += '        self.waters="""' + "\n"
-        logger.info("  Total number of molecules: {0}".format(
-            vol * len(ice.reppositions)))
+        logger.info(
+            "  Total number of molecules: {0}".format(vol * len(ice.reppositions))
+        )
 
         ncell, ss = FindEmptyCells(cellmat, self.ijk, ice.reppositions)
         assert vol == ncell
 
         s += ss + '"""' + "\n\n"
 
-        if ice.cagepos is not None:
+        if ice.cagepos1 is not None:
             s += '        self.cages="""' + "\n"
             ncell, ss = FindEmptyCells(
-                cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype)
+                cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype
+            )
             s += ss + '"""' + "\n\n"
 
         self.output = s

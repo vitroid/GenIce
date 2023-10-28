@@ -459,48 +459,52 @@ class GenIce:
 
         for line in self.doc:
             logger.info("  " + line)
+
+        # 変数名に1がついているのはunit cell
+
         # ================================================================
         # rotmatrices (analice)
         #
-        try:
-            self.rotmatrices = lat.rotmat
-        except BaseException:
-            logger.info("No rotmatrices in lattice")
-            self.rotmatrices = None
+        # try:
+        #     self.rotmatrices = lat.rotmat
+        # except BaseException:
+        #     logger.info("No rotmatrices in lattice")
+        #     self.rotmatrices = None
+
         # ================================================================
         # cell: cell dimension
         #   see parse_cell for syntax.
         #
-        self.cell = Cell(lat.cell)
+        self.cell1 = Cell(lat.cell)
 
         # ================================================================
         # waters: positions of water molecules
         #
-        self.waters = put_in_array(lat.waters)
-        logger.debug(f"Waters: {len(self.waters)}")
-        self.waters = self.waters.reshape((self.waters.size // 3, 3))
+        self.waters1 = put_in_array(lat.waters)
+        logger.debug(f"Waters: {len(self.waters1)}")
+        self.waters1 = self.waters1.reshape((-1, 3))
 
         # ================================================================
         # coord: "relative" or "absolute"
         #   Inside genice, molecular positions are always treated as "relative", i.e. in fractional coordinates
         #
         if lat.coord == "absolute":
-            self.waters = self.cell.abs2rel(self.waters)
+            self.waters1 = self.cell1.abs2rel(self.waters1)
 
         # shift of the origin
-        self.waters = np.array(self.waters) + np.array(shift)
+        self.waters1 = np.array(self.waters1) + np.array(shift)
         # fractional coordinate between [0, 1)
-        self.waters -= np.floor(self.waters)
+        self.waters1 -= np.floor(self.waters1)
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
         #   Bond orientation will be shuffled later
         #   unless it is "fixed".
         #
-        self.pairs = None
+        self.pairs1 = None
 
         try:
-            self.pairs = parse_pairs(lat.pairs)
+            self.pairs1 = parse_pairs(lat.pairs)
         except AttributeError:
             logger.info("HB connectivity is not defined.")
 
@@ -509,8 +513,8 @@ class GenIce:
         #   This is used when "pairs" are not specified.
         #   It is applied to the original positions of molecules (before density setting).
         #
-        nmol = self.waters.shape[0]  # nmol in a unit cell
-        volume = self.cell.volume()  # volume of a unit cell in nm**3
+        nmol = self.waters1.shape[0]  # nmol in a unit cell
+        volume = self.cell1.volume()  # volume of a unit cell in nm**3
         self.bondlen = None
 
         try:
@@ -521,9 +525,9 @@ class GenIce:
             # very rough estimate of the pair distances assuming that the particles distribute homogeneously.
             rc = (volume / nmol) ** (1 / 3) * 1.5
             p = pl.pairs_iter(
-                self.waters, maxdist=rc, cell=self.cell.mat, distance=False
+                self.waters1, maxdist=rc, cell=self.cell1.mat, distance=False
             )
-            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
+            self.bondlen = 1.1 * shortest_distance(self.waters1, self.cell1, pairs=p)
             logger.info(f"Bond length (estim.): {self.bondlen}")
 
         # Set density
@@ -538,7 +542,7 @@ class GenIce:
                 logger.info(
                     "Density is not specified. Assume the density from lattice."
                 )
-                dmin = shortest_distance(self.waters, self.cell)
+                dmin = shortest_distance(self.waters1, self.cell1)
                 logger.info(
                     f"Closest pair distance: {dmin} (should be around 0.276 nm)"
                 )
@@ -552,7 +556,7 @@ class GenIce:
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density) ** (1.0 / 3.0)
-        self.cell.scale(ratio)
+        self.cell1.scale(ratio)
 
         if self.bondlen is not None:
             self.bondlen *= ratio
@@ -562,27 +566,27 @@ class GenIce:
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #
-        self.cagepos = None
-        self.cagetype = None
+        self.cagepos1 = None
+        self.cagetype1 = None
 
         if "cages" in lat.__dict__:
-            self.cagepos, self.cagetype = parse_cages(lat.cages)
+            self.cagepos1, self.cagetype1 = parse_cages(lat.cages)
             logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
         elif "cagepos" in lat.__dict__:
             # pre-parsed data
-            self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
-        if self.cagepos is not None:
-            self.cagepos = np.array(self.cagepos) + np.array(shift)
-            self.cagepos -= np.floor(self.cagepos)
+            self.cagepos1, self.cagetype1 = np.array(lat.cagepos), lat.cagetype
+        if self.cagepos1 is not None:
+            self.cagepos1 = np.array(self.cagepos1) + np.array(shift)
+            self.cagepos1 -= np.floor(self.cagepos1)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
         #   you can specify them in pairs at a time.
         #   You can also leave it undefined.
         #
-        self.fixed = []
+        self.fixed1 = []
         try:
-            self.fixed = parse_pairs(lat.fixed)
+            self.fixed1 = parse_pairs(lat.fixed)
             logger.info("Orientations of some edges are fixed.")
         except AttributeError:
             pass
@@ -591,19 +595,19 @@ class GenIce:
             self.dopeIonsToUnitCell = lat.dopeIonsToUnitCell
         else:
             self.dopeIonsToUnitCell = None
-        self.dopants = set()
+        self.dopants1 = set()
 
-        self.immutables = set(self.dopants)
+        self.immutables1 = set(self.dopants1)
 
         # if asis, make pairs to be fixed.
-        if self.asis and len(self.fixed) == 0:
-            self.fixed = self.pairs
+        if self.asis and len(self.fixed1) == 0:
+            self.fixed1 = self.pairs1
 
         # filled cages
         self.filled_cages = set()
 
         # groups info
-        self.groups = defaultdict(dict)
+        self.groups1 = defaultdict(dict)
 
         # groups for the semi-guest
         # experimental; there are many variation of semi-guest inclusion.
@@ -744,14 +748,19 @@ class GenIce:
         """
 
         logger = getLogger()
-        self.reppositions = replicate_positions(self.waters, self.rep)
+        self.reppositions = replicate_positions(self.waters1, self.rep)
 
         # This must be done before the replication of the cell.
         logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
-        self.graph = self.prepare_random_graph(self.fixed)
+
+        if self.pairs1 is None:
+            self.pairs1 = self.prepare_pairs()
+
+        self.graph1 = nx.Graph(self.pairs1)
+        logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
 
         # scale the cell
-        self.repcell = Cell(self.cell.mat)
+        self.repcell = Cell(self.cell1.mat)
         self.repcell.scale2(self.rep)
 
         if noise > 0.0:
@@ -765,15 +774,15 @@ class GenIce:
 
         if assess_cages:
             logger.info("  Assessing the cages...")
-            self.cagepos, self.cagetype = cage.assess_cages(self.graph, self.waters)
+            self.cagepos1, self.cagetype1 = cage.assess_cages(self.graph1, self.waters1)
             logger.info("  Done assessment.")
 
-        if self.cagepos is not None and self.cagepos.shape[0] > 0:
+        if self.cagepos1 is not None and self.cagepos1.shape[0] > 0:
             logger.info("  Hints:")
-            self.repcagepos = replicate_positions(self.cagepos, self.rep)
+            self.repcagepos = replicate_positions(self.cagepos1, self.rep)
             nrepcages = self.repcagepos.shape[0]
             self.repcagetype = [
-                self.cagetype[i % len(self.cagetype)] for i in range(nrepcages)
+                self.cagetype1[i % len(self.cagetype1)] for i in range(nrepcages)
             ]
             self.cagetypes = defaultdict(set)
 
@@ -811,8 +820,10 @@ class GenIce:
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
-        self.groups = replicate_groups(self.groups, self.waters, self.cagepos, self.rep)
+        self.dopants = replicate_labeldict(self.dopants1, len(self.waters1), self.rep)
+        self.groups = replicate_groups(
+            self.groups1, self.waters1, self.cagepos1, self.rep
+        )
 
         # self.groups_info(self.groups)
         for root, cages in self.groups.items():
@@ -821,11 +832,11 @@ class GenIce:
         # logger.info(("filled",self.filled_cages))
         # Replicate the graph
         self.graph, self.fixedEdges = replicate_graph(
-            self.graph, self.waters, self.rep, self.fixed
+            self.graph1, self.waters1, self.rep, self.fixed1
         )
         # replicate "immutables" == dopants list in the graph
         self.repimmutables = replicate_labels(
-            self.immutables, self.waters.shape[0], self.rep
+            self.immutables1, self.waters1.shape[0], self.rep
         )
 
         # Dope ions by options.
@@ -942,9 +953,9 @@ class GenIce:
 
         logger = getLogger()
 
-        if self.cagepos is not None:
+        if self.cagepos1 is not None:
             # the cages around the dopants.
-            dopants_neighbors = self.dopants_info(
+            dopants_neighbors = dopants_info(
                 self.dopants, self.reppositions, self.repcagepos, self.repcell
             )
 
@@ -994,11 +1005,11 @@ class GenIce:
             # Now ge got the address book of the molecules.
             if len(molecules):
                 logger.info("  Summary of guest placements:")
-                self.guests_info(self.cagetypes, molecules)
+                guests_info(self.cagetypes, molecules)
 
             if len(self.spot_groups) > 0:
                 logger.info("  Summary of groups:")
-                self.groups_info(self.groups)
+                groups_info(self.groups)
 
             # semi-guests
             for root, cages in self.groups.items():
@@ -1048,23 +1059,21 @@ class GenIce:
             oneatom = one.Molecule(label=name)
             self.universe.append(arrange(pos, self.repcell, rot, oneatom))
 
-    def prepare_random_graph(self, fixed):
+    def prepare_pairs(self):
         logger = getLogger()
-        if self.pairs is None:
-            logger.info("  Pairs are not given explicitly.")
-            logger.info("  Estimating the bonds according to the pair distances.")
 
-            logger.debug(f"Bondlen: {self.bondlen}")
-            # make bonded pairs according to the pair distance.
-            # make before replicating them.
-            self.pairs = [
-                (i, j)
-                for i, j in pl.pairs_iter(
-                    self.waters, self.bondlen, self.cell.mat, distance=False
-                )
-            ]
+        logger.info("  Pairs are not given explicitly.")
+        logger.info("  Estimating the bonds according to the pair distances.")
 
-        graph = nx.Graph(self.pairs)
+        logger.debug(f"Bondlen: {self.bondlen}")
+        # make bonded pairs according to the pair distance.
+        # make before replicating them.
+        return [
+            (i, j)
+            for i, j in pl.pairs_iter(
+                self.waters1, self.bondlen, self.cell1.mat, distance=False
+            )
+        ]
 
         # graph = dg.IceGraph()
         # if fixed is not None:
@@ -1084,72 +1093,30 @@ class GenIce:
         #         else:
         #             graph.add_edge(j, i, fixed=False)
 
-        logger.info(f"  Number of water nodes: {graph.number_of_nodes()}")
+        # return graph
 
-        return graph
+    # def test_undirected_graph(self, graph):
+    #     # Test
 
-    def test_undirected_graph(self, graph):
-        # Test
+    #     logger = getLogger()
+    #     undir = graph.to_undirected()
+    #     for node in range(undir.number_of_nodes()):
+    #         if node not in undir:
+    #             logger.debug(f"z=0 at {node}")
+    #         else:
+    #             z = len(list(undir.neighbors(node)))
+    #             if z != 4:
+    #                 logger.debug(f"z={z} at {node}")
 
-        logger = getLogger()
-        undir = graph.to_undirected()
-        for node in range(undir.number_of_nodes()):
-            if node not in undir:
-                logger.debug(f"z=0 at {node}")
-            else:
-                z = len(list(undir.neighbors(node)))
-                if z != 4:
-                    logger.debug(f"z={z} at {node}")
+    #     if graph.number_of_edges() != len(self.reppositions) * 2:
+    #         logger.info(
+    #             "Inconsistent number of HBs {0} for number of molecules {1}.".format(
+    #                 graph.number_of_edges(), len(self.reppositions)
+    #             )
+    #         )
+    #         return False
 
-        if graph.number_of_edges() != len(self.reppositions) * 2:
-            logger.info(
-                "Inconsistent number of HBs {0} for number of molecules {1}.".format(
-                    graph.number_of_edges(), len(self.reppositions)
-                )
-            )
-            return False
-
-        return True
-
-    def dopants_info(self, dopants=None, waters=None, cagepos=None, cell=None):
-        logger = getLogger()
-        if dopants is None:
-            dopants = self.dopants
-
-        if waters is None:
-            waters = self.waters
-
-        if cagepos is None:
-            cagepos = self.cagepos
-
-        if cell is None:
-            cell = self.cell
-
-        dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
-
-        for dopant, cages in dopants_neighbors.items():
-            logger.info(f"    Cages adjacent to dopant {dopant}: {cages}")
-
-        return dopants_neighbors
-
-    def groups_info(self, groups):
-        logger = getLogger()
-        for root, cages in groups.items():
-            for cage, group in cages.items():
-                logger.info(f"    Group {group} of dopant {root} in cage {cage}")
-
-    def guests_info(self, cagetypes, molecules):
-        logger = getLogger()
-        for cagetype, cageid in cagetypes.items():
-            logger.info(f"    Guests in cage type {cagetype}:")
-
-            for molec, cages in molecules.items():
-                cages = set(cages)
-                cages &= cageid
-
-                if len(cages):
-                    logger.info(f"      {molec} * {len(cages)} @ {cages}")
-
+    #     return True
     def add_group(self, cage, group, root):
         self.groups[root][cage] = group
         self.filled_cages.add(cage)
@@ -1157,3 +1124,45 @@ class GenIce:
     def __del__(self):
         logger = getLogger()
         logger.info("Completed.")
+
+
+def dopants_info(dopants=None, waters=None, cagepos=None, cell=None):
+    logger = getLogger()
+    if dopants is None:
+        dopants = self.dopants
+
+    if waters is None:
+        waters = self.waters
+
+    if cagepos is None:
+        cagepos = self.cagepos
+
+    if cell is None:
+        cell = self.cell
+
+    dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
+
+    for dopant, cages in dopants_neighbors.items():
+        logger.info(f"    Cages adjacent to dopant {dopant}: {cages}")
+
+    return dopants_neighbors
+
+
+def groups_info(groups):
+    logger = getLogger()
+    for root, cages in groups.items():
+        for cage, group in cages.items():
+            logger.info(f"    Group {group} of dopant {root} in cage {cage}")
+
+
+def guests_info(cagetypes, molecules):
+    logger = getLogger()
+    for cagetype, cageid in cagetypes.items():
+        logger.info(f"    Guests in cage type {cagetype}:")
+
+        for molec, cages in molecules.items():
+            cages = set(cages)
+            cages &= cageid
+
+            if len(cages):
+                logger.info(f"      {molec} * {len(cages)} @ {cages}")
