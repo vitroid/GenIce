@@ -2,8 +2,11 @@
 *.ar3r
 *.cif
 *.done
+*.exmol
 *.exyz
+*.graph
 *gro
+*.kg
 *.mdv
 *.mdva
 *.mol
@@ -12,6 +15,7 @@
 *.nx4a
 *.pov
 *.py
+*.ringstat
 *.ringtest
 *.scad
 *.test
