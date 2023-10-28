@@ -1,5 +1,5 @@
 ## ToDo
-* genice-coreが遅い気がする。
+* genice-coreが遅い気がする。150%遅いがいまは黙認する。
 * hydrates with guests (using networkx.subgraph.isomorphism)
 * semiclathrate hydrates
 * hydrates of water and NH4F
