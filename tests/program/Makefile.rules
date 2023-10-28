@@ -62,7 +62,8 @@ all: 11-4.nx3a.test 11-8.nx3a.test 11-12.nx3a.test 11-16.nx3a.test
 
 %.test: %
 	diff -w -I '^#' $(REFD)/$< $<  && touch $@
-#	touch $@
+# make refs
+#	cp $< $(REFD); touch $@
 %.rings.yap: $(FMT)/rings.py
 	$(GENICE) $* -r 2 2 2 -f rings | fgrep -v "Command line:" > $@
 %.ringstat: $(FMT)/_ringstat.py

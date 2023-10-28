@@ -17,11 +17,11 @@ import genice2.lattices
 
 import networkx as nx
 import numpy as np
+
 # import random # not a good manner to initialize its own random generator.
 import itertools as it
 from cycless.cycles import cycles_iter
 from logging import getLogger
-import random
 
 
 def usage():
@@ -29,17 +29,19 @@ def usage():
     logger.info(__doc__)
 
 
-desc = {"ref": {"bilayer": "Koga 1997"},
-        "usage": usage(),
-        "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.",
-        "test": ("", "[size=6,10]", "[size=15,18:sw=0.2]")
-        }
+desc = {
+    "ref": {"bilayer": "Koga 1997"},
+    "usage": usage(),
+    "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.",
+    "test": ("", "[size=6,10]", "[size=15,18:sw=0.2]"),
+}
 
 
 # Unnecessary when pairs are given.
-#bondlen = 2.0 * 3.0 / 8.0**0.5 * 1.1
+# bondlen = 2.0 * 3.0 / 8.0**0.5 * 1.1
 
 # import matplotlib.pyplot as plt
+
 
 def remove_node(cycle, v):
     cycle.remove(v)
@@ -56,9 +58,9 @@ def insert_node(cycle, v, pair):
 
 def stone_wales(g, cycles):
     while True:
-        i = random.randint(0, len(g) - 1)
+        i = np.random.randint(len(g))
         ineis = set(g[i])
-        j = random.choice(list(ineis))
+        j = np.random.choice(list(ineis))
         jneis = set(g[j])
 
         owners = g.edges[i, j]["owners"]
@@ -96,11 +98,12 @@ def stone_wales(g, cycles):
             o4 = owners[1]
         else:
             o4 = owners[0]
-        if len(
-            cycles[o1]) < 6 or len(
-            cycles[o2]) < 6 or len(
-            cycles[o3]) > 6 or len(
-                cycles[o4]) > 6:
+        if (
+            len(cycles[o1]) < 6
+            or len(cycles[o2]) < 6
+            or len(cycles[o3]) > 6
+            or len(cycles[o4]) > 6
+        ):
             continue
         break
     g.add_edge(i1, j)
@@ -125,6 +128,7 @@ def stone_wales(g, cycles):
     # print(cycles[o3])
     # print(cycles[o4])
 
+
 # relaxation
 
 
@@ -137,7 +141,7 @@ def relax(g, rpos, cell, cycles=None, k=1.0):
             d *= cell
             L = np.linalg.norm(d)
             f = k * (L - 1.0)
-            f *= (d / L)
+            f *= d / L
             forces[i] -= f
             forces[j] += f
         if cycles is not None:
@@ -148,10 +152,11 @@ def relax(g, rpos, cell, cycles=None, k=1.0):
                     d *= cell
                     L = np.linalg.norm(d)
                     f = k * (L - 3**0.5)
-                    f *= (d / L)
+                    f *= d / L
                     forces[i] -= f
                     forces[j] += f
         rpos += forces / cell
+
 
 # def draw(g, rpos, cell):
 #     nodes = rpos * cell
@@ -180,7 +185,7 @@ class Lattice(genice2.lattices.Lattice):
 
         for k, v in kwargs.items():
             if k == "size":
-                NX, NY = [int(x) for x in v.split(',')]
+                NX, NY = [int(x) for x in v.split(",")]
                 assert NX % 3 == 0, "X must be a multiple of 3."
             elif k == "sw":
                 sw = float(v)
@@ -194,10 +199,15 @@ class Lattice(genice2.lattices.Lattice):
         y1 = 3**0.5 / 2
         cell = np.array([NX, y1 * NY])
 
-        nodes1 = [(i, j * y1 * 2) for i in range(NX)
-                  for j in range(NY // 2) if i % 3 != 2]
-        nodes2 = [(i + 0.5, (j + 0.5) * y1 * 2) for i in range(NX)
-                  for j in range(NY // 2) if i % 3 != 0]
+        nodes1 = [
+            (i, j * y1 * 2) for i in range(NX) for j in range(NY // 2) if i % 3 != 2
+        ]
+        nodes2 = [
+            (i + 0.5, (j + 0.5) * y1 * 2)
+            for i in range(NX)
+            for j in range(NY // 2)
+            if i % 3 != 0
+        ]
         nodes = np.array(nodes1 + nodes2)
 
         rpos = nodes / cell
@@ -231,12 +241,9 @@ class Lattice(genice2.lattices.Lattice):
 
         relax(g, rpos, cell, cycles, k=0.1)
 
-        self.cell = cellvectors(a=cell[0],
-                                b=cell[1],
-                                c=10.0) * 0.276
+        self.cell = cellvectors(a=cell[0], b=cell[1], c=10.0) * 0.276
 
-        self.density = Nnode * 2 * 18 / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        self.density = Nnode * 2 * 18 / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"
         self.waters = np.zeros([Nnode * 2, 3])
