@@ -594,11 +594,6 @@ class GenIce:
             # Count bonds
             nfixed = self.fixedEdges.number_of_edges()
             num_hb_disorder = self.graph.number_of_edges() - nfixed
-            # for i, j, data in self.graph.edges(data=True):
-            #     if self.graph[i][j]["fixed"]:  # fixed pair
-            #         nfixed += 1
-            #     else:
-            #         num_hb_disorder += 1
             logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
             logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
             logger.info(
@@ -606,11 +601,6 @@ class GenIce:
                     nfixed + num_hb_disorder, len(self.reppositions) * 2
                 )
             )
-
-            # test2==True means it is a z=4 graph.
-            # test2 = self.test_undirected_graph(self.graph)
-            # if not test2:
-            #     logger.warn("Ice rule is not satisfied.")
 
             if 2 in hooks:
                 abort = hooks[2](self)
@@ -746,7 +736,7 @@ class GenIce:
         )
 
         # self.groups_info(self.groups)
-        for root, cages in self.groups.items():
+        for _, cages in self.groups.items():
             self.filled_cages |= set(cages)
 
         # logger.info(("filled",self.filled_cages))
