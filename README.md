@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.7
+version 2.1.7.2
 
 
 ## New in GenIce2.1
@@ -72,7 +72,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.7)
+    (version 2.1.7.2)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -199,7 +199,6 @@ Install with pip3.
     
                             (None)
                             ----
-                            (Undocumented) cif  zeolite
     
     
                             3. Lattice structures served locally
@@ -209,7 +208,7 @@ Install with pip3.
     
     
     
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
@@ -254,9 +253,11 @@ Install with pip3.
     
                             2. Formatters served by external plugins
     
-                            (None)
+                            cage            Cage analysis.
+                            mdanalysis      MDAnalysis integration.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
-                            (Undocumented) png  svg
     
     
                             3. Formatters served locally
