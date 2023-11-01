@@ -86,82 +86,74 @@ def orientations(coord, graph, cell, immutables: set):
 
     logger = getLogger()
     # just for a test of pure water
-    assert len(coord) == graph.number_of_nodes(), (len(coord), graph.number_of_nodes())
-
+    assert len(coord) == graph.number_of_nodes()
+    logger.info(f"{immutables} immutables")
     # 通常の氷であればアルゴリズムを高速化できる。
 
-    if ice_rule(graph, strict=True) and len(immutables) == 0:
-        # fast track
-        rotmatrices = np.zeros([len(list(graph)), 3, 3])
+    nnode = len(list(graph))
+    neis = np.zeros([nnode, 2], dtype=int)
 
-        neis = np.zeros([len(list(graph)), 2], dtype=int)
-        for node in graph:
-            neis[node] = list(graph.successors(node))
-        # array of donating vectors
-        v0 = coord[neis[:, 0]] - coord[:]
-        v0 -= np.floor(v0 + 0.5)
-        v0 = v0 @ cell.mat
-        v0 /= np.linalg.norm(v0, axis=1)[:, np.newaxis]
-        v1 = coord[neis[:, 1]] - coord[:]
-        v1 -= np.floor(v1 + 0.5)
-        v1 = v1 @ cell.mat
-        v1 /= np.linalg.norm(v1, axis=1)[:, np.newaxis]
-        # intramolecular axes
-        y = v1 - v0
-        y /= np.linalg.norm(y, axis=1)[:, np.newaxis]
-        z = v0 + v1
-        z /= np.linalg.norm(z, axis=1)[:, np.newaxis]
-        x = np.cross(y, z, axisa=1, axisb=1)
-        rotmatrices[:, 0, :] = x
-        rotmatrices[:, 1, :] = y
-        rotmatrices[:, 2, :] = z
-        return rotmatrices
+    # 仮想ノード用の配列。第0要素は実際には第nnode要素を表す。
+    extended_coord = []
 
+    # v0 = np.zeros([nnode, 3])
+    # v1 = np.zeros([nnode, 3])
+    for node in graph:
+        if node in immutables:
+            h1 = np.array([0.0, 1, 1]) / (2**0.5)
+            h2 = np.array([0.0, -1, 1]) / (2**0.5)
+            r1 = cell.abs2rel(h1)
+            r2 = cell.abs2rel(h2)
+            # 仮想ノードにさしかえる
+            neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
+            extended_coord += [coord[node] + r1, coord[node] + r2]
+            continue
+        succ = list(graph.successors(node))
+        if len(succ) < 2:
+            vsucc = cell.rel2abs(rel_wrap(coord[succ] - coord[node]))
+            pred = list(graph.predecessors(node))
+            vpred = cell.rel2abs(rel_wrap(coord[pred] - coord[node]))
+            vsucc /= np.linalg.norm(vsucc, axis=1)[:, np.newaxis]
+            vpred /= np.linalg.norm(vpred, axis=1)[:, np.newaxis]
+            if len(vpred) > 2:
+                # number of incoming bonds should be <= 2
+                vpred = vpred[:2]
+            vcomp = assume_tetrahedral_vectors(np.vstack([vpred, vsucc]))
+            logger.debug(f"Node {node} vcomp {vcomp} vsucc {vsucc} vpred {vpred}")
+            vsucc = np.vstack([vsucc, vcomp])[:2]
+            rsucc = cell.abs2rel(vsucc)
+            # 仮想ノードにさしかえる
+            neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
+            extended_coord += [coord[node] + rsucc[0], coord[node] + rsucc[1]]
+        else:
+            neis[node] = succ
+
+    if len(extended_coord) == 0:
+        extended_coord = coord
     else:
-        rotmatrices = []
-        for node in range(graph.number_of_nodes()):
-            if node in immutables:
-                # for dopants; do not rotate
-                rotmat = np.identity(3)
-            else:
-                vsucc = [
-                    cell.rel2abs(rel_wrap(coord[x] - coord[node]))
-                    for x in graph.successors(node)
-                ]
+        extended_coord = np.vstack([coord, extended_coord])
 
-                if len(vsucc) < 2:  # TSL
-                    vpred = [
-                        cell.rel2abs(rel_wrap(coord[x] - coord[node]))
-                        for x in graph.predecessors(node)
-                    ]
-                    vsucc = [x / np.linalg.norm(x) for x in vsucc]
-                    vpred = [x / np.linalg.norm(x) for x in vpred]
+    # array of donating vectors
+    v0 = extended_coord[neis[:, 0]] - coord[:]
+    v0 -= np.floor(v0 + 0.5)
+    v0 = v0 @ cell.mat
+    v0 /= np.linalg.norm(v0, axis=1)[:, np.newaxis]
+    v1 = extended_coord[neis[:, 1]] - coord[:]
+    v1 -= np.floor(v1 + 0.5)
+    v1 = v1 @ cell.mat
+    v1 /= np.linalg.norm(v1, axis=1)[:, np.newaxis]
+    # intramolecular axes
+    y = v1 - v0
+    y /= np.linalg.norm(y, axis=1)[:, np.newaxis]
+    z = v0 + v1
+    z /= np.linalg.norm(z, axis=1)[:, np.newaxis]
+    x = np.cross(y, z, axisa=1, axisb=1)
 
-                    if len(vpred) > 2:
-                        # number of incoming bonds should be <= 2
-                        vpred = vpred[:2]
-                    vcomp = assume_tetrahedral_vectors(vpred + vsucc)
-                    logger.debug(
-                        f"Node {node} vcomp {vcomp} vsucc {vsucc} vpred {vpred}"
-                    )
-                    vsucc = (vsucc + vcomp)[:2]
+    rotmatrices = np.zeros([nnode, 3, 3])
 
-                logger.debug(f"Node {node} vsucc {vsucc}")
-                assert 2 <= len(vsucc), "Probably a wrong ice network."
-                # normalize vsucc
-                vsucc[0] /= np.linalg.norm(vsucc[0])
-                vsucc[1] /= np.linalg.norm(vsucc[1])
-                y = vsucc[1] - vsucc[0]
-                y /= np.linalg.norm(y)
-                z = (vsucc[0] + vsucc[1]) / 2
-                z /= np.linalg.norm(z)
-                x = np.cross(y, z)
-                # orthogonality check
-                # logger.debug((x@x,y@y,z@z,x@y,y@z,z@x))
-                rotmat = np.vstack([x, y, z])
-
-            rotmatrices.append(rotmat)
-
+    rotmatrices[:, 0, :] = x
+    rotmatrices[:, 1, :] = y
+    rotmatrices[:, 2, :] = z
     return rotmatrices
 
 
@@ -530,6 +522,7 @@ class GenIce:
         self.dopants1 = set()
 
         self.immutables1 = set(self.dopants1)
+        logger.info(f"{self.dopants1} dopants1")
 
         # if asis, make pairs to be fixed.
         if self.asis and len(self.fixed1) == 0:
