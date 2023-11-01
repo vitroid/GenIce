@@ -521,8 +521,8 @@ class GenIce:
             self.dopeIonsToUnitCell = None
         self.dopants1 = set()
 
-        self.immutables1 = set(self.dopants1)
-        logger.info(f"{self.dopants1} dopants1")
+        # self.immutables1 = set(self.dopants1)
+        # logger.info(f"{self.dopants1} dopants1")
 
         # if asis, make pairs to be fixed.
         if self.asis and len(self.fixed1) == 0:
@@ -738,10 +738,11 @@ class GenIce:
             self.graph1, self.waters1, self.rep, self.fixed1
         )
         # replicate "immutables" == dopants list in the graph
-        self.repimmutables = replicate_labels(
-            self.immutables1, self.waters1.shape[0], self.rep
-        )
+        # self.repimmutables = replicate_labels(
+        #     self.immutables1, self.waters1.shape[0], self.rep
+        # )
 
+        self.repimmutables = set()
         # Dope ions by options.
         if len(self.anions) > 0:
             logger.info(f"  Anionize: {self.anions}.")
@@ -751,6 +752,7 @@ class GenIce:
                 for nei in self.graph[site]:
                     self.fixedEdges.add_edge(nei, site)
                 self.dopants[site] = name
+                self.repimmutables.add(site)
 
         if len(self.cations) > 0:
             logger.info(f"  Cationize: {self.cations}.")
@@ -760,6 +762,7 @@ class GenIce:
                 for nei in self.graph[site]:
                     self.fixedEdges.add_edge(site, nei)
                 self.dopants[site] = name
+                self.repimmutables.add(site)
 
     @timeit
     @banner
