@@ -6,4 +6,4 @@ numpy
 wheel
 openpyscad
 graphstat
-genice-core
+genice-core>=0.8

@@ -777,7 +777,7 @@ class GenIce:
             iter = 0
         else:
             iter = 1000
-        d = genice_core.ice_graph(
+        self.digraph = genice_core.ice_graph(
             self.graph.to_undirected(),
             vertexPositions=self.reppositions,
             isPeriodicBoundary=True,
@@ -785,7 +785,7 @@ class GenIce:
             fixedEdges=self.fixedEdges,
         )
 
-        self.digraph = nx.compose(d, self.fixedEdges)
+        # self.digraph = nx.compose(d, self.fixedEdges)
 
         logger.debug("  Depolarized in Stage34E.")
 

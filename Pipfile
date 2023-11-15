@@ -12,7 +12,7 @@ graphstat = "*"
 PairList = ">=0.2.12.4"
 attrdict = "*"
 cycless = "*"
-genice-core = "*"
+genice-core = ">=0.8"
 
 [dev-packages]
 requests = "*"
