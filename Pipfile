@@ -26,6 +26,7 @@ nbformat = "*"
 py3dmol = "*"
 genice2-mdanalysis = "*"
 mdanalysis = "*"
+build = "*"
 
 [requires]
 python_version = "3.11"

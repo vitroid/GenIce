@@ -25,9 +25,10 @@ test-install: requirements.txt
 install:
 	./setup.py install
 uninstall:
-	-pip uninstall -y genice2
+	-pip uninstall -y genice
 build: $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
-	./setup.py sdist # bdist_wheel
+	python3 -m build
+	# ./setup.py sdist # bdist_wheel
 
 
 deploy: build
