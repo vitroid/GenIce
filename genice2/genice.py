@@ -126,6 +126,8 @@ def orientations(coord, graph, cell, immutables: set):
             neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
             extended_coord += [coord[node] + rsucc[0], coord[node] + rsucc[1]]
         else:
+            if len(succ) > 2:
+                logger.info(succ)
             neis[node] = succ
 
     if len(extended_coord) == 0:
