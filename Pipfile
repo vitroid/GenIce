@@ -13,6 +13,7 @@ PairList = ">=0.2.12.4"
 attrdict = "*"
 cycless = "*"
 genice-core = ">=0.8"
+toml = "*"
 
 [dev-packages]
 requests = "*"
@@ -27,6 +28,7 @@ py3dmol = "*"
 genice2-mdanalysis = "*"
 mdanalysis = "*"
 build = "*"
+toml = "*"
 
 [requires]
 python_version = "3.11"

@@ -5,15 +5,8 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 
 version {{version}}
 
+## New in GenIce2.2
 
-## New in GenIce2.1
-
-GenIce2-MDAnalysis integration is now available. Try
-```shell
-% pip install genice2-mdanalysis
-% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
-```
-to generate a PDB file.
 
 ## Demo
 
@@ -392,3 +385,12 @@ M. Matsumoto, T. Yagasaki, and H. Tanaka, “Novel Algorithm to Generate Hydroge
 # How to contribute
 
 GenIce has been available as open source software on GitHub({{url}}) since 2015. Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome. Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let me know.
+
+## New in GenIce2.1
+
+GenIce2-MDAnalysis integration is now available. Try
+```shell
+% pip install genice2-mdanalysis
+% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
+```
+to generate a PDB file.

@@ -8,7 +8,7 @@ from logging import getLogger, INFO, basicConfig
 from jinja2 import Template
 import json
 from genice2.plugin import plugin_descriptors
-
+import toml
 
 def make_citations(r):
     if len(r) > 0:
@@ -77,6 +77,6 @@ d = {
     "citationlist": prefix(citationlist, "* "),
 }
 
-
+proj = toml.load("pyproject.toml")
 t = Template(sys.stdin.read())
 print(t.render(**d))
