@@ -75,3 +75,4 @@ old.citations.json
 .vscode/settings.json
 .vscode/targets.log
 1h_unit.pdb
+tests/install/Pipfile.lock

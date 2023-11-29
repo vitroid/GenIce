@@ -25,7 +25,7 @@ nbformat = "*"
 py3dmol = "*"
 genice2-mdanalysis = "*"
 mdanalysis = "*"
-genice2-svg = {path = "./../genice-svg"}
+build = "*"
 
 [requires]
 python_version = "3.11"

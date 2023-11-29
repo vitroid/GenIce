@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling", "numpy"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "genice"
+version = "2.2" # major.minor.fix
+authors = [
+  { name="Masakazu Matsumoto", email="vitroid@gmail.com" },
+]
+description = "A Swiss army knife to generate hydrogen-disordered ice structures."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["networkx>=2.0.dev20160901144005",
+"cycless",
+"pairlist>=0.2.12.4",
+"yaplotlib>=0.1",
+"numpy",
+"wheel",
+"openpyscad",
+"graphstat",
+"genice-core>=0.8",]
+
+license = {text = "MIT"}
+
+[project.scripts]
+genice2 = "genice2.cli.genice:main"
+analice2 = "genice2.cli.analice:main"
+
+[project.urls]
+"Homepage" = "https://github.com/vitroid/GenIce"
+"Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
+"manual" = "https://vitroid.github.io/GenIce"
+
+[project.genice]
+"logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
+"url" = "https://github.com/vitroid/GenIce"
