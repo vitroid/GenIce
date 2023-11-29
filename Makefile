@@ -1,9 +1,7 @@
 all: README.md
 	echo Hello.
 %: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
-	-pip install jinja2
 	python Utilities/replacer.py < $< > $@
-	-fgrep '{{' $@
 
 update-citations:
 	cp citations.json old.citations.json

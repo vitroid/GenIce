@@ -76,3 +76,4 @@ old.citations.json
 .vscode/targets.log
 1h_unit.pdb
 tests/install/Pipfile.lock
+deepl.toml

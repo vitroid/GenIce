@@ -17,7 +17,6 @@ toml = "*"
 
 [dev-packages]
 requests = "*"
-genice2-svg = "*"
 genice2-cage = "*"
 ipykernel = "*"
 genice-svg = "*"
@@ -29,6 +28,7 @@ genice2-mdanalysis = "*"
 mdanalysis = "*"
 build = "*"
 toml = "*"
+jinja2 = "*"
 
 [requires]
 python_version = "3.11"
