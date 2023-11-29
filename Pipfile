@@ -16,7 +16,6 @@ genice-core = ">=0.8"
 
 [dev-packages]
 requests = "*"
-genice2-svg = "*"
 genice2-cage = "*"
 ipykernel = "*"
 genice-svg = "*"
@@ -26,6 +25,7 @@ nbformat = "*"
 py3dmol = "*"
 genice2-mdanalysis = "*"
 mdanalysis = "*"
+genice2-svg = {path = "./../genice-svg"}
 
 [requires]
 python_version = "3.11"
