@@ -26,6 +26,8 @@ py3dmol = "*"
 genice2-mdanalysis = "*"
 mdanalysis = "*"
 build = "*"
+toml = "*"
+jinja2 = "*"
 
 [requires]
 python_version = "3.11"

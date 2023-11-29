@@ -8,6 +8,7 @@ from logging import getLogger, INFO, basicConfig
 from jinja2 import Template
 import json
 from genice2.plugin import plugin_descriptors
+import toml
 
 
 def make_citations(r):
@@ -60,23 +61,18 @@ def prefix(L, pre):
     return pre + ("\n" + pre).join(L) + "\n"
 
 
-setup = distutils.core.run_setup("setup.py")
+project = toml.load("pyproject.toml")
 
-d = {
+project |= {
     "usage": prefix(
         [x.rstrip() for x in os.popen("./genice.x -h").readlines()], "    "
     ),
-    "version": setup.get_version(),
-    "package": setup.get_name(),
-    "url": setup.get_url(),
-    "genice": "[GenIce](" + setup.get_url() + ")",
-    "requires": prefix(setup.install_requires, "* "),
-    "ices": system_ices(),  # citations=[key for key, doi, desc in citations]),
+    "ices": system_ices(),
     "waters": system_molecules(water=True),
     "guests": system_molecules(water=False),
     "citationlist": prefix(citationlist, "* "),
 }
 
-
 t = Template(sys.stdin.read())
-print(t.render(**d))
+markdown_en = t.render(**project)
+print(markdown_en)

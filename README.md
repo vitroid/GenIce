@@ -5,15 +5,9 @@ A Swiss army knife to generate hydrogen-disordered ice structures.
 
 version 2.2
 
+## New in GenIce2.2
 
-## New in GenIce2.1
-
-GenIce2-MDAnalysis integration is now available. Try
-```shell
-% pip install genice2-mdanalysis
-% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
-```
-to generate a PDB file.
+* The core algorithm and its API are in a separate module, [`genice-core`](https://github.com/genice-dev/genice-core).
 
 ## Demo
 
@@ -30,7 +24,7 @@ The new GenIce works very well with interactive execution.
 * wheel
 * openpyscad
 * graphstat
-* genice-core
+* genice-core>=0.8
 
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
@@ -253,9 +247,11 @@ Install with pip3.
     
                             2. Formatters served by external plugins
     
-                            (None)
+                            cage            Cage analysis.
+                            mdanalysis      MDAnalysis integration.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
-                            (Undocumented) cage  png  svg
     
     
                             3. Formatters served locally
@@ -690,9 +686,20 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 |------------|-----------------|--------------|-------------|
 |[`genice2-cif`](https://github.com/vitroid/genice-cif)| `genice2 cif[ITT.cif]`<br /> `genice2 zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
 
-# Changes from GenIce1
 
-## Novel algorithm to make a structure obeying the ice rules in Stage 3.
+## New in GenIce2.1
+
+GenIce2-MDAnalysis integration is now available. Try
+```shell
+% pip install genice2-mdanalysis
+% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
+```
+to generate a PDB file.
+
+
+## Changes from GenIce1
+
+### Novel algorithm to make a structure obeying the ice rules in Stage 3.
 
 - We have devised a completely new algorithm for orienting water molecules so that they obey ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
   1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by a 4-connected undirected graph.
@@ -700,15 +707,15 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
   3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle so that the total polarization of the entire system is as small as possible.
   4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
 
-## Faster, faster, faster.
+### Faster, faster, faster.
 
 Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
 
-## Core algorithm is separated.
+### Core algorithm is separated.
 
 The core part of the new algorithm is separated as the TileCycles package.
 
-## Colaboratory-ready!
+### Colaboratory-ready!
 
 Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/jupyter.ipynb)
 
@@ -720,7 +727,7 @@ Many new ice structures are added.
 
 GenIce2 is now integrated with MDAnalysis.
 
-# References
+## References
 
 * [Avogadro] Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif
 * [Baez 1998] 
@@ -847,7 +854,7 @@ YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2018, Phase Diagrams o
 * [Zhao 2019] Zhao, C.-L. et al. Seven-Site Effective Pair Potential for Simulating Liquid Water. J. Phys. Chem. B 123, 4594-4603 (2019).
 
 
-# Algorithms and how to cite them.
+## Algorithms and how to cite them.
 
 The algorithms to make a depolarized hydrogen-disordered ice are explained in these papers:
 
@@ -874,6 +881,8 @@ M. Matsumoto, T. Yagasaki, and H. Tanaka, “Novel Algorithm to Generate Hydroge
         year = {2021}
     }
 
-# How to contribute
+## How to contribute
 
-GenIce has been available as open source software on GitHub(https://github.com/vitroid/GenIce/) since 2015. Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome. Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let me know.
+GenIce has been available as open source software on GitHub(https://github.com/vitroid/GenIce) since 2015.
+Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome.
+ Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let us know.

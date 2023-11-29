@@ -37,7 +37,4 @@ analice2 = "genice2.cli.analice:main"
 "Homepage" = "https://github.com/vitroid/GenIce"
 "Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
 "manual" = "https://vitroid.github.io/GenIce"
-
-[project.genice]
 "logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
-"url" = "https://github.com/vitroid/GenIce"
