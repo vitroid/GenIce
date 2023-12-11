@@ -202,12 +202,12 @@ def replicate_groups(groups, waters, cagepos, rep):
                     for z in range(rep[2]):
                         r = np.array((x, y, z))
                         # label of the root (water) in the replica
-                        newroot = root + len(waters) * (x + rep[0] * (y + rep[1] * z))
+                        newroot = root + len(waters) * (z + rep[2] * (y + rep[1] * x))
                         # replicated cell in which the cage resides.
                         # modulo by positive number is always positive.
                         cr = (r + gcell) % rep
                         newcage = cage + len(cagepos) * (
-                            cr[0] + rep[0] * (cr[1] + rep[1] * cr[2])
+                            cr[2] + rep[2] * (cr[1] + rep[1] * cr[0])
                         )
                         newcage = int(newcage)
                         newgroups[newroot][newcage] = group_name
@@ -222,7 +222,7 @@ def replicate_labeldict(labels, nmol, rep):
         for x in range(rep[0]):
             for y in range(rep[1]):
                 for z in range(rep[2]):
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
+                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
                     newlabels[newj] = labels[j]
 
     return newlabels
@@ -235,7 +235,7 @@ def replicate_labels(labels, nmol, rep):
         for x in range(rep[0]):
             for y in range(rep[1]):
                 for z in range(rep[2]):
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
+                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
                     newlabels.add(newj)
 
     return newlabels
@@ -267,8 +267,8 @@ def replicate_graph(graph, positions, rep, fixed: list):
                     xi = (x + delta[0]) % rep[0]
                     yi = (y + delta[1]) % rep[1]
                     zi = (z + delta[2]) % rep[2]
-                    newi = i + nmol * (xi + rep[0] * (yi + rep[1] * zi))
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
+                    newi = i + nmol * (zi + rep[2] * (yi + rep[1] * xi))
+                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
 
                     if edge_fixed:  # fixed pair
                         fixedEdges.add_edge(newi, newj)
@@ -278,25 +278,13 @@ def replicate_graph(graph, positions, rep, fixed: list):
 
 
 def replicate_positions(positions, rep):
-    repx = positions.copy()
-
-    for m in range(1, rep[0]):
-        v = np.array([m, 0, 0])
-        repx = np.concatenate((repx, positions + v))
-
-    repy = repx.copy()
-
-    for m in range(1, rep[1]):
-        v = np.array([0, m, 0])
-        repy = np.concatenate((repy, repx + v))
-
-    repz = repy.copy()
-
-    for m in range(1, rep[2]):
-        v = np.array([0, 0, m])
-        repz = np.concatenate((repz, repy + v))
-
-    return repz / rep
+    reppositions = []
+    for x in range(rep[0]):
+        for y in range(rep[1]):
+            for z in range(rep[2]):
+                v = np.array([x, y, z])
+                reppositions.append(positions + v)
+    return np.vstack(reppositions) / rep
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
