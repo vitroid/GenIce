@@ -13,6 +13,7 @@ PairList = ">=0.2.12.4"
 attrdict = "*"
 cycless = "*"
 genice-core = ">=0.8"
+toml = "*"
 
 [dev-packages]
 requests = "*"
