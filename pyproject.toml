@@ -1,11 +1,23 @@
-[build-system]
-requires = ["hatchling", "numpy"]
-build-backend = "hatchling.build"
+# [build-system]
+# requires = ["hatchling", "numpy"]
+# build-backend = "hatchling.build"
 
 
 [project]
 version = "2.2.1"
 name = "genice2"
+
+[project.scripts]
+genice2 = "genice2.cli.genice:main"
+analice2 = "genice2.cli.analice:main"
+
+[project.urls]
+"Homepage" = "https://github.com/vitroid/GenIce"
+"Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
+"manual" = "https://vitroid.github.io/GenIce"
+"logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
+
+
 
 [tool.poetry]
 name = "genice2"
@@ -27,9 +39,6 @@ genice-core = "^0.9"
 yaplotlib = "^0.1.2"
 openpyscad = "^0.5.0"
 
-
-# "wheel",
-
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
 ipykernel = "^6.27.1"
@@ -42,12 +51,3 @@ plotly = "^5.18.0"
 nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 
-[project.scripts]
-genice2 = "genice2.cli.genice:main"
-analice2 = "genice2.cli.analice:main"
-
-[project.urls]
-"Homepage" = "https://github.com/vitroid/GenIce"
-"Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
-"manual" = "https://vitroid.github.io/GenIce"
-"logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
