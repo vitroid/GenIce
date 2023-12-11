@@ -46,6 +46,18 @@ def getoptions():
         help="Repeat the unit cell along a, b, and c axes. [1,1,1]",
     )
     parser.add_argument(
+        "--reshape",
+        "-R",
+        type=str,
+        dest="reshape",
+        default="",
+        help=(
+            "Convert the unit cell shape by specifying the new (a,b,c) set from the original (a,b,c) of the unit cell. "
+            + "The combination of (a,b,c) is specified by nine integers. "
+            + "For example, '--reshape 3,0,0,0,2,0,0,0,1' specifies that the new cell vectors are (3a, 2b, c), which is equivalent to '--rep 3 2 1'."
+        ),
+    )
+    parser.add_argument(
         "--shift",
         "-S",
         nargs=3,
@@ -199,7 +211,10 @@ def main():
     seed = options.seed
     np.random.seed(seed)
     # self.seed = seed  # used in tilecycles
-    rep = options.rep
+    if options.reshape != "":
+        reshape = np.array([int(x) for x in options.reshape.split(",")]).reshape(3, 3)
+    else:
+        reshape = np.diag(options.rep)
     sh = options.shift
     density = options.dens
     asis = options.asis
@@ -237,13 +252,14 @@ def main():
         safe_import("lattice", lattice_type).Lattice(**lattice_options),
         signature=signature,
         density=density,
-        rep=rep,
+        reshape=reshape,
         cations=cations,
         anions=anions,
         spot_guests=spot_guests,
         spot_groups=groups,
         asis=asis,
         shift=sh,
+        rep=None,
     )
 
     guests = defaultdict(dict)

@@ -57,7 +57,7 @@ Install with pip3.
 
 ## Usage
 
-    usage: genice2 [-h] [--version] [--rep REP REP REP]
+    usage: genice2 [-h] [--version] [--rep REP REP REP] [--reshape RESHAPE]
                    [--shift SHIFT SHIFT SHIFT] [--dens DENS] [--add_noise percent]
                    [--seed SEED] [--format name] [--water model] [--guest 14=me]
                    [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
@@ -207,6 +207,13 @@ Install with pip3.
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell along a, b, and c axes. [1,1,1]
+      --reshape RESHAPE, -R RESHAPE
+                            Convert the unit cell shape by specifying the new
+                            (a,b,c) set from the original (a,b,c) of the unit
+                            cell. The combination of (a,b,c) is specified by nine
+                            integers. For example, '--reshape 3,0,0,0,2,0,0,0,1'
+                            specifies that the new cell vectors are (3a, 2b, c),
+                            which is equivalent to '--rep 3 2 1'.
       --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
                             Shift the unit cell along a, b, and c axes. (0.5==half
                             cell) [0,0,0]
@@ -234,7 +241,6 @@ Install with pip3.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
-                            o, openscad     OpenSCAD.
                             p, python, reshape              Cell-reshaper.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
@@ -248,6 +254,7 @@ Install with pip3.
                             2. Formatters served by external plugins
     
                             cage            Cage analysis.
+                            mdanalysis      MDAnalysis integration.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
                             ----
@@ -546,7 +553,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]

@@ -297,8 +297,8 @@ def replicate_graph(
             d = replica_vector_b - np.floor(replica_vector_b + 0.5)
             assert d @ d < 1e-20
 
-            replica_vector_b = replica_vector_b.astype(int)
-
+            # The safest way to convert a float into int
+            replica_vector_b = np.floor(replica_vector_b + 0.5).astype(int)
             b = replica_vector_labels[tuple(replica_vector_b)]
             newi = nmol * b + i
             newj = nmol * a + j
@@ -356,6 +356,7 @@ class GenIce:
              The locations of functional groups that occupy the cages.
     as_is:   Avoids shuffling of the orientations of water molecules.
     signature: A text that is inserted in the output.
+    reshape: reshape matrix.
     """
 
     @timeit
@@ -365,7 +366,8 @@ class GenIce:
         lat: Type[Lattice],
         signature: str = "",
         density: float = 0,
-        rep=(1, 1, 1),
+        rep=None,
+        reshape=np.eye(3),
         cations: dict = {},
         anions: dict = {},
         spot_guests: dict = {},
@@ -388,7 +390,7 @@ class GenIce:
             spot_groups:Labels of cages in which a group is placed.
             asis:       Do not modify the orientations of the hydrogen bonds.
             shift:      A fractional value to be added to the positions.
-
+            reshape: reshape matrix.
         """
 
         # このconstructorが大きすぎ、複雑すぎ。
@@ -400,27 +402,59 @@ class GenIce:
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
 
-        # replication vectors
-        # self.replica_vectors = np.array(
-        #     [
-        #         (x, y, z)
-        #         for z in range(rep[2])
-        #         for y in range(rep[1])
-        #         for x in range(rep[0])
-        #     ]
-        # )
-        self.replica_vectors = np.array(
-            [
-                (x, y, z)
-                for x in range(rep[0])
-                for y in range(rep[1])
-                for z in range(rep[2])
+        # 変数名に1がついているのはunit cell
+
+        # ================================================================
+        # cell: cell dimension
+        #   see parse_cell for syntax.
+        #
+        self.cell1 = Cell(lat.cell)
+
+        if rep is not None:
+            logger.warning("rep for GenIce() is deprecated. Use reshape instead.")
+            self.replica_vectors = np.array(
+                [
+                    (x, y, z)
+                    for x in range(rep[0])
+                    for y in range(rep[1])
+                    for z in range(rep[2])
+                ]
+            )
+            self.grand_cellmat = np.diag(rep)
+        else:
+            logger.info("  Reshaping the unit cell.")
+            i, j, k = reshape
+            logger.info(f"    i:{i}")
+            logger.info(f"    j:{j}")
+            logger.info(f"    k:{k}")
+
+            corners = [
+                a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)
             ]
-        )
+
+            mins = np.min(corners, axis=0)
+            maxs = np.max(corners, axis=0)
+
+            vecs = []
+
+            inv = np.linalg.inv(reshape)
+            for a in range(mins[0], maxs[0]):
+                for b in range(mins[1], maxs[1]):
+                    for c in range(mins[2], maxs[2]):
+                        abc = np.array([a, b, c])
+                        frac = abc @ inv
+                        if np.all((0 <= frac) & (frac < 1)):
+                            vecs.append(abc)
+            self.replica_vectors = np.array(vecs)
+
+            vol = abs(np.linalg.det(reshape))
+            assert np.allclose(vol, len(vecs))
+
+            self.grand_cellmat = reshape
+
         self.replica_vector_labels = {
             tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
         }
-        self.grand_cellmat = np.diag(rep)
 
         # Show the document of the module
         try:
@@ -434,14 +468,6 @@ class GenIce:
 
         for line in self.doc:
             logger.info("  " + line)
-
-        # 変数名に1がついているのはunit cell
-
-        # ================================================================
-        # cell: cell dimension
-        #   see parse_cell for syntax.
-        #
-        self.cell1 = Cell(lat.cell)
 
         # ================================================================
         # waters: positions of water molecules
