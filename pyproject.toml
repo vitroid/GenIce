@@ -4,30 +4,43 @@ build-backend = "hatchling.build"
 
 
 [project]
-name = "genice"
-version = "2.2" # major.minor.fix
+version = "2.2.1"
+name = "genice2"
+
+[tool.poetry]
+name = "genice2"
+version = "2.2.1" # major.minor.fix
 authors = [
-  { name="Masakazu Matsumoto", email="vitroid@gmail.com" },
+  "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
-readme = "README.md"
-requires-python = ">=3.9"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
-dependencies = ["networkx>=2.0.dev20160901144005",
-"cycless",
-"pairlist>=0.2.12.4",
-"yaplotlib>=0.1",
-"numpy",
-"wheel",
-"openpyscad",
-"graphstat",
-"genice-core>=0.8",]
+license = "MIT"
 
-license = {text = "MIT"}
+[tool.poetry.dependencies]
+"networkx" = ">=2.0.dev20160901144005"
+"python" = "^3.9"
+numpy = "^1.26.2"
+pairlist = "^0.5.1.2"
+cycless = "^0.4"
+graphstat = "^0.2.1"
+genice-core = "^0.9"
+yaplotlib = "^0.1.2"
+openpyscad = "^0.5.0"
+
+
+# "wheel",
+
+[tool.poetry.group.dev.dependencies]
+toml = "^0.10.2"
+ipykernel = "^6.27.1"
+jinja2 = "^3.1.2"
+py3dmol = "^2.0.4"
+matplotlib = "^3.8.2"
+genice2-cage = "^2.2"
+genice2-svg = "^2.2"
+plotly = "^5.18.0"
+nbformat = "^5.9.2"
+genice2-mdanalysis = "^0.6.5"
 
 [project.scripts]
 genice2 = "genice2.cli.genice:main"

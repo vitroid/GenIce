@@ -1,9 +1,9 @@
 ![Logo]({{project.urls.logo}})
 # GenIce2
 
-{{project.description}}
+{{tool.poetry.description}}
 
-version {{project.version}}
+version {{tool.poetry.version}}
 
 ## New in GenIce2.2
 
@@ -16,7 +16,7 @@ The new GenIce works very well with interactive execution.
 
 ## Requirements
 
-{% for item in project.dependencies %}* {{item}}
+{% for item in tool.poetry.dependencies %}* {{item}}{{tool.poetry.dependencies[item]}}
 {% endfor %}
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)

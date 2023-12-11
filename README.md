@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2
+version 2.2.1
 
 ## New in GenIce2.2
 
@@ -17,14 +17,14 @@ The new GenIce works very well with interactive execution.
 ## Requirements
 
 * networkx>=2.0.dev20160901144005
-* cycless
-* pairlist>=0.2.12.4
-* yaplotlib>=0.1
-* numpy
-* wheel
-* openpyscad
-* graphstat
-* genice-core>=0.8
+* python^3.9
+* numpy^1.26.2
+* pairlist^0.5.1.2
+* cycless^0.4
+* graphstat^0.2.1
+* genice-core^0.9
+* yaplotlib^0.1.2
+* openpyscad^0.5.0
 
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
@@ -248,9 +248,9 @@ Install with pip3.
                             2. Formatters served by external plugins
     
                             cage            Cage analysis.
-                            mdanalysis      MDAnalysis integration.
+                            png             PNG (Portable Network Graphics).
+                            svg             SVG (Standard Vector Graphics).
                             ----
-                            (Undocumented) png  svg
     
     
                             3. Formatters served locally
@@ -546,7 +546,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]

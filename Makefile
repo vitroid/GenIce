@@ -1,3 +1,6 @@
+PKGNAME=genice2
+REPNAME=GenIce
+
 all: README.md
 	echo Hello.
 %: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
@@ -8,31 +11,25 @@ update-citations:
 	python Utilities/citation.py < old.citations.json > citations.json
 	-diff old.citations.json citations.json
 
-pep8:
-	autopep8 -r -a -a -i genice2/
 test:
 	make -C tests all
-test-deploy: build
-	-pip install twine
-	twine upload -r pypitest dist/*
-test-install: requirements.txt
-	pip install -r $<
-	pip install --index-url https://test.pypi.org/simple/ genice2
 
-
-install:
-	./setup.py install
+test-deploy:
+	poetry publish --build -r testpypi
+test-install:
+	pip install --index-url https://test.pypi.org/simple/ $(PKGNAME)
 uninstall:
-	-pip uninstall -y genice
-build: $(wildcard genice2/*.py genice2/formats/*.py genice2/lattices/*.py genice2/molecules/*.py)
-	python3 -m build
-	# ./setup.py sdist # bdist_wheel
-
-
-deploy: build
-	twine upload dist/*
+	-pip uninstall -y $(PKGNAME)
+build: README.md $(wildcard genice2/*.py)
+	poetry build
+deploy:
+	poetry publish --build
 check:
-	./setup.py check
+	poetry check
+
+
+
+
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@
 clean:
