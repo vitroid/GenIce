@@ -80,23 +80,17 @@ class Format(genice2.formats.Format):
         s += "        self.waters="
 
         ss = '"""' + "\n".join(
-            [" ".join([f"{y}" for y in x]) for x in ice.reppositions]
+            [" ".join([f"{y:.4f}" for y in x]) for x in ice.reppositions]
         )
 
         s += ss + '\n"""' + "\n"
 
-        if ice.cagepos1 is not None:
-            s += '        self.cages="""' + "\n"
-            ncell, ss = FindEmptyCells(
-                cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype
-            )
-            s += ss + '"""' + "\n\n"
+        # 一時的に不活性にする。
+        # # if ice.cagepos1 is not None:
+        #     s += '        self.cages="""' + "\n"
+        #     ncell, ss = FindEmptyCells(
+        #         cellmat, self.ijk, ice.repcagepos, labels=ice.repcagetype
+        #     )
+        #     s += ss + '"""' + "\n\n"
 
         self.output = s
-
-    # Reshaping matrix (Must be integers)
-    # for now they are hardcoded.  It will be given as options for the plugin in the future.
-    # ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
-    # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
-    # ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
-    # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])

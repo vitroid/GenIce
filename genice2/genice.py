@@ -246,19 +246,6 @@ def replicate_labeldict(labels, nmol, replica_vectors):
     return newlabels
 
 
-# def replicate_labels(labels, nmol, rep):
-#     newlabels = set()
-
-#     for j in labels:
-#         for x in range(rep[0]):
-#             for y in range(rep[1]):
-#                 for z in range(rep[2]):
-#                     newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
-#                     newlabels.add(newj)
-
-#     return newlabels
-
-
 @timeit
 def replicate_graph(
     graph1,
@@ -311,11 +298,20 @@ def replicate_graph(
 
 
 def replicate_positions(positions1, replica_vectors, grand_cellmat):
+    # レプリカ単位胞の数だけ、水分子位置を複製する。
+    inv = np.linalg.inv(grand_cellmat)
     reppositions = []
     for replica_vector in replica_vectors:
-        reppositions.append(positions1 + replica_vector)
+        # レプリカ単位胞内での分子の位置
+        replica = positions1 + replica_vector
+        # 大セル内の位置に換算する
+        replica = replica @ inv
+        replica -= np.floor(replica)
+        # 束ねて
+        reppositions.append(replica)
+    # 一つの配列にまとめ
     reppositions = np.vstack(reppositions)
-    return reppositions @ np.linalg.inv(grand_cellmat)
+    return reppositions
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
@@ -410,8 +406,17 @@ class GenIce:
         #
         self.cell1 = Cell(lat.cell)
 
+        # Reshaping matrix (Must be integers)
+        # for now they are hardcoded.  It will be given as options for the plugin in the future.
+        # ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
+        # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
+        # ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
+        # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+
+        # CLIからはrepは与えられない。API経由で設定される可能性はある。
         if rep is not None:
             logger.warning("rep for GenIce() is deprecated. Use reshape instead.")
+            # 直方体レプリカの順序指定。
             self.replica_vectors = np.array(
                 [
                     (x, y, z)
@@ -420,14 +425,17 @@ class GenIce:
                     for z in range(rep[2])
                 ]
             )
+            # セルの複製後の大セルの形
             self.grand_cellmat = np.diag(rep)
         else:
             logger.info("  Reshaping the unit cell.")
+
             i, j, k = reshape
             logger.info(f"    i:{i}")
             logger.info(f"    j:{j}")
             logger.info(f"    k:{k}")
 
+            # 単位胞を並べた格子を、大セルで切りとった時に、どの範囲の単位胞がかするか
             corners = [
                 a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)
             ]
@@ -438,20 +446,28 @@ class GenIce:
             vecs = []
 
             inv = np.linalg.inv(reshape)
+            # かする単位胞のうち
             for a in range(mins[0], maxs[0]):
                 for b in range(mins[1], maxs[1]):
                     for c in range(mins[2], maxs[2]):
+                        # 単位胞の位置を、
                         abc = np.array([a, b, c])
+                        # 大セルに対する相対座標で表す。
                         frac = abc @ inv
+                        # 大セルに含まれるなら
                         if np.all((0 <= frac) & (frac < 1)):
+                            # その単位胞を記録する
                             vecs.append(abc)
             self.replica_vectors = np.array(vecs)
 
+            # 大セルの大きさは、単位胞の整数倍でなければいけない。
             vol = abs(np.linalg.det(reshape))
             assert np.allclose(vol, len(vecs))
 
+            # 大セルの形
             self.grand_cellmat = reshape
 
+        # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
         self.replica_vector_labels = {
             tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
         }

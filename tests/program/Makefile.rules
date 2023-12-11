@@ -146,8 +146,8 @@ T.pov: $(FMT)/povray.py
 	$(GENICE) T --guest 12=g12 --rep 1 1 1 --format povray | fgrep -v "Command line:" > $@
 2dL.gro: $(FMT)/gromacs.py
 	$(GENICE) 2d --rep 6 6 6 | fgrep -v "Command line:" > $@
-1hreshape.py: $(FMT)/reshape.py
-	$(GENICE) 1h --rep 1 1 1 --format reshape[1,1,-2,1,-1,0,1,1,1] | fgrep -v "Command line:" > $@
+1hreshape.py: $(FMT)/python.py
+	$(GENICE) 1h --reshape 1,1,-2,1,-1,0,1,1,1 -f python | fgrep -v "Command line:" > $@
 2D3.ringtest: $(FMT)/_ringstat.py
 	$(GENICE) 2D3 --rep 5 5 1 --format _ringstat --depol=optimal | fgrep -v "Command line:" > $@
 oprism7.nx3a: $(FMT)/euler.py
@@ -206,7 +206,7 @@ eleven.nx3a: $(LTC)/eleven.py $(FMT)/euler.py
 
 # reshape debug
 5x3R.py:
-	$(GENICE) 5 -r 1 1 3 -f reshape[1,0,0,0,1,0,1,0,1] | fgrep -v "Command line:" > $@
+	$(GENICE) 5 --reshape 1,0,0,0,1,0,1,0,3 -f python | fgrep -v "Command line:" > $@
 lattices/5x3R.py: 5x3R.py
 	-mkdir lattices
 	cp $< lattices
