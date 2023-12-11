@@ -5,6 +5,64 @@ Parallelepiped cell
 import numpy as np
 import logging
 from math import pi, sin, cos, sqrt, acos, degrees
+import itertools as it
+
+
+## Moved from formats/reshape.py
+MAXCELL = 11
+torr = 1e-8
+
+
+def isZero(x):
+    return -torr < x < torr
+
+
+def FlagEquivCells(nv, flags, ijk):
+    if nv not in flags:
+        for d in it.product((-2, -1, 0, 1, 2), repeat=3):
+            vv = tuple(d @ ijk + nv)
+            flags.add(vv)
+
+
+def FindEmptyCells(cellmat, ijk, relpositions, labels=None):
+    newcell = ijk @ cellmat
+    newcelli = np.linalg.inv(newcell)
+    L1 = np.linalg.norm(newcell[0])
+    L2 = np.linalg.norm(newcell[1])
+    L3 = np.linalg.norm(newcell[2])
+    rL = np.array([L1, L2, L3])
+    # print(rL)
+    ncell = 0
+    flags = set()
+    queue = [(0, 0, 0)]
+    s = ""
+    while len(queue) > 0:
+        nv = queue.pop(0)
+        if nv not in flags:
+            ncell += 1
+            # Place atoms
+            for i, xyz in enumerate(relpositions):
+                # rel to abs
+                xxv = (xyz + nv) @ cellmat
+                # inner products with axis vector of the newcell
+                pv = xxv @ newcelli
+                # print(pv,rL)
+                pv -= np.floor(pv)
+                # print(nv)
+                label = ""
+                if labels is not None:
+                    label = labels[i]
+                s += "{3} {0:9.4f} {1:9.4f} {2:9.4f}\n".format(
+                    pv[0], pv[1], pv[2], label
+                )
+            # print("NV:",nv)
+            FlagEquivCells(nv, flags, ijk)
+            for xi, yi, zi in it.product((-1, 0, 1), repeat=3):
+                nei = nv[0] + xi, nv[1] + yi, nv[2] + zi
+                if nei not in flags:
+                    # print("nei", nei)
+                    queue.append(nei)
+    return ncell, s
 
 
 def rel_wrap(relvec):

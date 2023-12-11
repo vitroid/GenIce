@@ -67,16 +67,16 @@ def assume_tetrahedral_vectors(v):
     return []
 
 
-def ice_rule(dg: nx.DiGraph, strict=False) -> bool:
-    if strict:
-        for node in dg:
-            if dg.in_degree(node) != 2 or dg.out_degree(node) != 2:
-                return False
-    else:
-        for node in dg:
-            if dg.in_degree(node) > 2 or dg.out_degree(node) > 2:
-                return False
-    return True
+# def ice_rule(dg: nx.DiGraph, strict=False) -> bool:
+#     if strict:
+#         for node in dg:
+#             if dg.in_degree(node) != 2 or dg.out_degree(node) != 2:
+#                 return False
+#     else:
+#         for node in dg:
+#             if dg.in_degree(node) > 2 or dg.out_degree(node) > 2:
+#                 return False
+#     return True
 
 
 def orientations(coord, graph, cell, immutables: set):
@@ -185,6 +185,8 @@ def replicate_groups(groups, waters, cagepos, rep):
     # Storage for replicated groups
     newgroups = defaultdict(dict)
 
+    nmol = len(waters)
+
     for root, cages in groups.items():
         # Position of root (water) (fractional)
         root_pos = waters[root]
@@ -197,59 +199,83 @@ def replicate_groups(groups, waters, cagepos, rep):
             # (Image) cell that the cage resides
             gcell = np.floor(root_pos + delta)
 
-            for x in range(rep[0]):
-                for y in range(rep[1]):
-                    for z in range(rep[2]):
-                        r = np.array((x, y, z))
-                        # label of the root (water) in the replica
-                        newroot = root + len(waters) * (z + rep[2] * (y + rep[1] * x))
-                        # replicated cell in which the cage resides.
-                        # modulo by positive number is always positive.
-                        cr = (r + gcell) % rep
-                        newcage = cage + len(cagepos) * (
-                            cr[2] + rep[2] * (cr[1] + rep[1] * cr[0])
-                        )
-                        newcage = int(newcage)
-                        newgroups[newroot][newcage] = group_name
-                        # logger.info(("root",newroot,"newcage", newcage))
+            for i, xyz in enumerate(rep):
+                newroot = i * nmol + root
+                replica_vector_b = xyz + gcell
+                fractional_b = replica_vector_b @ np.linalg.inv(grand_cellmat)
+                fractional_b -= np.floor(fractional_b)
+                replica_vector_b = fractional_b @ grand_cellmat
+
+                # test
+                d = replica_vector_b - np.floor(replica_vector_b + 0.5)
+                assert d @ d < 1e-20
+
+                replica_vector_b = replica_vector_b.astype(int)
+
+                b = replica_vector_labels[tuple(replica_vector_b)]
+                newcage = cage + ncage * b
+                newgroups[newroot][newcage] = group_name
+                # たぶんこれでいいと思うのだが、この部分は今は使っていないので検証不能。
+
+            # for x in range(rep[0]):
+            #     for y in range(rep[1]):
+            #         for z in range(rep[2]):
+            #             r = np.array((x, y, z))
+            #             # label of the root (water) in the replica
+            #             newroot = root + len(waters) * (z + rep[2] * (y + rep[1] * x))
+            #             # replicated cell in which the cage resides.
+            #             # modulo by positive number is always positive.
+            #             cr = (r + gcell) % rep
+            #             newcage = cage + len(cagepos) * (
+            #                 cr[2] + rep[2] * (cr[1] + rep[1] * cr[0])
+            #             )
+            #             newcage = int(newcage)
+            #             newgroups[newroot][newcage] = group_name
+            #             # logger.info(("root",newroot,"newcage", newcage))
     return newgroups
 
 
-def replicate_labeldict(labels, nmol, rep):
+def replicate_labeldict(labels, nmol, replica_vectors):
     newlabels = dict()
 
     for j in labels:
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
-                    newlabels[newj] = labels[j]
+        for i, _ in enumerate(replica_vectors):
+            newj = nmol * i + j
+            newlabels[newj] = labels[j]
 
     return newlabels
 
 
-def replicate_labels(labels, nmol, rep):
-    newlabels = set()
+# def replicate_labels(labels, nmol, rep):
+#     newlabels = set()
 
-    for j in labels:
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
-                    newlabels.add(newj)
+#     for j in labels:
+#         for x in range(rep[0]):
+#             for y in range(rep[1]):
+#                 for z in range(rep[2]):
+#                     newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
+#                     newlabels.add(newj)
 
-    return newlabels
+#     return newlabels
 
 
 @timeit
-def replicate_graph(graph, positions, rep, fixed: list):
+def replicate_graph(
+    graph1,
+    fractional_coords,
+    replica_vectors,
+    fixed: list,
+    replica_vector_labels,
+    grand_cellmat,
+):
     # repgraph = dg.IceGraph()
+    logger = getLogger()
     repgraph = nx.Graph()
     fixed = nx.DiGraph(fixed)
     fixedEdges = nx.DiGraph()
-    nmol = positions.shape[0]
+    nmol = fractional_coords.shape[0]
 
-    for i, j in graph.edges(data=False):
+    for i, j in graph1.edges(data=False):
         if fixed.has_edge(i, j):
             edge_fixed = True
         elif fixed.has_edge(j, i):
@@ -258,33 +284,38 @@ def replicate_graph(graph, positions, rep, fixed: list):
         else:
             edge_fixed = False
         # positions in the unreplicated cell
-        vec = positions[j] - positions[i]
+        vec = fractional_coords[j] - fractional_coords[i]
         delta = np.floor(vec + 0.5).astype(int)
 
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    xi = (x + delta[0]) % rep[0]
-                    yi = (y + delta[1]) % rep[1]
-                    zi = (z + delta[2]) % rep[2]
-                    newi = i + nmol * (zi + rep[2] * (yi + rep[1] * xi))
-                    newj = j + nmol * (z + rep[2] * (y + rep[1] * x))
+        for a, replica_vector_a in enumerate(replica_vectors):
+            replica_vector_b = replica_vector_a + delta
+            fractional_b = replica_vector_b @ np.linalg.inv(grand_cellmat)
+            fractional_b -= np.floor(fractional_b)
+            replica_vector_b = fractional_b @ grand_cellmat
 
-                    if edge_fixed:  # fixed pair
-                        fixedEdges.add_edge(newi, newj)
-                    repgraph.add_edge(newi, newj)
+            # test
+            d = replica_vector_b - np.floor(replica_vector_b + 0.5)
+            assert d @ d < 1e-20
+
+            replica_vector_b = replica_vector_b.astype(int)
+
+            b = replica_vector_labels[tuple(replica_vector_b)]
+            newi = nmol * b + i
+            newj = nmol * a + j
+
+            if edge_fixed:  # fixed pair
+                fixedEdges.add_edge(newi, newj)
+            repgraph.add_edge(newi, newj)
 
     return repgraph, fixedEdges
 
 
-def replicate_positions(positions, rep):
+def replicate_positions(positions1, replica_vectors, grand_cellmat):
     reppositions = []
-    for x in range(rep[0]):
-        for y in range(rep[1]):
-            for z in range(rep[2]):
-                v = np.array([x, y, z])
-                reppositions.append(positions + v)
-    return np.vstack(reppositions) / rep
+    for replica_vector in replica_vectors:
+        reppositions.append(positions1 + replica_vector)
+    reppositions = np.vstack(reppositions)
+    return reppositions @ np.linalg.inv(grand_cellmat)
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
@@ -363,12 +394,33 @@ class GenIce:
         # このconstructorが大きすぎ、複雑すぎ。
         # self変数も多すぎ。
         logger = getLogger()
-        self.rep = rep
         self.asis = asis
         self.cations = cations
         self.anions = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+
+        # replication vectors
+        # self.replica_vectors = np.array(
+        #     [
+        #         (x, y, z)
+        #         for z in range(rep[2])
+        #         for y in range(rep[1])
+        #         for x in range(rep[0])
+        #     ]
+        # )
+        self.replica_vectors = np.array(
+            [
+                (x, y, z)
+                for x in range(rep[0])
+                for y in range(rep[1])
+                for z in range(rep[2])
+            ]
+        )
+        self.replica_vector_labels = {
+            tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
+        }
+        self.grand_cellmat = np.diag(rep)
 
         # Show the document of the module
         try:
@@ -641,7 +693,9 @@ class GenIce:
         """
 
         logger = getLogger()
-        self.reppositions = replicate_positions(self.waters1, self.rep)
+        self.reppositions = replicate_positions(
+            self.waters1, self.replica_vectors, self.grand_cellmat
+        )
 
         # This must be done before the replication of the cell.
         logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
@@ -653,8 +707,7 @@ class GenIce:
         logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
 
         # scale the cell
-        self.repcell = Cell(self.cell1.mat)
-        self.repcell.scale2(self.rep)
+        self.repcell = Cell(self.grand_cellmat @ self.cell1.mat)
 
         if noise > 0.0:
             logger.info(f"  Add noise: {noise}.")
@@ -672,7 +725,9 @@ class GenIce:
 
         if self.cagepos1 is not None and self.cagepos1.shape[0] > 0:
             logger.info("  Hints:")
-            self.repcagepos = replicate_positions(self.cagepos1, self.rep)
+            self.repcagepos = replicate_positions(
+                self.cagepos1, self.replica_vectors, self.grand_cellmat
+            )
             nrepcages = self.repcagepos.shape[0]
             self.repcagetype = [
                 self.cagetype1[i % len(self.cagetype1)] for i in range(nrepcages)
@@ -713,9 +768,12 @@ class GenIce:
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(self.dopants1, len(self.waters1), self.rep)
+        self.dopants = replicate_labeldict(
+            self.dopants1, len(self.waters1), self.replica_vectors
+        )
+
         self.groups = replicate_groups(
-            self.groups1, self.waters1, self.cagepos1, self.rep
+            self.groups1, self.waters1, self.cagepos1, self.replica_vectors
         )
 
         # self.groups_info(self.groups)
@@ -725,7 +783,12 @@ class GenIce:
         # logger.info(("filled",self.filled_cages))
         # Replicate the graph
         self.graph, self.fixedEdges = replicate_graph(
-            self.graph1, self.waters1, self.rep, self.fixed1
+            self.graph1,
+            self.waters1,
+            self.replica_vectors,
+            self.fixed1,
+            self.replica_vector_labels,
+            self.grand_cellmat,
         )
         # replicate "immutables" == dopants list in the graph
         # self.repimmutables = replicate_labels(

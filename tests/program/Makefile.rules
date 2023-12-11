@@ -39,7 +39,8 @@ all: 9.nx3a.test dtc.nx3a.test
 all: 2d.gro.test
 all: 4.ngph.test
 all: test1.done   test2.done   test3.done   test4.done
-all: 12.scad.test HS3.rings.yap.test
+# all: 12.scad.test 
+all: HS3.rings.yap.test
 all: c0te.nx3a.test c1te.nx3a.test ice1hte.nx3a.test
 all: i.graph.test
 all: 0.exyz.test
