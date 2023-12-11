@@ -363,7 +363,7 @@ class GenIce:
         signature: str = "",
         density: float = 0,
         rep=None,
-        reshape=np.eye(3),
+        reshape=np.eye(3, dtype=int),
         cations: dict = {},
         anions: dict = {},
         spot_guests: dict = {},
@@ -430,15 +430,15 @@ class GenIce:
         else:
             logger.info("  Reshaping the unit cell.")
 
-            i, j, k = reshape
+            i, j, k = np.array(reshape)
             logger.info(f"    i:{i}")
             logger.info(f"    j:{j}")
             logger.info(f"    k:{k}")
 
             # 単位胞を並べた格子を、大セルで切りとった時に、どの範囲の単位胞がかするか
-            corners = [
-                a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)
-            ]
+            corners = np.array(
+                [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+            )
 
             mins = np.min(corners, axis=0)
             maxs = np.max(corners, axis=0)
