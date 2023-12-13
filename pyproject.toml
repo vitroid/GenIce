@@ -19,6 +19,7 @@ analice2 = "genice2.cli.analice:main"
 
 
 
+
 [tool.poetry]
 name = "genice2"
 version = "2.2.1" # major.minor.fix
@@ -51,3 +52,9 @@ plotly = "^5.18.0"
 nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["genice2"]  # package names should match these glob patterns (["*"] by default)
+exclude = []  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
