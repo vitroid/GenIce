@@ -28,6 +28,7 @@ authors = [
 ]
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 license = "MIT"
+include = ["genice2", "genice2/cli"]  # package names should match these glob patterns (["*"] by default)
 
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
@@ -53,8 +54,12 @@ nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 
 
-[tool.setuptools.packages.find]
-where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["genice2", "genice2/*"]  # package names should match these glob patterns (["*"] by default)
-exclude = []  # exclude packages matching these glob patterns (empty by default)
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+[tool.setuptools]
+packages=["genice2", "genice2.cli", "genice2.molecules", "genice2.formats", "genice2.lattices", "genice2.loaders", "genice2.groups"]
+
+# [tool.setuptools.packages.find]
+# where = ["."]  # list of folders that contain the packages (["."] by default)
+# include = ["genice2", "genice2/cli"]  # package names should match these glob patterns (["*"] by default)
+# exclude = []  # exclude packages matching these glob patterns (empty by default)
+# namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
