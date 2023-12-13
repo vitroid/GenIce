@@ -5,6 +5,8 @@ from logging import getLogger
 import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
+from genice2.cell import cellvectors
+import numpy as np
 
 desc = {
     "ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
@@ -32,6 +34,24 @@ class Format(genice2.formats.Format):
         logger = getLogger()
         cellmat = ice.repcell.mat
 
+        if not (cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0):
+            logger.info(
+                "  The specified reshaping matrix does not obey the requirements for Gromacs' unit cell convention."
+            )
+            a = np.linalg.norm(cellmat[0])
+            b = np.linalg.norm(cellmat[1])
+            c = np.linalg.norm(cellmat[2])
+            ea = cellmat[0] / a
+            eb = cellmat[1] / b
+            ec = cellmat[2] / c
+            A = np.degrees(np.arccos(eb @ ec))
+            B = np.degrees(np.arccos(ec @ ea))
+            C = np.degrees(np.arccos(ea @ eb))
+            rotmat = ice.repcell.inv @ cellvectors(a, b, c, A, B, C)
+            logger.info("  The reshape matrix is reoriented.")
+        else:
+            rotmat = np.eye(3)
+
         atoms = []
         for mols in ice.universe:
             atoms += serialize(mols)
@@ -47,6 +67,7 @@ class Format(genice2.formats.Format):
         molorder = 0
         for i, atom in enumerate(atoms):
             resno, resname, atomname, position, order = atom
+            position = position @ rotmat
             if resno == 0:
                 molorder += 1
             if len(atoms) > 99999:
@@ -63,6 +84,7 @@ class Format(genice2.formats.Format):
                     position[1],
                     position[2],
                 )
+        cellmat = cellmat @ rotmat
         if cellmat[1, 0] == 0 and cellmat[2, 0] == 0 and cellmat[2, 1] == 0:
             s += "    {0:.8f} {1:.8f} {2:.8f}\n".format(
                 cellmat[0, 0], cellmat[1, 1], cellmat[2, 2]
