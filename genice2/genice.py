@@ -14,7 +14,7 @@ import networkx as nx
 from genice2 import cage
 
 # from genice2 import digraph_unused as dg
-from genice2.cell import Cell, rel_wrap
+from genice2.cell import Cell, rel_wrap, cellshape
 from genice2.decorators import banner, timeit
 from genice2.formats import Format
 from genice2.lattices import Lattice
@@ -86,7 +86,7 @@ def orientations(coord, graph, cell, immutables: set):
 
     logger = getLogger()
     # just for a test of pure water
-    assert len(coord) == graph.number_of_nodes()
+    assert len(coord) == graph.number_of_nodes(), (len(coord), graph.number_of_nodes())
     logger.info(f"{immutables} immutables")
     # 通常の氷であればアルゴリズムを高速化できる。
 
@@ -249,18 +249,44 @@ def replicate_labeldict(labels, nmol, replica_vectors):
 @timeit
 def replicate_graph(
     graph1,
-    fractional_coords,
+    cell1frac_coords,
     replica_vectors,
     fixed: list,
     replica_vector_labels,
-    grand_cellmat,
+    reshape,
 ):
+    """
+    関数 `replicate_graph` は、グラフに関連するさまざまな入力を受け取り、指定されたレプリカ ベクトルと形状に基づいてそれを複製し、複製されたグラフと固定エッジを返します。
+
+    2つの座標系がいりみだれているので注意。
+    cell1frac: 複製前の単位胞における小数座標
+    grandfrac: 複製後の大きな単位胞における小数座標
+
+    Args:
+      graph1: 元のグラフを表すグラフ オブジェクトです。
+      cell1frac_coords: 元のグラフ内の原子の小数点座標を含む numpy 配列です。
+      replica_vectors: レプリカ(拡大単位胞を構成する、もとの単位胞のグリッド)の方向を定義する整数ベクトルのリスト。
+      fixed (list): グラフ内の固定エッジを表すリストです。
+      replica_vector_labels: レプリカベクトル座標のタプルを一意のラベルにマッピングする辞書です。このラベルは、複製されたグラフ内の各レプリカ ベクトルを識別するために使用されます。
+      reshape: 単位胞を積みかさねて拡大された結晶構造を作る、積み重ね方を表す行列。
+
+    Returns:
+      関数 `replicate_graph` は 2 つの値、`repgraph` と `fixedEdges` を返します。
+    """
     # repgraph = dg.IceGraph()
     logger = getLogger()
     repgraph = nx.Graph()
     fixed = nx.DiGraph(fixed)
     fixedEdges = nx.DiGraph()
-    nmol = fractional_coords.shape[0]
+    nmol = cell1frac_coords.shape[0]
+
+    # 正の行列式の値(倍率)。整数。
+    det = np.linalg.det(reshape)
+    if det < 0:
+        det = -det
+    det = np.floor(det + 0.5).astype(int)
+    # 逆行列に行列式をかけたもの。整数行列。
+    invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
 
     for i, j in graph1.edges(data=False):
         if fixed.has_edge(i, j):
@@ -270,23 +296,25 @@ def replicate_graph(
             i, j = j, i
         else:
             edge_fixed = False
-        # positions in the unreplicated cell
-        vec = fractional_coords[j] - fractional_coords[i]
-        delta = np.floor(vec + 0.5).astype(int)
+        # positions in the original small cell
+        cell1_delta = cell1frac_coords[j] - cell1frac_coords[i]
+        cell1_delta = np.floor(cell1_delta + 0.5).astype(int)
 
-        for a, replica_vector_a in enumerate(replica_vectors):
-            replica_vector_b = replica_vector_a + delta
-            fractional_b = replica_vector_b @ np.linalg.inv(grand_cellmat)
-            fractional_b -= np.floor(fractional_b)
-            replica_vector_b = fractional_b @ grand_cellmat
+        for a, cell1frac_a in enumerate(replica_vectors):
+            cell1frac_b = cell1frac_a + cell1_delta
+            # この処理は、replica_wrapでやってほしい。
+            grandfrac_b = cell1frac_b @ np.linalg.inv(reshape)
+            grandfrac_b -= np.floor(grandfrac_b)
+            cell1frac_b = grandfrac_b @ reshape
 
             # test
-            d = replica_vector_b - np.floor(replica_vector_b + 0.5)
+            d = cell1frac_b - np.floor(cell1frac_b + 0.5)
             assert d @ d < 1e-20
 
             # The safest way to convert a float into int
-            replica_vector_b = np.floor(replica_vector_b + 0.5).astype(int)
-            b = replica_vector_labels[tuple(replica_vector_b)]
+            cell1frac_b = np.floor(cell1frac_b + 0.5).astype(int)
+            cell1frac_b = replica_wrap(cell1frac_b, reshape, invdet, det)
+            b = replica_vector_labels[tuple(cell1frac_b)]
             newi = nmol * b + i
             newj = nmol * a + j
 
@@ -334,6 +362,18 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
                 # logger.info((i,cagepos[i]))
 
     return dnei
+
+
+def replica_wrap(
+    gridpoint: np.ndarray, reshape: np.ndarray, invdet: np.ndarray, det: int
+):
+    """
+    単位胞の繰り返しのグリッドの点を、周期境界条件のもとで、拡大単位胞内におさめる。
+    例えば、拡大単位胞が(-1,4), (6,1)なら、(5,5)と(6,1)は(0,0)と等価である。
+    """
+    frac = gridpoint @ invdet
+    frac = frac % det
+    return frac @ reshape // det
 
 
 class GenIce:
@@ -426,14 +466,22 @@ class GenIce:
                 ]
             )
             # セルの複製後の大セルの形
-            self.grand_cellmat = np.diag(rep)
+            self.reshape_matrix = np.diag(rep)
         else:
             logger.info("  Reshaping the unit cell.")
+
+            self.reshape_matrix = reshape
 
             i, j, k = np.array(reshape)
             logger.info(f"    i:{i}")
             logger.info(f"    j:{j}")
             logger.info(f"    k:{k}")
+
+            a, b, c, A, B, C = cellshape(reshape @ self.cell1.mat)
+            logger.info("  Reshaped cell:")
+            logger.info(f"    a,b,c = {a}, {b}, {c}")
+            logger.info(f"    A,B,C = {A}, {B}, {C}")
+            abc = reshape @ self.cell1.mat
 
             # 単位胞を並べた格子を、大セルで切りとった時に、どの範囲の単位胞がかするか
             corners = np.array(
@@ -443,29 +491,33 @@ class GenIce:
             mins = np.min(corners, axis=0)
             maxs = np.max(corners, axis=0)
 
-            vecs = []
+            # 整数行列の逆行列に行列式をかけたものは整数行列になる。
+            det = np.linalg.det(reshape)
+            if det < 0:
+                det = -det
+            det = np.floor(det + 0.5).astype(int)
+            invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
 
-            inv = np.linalg.inv(reshape)
+            vecs = set()
             # かする単位胞のうち
-            for a in range(mins[0], maxs[0]):
-                for b in range(mins[1], maxs[1]):
-                    for c in range(mins[2], maxs[2]):
+            for a in range(mins[0], maxs[0] + 1):
+                for b in range(mins[1], maxs[1] + 1):
+                    for c in range(mins[2], maxs[2] + 1):
                         # 単位胞の位置を、
                         abc = np.array([a, b, c])
-                        # 大セルに対する相対座標で表す。
-                        frac = abc @ inv
-                        # 大セルに含まれるなら
-                        if np.all((0 <= frac) & (frac < 1)):
-                            # その単位胞を記録する
-                            vecs.append(abc)
-            self.replica_vectors = np.array(vecs)
+                        # 大セルにおさめ
+                        rep = replica_wrap(abc, reshape, invdet, det)
+                        # 記録する
+                        vecs.add(tuple(rep))
+
+            self.replica_vectors = np.array(list(vecs))
 
             # 大セルの大きさは、単位胞の整数倍でなければいけない。
             vol = abs(np.linalg.det(reshape))
-            assert np.allclose(vol, len(vecs))
+            assert np.allclose(vol, len(vecs)), (vol, vecs)
 
             # 大セルの形
-            self.grand_cellmat = reshape
+            self.reshape_matrix = reshape
 
         # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
         self.replica_vector_labels = {
@@ -736,7 +788,7 @@ class GenIce:
 
         logger = getLogger()
         self.reppositions = replicate_positions(
-            self.waters1, self.replica_vectors, self.grand_cellmat
+            self.waters1, self.replica_vectors, self.reshape_matrix
         )
 
         # This must be done before the replication of the cell.
@@ -749,7 +801,7 @@ class GenIce:
         logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
 
         # scale the cell
-        self.repcell = Cell(self.grand_cellmat @ self.cell1.mat)
+        self.repcell = Cell(self.reshape_matrix @ self.cell1.mat)
 
         if noise > 0.0:
             logger.info(f"  Add noise: {noise}.")
@@ -768,7 +820,7 @@ class GenIce:
         if self.cagepos1 is not None and self.cagepos1.shape[0] > 0:
             logger.info("  Hints:")
             self.repcagepos = replicate_positions(
-                self.cagepos1, self.replica_vectors, self.grand_cellmat
+                self.cagepos1, self.replica_vectors, self.reshape_matrix
             )
             nrepcages = self.repcagepos.shape[0]
             self.repcagetype = [
@@ -830,7 +882,7 @@ class GenIce:
             self.replica_vectors,
             self.fixed1,
             self.replica_vector_labels,
-            self.grand_cellmat,
+            self.reshape_matrix,
         )
         # replicate "immutables" == dopants list in the graph
         # self.repimmutables = replicate_labels(

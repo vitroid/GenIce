@@ -90,7 +90,6 @@ class Format(genice2.formats.Format):
                 cellmat[0, 0], cellmat[1, 1], cellmat[2, 2]
             )
         else:
-            assert cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0
             s += "    {0:.8f} {1:.8f} {2:.8f} {3:.8f} {4:.8f} {5:.8f} {6:.8f} {7:.8f} {8:.8f}\n".format(
                 cellmat[0, 0],
                 cellmat[1, 1],
