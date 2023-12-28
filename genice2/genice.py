@@ -302,18 +302,9 @@ def replicate_graph(
 
         for a, cell1frac_a in enumerate(replica_vectors):
             cell1frac_b = cell1frac_a + cell1_delta
-            # この処理は、replica_wrapでやってほしい。
-            grandfrac_b = cell1frac_b @ np.linalg.inv(reshape)
-            grandfrac_b -= np.floor(grandfrac_b)
-            cell1frac_b = grandfrac_b @ reshape
-
-            # test
-            d = cell1frac_b - np.floor(cell1frac_b + 0.5)
-            assert d @ d < 1e-20
-
-            # The safest way to convert a float into int
-            cell1frac_b = np.floor(cell1frac_b + 0.5).astype(int)
-            cell1frac_b = replica_wrap(cell1frac_b, reshape, invdet, det)
+            cell1frac_b = np.floor(
+                grandcell_wrap(cell1frac_b, reshape, invdet, det)
+            ).astype(int)
             b = replica_vector_labels[tuple(cell1frac_b)]
             newi = nmol * b + i
             newj = nmol * a + j
@@ -364,16 +355,16 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
-def replica_wrap(
-    gridpoint: np.ndarray, reshape: np.ndarray, invdet: np.ndarray, det: int
+def grandcell_wrap(
+    cell1frac_vec: np.ndarray, reshape: np.ndarray, invdet: np.ndarray, det: int
 ):
     """
     単位胞の繰り返しのグリッドの点を、周期境界条件のもとで、拡大単位胞内におさめる。
     例えば、拡大単位胞が(-1,4), (6,1)なら、(5,5)と(6,1)は(0,0)と等価である。
     """
-    frac = gridpoint @ invdet
+    frac = cell1frac_vec @ invdet
     frac = frac % det
-    return frac @ reshape // det
+    return frac @ reshape / det
 
 
 class GenIce:
@@ -498,7 +489,7 @@ class GenIce:
             det = np.floor(det + 0.5).astype(int)
             invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
 
-            vecs = set()
+            vecs = []
             # かする単位胞のうち
             for a in range(mins[0], maxs[0] + 1):
                 for b in range(mins[1], maxs[1] + 1):
@@ -506,11 +497,12 @@ class GenIce:
                         # 単位胞の位置を、
                         abc = np.array([a, b, c])
                         # 大セルにおさめ
-                        rep = replica_wrap(abc, reshape, invdet, det)
+                        rep = grandcell_wrap(abc, reshape, invdet, det).astype(int)
                         # 記録する
-                        vecs.add(tuple(rep))
+                        if tuple(rep) not in vecs:
+                            vecs.append(tuple(rep))
 
-            self.replica_vectors = np.array(list(vecs))
+            self.replica_vectors = np.array(vecs)
 
             # 大セルの大きさは、単位胞の整数倍でなければいけない。
             vol = abs(np.linalg.det(reshape))
