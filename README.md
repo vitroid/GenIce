@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.1
+version 2.2.2
 
 ## New in GenIce2.2
 
@@ -22,9 +22,9 @@ The new GenIce works very well with interactive execution.
 * pairlist^0.5.1.2
 * cycless^0.4
 * graphstat^0.2.1
-* genice-core^0.9
 * yaplotlib^0.1.2
 * openpyscad^0.5.0
+* genice-core^0.9
 
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
@@ -161,6 +161,9 @@ Install with pip3.
                                             ice 'sIII'.
                             Struct02        A space fullerene. (I phase?)
                             T               Hypothetical clathrate type T.
+                            XIc-a           A candidate for the proton-ordered
+                                            counterpart of ice Ic. The structure
+                                            'a' in Figure 1.
                             bilayer         A Bilayer Honeycomb Ice Phase in
                                             Hydrophobic Nanopores.
                             c0te            Filled ice C0 by Teeratchanan
@@ -241,7 +244,7 @@ Install with pip3.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
-                            p, python, reshape              Cell-reshaper.
+                            p, python       Cell-reshaper.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
                             raw             Raw data. (For use with Jupyter)
@@ -582,6 +585,7 @@ FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017, IZA Database
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Database]
 Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
 T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
+XIc-a | A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1. [Geiger 2014]
 bilayer | A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores. [Koga 1997]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
@@ -755,6 +759,7 @@ FALENTY, Andrzej, HANSEN, Thomas C. and KUHS, Werner F., 2014, Formation and pro
 * [Fennell 2005] 
 FENNELL, Christopher J. and GEZELTER, J. Daniel, 2005, Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice Ih. Journal of Chemical Theory and Computation [online]. 30 April 2005. Vol. 1, no. 4, p. 662–667. DOI 10.1021/ct050005s. Available from: http://dx.doi.org/10.1021/ct050005s
 
+* [Geiger 2014] 
 * [Hirata 2017] 
 HIRATA, Masanori, YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2017, Phase Diagram of TIP4P/2005 Water at High Pressure. Langmuir [online]. 24 August 2017. Vol. 33, no. 42, p. 11561–11569. DOI 10.1021/acs.langmuir.7b01764. Available from: http://dx.doi.org/10.1021/acs.langmuir.7b01764
 
