@@ -359,8 +359,8 @@ def grandcell_wrap(
     cell1frac_vec: np.ndarray, reshape: np.ndarray, invdet: np.ndarray, det: int
 ):
     """
-    単位胞の繰り返しのグリッドの点を、周期境界条件のもとで、拡大単位胞内におさめる。
-    例えば、拡大単位胞が(-1,4), (6,1)なら、(5,5)と(6,1)は(0,0)と等価である。
+    単位胞の小数座標で表された点(単位胞内とは限らない)を、拡大単位胞内におさめる。
+    例えば、拡大単位胞が(-1,4), (6,1)なら、(5.1,5.1)と(6.1,1.1)は(0.1,0.1)になる。
     """
     frac = cell1frac_vec @ invdet
     frac = frac % det
@@ -489,9 +489,10 @@ class GenIce:
             det = np.floor(det + 0.5).astype(int)
             invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
 
-            vecs = []
+            vecs = set()
             # かする単位胞のうち
             for a in range(mins[0], maxs[0] + 1):
+                logger.debug(a)
                 for b in range(mins[1], maxs[1] + 1):
                     for c in range(mins[2], maxs[2] + 1):
                         # 単位胞の位置を、
@@ -500,9 +501,9 @@ class GenIce:
                         rep = grandcell_wrap(abc, reshape, invdet, det).astype(int)
                         # 記録する
                         if tuple(rep) not in vecs:
-                            vecs.append(tuple(rep))
+                            vecs.add(tuple(rep))
 
-            self.replica_vectors = np.array(vecs)
+            self.replica_vectors = np.array(list(vecs))
 
             # 大セルの大きさは、単位胞の整数倍でなければいけない。
             vol = abs(np.linalg.det(reshape))
