@@ -4,7 +4,7 @@
 
 
 [project]
-version = "2.2.3"
+# version = "2.2.3"
 name = "genice2"
 
 [project.scripts]
@@ -22,7 +22,7 @@ analice2 = "genice2.cli.analice:main"
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.2" # major.minor.fix
+version = "2.2.3" # major.minor.fix
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]

@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.2
+version 2.2.3
 
 ## New in GenIce2.2
 
@@ -20,7 +20,7 @@ The new GenIce works very well with interactive execution.
 * python^3.9
 * numpy^1.26.2
 * pairlist^0.5.1.2
-* cycless^0.4
+* cycless^0.4.1
 * graphstat^0.2.1
 * yaplotlib^0.1.2
 * openpyscad^0.5.0
@@ -556,7 +556,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
@@ -760,6 +760,8 @@ FALENTY, Andrzej, HANSEN, Thomas C. and KUHS, Werner F., 2014, Formation and pro
 FENNELL, Christopher J. and GEZELTER, J. Daniel, 2005, Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice Ih. Journal of Chemical Theory and Computation [online]. 30 April 2005. Vol. 1, no. 4, p. 662–667. DOI 10.1021/ct050005s. Available from: http://dx.doi.org/10.1021/ct050005s
 
 * [Geiger 2014] 
+GEIGER, Philipp, DELLAGO, Christoph, MACHER, Markus, FRANCHINI, Cesare, KRESSE, Georg, BERNARD, Jürgen, STERN, Josef N. and LOERTING, Thomas, 2014. Proton Ordering of Cubic Ice Ic: Spectroscopy and Computer Simulations. The Journal of Physical Chemistry C. Online. 13 May 2014. Vol. 118, no. 20, p. 10989–10997. DOI 10.1021/jp500324x. 
+
 * [Hirata 2017] 
 HIRATA, Masanori, YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2017, Phase Diagram of TIP4P/2005 Water at High Pressure. Langmuir [online]. 24 August 2017. Vol. 33, no. 42, p. 11561–11569. DOI 10.1021/acs.langmuir.7b01764. Available from: http://dx.doi.org/10.1021/acs.langmuir.7b01764
 
@@ -881,15 +883,15 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
         year = {2017}
     }
 
-M. Matsumoto, T. Yagasaki, and H. Tanaka, “Novel Algorithm to Generate Hydrogen-Disordered Ice Structures.”, J. Chem. Info. Modeling 61 (6): 2542–46 (2021). [DOI:10.1021/acs.jcim.1c00440](https://doi.org/10.1021/acs.jcim.1c00440)
+M. Matsumoto, T. Yagasaki, and H. Tanaka, “GenIce-core: Efficient algorithm for generation of hydrogen-disordered ice structures.”, J. Chem. Phys. 160, 094101 (2024). [DOI:10.1063/5.0198056](https://doi.org/10.1063/5.0198056)
 
-    @article{Matsumoto:2021,
+    @article{Matsumoto:2024,
         author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
-        title = {Novel Algorithm to Generate Hydrogen-Disordered Ice Structures},
-        journal = {Journal of Chemical Information and Modeling},
-        volume = {61},
-        pages = {2542-2546},
-        year = {2021}
+        title = {GenIce-core: Efficient algorithm for generation of hydrogen-disordered ice structures},
+        journal = {Journal of Chemical Physics},
+        volume = {160},
+        pages = {094101},
+        year = {2024}
     }
 
 ## How to contribute
