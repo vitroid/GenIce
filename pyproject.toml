@@ -4,7 +4,7 @@
 
 
 [project]
-version = "2.2.2"
+version = "2.2.3"
 name = "genice2"
 
 [project.scripts]
@@ -35,7 +35,7 @@ include = ["genice2", "genice2/cli"]  # package names should match these glob pa
 "python" = "^3.9"
 numpy = "^1.26.2"
 pairlist = "^0.5.1.2"
-cycless = "^0.4"
+cycless = "^0.4.1"
 graphstat = "^0.2.1"
 yaplotlib = "^0.1.2"
 openpyscad = "^0.5.0"
