@@ -3,7 +3,7 @@ REPNAME=GenIce
 
 all: README.md
 	echo Hello.
-%: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json
+%: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json pyproject.toml
 	python Utilities/replacer.py < $< > $@
 
 update-citations:

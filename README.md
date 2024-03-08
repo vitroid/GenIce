@@ -19,12 +19,12 @@ The new GenIce works very well with interactive execution.
 * networkx>=2.0.dev20160901144005
 * python^3.9
 * numpy^1.26.2
-* pairlist^0.5.1.2
-* cycless^0.4.1
-* graphstat^0.2.1
-* yaplotlib^0.1.2
+* pairlist>=0.5.1.2
+* cycless>=0.4.1
+* graphstat>=0.2.1
+* yaplotlib>=0.1.2
 * openpyscad^0.5.0
-* genice-core^0.9
+* genice-core>=0.9
 
 
 **Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
@@ -556,7 +556,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
@@ -883,15 +883,15 @@ Ice Generator",  J. Comput. Chem. 39, 61-64 (2017). [DOI: 10.1002/jcc.25077](htt
         year = {2017}
     }
 
-M. Matsumoto, T. Yagasaki, and H. Tanaka, “GenIce-core: Efficient algorithm for generation of hydrogen-disordered ice structures.”, J. Chem. Phys. 160, 094101 (2024). [DOI:10.1063/5.0198056](https://doi.org/10.1063/5.0198056)
+M. Matsumoto, T. Yagasaki, and H. Tanaka, “Novel Algorithm to Generate Hydrogen-Disordered Ice Structures.”, J. Chem. Info. Modeling 61 (6): 2542–46 (2021). [DOI:10.1021/acs.jcim.1c00440](https://doi.org/10.1021/acs.jcim.1c00440)
 
-    @article{Matsumoto:2024,
+    @article{Matsumoto:2021,
         author = {Matsumoto, Masakazu and Yagasaki, Takuma and Tanaka, Hideki},
-        title = {GenIce-core: Efficient algorithm for generation of hydrogen-disordered ice structures},
-        journal = {Journal of Chemical Physics},
-        volume = {160},
-        pages = {094101},
-        year = {2024}
+        title = {Novel Algorithm to Generate Hydrogen-Disordered Ice Structures},
+        journal = {Journal of Chemical Information and Modeling},
+        volume = {61},
+        pages = {2542-2546},
+        year = {2021}
     }
 
 ## How to contribute
