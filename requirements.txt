@@ -1,5 +1,5 @@
 networkx>=2.0.dev20160901144005
-cycless
+cycless>=0.4.1
 pairlist>=0.2.12.4
 yaplotlib>=0.1
 numpy

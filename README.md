@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.7.2
+version 2.1.8
 
 
 ## New in GenIce2.1
@@ -23,7 +23,7 @@ The new GenIce works very well with interactive execution.
 ## Requirements
 
 * networkx>=2.0.dev20160901144005
-* cycless
+* cycless>=0.4.1
 * pairlist>=0.2.12.4
 * yaplotlib>=0.1
 * numpy
@@ -63,297 +63,10 @@ Install with pip3.
 
 ## Usage
 
-    usage: genice2 [-h] [--version] [--rep REP REP REP]
-                   [--shift SHIFT SHIFT SHIFT] [--dens DENS] [--add_noise percent]
-                   [--seed SEED] [--format name] [--water model] [--guest 14=me]
-                   [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                   [--cation 3=Na] [--depol DEPOL] [--asis] [--debug] [--quiet]
-                   [--assess_cages]
-                   Type
     
-    GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.7.2)
-    
-    positional arguments:
-      Type                  Crystal type (1c, 1h, etc. See
-                            https://github.com/vitroid/GenIce for available ice
-                            structures.)
-                            If you want to analyze your own structures, please try
-                            analice tool.
-    
-    
-                            [Available lattice structures]
-    
-                            1. Lattice structures served with GenIce
-    
-                            0, ice0         Metastable ice "0".
-                            11, XI, ice11   A candidate for an antiferroelectric
-                                            Ice XI #19.
-                            115_2_114, 12_1_11, 144_2_7301, 151_2_4949650,
-                                            153_2_155471, 176_2_5256, 207_1_4435,
-                                            2_2_623457, ACO, CS4, DDR, IWV, LTA,
-                                            MAR, NON, PCOD8007225, PCOD8036144,
-                                            PCOD8204698, PCOD8301974, PCOD8321499,
-                                            PCOD8324623, SGT, SOD, engel01,
-                                            engel03, engel04, engel17, engel20,
-                                            engel23, engel24, engel26, engel29,
-                                            engel30, engel31, engel34, sVII
-                                            Hypothetical zeolitic ice
-                            11i             Sixteen candidates for Ice XI.
-                            12, XII, ice12  Metastable high-pressure ice XII.
-                            13, XIII, ice13 Ice XIII, a hydrogen-ordered
-                                            counterpart of ice V.
-                            16, CS2, MTN, XVI, ice16, sII   Ultralow-density Ice
-                                            XVI.
-                            17, XVII, ice17 Ultralow-density Ice XVII.
-                            1c, Ic, ice1c   Cubic type of ice I.
-                            1h, Ih, ice1h   Most popular Ice I (hexagonal)
-                            2, II, ice2     Hydrogen-ordered ice II.
-                            2D3             Trilayer honeycomb ice.
-                            2d, ice2d, ice2rect             A hydrogen-disordered
-                                            counterpart of ice II.
-                            3, III, ice3    Ice III.
-                            4, IV, ice4     Ice IV.
-                            4R              Orthogonalized ice IV.
-                            5, V, ice5      Monoclinic ice V (testing).
-                            5R              Ice V with orthogonal unit cell.
-                                            (testing)
-                            6, VI, ice6     Conventional high-pressure ice VI.
-                            6h              Half lattice of ice VI.
-                            7, VII, ice7    Conventional high-pressure ice VII.
-                            8, VIII, ice8   Ice VIII, a hydrogen-ordered
-                                            counterpart of ice VII.
-                            9, IX, ice9     Ice IX, a hydrogen-ordered counterpart
-                                            of ice III.
-                            A, iceA         Hypothetical ice A.
-                            A15, Struct33   Cubic Structure I of clathrate hydrate.
-                            B, iceB         Hypothetical ice B.
-                            BSV, engel05    Hypothetical zeolitic ice of the gyroid
-                                             structure.
-                            C14, C15, C36, FK6layers, FK9layers, HS2, Hcomp,
-                                            Struct01, Struct03, Struct04, Struct05,
-                                             Struct06, Struct07, Struct08,
-                                            Struct09, Struct10, Struct11, Struct12,
-                                             Struct13, Struct14, Struct15,
-                                            Struct16, Struct17, Struct18, Struct19,
-                                             Struct20, Struct21, Struct22,
-                                            Struct23, Struct24, Struct25, Struct26,
-                                             Struct27, Struct28, Struct29,
-                                            Struct30, Struct31, Struct32, Struct34,
-                                             Struct35, Struct36, Struct37,
-                                            Struct38, Struct39, Struct40, Struct41,
-                                             Struct42, Struct43, Struct44,
-                                            Struct45, Struct46, Struct47, Struct48,
-                                             Struct49, Struct50, Struct51,
-                                            Struct52, Struct53, Struct54, Struct55,
-                                             Struct56, Struct57, Struct58,
-                                            Struct59, Struct60, Struct61, Struct62,
-                                             Struct63, Struct64, Struct65,
-                                            Struct66, Struct67, Struct68, Struct69,
-                                             Struct70, Struct71, Struct72,
-                                            Struct73, Struct74, Struct75, Struct76,
-                                             Struct77, Struct78, Struct79,
-                                            Struct80, Struct81, Struct82, Struct83,
-                                             Struct84, Z, delta, mu, psigma, sV,
-                                            sigma, zra-d     A space fullerene.
-                            CRN1, CRN2, CRN3                A continuous random
-                                            network of Sillium.
-                            CS1, MEP, sI    Clathrate hydrates sI.
-                            DOH, HS3, sH    Clathrate type H.
-                            EMT             Hypothetical ice with a large cavity.
-                            FAU             Hypothetical ice at negative pressure
-                                            ice 'sIV'.
-                            RHO             Hypothetical ice at negative pressure
-                                            ice 'sIII'.
-                            Struct02        A space fullerene. (I phase?)
-                            T               Hypothetical clathrate type T.
-                            bilayer         A Bilayer Honeycomb Ice Phase in
-                                            Hydrophobic Nanopores.
-                            c0te            Filled ice C0 by Teeratchanan
-                                            (Hydrogen-disordered.) (Positions of
-                                            guests are supplied.)
-                            c1te            Hydrogen-ordered hydrogen hydrate C1 by
-                                             Teeratchanan. (Positions of guests are
-                                             supplied.)
-                            c2te            Filled ice C2 (cubic ice) by
-                                            Teeratchanan (Hydrogen disordered).
-                                            (Positions of guests are supplied.)
-                            eleven          Ice XI w/ stacking faults.
-                            i               Hypothetical ice "i".
-                            ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
-                                             disordered). (Positions of guests are
-                                            supplied.)
-                            iceR            Hypothetical ice R.
-                            iceT            Hypothetical ice T.
-                            iceT2           Hypothetical ice T2.
-                            one             Ice I w/ stacking faults.
-                            oprism          Hydrogen-ordered ice nanotubes.
-                            sTprime         Filled ice sT'.
-                            xFAU            Aeroice xFAU.
-                            xdtc            A porous ice with cylindrical channels.
-                            ----
-                            (Undocumented) 1h_unit HS1 TS1 dtc ice1h_unit sIII sIV
-    
-    
-                            2. Lattice structures served by external plugins
-    
-                            (None)
-                            ----
-    
-    
-                            3. Lattice structures served locally
-    
-                            (None)
-                            ----
-    
-    
-    
-    options:
-      -h, --help            show this help message and exit
-      --version, -V         show program's version number and exit
-      --rep REP REP REP, -r REP REP REP
-                            Repeat the unit cell along a, b, and c axes. [1,1,1]
-      --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
-                            Shift the unit cell along a, b, and c axes. (0.5==half
-                            cell) [0,0,0]
-      --dens DENS, -d DENS  Specify the ice density in g/cm3 (Guests are not
-                            included.)
-      --add_noise percent   Add a Gauss noise with given width (SD) to the
-                            molecular positions of water. The value 1 corresponds
-                            to 1 percent of the molecular diameter of water.
-      --seed SEED, -s SEED  Random seed [1000]
-      --format name, -f name
-                            Specify the output file format. [gromacs]
-    
-    
-                            [Available formatters]
-    
-                            1. Formatters served with GenIce
-    
-                            _KG             Kirkworrd G factor.
-                            _ringstat       Bond direction statistics.
-                            d, digraph      Directed graph of HBs.
-                            e, euler        Rigid rotor (Euler angle).
-                            exmol           Extended XMol file format.
-                            exyz            Extended XYZ format.
-                            g, gromacs      Gromacs .gro file.
-                            graph           Undirected graph of HBs.
-                            m, mdview       MDView file (in Angdtrom).
-                            mdv_au          MDView file (in au).
-                            o, openscad     OpenSCAD.
-                            p, python, reshape              Cell-reshaper.
-                            povray          Povray.
-                            q, quaternion   Rigid rotor (Quaternion).
-                            raw             Raw data. (For use with Jupyter)
-                            rings           Show rings in Yaplot.
-                            y, yaplot       Yaplot.
-                            ----
-                            (Undocumented) c cif cif2 com null r rcom towhee xyz
-    
-    
-                            2. Formatters served by external plugins
-    
-                            cage            Cage analysis.
-                            mdanalysis      MDAnalysis integration.
-                            png             PNG (Portable Network Graphics).
-                            svg             SVG (Standard Vector Graphics).
-                            ----
-    
-    
-                            3. Formatters served locally
-    
-                            (None)
-                            ----
-    
-    
-      --water model, -w model
-                            Specify the water model. [tip3p]
-    
-    
-                            [Available molecules]
-    
-                            1. Molecules served with GenIce
-    
-                            3site, tip3p    A typical 3-site model.
-                            4site, tip4p    A typical 4-site model.
-                            5site, tip5p    A typical 5-site model.
-                            6site, NvdE     A 6-site water model.
-                            7site           A seven-site water model.
-                            physical_water  Physical model of water; Oxygen atom is
-                                             on the lattice point.
-                            ----
-                            (Undocumented) ice spce
-    
-    
-                            2. Molecules served by external plugins
-    
-                            (None)
-                            ----
-    
-    
-                            3. Molecules served locally
-    
-                            (None)
-                            ----
-    
-    
-      --guest 14=me, -g 14=me
-                            Specify guest(s) in the cage type. (D=empty,
-                            T=co2*0.5+me*0.3, etc.)
-    
-    
-                            [Available molecules]
-    
-                            1. Molecules served with GenIce
-    
-                            H2              Hydrogen molecule.
-                            ch4             An all-atom methane model.
-                            et              A united-atom ethane model.
-                            me              A united-atom methane model.
-                            mol             Loader for MOL files (generated by
-                                            MolView.org), e.g. mol[THF.mol].
-                            thf             An all-atom tetrahydrofuran (THF)
-                                            model.
-                            uathf           A united-atom five-site tetrahydrofuran
-                                             (THF) model.
-                            ----
-                            (Undocumented) co2 empty g12 g14 g15 g16 one uathf6
-    
-    
-                            2. Molecules served by external plugins
-    
-                            (None)
-                            ----
-    
-    
-                            3. Molecules served locally
-    
-                            (None)
-                            ----
-    
-    
-      --Guest 13=me, -G 13=me
-                            Specify guest in the specific cage. (13=me, 32=co2,
-                            etc.)
-      --Group 13=bu-:0, -H 13=bu-:0
-                            Specify the group. (-H 13=bu-:0, etc.)
-      --anion 3=Cl, -a 3=Cl
-                            Specify a monatomic anion that replaces a water
-                            molecule. (3=Cl, 39=F, etc.)
-      --cation 3=Na, -c 3=Na
-                            Specify a monatomic cation that replaces a water
-                            molecule. (3=Na, 39=NH4, etc.)
-      --depol DEPOL         Depolarization. (strict, optimal, or none) ["strict"]
-      --asis                Assumes all given HB pairs to be fixed. No shuffle and
-                            no depolarization.
-      --debug, -D           Output debugging info.
-      --quiet, -q           Do not output progress messages.
-      --assess_cages, -A    Assess the locations of cages based on the HB network
-                            topology. Note: it may fail when the unit cell is too
-                            small.
 
 
-Use `./genice.x` instead of `genice2` if you want to use it inside the source tree.
+Use `./genice.x` instead of `genice2` if you want to use it inside the source tree without installation.
 
 ## Examples
 
@@ -553,7 +266,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]

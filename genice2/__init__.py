@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = "2.1.7.2"
+__version__ = "2.1.8"
 
 # 1st: major version
 # 2nd: minor version (refactorization)
