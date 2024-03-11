@@ -3,7 +3,7 @@ import sys
 import os
 
 # from genice2.tool import line_replacer
-import distutils.core
+# import distutils.core
 from logging import getLogger, INFO, basicConfig
 from jinja2 import Template
 import json
@@ -13,7 +13,8 @@ import toml
 
 def make_citations(r):
     if len(r) > 0:
-        return " [" + ", ".join(sorted(r, key=lambda x: x.split()[-1])) + "]"
+        # sort by year, then the initial letter
+        return " [" + ", ".join(sorted(r, key=lambda x: (x.split()[-1], x[0]))) + "]"
     return ""
 
 
