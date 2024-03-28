@@ -1,6 +1,6 @@
 # coding: utf-8
 """
-Generate a hydrogen-disordered ice I with stacking faults.
+Generate a hydrogen-disordered ice I with stacking disorder.
 
 Usage:
   genice2 one[hcchchcc]            Specify layer types with "c" or "h".
@@ -22,15 +22,23 @@ def usage():
 desc = {
     "ref": {},
     "usage": usage(),
-    "brief": "Ice I w/ stacking faults.",
-    "test": ("[ccchchc]",)
-
+    "brief": "Ice I w/ stacking disorder.",
+    "test": (
+        {
+            "args": "ccchchc",  # argument for the plugin itself
+        },
+        {
+            "args": {"layers": "ccchchc"},  # argument for the plugin
+        },
+    ),
 }
 
 
-lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
-       [[0, 2], [2, 2], [1, 5], [3, 5]],
-       [[0, 4], [2, 4], [1, 1], [3, 1]]]
+lat = [
+    [[0, 0], [2, 0], [1, 3], [3, 3]],
+    [[0, 2], [2, 2], [1, 5], [3, 5]],
+    [[0, 4], [2, 4], [1, 1], [3, 1]],
+]
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -39,7 +47,7 @@ class Lattice(genice2.lattices.Lattice):
         assert len(kwargs) > 0, desc["usage"]
 
         for k, v in kwargs.items():
-            if k == 'layers':
+            if k == "layers":
                 arg = v
             elif v:  # in case only the char string is given
                 arg = k
@@ -61,7 +69,7 @@ class Lattice(genice2.lattices.Lattice):
             if ch in "Hh":
                 # hexagonal = alternative
                 dir = -dir
-                #cubic = progressive
+                # cubic = progressive
         assert layer == 0 and dir == 1, "Incompatible number of layers."
         assert len(L) > 0, "Stacking pattern must be specified."
         self.waters = np.array(L) / np.array([4.0, 6.0, height])

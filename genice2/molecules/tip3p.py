@@ -19,8 +19,8 @@ class Molecule(genice2.molecules.Molecule):
         ohz = oh * math.cos(hangle)
         ohy = oh * math.sin(hangle)
         oz = -ohz * 2 / mass
-        self.sites_ = np.array([[0, 0, oz],
-                               [0, ohy, ohz + oz],
-                               [0, -ohy, ohz + oz]])  # nm, OHHM
+        self.sites_ = np.array(
+            [[0, 0, oz], [0, ohy, ohz + oz], [0, -ohy, ohz + oz]]
+        )  # nm, OHHM
         self.labels_ = ["O", "H", "H"]
         self.name_ = "SOL"

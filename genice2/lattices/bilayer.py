@@ -33,7 +33,7 @@ desc = {
     "ref": {"bilayer": "Koga 1997"},
     "usage": usage(),
     "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.",
-    "test": ("", "[size=6,10]", "[size=15,18:sw=0.2]"),
+    "test": ({"args": {"size": "6,10"}}, {"args": {"size": "15,18", "sw": "0.2"}}),
 }
 
 

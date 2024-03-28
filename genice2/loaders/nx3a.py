@@ -1,7 +1,6 @@
 import logging
 
 import numpy as np
-import pairlist as pl
 
 from genice2 import rigid
 import genice2.molecules.tip4p
