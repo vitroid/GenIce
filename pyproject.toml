@@ -4,7 +4,8 @@
 
 
 [project]
-version = "2.2.5"
+# Must be same as the version string in ./genice2/__init__.py
+version = "2.2.5.1"
 name = "genice2"
 
 [project.scripts]
@@ -22,13 +23,15 @@ analice2 = "genice2.cli.analice:main"
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.5" # major.minor.fix
+# Must be same as the version string in ./genice2/__init__.py
+version = "2.2.5.1"
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 license = "MIT"
-include = ["genice2", "genice2/cli"]  # package names should match these glob patterns (["*"] by default)
+# package names should match these glob patterns (["*"] by default)
+include = ["genice2", "genice2/cli"]  
 
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
