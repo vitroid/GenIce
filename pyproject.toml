@@ -4,6 +4,7 @@
 
 
 [project]
+version = "2.2.5"
 name = "genice2"
 
 [project.scripts]
