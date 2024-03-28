@@ -6,10 +6,29 @@ import numpy as np
 from genice2.cell import cellvectors
 from genice2.CIF import fullatoms, operations, waters_and_pairs
 
-desc = {"ref": {"11i": "Hirsch 2004"},
-        "usage": "genice2 11i[num]\n\n'num' specifies the structure in Table 1 of the Ref. [Hirsch 2004]",
-        "brief": "Sixteen candidates for Ice XI."
-        }
+desc = {
+    "ref": {"11i": "Hirsch 2004"},
+    "usage": "genice2 11i[num]\n\n'num' specifies the structure in Table 1 of the Ref. [Hirsch 2004]",
+    "brief": "Sixteen candidates for Ice XI.",
+    "test": (
+        {"args": "1", "options": "--depol=none"},
+        {"args": "2", "options": "--depol=none"},
+        {"args": "3", "options": "--depol=none"},
+        {"args": "4", "options": "--depol=none"},
+        {"args": "5", "options": "--depol=none"},
+        {"args": "6", "options": "--depol=none"},
+        {"args": "7", "options": "--depol=none"},
+        {"args": "8", "options": "--depol=none"},
+        {"args": "9", "options": "--depol=none"},
+        {"args": "10", "options": "--depol=none"},
+        {"args": "11", "options": "--depol=none"},
+        {"args": "12", "options": "--depol=none"},
+        {"args": "13", "options": "--depol=none"},
+        {"args": "14", "options": "--depol=none"},
+        {"args": "15", "options": "--depol=none"},
+        {"args": "16", "options": "--depol=none"},
+    ),
+}
 
 Table1 = """
 1. Cmc2_1
@@ -229,12 +248,12 @@ class Lattice(genice2.lattices.Lattice):
             cols = line.split()
             if len(cols) == 0:
                 if spaceg is not None:
-                    names = ["OHH"[x%3]+f"{x}" for x in range(len(atoms))]
+                    names = ["OHH"[x % 3] + f"{x}" for x in range(len(atoms))]
                     atomd = {name: pos for name, pos in zip(names, atoms)}
                     cur = {
                         "spaceg": spaceg,
                         "atomd": atomd,
-                        "cell": cellvectors(a, b, c, A, B, G) / 10
+                        "cell": cellvectors(a, b, c, A, B, G) / 10,
                     }
                     elevens[label] = cur
             elif len(cols) == 2:
@@ -242,7 +261,7 @@ class Lattice(genice2.lattices.Lattice):
                 label, spaceg = cols
                 label = int(label.rstrip("."))
             elif len(cols) == 6:
-                a,b,c,A,B,G = [float(x) for x in line.split(",")]
+                a, b, c, A, B, G = [float(x) for x in line.split(",")]
                 atoms = []
             elif len(cols) == 3:
                 atoms.append([float(x) for x in line.split(",")])
@@ -262,19 +281,23 @@ class Lattice(genice2.lattices.Lattice):
         spaceg = data["spaceg"]
 
         # When the cell is too thin, it is doubled.
-        rep = [1,1,1]
+        rep = [1, 1, 1]
         for d in range(3):
-            if data["cell"][d,d] < 0.5:
+            if data["cell"][d, d] < 0.5:
                 rep[d] = 2
         if typ == 10:
-            rep = [2,1,2]
+            rep = [2, 1, 2]
 
         # molecular positions and the HB network
-        self.waters, self.fixed = waters_and_pairs(data["cell"], data["atomd"], operations(spaceg), rep=rep)
+        self.waters, self.fixed = waters_and_pairs(
+            data["cell"], data["atomd"], operations(spaceg), rep=rep
+        )
         self.pairs = self.fixed
 
         # define other parameters
         self.cell = data["cell"]
-        self.density = 18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        self.density = (
+            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        )
 
         self.coord = "relative"

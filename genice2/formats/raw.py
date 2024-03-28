@@ -14,6 +14,7 @@ desc = {
 It is convenient to select the raw data format when you call GenIce from
 Jupyter and Google Colab environment. Raw data is not available in the command line.
 """,
+    "test": ({"args": "1234567"},),
 }
 
 
@@ -57,7 +58,9 @@ class Format(genice2.formats.Format):
         unknown = dict()
         self.stages = []
         for k, v in kwargs.items():
-            if k == "stage":
+            if v == True:
+                self.stages = [int(x) for x in k]
+            elif k == "stage":
                 self.stages = v
             else:
                 unknown[k] = v

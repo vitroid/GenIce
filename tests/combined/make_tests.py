@@ -1,14 +1,18 @@
 from genice2.plugin import scan, safe_import
 from logging import getLogger, basicConfig, DEBUG
 import sys
+import random
+import itertools as it
 
 
 def formats():
     category = "format"
     plugins = scan(category)
 
+    random.shuffle(plugins["system"])
+
     for plugin_name in plugins["system"]:
-        plugin = safe_import(category, plugin_name)
+        # plugin = safe_import(category, plugin_name)
         # if plugin_name in plugins["desc"]:
         #     # it has special test suite
         #     print(plugin_name, plugins["desc"][plugin_name])
@@ -32,11 +36,19 @@ def formats():
 
 def lattices():
 
+    def isfixed(plugin, lattice_args={}):
+        """if the lattice module has member "fixed" """
+        lattice = plugin.Lattice(**lattice_args)
+        # if the lattice module has member "fixed",
+        return "fixed" in dir(lattice)
+
     category = "lattice"
     plugins = scan(category)
 
+    random.shuffle(plugins["system"])
+
     for plugin_name in plugins["system"]:
-        plugin = safe_import(category, plugin_name)
+        lattice = safe_import(category, plugin_name)
         # if plugin_name in plugins["desc"]:
         #     # it has special test suite
         #     print(plugin_name, plugins["desc"][plugin_name])
@@ -51,14 +63,24 @@ def lattices():
                         if content != "":
                             testcase["args"] = {content: True}
                     assert type(testcase["args"]) is dict, plugin_name
+                    if isfixed(lattice, testcase["args"]):
+                        # it is informed
+                        testcase["fixed"] = True
                     yield plugin_name, testcase
                     yieldcount += 1
                 elif "options" in testcase:
                     testcase["args"] = {}
+                    if isfixed(lattice):
+                        # it is informed
+                        testcase["fixed"] = True
                     yield plugin_name, testcase
                     yieldcount += 1
         if yieldcount == 0:
-            yield plugin_name, {"args": {}}
+            testcase = {f"args": {}}
+            if isfixed(lattice):
+                # it is informed
+                testcase["fixed"] = True
+            yield plugin_name, testcase
 
 
 def waters():
@@ -66,8 +88,10 @@ def waters():
     category = "molecule"
     plugins = scan(category)
 
+    random.shuffle(plugins["system"])
+
     for plugin_name in plugins["system"]:
-        plugin = safe_import(category, plugin_name)
+        molecule = safe_import(category, plugin_name)
         # if plugin_name in plugins["desc"]:
         #     # it has special test suite
         #     print(plugin_name, plugins["desc"][plugin_name])
@@ -83,12 +107,33 @@ def waters():
                         if content != "":
                             testcase["args"] = {content: True}
                     assert type(testcase["args"]) is dict, plugin_name
-                    if "water" in dir(plugin) and plugin.water == 1:
+                    if "water" in dir(molecule) and molecule.water == 1:
                         yield plugin_name, testcase["args"]
                         yieldcount += 1
         if yieldcount == 0:
-            if "water" in dir(plugin) and plugin.water == 1:
+            if "water" in dir(molecule) and molecule.water == 1:
                 yield plugin_name, {}
+
+
+general_options = [
+    ["", "--rep 2 2 2", "--rep 3 3 3", "--reshape 1,1,1,1,-1,0,1,1,-2"],
+    #  --assess_cages
+    #  --Guest
+    #  --guest
+    ["", "--add_noise 2"],
+    ["", "--dens 1.0"],
+    ["", "--shift 2 2 2"],
+]
+
+# options for hydrogen-disordered ices only
+hdi_options = ["", "--cation 0=NH4 --anion 3=F"]
+
+
+def options():
+    ops = [" ".join(x) for x in it.product(*general_options)]
+    random.shuffle(ops)
+    for op in ops:
+        yield op
 
 
 def startover(iter):
@@ -109,32 +154,34 @@ def make_plugin_args(args):
 
 
 def makefile_rules():
-    for i, (water, lattice, format) in enumerate(
-        zip(startover(waters), lattices(), startover(formats))
+    for i, (water, (lattice_name, lattice_args), format, ops) in enumerate(
+        zip(startover(waters), lattices(), startover(formats), startover(options))
     ):
         args = ["$(GENICE)"]
-        args += [lattice[0] + make_plugin_args(lattice[1]["args"])]
+        args += [lattice_name + make_plugin_args(lattice_args["args"])]
         args += ["-w", water[0] + make_plugin_args(water[1])]
         args += ["-f ", format[0] + make_plugin_args(format[1])]
-        if "options" in lattice[1]:
-            args.append(lattice[1]["options"])
-        if lattice[0] == "8":
-            print(lattice)
+        args += [ops]
+        if "fixed" not in lattice_args:
+            args.append(random.choice(hdi_options))
+        if "options" in lattice_args:
+            args.append(lattice_args["options"])
 
         yield f"_test{i}", " ".join(args)
 
 
 if __name__ == "__main__":
     # basicConfig(level=DEBUG)
-    prefix = sys.argv[1]
+    seed = int(sys.argv[1])
+    random.seed(seed)
 
     all = []
 
     s = ""
     for filename, rule in makefile_rules():
-        s += prefix + "/" + filename + ":\n\t" + rule + " > $@\n"
-        all.append(prefix + "/" + filename)
+        s += filename + ":\n\t" + rule + " > $@\n"
+        all.append(filename)
 
-    print("GENICE=../../genice.x")
+    print("GENICE=../../../genice.x")
     print("all: " + " ".join(all))
     print(s)
