@@ -1022,7 +1022,9 @@ class GenIce:
 
             # process the -g option
             for cagetype, contents in guests.items():
-                assert cagetype in self.cagetypes, f"Nonexistent cage type: {cagetype}"
+                if cagetype not in self.cagetypes:
+                    logger.info(f"Nonexistent cage type: {cagetype}")
+                    continue
                 resident = dict()
                 rooms = list(self.cagetypes[cagetype] - self.filled_cages)
 
