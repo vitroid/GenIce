@@ -36,11 +36,18 @@ def formats():
 
 def lattices():
 
-    def isfixed(plugin, lattice_args={}):
+    def is_fixed(plugin, lattice_args={}):
         """if the lattice module has member "fixed" """
         lattice = plugin.Lattice(**lattice_args)
         # if the lattice module has member "fixed",
         return "fixed" in dir(lattice)
+
+    def has_cages(plugin, lattice_args={}):
+        """if the lattice module has member 'fixed'"""
+        lattice = plugin.Lattice(**lattice_args)
+        # if plugin_name == "engel29":
+        #     assert False, dir(lattice)
+        return "cages" in dir(lattice)
 
     category = "lattice"
     plugins = scan(category)
@@ -63,23 +70,32 @@ def lattices():
                         if content != "":
                             testcase["args"] = {content: True}
                     assert type(testcase["args"]) is dict, plugin_name
-                    if isfixed(lattice, testcase["args"]):
+                    if is_fixed(lattice, testcase["args"]):
                         # it is informed
                         testcase["fixed"] = True
+                    if has_cages(lattice, testcase["args"]):
+                        # it is informed
+                        testcase["cages"] = True
                     yield plugin_name, testcase
                     yieldcount += 1
                 elif "options" in testcase:
                     testcase["args"] = {}
-                    if isfixed(lattice):
+                    if is_fixed(lattice):
                         # it is informed
                         testcase["fixed"] = True
+                    if has_cages(lattice):
+                        # it is informed
+                        testcase["cages"] = True
                     yield plugin_name, testcase
                     yieldcount += 1
         if yieldcount == 0:
             testcase = {f"args": {}}
-            if isfixed(lattice):
+            if is_fixed(lattice):
                 # it is informed
                 testcase["fixed"] = True
+            if has_cages(lattice):
+                # it is informed
+                testcase["cages"] = True
             yield plugin_name, testcase
 
 
@@ -126,7 +142,9 @@ general_options = [
 ]
 
 # options for hydrogen-disordered ices only
-hdi_options = ["", "--cation 0=NH4 --anion 3=F"]
+hdi_options = ["", "--cation 0=NH4 --anion 5=F"]
+
+hyd_options = ["--guest 12=g12*0.5+g14*0.3"]
 
 
 def options():
@@ -164,6 +182,8 @@ def makefile_rules():
         args += [ops]
         if "fixed" not in lattice_args:
             args.append(random.choice(hdi_options))
+        if "cages" in lattice_args:
+            args.append(random.choice(hyd_options))
         if "options" in lattice_args:
             args.append(lattice_args["options"])
 
