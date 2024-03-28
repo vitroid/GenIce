@@ -4,7 +4,7 @@ $(SEED).makefile: make_tests.py
 	python make_tests.py $(SEED) > $@
 
 tag.%: $(SEED).makefile
-	git checkout refs/tags/$*
+	# git checkout refs/tags/$*
 	-mkdir $*
 	make -f ../$(SEED).makefile -C $*
 
