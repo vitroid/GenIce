@@ -4,7 +4,6 @@
 
 
 [project]
-# version = "2.2.3"
 name = "genice2"
 
 [project.scripts]
@@ -22,7 +21,7 @@ analice2 = "genice2.cli.analice:main"
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.3" # major.minor.fix
+version = "2.2.4" # major.minor.fix
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
@@ -33,12 +32,12 @@ include = ["genice2", "genice2/cli"]  # package names should match these glob pa
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
 "python" = "^3.9"
-numpy = "^1.26.2"
+numpy = ">=1.26.2"
 pairlist = ">=0.5.1.2"
-cycless = ">=0.4.1"
+cycless = ">=0.4.2"
 graphstat = ">=0.2.1"
 yaplotlib = ">=0.1.2"
-openpyscad = "^0.5.0"
+openpyscad = ">=0.5.0"
 genice-core = ">=0.9"
 
 [tool.poetry.group.dev.dependencies]
@@ -53,6 +52,7 @@ plotly = "^5.18.0"
 nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
+pytest = "^8.1.1"
 
 
 [tool.setuptools]

@@ -11,9 +11,14 @@ from collections import defaultdict
 from logging import DEBUG, INFO, basicConfig, getLogger
 from textwrap import fill
 
-import pkg_resources as pr
+# import pkg_resources as pr
 
 from genice2.decorators import banner, timeit
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 
 @timeit
@@ -57,18 +62,18 @@ def scan(category):
     logger.info(f"Extra {category}s")
     groupname = f"genice2_{category}"
     mods = []
-    for ep in pr.iter_entry_points(group=groupname):
-        label, m = str(ep).split("=")
-        mods.append(label)
+    # for ep in pr.iter_entry_points(group=groupname):
+    for ep in entry_points(group=groupname):
+        mods.append(ep.name)
         try:
             module = ep.load()
             if "desc" in module.__dict__:
-                desc[label] = module.desc["brief"]
+                desc[ep.name] = module.desc["brief"]
                 if "ref" in module.desc:
-                    refs[label] = module.desc["ref"]
+                    refs[ep.name] = module.desc["ref"]
                 if "test" in module.desc:
                     tests[mod] = module.desc["test"]
-            iswater[label] = "water" in module.__dict__
+            iswater[ep.name] = "water" in module.__dict__
         except BaseException:
             pass
     logger.info(mods)
@@ -226,14 +231,13 @@ def import_extra(category, name):
     logger.info(f"Extra {category} plugin: {name}")
     groupname = f"genice2_{category}"
     module = None
-    for ep in pr.iter_entry_points(group=groupname):
+    # for ep in pr.iter_entry_points(group=groupname):
+    for ep in entry_points(group=groupname):
         logger.debug(f"    Entry point: {ep}")
         if ep.name == name:
             logger.debug(f"      Loading {name}...")
             module = ep.load()
-    if module is None:
-        logger.error(f"Nonexistent module: {name}")
-        sys.exit(1)
+    assert module is not None, f"Nonexistent or failed to load the module: {name}"
     return module
 
 
@@ -270,10 +274,10 @@ def safe_import(category, name):
     if module is None:
         fullname = "genice2." + category + "s." + name
         logger.debug(f"Load module: {fullname}")
-        try:
-            module = importlib.import_module(fullname)
-        except BaseException:
-            pass
+        # try:
+        module = importlib.import_module(fullname)
+        # except BaseException:
+        #     pass
     if module is None:
         module = import_extra(category, name)
 

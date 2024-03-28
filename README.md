@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.3
+version 2.2.4
 
 ## New in GenIce2.2
 
@@ -18,12 +18,12 @@ The new GenIce works very well with interactive execution.
 
 * networkx>=2.0.dev20160901144005
 * python^3.9
-* numpy^1.26.2
+* numpy>=1.26.2
 * pairlist>=0.5.1.2
-* cycless>=0.4.1
+* cycless>=0.4.2
 * graphstat>=0.2.1
 * yaplotlib>=0.1.2
-* openpyscad^0.5.0
+* openpyscad>=0.5.0
 * genice-core>=0.9
 
 
