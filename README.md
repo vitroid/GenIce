@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.4
+version 2.2.5
 
 ## New in GenIce2.2
 
@@ -66,7 +66,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2)
+    (version 2.2.5)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -183,7 +183,7 @@ Install with pip3.
                             iceR            Hypothetical ice R.
                             iceT            Hypothetical ice T.
                             iceT2           Hypothetical ice T2.
-                            one             Ice I w/ stacking faults.
+                            one             Ice I w/ stacking disorder.
                             oprism          Hydrogen-ordered ice nanotubes.
                             sTprime         Filled ice sT'.
                             xFAU            Aeroice xFAU.
@@ -596,7 +596,7 @@ ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of gue
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
-one | Ice I w/ stacking faults.
+one | Ice I w/ stacking disorder.
 oprism | Hydrogen-ordered ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]

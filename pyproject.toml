@@ -21,7 +21,7 @@ analice2 = "genice2.cli.analice:main"
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.4" # major.minor.fix
+version = "2.2.5" # major.minor.fix
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
