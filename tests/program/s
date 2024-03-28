@@ -1,5 +1,0 @@
-#!/bin/bash
-
-sort $1 > @
-sort ref/$1 > @@
-diff @ @@
