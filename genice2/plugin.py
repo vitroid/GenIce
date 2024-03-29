@@ -267,19 +267,27 @@ def safe_import(category, name):
     assert audit_name(name), f"Dubious {category} name: {name}"
 
     module = None
+    fullname = category + "s." + name
+    logger.debug(f"Try to Load a local module: {fullname}")
     try:
-        module = importlib.import_module(category + "s." + name)  # at ~/.genice
-    except ImportError as e:
+        module = importlib.import_module(fullname)  # at ~/.genice
+        logger.debug("Succeeded.")
+    except ImportError:
+        logger.debug("Failed.")
         pass
     if module is None:
         fullname = "genice2." + category + "s." + name
-        logger.debug(f"Load module: {fullname}")
+        logger.debug(f"Try to load a system module: {fullname}")
         try:
             module = importlib.import_module(fullname)
-        except BaseException:
+            logger.debug("Succeeded.")
+        except ImportError:
+            logger.debug("Failed.")
             pass
     if module is None:
+        logger.debug(f"Try to load an extra module: {fullname}")
         module = import_extra(category, name)
+        logger.debug("Succeeded.")
 
     if usage:
         if "desc" in module.__dict__:

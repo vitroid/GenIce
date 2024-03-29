@@ -4,7 +4,7 @@
 # See https://semver.org if you wander how to version it.
 # `make README.md` at the root when it is changed.
 
-__version__ = "2.2.5.3"
+__version__ = "2.2.5.4"
 
 # 1st: major version
 # 2nd: minor version (refactorization)

@@ -19,23 +19,8 @@ The new GenIce works very well with interactive execution.
 {% for item in tool.poetry.dependencies %}* {{item}}{{tool.poetry.dependencies[item]}}
 {% endfor %}
 
-**Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
-
-**Note 2**: There may be compatibility issues when you install GenIce in Apple M1.
-
-1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1
-
-2. Moreover, scipy requires pythran (I do not know what it is).
-
-```shell
-pip3 install pythran
-pip3 install cython pybind11
-pip3 install --no-binary :all: --no-use-pep517 numpy
-brew install openblas gfortran
-export OPENBLAS=/opt/homebrew/opt/openblas/lib/
-pip3 install --no-binary :all: --no-use-pep517 scipy
-```
-
+**Note**: The package management system `poetry`, new in GenIce version 2.1, ignores all symlinks in package directories.
+Because of this, some module "aliases" do not work correctly. (e.g. `genice2 1h` does not work, but `genice ice1h` does, because `1h.py` is an alias for `ice1h.py` .)
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
