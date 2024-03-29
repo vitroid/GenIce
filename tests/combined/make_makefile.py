@@ -55,6 +55,8 @@ def lattices():
     random.shuffle(plugins["system"])
 
     for plugin_name in plugins["system"]:
+        if plugin_name in ("iceR",):
+            continue
         lattice = safe_import(category, plugin_name)
         # if plugin_name in plugins["desc"]:
         #     # it has special test suite

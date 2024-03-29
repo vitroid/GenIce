@@ -274,10 +274,10 @@ def safe_import(category, name):
     if module is None:
         fullname = "genice2." + category + "s." + name
         logger.debug(f"Load module: {fullname}")
-        # try:
-        module = importlib.import_module(fullname)
-        # except BaseException:
-        #     pass
+        try:
+            module = importlib.import_module(fullname)
+        except BaseException:
+            pass
     if module is None:
         module = import_extra(category, name)
 
