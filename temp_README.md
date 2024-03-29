@@ -3,7 +3,7 @@
 
 {{tool.poetry.description}}
 
-version {{tool.poetry.version}}
+version {{version}}
 
 ## New in GenIce2.2
 

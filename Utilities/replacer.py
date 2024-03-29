@@ -7,6 +7,7 @@ import os
 from logging import getLogger, INFO, basicConfig
 from jinja2 import Template
 import json
+import genice2
 from genice2.plugin import plugin_descriptors
 import toml
 
@@ -72,6 +73,7 @@ project |= {
     "waters": system_molecules(water=True),
     "guests": system_molecules(water=False),
     "citationlist": prefix(citationlist, "* "),
+    "version": genice2.__version__,
 }
 
 t = Template(sys.stdin.read())

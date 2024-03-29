@@ -1,16 +1,8 @@
-# [build-system]
-# requires = ["hatchling", "numpy"]
-# build-backend = "hatchling.build"
-
 
 [project]
-# Must be same as the version string in ./genice2/__init__.py
-version = "2.2.5.1"
+dynamic = ["version"]
 name = "genice2"
 
-[project.scripts]
-genice2 = "genice2.cli.genice:main"
-analice2 = "genice2.cli.analice:main"
 
 [project.urls]
 "Homepage" = "https://github.com/vitroid/GenIce"
@@ -18,13 +10,13 @@ analice2 = "genice2.cli.analice:main"
 "manual" = "https://vitroid.github.io/GenIce"
 "logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
 
-
-
+# poetry self add poetry-version-plugin
+[tool.poetry-version-plugin]
+source = "init"
 
 [tool.poetry]
 name = "genice2"
-# Must be same as the version string in ./genice2/__init__.py
-version = "2.2.5.1"
+version = "0.0.0" # worked!
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
@@ -32,6 +24,11 @@ description = "A Swiss army knife to generate hydrogen-disordered ice structures
 license = "MIT"
 # package names should match these glob patterns (["*"] by default)
 include = ["genice2", "genice2/cli"]  
+
+# poetry install to make them work
+[tool.poetry.scripts]
+genice2 = "genice2.cli.genice:main"
+analice2 = "genice2.cli.analice:main"
 
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
@@ -57,7 +54,7 @@ nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
-
+poetry-dynamic-versioning = "*"
 
 [tool.setuptools]
 packages=["genice2", "genice2.cli", "genice2.molecules", "genice2.formats", "genice2.lattices", "genice2.loaders", "genice2.groups"]
@@ -68,3 +65,9 @@ packages=["genice2", "genice2.cli", "genice2.molecules", "genice2.formats", "gen
 # exclude = []  # exclude packages matching these glob patterns (empty by default)
 # namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "genice2/__init__.py"
