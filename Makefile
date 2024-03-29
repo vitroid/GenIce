@@ -6,6 +6,7 @@ all: README.md
 %: temp_% Utilities/replacer.py genice2/__init__.py genice2/plugin.py citations.json pyproject.toml
 	python Utilities/replacer.py < $< > $@
 
+
 update-citations:
 	cp citations.json old.citations.json
 	python Utilities/citation.py < old.citations.json > citations.json
@@ -28,6 +29,8 @@ check:
 	poetry check
 
 
+clone-myself-from-github:
+	git clone -b genice-core https://github.com/vitroid/GenIce.git ../GenIce2.clone
 
 
 %.png: %.pov
