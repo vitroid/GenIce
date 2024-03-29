@@ -3,53 +3,32 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.1.8
+version 2.2.5.4
 
+## New in GenIce2.2
 
-## New in GenIce2.1
-
-GenIce2-MDAnalysis integration is now available. Try
-```shell
-% pip install genice2-mdanalysis
-% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
-```
-to generate a PDB file.
+* The core algorithm and its API are in a separate module, [`genice-core`](https://github.com/genice-dev/genice-core).
 
 ## Demo
 
 The new GenIce works very well with interactive execution.
-[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colab.
+[Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colaboratory.
 
 ## Requirements
 
 * networkx>=2.0.dev20160901144005
-* cycless>=0.4.1
-* pairlist>=0.2.12.4
-* yaplotlib>=0.1
-* numpy
-* wheel
-* openpyscad
-* graphstat
-* tilecycles>=0.1.5.6
+* python^3.9
+* numpy>=1.26.2
+* pairlist>=0.5.1.2
+* cycless>=0.4.2
+* graphstat>=0.2.1
+* yaplotlib>=0.1.2
+* openpyscad>=0.5.0
+* genice-core>=0.9
 
 
-**Note**: In case you encounter an error complaining "No module named '_ctypes'": Python3.7 and later may require `libffi` for `pairlist` and `tilecycles` modules. Please install `libffi-devel` via the package management system for your system (apt, yum, dnf, brew, etc.)
-
-**Note 2**: There may be compatibility issues when you install GenIce in Apple M1.
-
-1. networkx requires scipy, which cannot be installed simply. See thr workaround at https://stackoverflow.com/questions/65745683/how-to-install-scipy-on-apple-silicon-arm-m1
-
-2. Moreover, scipy requires pythran (I do not know what it is).
-
-```shell
-pip3 install pythran
-pip3 install cython pybind11
-pip3 install --no-binary :all: --no-use-pep517 numpy
-brew install openblas gfortran
-export OPENBLAS=/opt/homebrew/opt/openblas/lib/
-pip3 install --no-binary :all: --no-use-pep517 scipy
-```
-
+**Note**: The package management system `poetry`, new in GenIce version 2.1, ignores all symlinks in package directories.
+Because of this, some module "aliases" do not work correctly. (e.g. `genice2 1h` does not work, but `genice ice1h` does, because `1h.py` is an alias for `ice1h.py` .)
 
 ## Installation
 GenIce is registered to [PyPI (Python Package Index)](https://pypi.python.org/pypi/GenIce).
@@ -63,7 +42,7 @@ Install with pip3.
 
 ## Usage
 
-    usage: genice2 [-h] [--version] [--rep REP REP REP]
+    usage: genice2 [-h] [--version] [--rep REP REP REP] [--reshape RESHAPE]
                    [--shift SHIFT SHIFT SHIFT] [--dens DENS] [--add_noise percent]
                    [--seed SEED] [--format name] [--water model] [--guest 14=me]
                    [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
@@ -72,7 +51,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.1.8)
+    (version 2.2.5.4)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -167,6 +146,9 @@ Install with pip3.
                                             ice 'sIII'.
                             Struct02        A space fullerene. (I phase?)
                             T               Hypothetical clathrate type T.
+                            XIc-a           A candidate for the proton-ordered
+                                            counterpart of ice Ic. The structure
+                                            'a' in Figure 1.
                             bilayer         A Bilayer Honeycomb Ice Phase in
                                             Hydrophobic Nanopores.
                             c0te            Filled ice C0 by Teeratchanan
@@ -186,7 +168,7 @@ Install with pip3.
                             iceR            Hypothetical ice R.
                             iceT            Hypothetical ice T.
                             iceT2           Hypothetical ice T2.
-                            one             Ice I w/ stacking faults.
+                            one             Ice I w/ stacking disorder.
                             oprism          Hydrogen-ordered ice nanotubes.
                             sTprime         Filled ice sT'.
                             xFAU            Aeroice xFAU.
@@ -213,6 +195,13 @@ Install with pip3.
       --version, -V         show program's version number and exit
       --rep REP REP REP, -r REP REP REP
                             Repeat the unit cell along a, b, and c axes. [1,1,1]
+      --reshape RESHAPE, -R RESHAPE
+                            Convert the unit cell shape by specifying the new
+                            (a,b,c) set from the original (a,b,c) of the unit
+                            cell. The combination of (a,b,c) is specified by nine
+                            integers. For example, '--reshape 3,0,0,0,2,0,0,0,1'
+                            specifies that the new cell vectors are (3a, 2b, c),
+                            which is equivalent to '--rep 3 2 1'.
       --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
                             Shift the unit cell along a, b, and c axes. (0.5==half
                             cell) [0,0,0]
@@ -240,8 +229,7 @@ Install with pip3.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
-                            o, openscad     OpenSCAD.
-                            p, python, reshape              Cell-reshaper.
+                            p, python       Cell-reshaper.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
                             raw             Raw data. (For use with Jupyter)
@@ -553,7 +541,7 @@ Symbol | <div style="width:300px">Description</div>
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
-17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Strobel 2016, Rosso 2016]
+17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
 1h, Ih, ice1h | Most popular Ice I (hexagonal)
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
@@ -582,6 +570,7 @@ FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017, IZA Database
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Database]
 Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
 T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
+XIc-a | A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1. [Geiger 2014]
 bilayer | A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores. [Koga 1997]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
@@ -592,7 +581,7 @@ ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of gue
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
-one | Ice I w/ stacking faults.
+one | Ice I w/ stacking disorder.
 oprism | Hydrogen-ordered ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
@@ -692,9 +681,20 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
 |------------|-----------------|--------------|-------------|
 |[`genice2-cif`](https://github.com/vitroid/genice-cif)| `genice2 cif[ITT.cif]`<br /> `genice2 zeolite[ITT]`| Read a local CIF file as an ice structure.<br />Read a structure from Zeolite DB. | `cif2ice` |
 
-# Changes from GenIce1
 
-## Novel algorithm to make a structure obeying the ice rules in Stage 3.
+## New in GenIce2.1
+
+GenIce2-MDAnalysis integration is now available. Try
+```shell
+% pip install genice2-mdanalysis
+% genice2 1h -r 4 4 4 -f "mdanalysis[1h.pdb]"
+```
+to generate a PDB file.
+
+
+## Changes from GenIce1
+
+### Novel algorithm to make a structure obeying the ice rules in Stage 3.
 
 - We have devised a completely new algorithm for orienting water molecules so that they obey ice rules. This algorithm can be applied only to defect-free ice. The algorithm runs in the following steps.
   1. First, based on the distances between neighboring molecules, the structure of the hydrogen-bond network is represented by a 4-connected undirected graph.
@@ -702,15 +702,15 @@ Input plugins (a.k.a. lattice plugins) construct a crystal structure on demand.
   3. By directing each cycle, we can immediately obtain a directed graph that satisfies the ice rule. We can choose two orientations for each cycle so that the total polarization of the entire system is as small as possible.
   4. In rare cases, complete depolarization may not be possible. In such cases, it is depolarized in Stage 4.
 
-## Faster, faster, faster.
+### Faster, faster, faster.
 
 Combinations of the new algorithm and other improvements in coding, the processing time of GenIce2 is about five times faster than that of GenIce1.
 
-## Core algorithm is separated.
+### Core algorithm is separated.
 
 The core part of the new algorithm is separated as the TileCycles package.
 
-## Colaboratory-ready!
+### Colaboratory-ready!
 
 Now GenIce2 works on the [Google Colaboratory!](https://colab.research.google.com/github/vitroid/GenIce/blob/genice2/jupyter.ipynb)
 
@@ -722,7 +722,7 @@ Many new ice structures are added.
 
 GenIce2 is now integrated with MDAnalysis.
 
-# References
+## References
 
 * [Avogadro] Avogadro https://github.com/cryos/avogadro/blob/master/crystals/ice/H2O-Ice-IV.cif
 * [Baez 1998] 
@@ -743,6 +743,9 @@ FALENTY, Andrzej, HANSEN, Thomas C. and KUHS, Werner F., 2014, Formation and pro
 * [Fan 2010] Xiaofeng Fan, Dan Bing, Jingyun Zhang, Zexiang Shen, Jer-Lai Kuo,  Computational Materials Science 49 (2010) S170–S175.
 * [Fennell 2005] 
 FENNELL, Christopher J. and GEZELTER, J. Daniel, 2005, Computational Free Energy Studies of a New Ice Polymorph Which Exhibits Greater Stability than Ice Ih. Journal of Chemical Theory and Computation [online]. 30 April 2005. Vol. 1, no. 4, p. 662–667. DOI 10.1021/ct050005s. Available from: http://dx.doi.org/10.1021/ct050005s
+
+* [Geiger 2014] 
+GEIGER, Philipp, DELLAGO, Christoph, MACHER, Markus, FRANCHINI, Cesare, KRESSE, Georg, BERNARD, Jürgen, STERN, Josef N. and LOERTING, Thomas, 2014. Proton Ordering of Cubic Ice Ic: Spectroscopy and Computer Simulations. The Journal of Physical Chemistry C. Online. 13 May 2014. Vol. 118, no. 20, p. 10989–10997. DOI 10.1021/jp500324x. 
 
 * [Hirata 2017] 
 HIRATA, Masanori, YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2017, Phase Diagram of TIP4P/2005 Water at High Pressure. Langmuir [online]. 24 August 2017. Vol. 33, no. 42, p. 11561–11569. DOI 10.1021/acs.langmuir.7b01764. Available from: http://dx.doi.org/10.1021/acs.langmuir.7b01764
@@ -849,7 +852,7 @@ YAGASAKI, Takuma, MATSUMOTO, Masakazu and TANAKA, Hideki, 2018, Phase Diagrams o
 * [Zhao 2019] Zhao, C.-L. et al. Seven-Site Effective Pair Potential for Simulating Liquid Water. J. Phys. Chem. B 123, 4594-4603 (2019).
 
 
-# Algorithms and how to cite them.
+## Algorithms and how to cite them.
 
 The algorithms to make a depolarized hydrogen-disordered ice are explained in these papers:
 
@@ -876,6 +879,8 @@ M. Matsumoto, T. Yagasaki, and H. Tanaka, “Novel Algorithm to Generate Hydroge
         year = {2021}
     }
 
-# How to contribute
+## How to contribute
 
-GenIce has been available as open source software on GitHub(https://github.com/vitroid/GenIce/) since 2015. Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome. Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let me know.
+GenIce has been available as open source software on GitHub(https://github.com/vitroid/GenIce) since 2015.
+Feedback, suggestions for improvements and enhancements, bug fixes, etc. are sincerely welcome.
+ Developers and test users are also welcome. If you have any ice that is publicly available but not included in GenIce, please let us know.

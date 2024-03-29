@@ -25,11 +25,18 @@ def usage():
     logger.info(__doc__)
 
 
-desc = {"ref": {"xFAU": 'Matsui 2017'},
-        "usage": usage(),
-        "brief": "Aeroice xFAU.",
-        "test": ("[0]", "[1]", "[2]", "[4]", "[8]")
-        }
+desc = {
+    "ref": {"xFAU": "Matsui 2017"},
+    "usage": usage(),
+    "brief": "Aeroice xFAU.",
+    "test": (
+        {"args": "0"},
+        {"args": "1"},
+        {"args": "2"},
+        {"args": "4"},
+        {"args": "8"},
+    ),
+}
 # FAU Decoration of a 4-network
 # 読みこんだAR3Rの座標を、FAU構造における多面体vertexの位置とみなし、
 # それらを連結するネットワークを六角柱で修飾して大きなネットワークを作る。
@@ -70,7 +77,7 @@ def tune_angles(sixvecs, pivot):
         offset += doffset
 
 
-class decorate():
+class decorate:
     def __init__(self, atoms, cell, pairs, Ncyl):
         """
         Ncyl is the number of cylinders to be inserted (>0)
@@ -127,9 +134,9 @@ class decorate():
         # determine r
         # assume edge length is 1
         # the radius of the outer sphere of the polyhed is sqrt(3/2)
-        L = (3 / 2)**0.5 * 2 + self.Ncyl
+        L = (3 / 2) ** 0.5 * 2 + self.Ncyl
         r = 1 / L  # edge len = radius of cyl
-        rp = (3 / 2)**0.5 / L  # = radius of polyhed
+        rp = (3 / 2) ** 0.5 / L  # = radius of polyhed
         #
         icell = np.linalg.inv(self.cell)
         a = self.atoms[i] @ self.cell
@@ -159,10 +166,10 @@ class decorate():
 
 class Lattice(genice2.lattices.Lattice):
     """
-Generate a (hydrogen-ordered) Aeroice nxFAU.
+    Generate a (hydrogen-ordered) Aeroice nxFAU.
 
-Options:
-  rep=n    Length of the hexagonal prism. (rep=1:FAU, rep=0:SOD, rep>1: aeroice)
+    Options:
+      rep=n    Length of the hexagonal prism. (rep=1:FAU, rep=0:SOD, rep>1: aeroice)
     """
 
     def __init__(self, **kwargs):
@@ -184,9 +191,7 @@ Options:
         logger.info("Superlattice {0}xFAU".format(Ncyl))
         dec = decorate(waters1c, cell1c, pairs1c, Ncyl)
 
-        self.coord = 'relative'
-        self.cell = cellvectors(a=dec.cell[0, 0],
-                                b=dec.cell[1, 1],
-                                c=dec.cell[2, 2])
+        self.coord = "relative"
+        self.cell = cellvectors(a=dec.cell[0, 0], b=dec.cell[1, 1], c=dec.cell[2, 2])
         self.waters = dec.vertices
         self.fixed = dec.fixedEdges

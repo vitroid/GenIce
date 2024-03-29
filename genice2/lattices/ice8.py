@@ -5,12 +5,13 @@ import numpy as np
 from genice2 import CIF
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"VIII": 'Kuhs 1998'},
-        "usage": "No options available.",
-        "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII.",
-        "test": ({"args": "",
-                  "options": "--depol=none"},)
-        }
+
+desc = {
+    "ref": {"VIII": "Kuhs 1998"},
+    "usage": "No options available.",
+    "brief": "Ice VIII, a hydrogen-ordered counterpart of ice VII.",
+    "test": ({"options": "--depol=none"},),
+}
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -41,7 +42,9 @@ class Lattice(genice2.lattices.Lattice):
             1/4-y,        1/4-x,        3/4-z
             1/4+y,        3/4+x,        1/4-z
 
-        """.translate({ord(','): ''})
+        """.translate(
+            {ord(","): ""}
+        )
 
         # add +1/2, +1/2, +1/2
         lines = ""
@@ -66,12 +69,14 @@ class Lattice(genice2.lattices.Lattice):
         atomd = CIF.atomdic(atoms)
         sops = CIF.symmetry_operators(symops)
         self.waters, self.pairs = CIF.waters_and_pairs(
-            self.cell, atomd, sops, rep=(2, 2, 2))
+            self.cell, atomd, sops, rep=(2, 2, 2)
+        )
 
         # All the self.pairs are self.fixed.
         self.fixed = self.pairs
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        self.density = (
+            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        )
 
         self.coord = "relative"

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Plugin handler.
 """
@@ -14,9 +11,14 @@ from collections import defaultdict
 from logging import DEBUG, INFO, basicConfig, getLogger
 from textwrap import fill
 
-import pkg_resources as pr
+# import pkg_resources as pr
 
 from genice2.decorators import banner, timeit
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 
 @timeit
@@ -46,8 +48,7 @@ def scan(category):
 
     for mod in modules["system"]:
         try:
-            module = importlib.import_module(
-               f"genice2.{category}s.{mod}")
+            module = importlib.import_module(f"genice2.{category}s.{mod}")
             if "desc" in module.__dict__:
                 desc[mod] = module.desc["brief"]
                 if "ref" in module.desc:
@@ -59,28 +60,29 @@ def scan(category):
             pass
 
     logger.info(f"Extra {category}s")
-    groupname = f'genice2_{category}'
+    groupname = f"genice2_{category}"
     mods = []
-    for ep in pr.iter_entry_points(group=groupname):
-        label, m = str(ep).split("=")
-        mods.append(label)
+    # for ep in pr.iter_entry_points(group=groupname):
+    for ep in entry_points(group=groupname):
+        mods.append(ep.name)
         try:
             module = ep.load()
             if "desc" in module.__dict__:
-                desc[label] = module.desc["brief"]
+                desc[ep.name] = module.desc["brief"]
                 if "ref" in module.desc:
-                    refs[label] = module.desc["ref"]
+                    refs[ep.name] = module.desc["ref"]
                 if "test" in module.desc:
                     tests[mod] = module.desc["test"]
-            iswater[label] = "water" in module.__dict__
+            iswater[ep.name] = "water" in module.__dict__
         except BaseException:
             pass
     logger.info(mods)
     modules["extra"] = mods
 
     logger.info(f"Local {category}s")
-    mods = [os.path.basename(mod)[:-3]
-            for mod in sorted(glob.glob(f"./{category}s/*.py"))]
+    mods = [
+        os.path.basename(mod)[:-3] for mod in sorted(glob.glob(f"./{category}s/*.py"))
+    ]
     logger.info(mods)
     for mod in mods:
         module = importlib.import_module(f"{category}s.{mod}")
@@ -101,14 +103,7 @@ def scan(category):
     return modules
 
 
-def descriptions(
-    category,
-    width=72,
-    water=False,
-    groups=(
-        "system",
-        "extra",
-        "local")):
+def descriptions(category, width=72, water=False, groups=("system", "extra", "local")):
     """
     Show the list of available plugins in the category.
 
@@ -121,22 +116,26 @@ def descriptions(
             "system": "1. Lattice structures served with GenIce",
             "extra": "2. Lattice structures served by external plugins",
             "local": "3. Lattice structures served locally",
-            "title": "[Available lattice structures]"},
+            "title": "[Available lattice structures]",
+        },
         "format": {
             "system": "1. Formatters served with GenIce",
             "extra": "2. Formatters served by external plugins",
             "local": "3. Formatters served locally",
-            "title": "[Available formatters]"},
+            "title": "[Available formatters]",
+        },
         "loader": {
             "system": "1. File types served with GenIce",
             "extra": "2. File types served by external eplugins",
             "local": "3. File types served locally",
-            "title": "[Available input file types]"},
+            "title": "[Available input file types]",
+        },
         "molecule": {
             "system": "1. Molecules served with GenIce",
             "extra": "2. Molecules served by external plugins",
             "local": "3. Molecules served locally",
-            "title": "[Available molecules]"},
+            "title": "[Available molecules]",
+        },
     }
     mods = scan(category)
     catalog = f" \n \n{titles[category]['title']}\n \n"
@@ -172,8 +171,10 @@ def descriptions(
                 drop_whitespace=False,
                 expand_tabs=True,
                 tabsize=16,
-                subsequent_indent=" " *
-                16) for line in table.splitlines()]
+                subsequent_indent=" " * 16,
+            )
+            for line in table.splitlines()
+        ]
         table = "\n".join(table) + "\n"
         undesc = " ".join(undesc)
         if undesc != "":
@@ -182,13 +183,7 @@ def descriptions(
     return catalog
 
 
-def plugin_descriptors(
-    category,
-    water=False,
-    groups=(
-        "system",
-        "extra",
-        "local")):
+def plugin_descriptors(category, water=False, groups=("system", "extra", "local")):
     """
     Show the list of available plugins in the category.
 
@@ -217,8 +212,7 @@ def plugin_descriptors(
                 # L is the name of module (name of ice)
                 desced[desc[L]].append(L)
                 if L in refs:
-                    refss[desc[L]] |= set(
-                        [label for key, label in refs[L].items()])
+                    refss[desc[L]] |= set([label for key, label in refs[L].items()])
             else:
                 undesc.append(L)
         catalog[group] = [desced, undesc, refss]
@@ -229,22 +223,21 @@ def audit_name(name):
     """
     Audit the mol name to avoid the access to external files
     """
-    return re.match('^[A-Za-z0-9-_]+$', name) is not None
+    return re.match("^[A-Za-z0-9-_]+$", name) is not None
 
 
 def import_extra(category, name):
     logger = getLogger()
     logger.info(f"Extra {category} plugin: {name}")
-    groupname = f'genice2_{category}'
+    groupname = f"genice2_{category}"
     module = None
-    for ep in pr.iter_entry_points(group=groupname):
+    # for ep in pr.iter_entry_points(group=groupname):
+    for ep in entry_points(group=groupname):
         logger.debug(f"    Entry point: {ep}")
         if ep.name == name:
             logger.debug(f"      Loading {name}...")
             module = ep.load()
-    if module is None:
-        logger.error(f"Nonexistent module: {name}")
-        sys.exit(1)
+    assert module is not None, f"Nonexistent or failed to load the module: {name}"
     return module
 
 
@@ -274,20 +267,27 @@ def safe_import(category, name):
     assert audit_name(name), f"Dubious {category} name: {name}"
 
     module = None
+    fullname = category + "s." + name
+    logger.debug(f"Try to Load a local module: {fullname}")
     try:
-        module = importlib.import_module(
-            category + "s." + name)  # at ~/.genice
-    except ImportError as e:
+        module = importlib.import_module(fullname)  # at ~/.genice
+        logger.debug("Succeeded.")
+    except ImportError:
+        logger.debug("Failed.")
         pass
     if module is None:
         fullname = "genice2." + category + "s." + name
-        logger.debug(f"Load module: {fullname}")
+        logger.debug(f"Try to load a system module: {fullname}")
         try:
             module = importlib.import_module(fullname)
-        except BaseException:
+            logger.debug("Succeeded.")
+        except ImportError:
+            logger.debug("Failed.")
             pass
     if module is None:
+        logger.debug(f"Try to load an extra module: {fullname}")
         module = import_extra(category, name)
+        logger.debug("Succeeded.")
 
     if usage:
         if "desc" in module.__dict__:

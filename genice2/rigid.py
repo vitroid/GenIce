@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Rigid-body geometry.
 """
 
 from __future__ import print_function
 from math import *
-import sys
 import numpy as np
-import numpy.linalg
-import logging
 
 # Rigid.py uses vertical vectors while other pars of genice uses
 # horizontal vectors.
@@ -29,8 +23,8 @@ def decide2(v1, v2):
     d /= np.linalg.norm(d)
     v = np.cross(v1, v2)
     v /= np.linalg.norm(v)
-    d *= -sqrt(1. / 3)
-    v *= sqrt(2. / 3)
+    d *= -sqrt(1.0 / 3)
+    v *= sqrt(2.0 / 3)
     return d + v, d - v
 
 
@@ -62,7 +56,7 @@ def rotmat2quat0(i, j, k):
         if a is None:
             a = op(k - ez, j - ey)
             if a is None:
-                #sys.stderr.write("outer prod warning\n")
+                # sys.stderr.write("outer prod warning\n")
                 # //全く回転しないケース
                 return 1.0, 0.0, 0.0, 0.0
     a /= np.linalg.norm(a)
@@ -108,7 +102,7 @@ def QfromtRM(m):
 
 def quat2rotmat(q):
     a, b, c, d = q
-    sp11 = (a * a + b * b - (c * c + d * d))
+    sp11 = a * a + b * b - (c * c + d * d)
     sp12 = -2.0 * (a * d + b * c)
     sp13 = 2.0 * (b * d - a * c)
     sp21 = 2.0 * (a * d - b * c)
@@ -117,8 +111,9 @@ def quat2rotmat(q):
     sp31 = 2.0 * (a * c + b * d)
     sp32 = 2.0 * (a * b - c * d)
     sp33 = a * a + d * d - (b * b + c * c)
-    return np.array([[sp11, sp12, sp13], [sp21, sp22, sp23],
-                    [sp31, sp32, sp33]]).transpose()
+    return np.array(
+        [[sp11, sp12, sp13], [sp21, sp22, sp23], [sp31, sp32, sp33]]
+    ).transpose()
 
 
 # Vector function
@@ -138,7 +133,7 @@ def tRMfromQ(q):
     bd = b * d
     cd = c * d
     t = np.zeros([q.shape[0], 3, 3])
-    t[:, 0, 0] = (aa + bb - (cc + dd))
+    t[:, 0, 0] = aa + bb - (cc + dd)
     t[:, 0, 1] = -2 * (ad + bc)
     t[:, 0, 2] = 2 * (bd - ac)
     t[:, 1, 0] = 2 * (ad - bc)
@@ -196,7 +191,7 @@ def quat2euler(q):
     e = np.zeros(3)
     if q[0] == 1.0:
         return e
-    p = 2 * (q[0]**2 + q[3]**2) - 1
+    p = 2 * (q[0] ** 2 + q[3] ** 2) - 1
     if p > 1.0:
         p = 1.0
     if p < -1.0:
@@ -228,7 +223,7 @@ def quat2euler(q):
     else:
         e[2] = p - s
         e[1] = p + s
-    e[1:3] %= (2 * pi)
+    e[1:3] %= 2 * pi
     return e
 
 
@@ -251,7 +246,7 @@ def qmul(q, x):
     if q[0] >= 1.0:
         return np.array(q)
     phi = acos(q[0])
-    sine = sqrt(1.0 - q[0]**2)
+    sine = sqrt(1.0 - q[0] ** 2)
     if q[1] < 0:
         phi = -phi
         sine = -sine
@@ -292,7 +287,7 @@ def six2nine(a, b, c, alpha, beta, gamma):
     ecx = cos(beta)
     # ecx*cos(gamma)+ecy*sin(gamma)=c cos(alpha)
     ecy = (cos(alpha) - ecx * cos(gamma)) / sin(gamma)
-    ecz = (1 - ecx**2 - ecy**2)**0.5
+    ecz = (1 - ecx**2 - ecy**2) ** 0.5
     ec = np.array([ecx, ecy, ecz])
     C = c * ec
     # checked.
@@ -337,11 +332,7 @@ def rand_rotation_matrix(deflection=1.0, randnums=None):
     # has length sqrt(2) to eliminate the 2 in the Householder matrix.
 
     r = np.sqrt(z)
-    Vx, Vy, Vz = V = (
-        np.sin(phi) * r,
-        np.cos(phi) * r,
-        np.sqrt(2.0 - z)
-    )
+    Vx, Vy, Vz = V = (np.sin(phi) * r, np.cos(phi) * r, np.sqrt(2.0 - z))
 
     st = np.sin(theta)
     ct = np.cos(theta)

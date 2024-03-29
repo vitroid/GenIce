@@ -6,21 +6,23 @@ Reshaping the unit cell.
   j:[0 1 0]
   k:[0 0 1]
 """
+
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"T2": 'Yagasaki 2018'},
-        "usage": "No options available.",
-        "brief": "Hypothetical ice T2.",
-        "test": ({"args": "",
-                  "options": "--depol=optimal"},)
-        }
+
+desc = {
+    "ref": {"T2": "Yagasaki 2018"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice T2.",
+    "test": ({"options": "--depol=optimal"},),
+}
 
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
         self.bondlen = 2.8577528998751287
-        self.coord = 'relative'
-        self.cell = '19.91215483 19.91215483 7.57505890'
+        self.coord = "relative"
+        self.cell = "19.91215483 19.91215483 7.57505890"
         self.density = 1.5127
         self.waters = """
             0.7040    0.6850    0.9660
@@ -177,6 +179,4 @@ class Lattice(genice2.lattices.Lattice):
             0.0000    0.0000    0.2500
         """
 
-        self.cell = cellvectors(a=19.91215483,
-                                b=19.91215483,
-                                c=7.5750589)
+        self.cell = cellvectors(a=19.91215483, b=19.91215483, c=7.5750589)

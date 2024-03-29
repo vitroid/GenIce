@@ -25,11 +25,10 @@ def usage():
 
 
 desc = {
-    "ref": {
-        "prism": "Koga 2001"
-    },
+    "ref": {"prism": "Koga 2001"},
     "usage": usage(),
-    "brief": "Hydrogen-ordered ice nanotubes."
+    "brief": "Hydrogen-ordered ice nanotubes.",
+    "test": [{"args": {}}, {"args": "5"}, {"args": "8,6"}],
 }
 
 
@@ -56,14 +55,12 @@ class Lattice(genice2.lattices.Lattice):
                 else:
                     sys.exit(1)
 
-        logger.info(
-            "Prism ice with {0} sides and {1} rows.".format(sides, rows))
+        logger.info("Prism ice with {0} sides and {1} rows.".format(sides, rows))
 
         L = 2.75
         self.bondlen = 3
         R = L / 2 / sin(pi / sides)
-        self.density = sides * rows / \
-            (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
+        self.density = sides * rows / (L**3 * 400 * rows) * 18 / 6.022e23 * 1e24
 
         self.waters = []
         self.fixed = []
@@ -90,6 +87,4 @@ class Lattice(genice2.lattices.Lattice):
 
         self.coord = "absolute"
 
-        self.cell = cellvectors(a=L * 20,
-                                b=L * 20,
-                                c=L * rows)
+        self.cell = cellvectors(a=L * 20, b=L * 20, c=L * rows)

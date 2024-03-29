@@ -1,12 +1,14 @@
-from genice2.cell import rel_wrap
 import numpy as np
 import re
 from logging import getLogger
+
 desc = {
     "ref": {
-        "exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"},
+        "exyz": "https://open-babel.readthedocs.io/en/latest/FileFormats/Extended_XYZ_cartesian_coordinates_format.html"
+    },
     "brief": "Extended XYZ format.",
-    "usage": "No options available."}
+    "usage": "No options available.",
+}
 
 
 def readaline(file):

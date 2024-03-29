@@ -1,11 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Helper functions to read various value types.
 """
-
-import logging
 
 import numpy as np
 
@@ -14,6 +9,7 @@ try:
     from collections.abc import Iterable
 except ImportError:
     from collections import Iterable
+
 
 def flatten(item):
     """Yield items from any nested iterable; see REF."""
@@ -66,7 +62,6 @@ def parse_guest(guests, arg):
     assert cagetype not in guests, "Cage type already specified."
 
     for content in contents:
-
         if "*" in content:
             molec, frac = content.split("*")
             frac = float(frac)
@@ -116,7 +111,7 @@ def plugin_option_parser(s):
     left = s.find("[")
     right = s.find("]")
     if 0 < left < len(s) and 0 < right < len(s) and left < right:
-        args = s[left + 1:right]
+        args = s[left + 1 : right]
         name = s[:left]
     else:
         return s, {}

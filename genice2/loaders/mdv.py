@@ -1,14 +1,14 @@
-
-import pairlist as pl
 import numpy as np
 import re
 import logging
-desc = {"ref": {},
-        "brief": "MDView file (in Angdtrom).",
-        "usage": "No options available."
-        }
 
-if __name__[-4:] == 'mdva':
+desc = {
+    "ref": {},
+    "brief": "MDView file (in Angdtrom).",
+    "usage": "No options available.",
+}
+
+if __name__[-4:] == "mdva":
     desc["brief"] = "MDView file (in au)."
 
 
@@ -17,7 +17,7 @@ def load_iter(file, oname, hname=None):
     if __name__[-4:] == "mdva":
         conv = 0.052917721067  # au in nm
     else:
-        conv = 0.1             # AA in nm
+        conv = 0.1  # AA in nm
 
     natom = -100
     lineno = 0
@@ -26,11 +26,9 @@ def load_iter(file, oname, hname=None):
         if lineno == 1:
             # first line
             cols = line.split()
-            assert cols[0] == '#'  # yaga style
+            assert cols[0] == "#"  # yaga style
             c = [float(x) for x in cols[1:4]]
-            cellmat = np.array([[c[0], 0., 0.],
-                                [0., c[1], 0.],
-                                [0., 0., c[2]]])
+            cellmat = np.array([[c[0], 0.0, 0.0], [0.0, c[1], 0.0], [0.0, 0.0, c[2]]])
             cellmat *= conv
             celli = np.linalg.inv(cellmat)
         elif line[0] == "-":

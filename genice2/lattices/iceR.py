@@ -7,13 +7,13 @@ Data Source
 
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {"Methane A": 'Maynard-Casely 2010',
-                "R": 'Mochizuki 2014'},
-        "usage": "No options available.",
-        "brief": "Hypothetical ice R.",
-        "test": ({"args": "",
-                  "options": "--depol=optimal"},)
-        }
+
+desc = {
+    "ref": {"Methane A": "Maynard-Casely 2010", "R": "Mochizuki 2014"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice R.",
+    "test": ({"options": "--depol=optimal"},),
+}
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -50,9 +50,11 @@ class Lattice(genice2.lattices.Lattice):
         self.bondlen = 3.05
         self.density = 1.5
 
-        self.cell = cellvectors(a=7.547382417065826,
-                                b=7.547382417065826,
-                                c=7.547382417065826,
-                                A=89.31999999999998,
-                                B=89.31999999999998,
-                                C=89.31999999999998)
+        self.cell = cellvectors(
+            a=7.547382417065826,
+            b=7.547382417065826,
+            c=7.547382417065826,
+            A=89.31999999999998,
+            B=89.31999999999998,
+            C=89.31999999999998,
+        )

@@ -1,32 +1,29 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 GenIce class
 """
 
 import itertools as it
-import random
 from collections import defaultdict
 from logging import getLogger
 from typing import Type, Union
 
 import numpy as np
 import pairlist as pl
-import tilecycles as tc
+import networkx as nx
 
 from genice2 import cage
-from genice2 import digraph as dg
-from genice2.cell import Cell, rel_wrap
+
+# from genice2 import digraph_unused as dg
+from genice2.cell import Cell, rel_wrap, cellshape
 from genice2.decorators import banner, timeit
 from genice2.formats import Format
 from genice2.lattices import Lattice
+import genice_core
 
 # A virtual monatomic molecule
 from genice2.molecules import Molecule, arrange, monatom, one
 from genice2.plugin import Group, safe_import
 from genice2.valueparser import (
-    flatten,
     parse_cages,
     parse_pairs,
     plugin_option_parser,
@@ -70,15 +67,27 @@ def assume_tetrahedral_vectors(v):
     return []
 
 
-def orientations(coord, graph, cell):
+# def ice_rule(dg: nx.DiGraph, strict=False) -> bool:
+#     if strict:
+#         for node in dg:
+#             if dg.in_degree(node) != 2 or dg.out_degree(node) != 2:
+#                 return False
+#     else:
+#         for node in dg:
+#             if dg.in_degree(node) > 2 or dg.out_degree(node) > 2:
+#                 return False
+#     return True
+
+
+def orientations(coord, graph, cell, immutables: set):
     """
     Does not work when two OHs are colinear
     """
 
     logger = getLogger()
     # just for a test of pure water
-    assert len(coord) == graph.number_of_nodes()
-
+    assert len(coord) == graph.number_of_nodes(), (len(coord), graph.number_of_nodes())
+    logger.info(f"{immutables} immutables")
     # 通常の氷であればアルゴリズムを高速化できる。
 
     nnode = len(list(graph))
@@ -90,7 +99,7 @@ def orientations(coord, graph, cell):
     # v0 = np.zeros([nnode, 3])
     # v1 = np.zeros([nnode, 3])
     for node in graph:
-        if node in graph.immutables:
+        if node in immutables:
             h1 = np.array([0.0, 1, 1]) / (2**0.5)
             h2 = np.array([0.0, -1, 1]) / (2**0.5)
             r1 = cell.abs2rel(h1)
@@ -109,14 +118,16 @@ def orientations(coord, graph, cell):
             if len(vpred) > 2:
                 # number of incoming bonds should be <= 2
                 vpred = vpred[:2]
-            vcomp = assume_tetrahedral_vectors(vpred + vsucc)
+            vcomp = assume_tetrahedral_vectors(np.vstack([vpred, vsucc]))
             logger.debug(f"Node {node} vcomp {vcomp} vsucc {vsucc} vpred {vpred}")
-            vsucc = (vsucc + vcomp)[:2]
+            vsucc = np.vstack([vsucc, vcomp])[:2]
             rsucc = cell.abs2rel(vsucc)
             # 仮想ノードにさしかえる
             neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
             extended_coord += [coord[node] + rsucc[0], coord[node] + rsucc[1]]
         else:
+            if len(succ) > 2:
+                logger.info(succ)
             neis[node] = succ
 
     if len(extended_coord) == 0:
@@ -174,6 +185,8 @@ def replicate_groups(groups, waters, cagepos, rep):
     # Storage for replicated groups
     newgroups = defaultdict(dict)
 
+    nmol = len(waters)
+
     for root, cages in groups.items():
         # Position of root (water) (fractional)
         root_pos = waters[root]
@@ -186,105 +199,138 @@ def replicate_groups(groups, waters, cagepos, rep):
             # (Image) cell that the cage resides
             gcell = np.floor(root_pos + delta)
 
-            for x in range(rep[0]):
-                for y in range(rep[1]):
-                    for z in range(rep[2]):
-                        r = np.array((x, y, z))
-                        # label of the root (water) in the replica
-                        newroot = root + len(waters) * (x + rep[0] * (y + rep[1] * z))
-                        # replicated cell in which the cage resides.
-                        # modulo by positive number is always positive.
-                        cr = (r + gcell) % rep
-                        newcage = cage + len(cagepos) * (
-                            cr[0] + rep[0] * (cr[1] + rep[1] * cr[2])
-                        )
-                        newcage = int(newcage)
-                        newgroups[newroot][newcage] = group_name
-                        # logger.info(("root",newroot,"newcage", newcage))
+            for i, xyz in enumerate(rep):
+                newroot = i * nmol + root
+                replica_vector_b = xyz + gcell
+                fractional_b = replica_vector_b @ np.linalg.inv(grand_cellmat)
+                fractional_b -= np.floor(fractional_b)
+                replica_vector_b = fractional_b @ grand_cellmat
+
+                # test
+                d = replica_vector_b - np.floor(replica_vector_b + 0.5)
+                assert d @ d < 1e-20
+
+                replica_vector_b = replica_vector_b.astype(int)
+
+                b = replica_vector_labels[tuple(replica_vector_b)]
+                newcage = cage + ncage * b
+                newgroups[newroot][newcage] = group_name
+                # たぶんこれでいいと思うのだが、この部分は今は使っていないので検証不能。
+
+            # for x in range(rep[0]):
+            #     for y in range(rep[1]):
+            #         for z in range(rep[2]):
+            #             r = np.array((x, y, z))
+            #             # label of the root (water) in the replica
+            #             newroot = root + len(waters) * (z + rep[2] * (y + rep[1] * x))
+            #             # replicated cell in which the cage resides.
+            #             # modulo by positive number is always positive.
+            #             cr = (r + gcell) % rep
+            #             newcage = cage + len(cagepos) * (
+            #                 cr[2] + rep[2] * (cr[1] + rep[1] * cr[0])
+            #             )
+            #             newcage = int(newcage)
+            #             newgroups[newroot][newcage] = group_name
+            #             # logger.info(("root",newroot,"newcage", newcage))
     return newgroups
 
 
-def replicate_labeldict(labels, nmol, rep):
+def replicate_labeldict(labels, nmol, replica_vectors):
     newlabels = dict()
 
     for j in labels:
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
-                    newlabels[newj] = labels[j]
-
-    return newlabels
-
-
-def replicate_labels(labels, nmol, rep):
-    newlabels = set()
-
-    for j in labels:
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
-                    newlabels.add(newj)
+        for i, _ in enumerate(replica_vectors):
+            newj = nmol * i + j
+            newlabels[newj] = labels[j]
 
     return newlabels
 
 
 @timeit
-def replicate_graph(graph, positions, rep):
-    repgraph = dg.IceGraph()
-    nmol = positions.shape[0]
+def replicate_graph(
+    graph1,
+    cell1frac_coords,
+    replica_vectors,
+    fixed: list,
+    replica_vector_labels,
+    reshape,
+):
+    """
+    関数 `replicate_graph` は、グラフに関連するさまざまな入力を受け取り、指定されたレプリカ ベクトルと形状に基づいてそれを複製し、複製されたグラフと固定エッジを返します。
 
-    for i, j in graph.edges(data=False):
-        # positions in the unreplicated cell
-        vec = positions[j] - positions[i]
-        delta = np.floor(vec + 0.5).astype(int)
-        edge_fixed = graph[i][j]["fixed"]
+    2つの座標系がいりみだれているので注意。
+    cell1frac: 複製前の単位胞における小数座標
+    grandfrac: 複製後の大きな単位胞における小数座標
 
-        for x in range(rep[0]):
-            for y in range(rep[1]):
-                for z in range(rep[2]):
-                    xi = (x + delta[0]) % rep[0]
-                    yi = (y + delta[1]) % rep[1]
-                    zi = (z + delta[2]) % rep[2]
-                    newi = i + nmol * (xi + rep[0] * (yi + rep[1] * zi))
-                    newj = j + nmol * (x + rep[0] * (y + rep[1] * z))
+    Args:
+      graph1: 元のグラフを表すグラフ オブジェクトです。
+      cell1frac_coords: 元のグラフ内の原子の小数点座標を含む numpy 配列です。
+      replica_vectors: レプリカ(拡大単位胞を構成する、もとの単位胞のグリッド)の方向を定義する整数ベクトルのリスト。
+      fixed (list): グラフ内の固定エッジを表すリストです。
+      replica_vector_labels: レプリカベクトル座標のタプルを一意のラベルにマッピングする辞書です。このラベルは、複製されたグラフ内の各レプリカ ベクトルを識別するために使用されます。
+      reshape: 単位胞を積みかさねて拡大された結晶構造を作る、積み重ね方を表す行列。
 
-                    if edge_fixed:  # fixed pair
-                        repgraph.add_edge(newi, newj, fixed=True)
-                    else:
-                        # shuffle the bond directions
-                        if 0 == random.randint(0, 1):
-                            repgraph.add_edge(newi, newj, fixed=False)
-                        else:
-                            repgraph.add_edge(newj, newi, fixed=False)
+    Returns:
+      関数 `replicate_graph` は 2 つの値、`repgraph` と `fixedEdges` を返します。
+    """
+    # repgraph = dg.IceGraph()
+    logger = getLogger()
+    repgraph = nx.Graph()
+    fixed = nx.DiGraph(fixed)
+    fixedEdges = nx.DiGraph()
+    nmol = cell1frac_coords.shape[0]
 
-    # replicate "immutables" == dopants list in the graph
-    repgraph.immutables = replicate_labels(graph.immutables, nmol, rep)
+    # 正の行列式の値(倍率)。整数。
+    det = np.linalg.det(reshape)
+    if det < 0:
+        det = -det
+    det = np.floor(det + 0.5).astype(int)
+    # 逆行列に行列式をかけたもの。整数行列。
+    invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
 
-    return repgraph
+    for i, j in graph1.edges(data=False):
+        if fixed.has_edge(i, j):
+            edge_fixed = True
+        elif fixed.has_edge(j, i):
+            edge_fixed = True
+            i, j = j, i
+        else:
+            edge_fixed = False
+        # positions in the original small cell
+        cell1_delta = cell1frac_coords[j] - cell1frac_coords[i]
+        cell1_delta = np.floor(cell1_delta + 0.5).astype(int)
+
+        for a, cell1frac_a in enumerate(replica_vectors):
+            cell1frac_b = cell1frac_a + cell1_delta
+            cell1frac_b = np.floor(
+                grandcell_wrap(cell1frac_b, reshape, invdet, det)
+            ).astype(int)
+            b = replica_vector_labels[tuple(cell1frac_b)]
+            newi = nmol * b + i
+            newj = nmol * a + j
+
+            if edge_fixed:  # fixed pair
+                fixedEdges.add_edge(newi, newj)
+            repgraph.add_edge(newi, newj)
+
+    return repgraph, fixedEdges
 
 
-def replicate_positions(positions, rep):
-    repx = positions.copy()
-
-    for m in range(1, rep[0]):
-        v = np.array([m, 0, 0])
-        repx = np.concatenate((repx, positions + v))
-
-    repy = repx.copy()
-
-    for m in range(1, rep[1]):
-        v = np.array([0, m, 0])
-        repy = np.concatenate((repy, repx + v))
-
-    repz = repy.copy()
-
-    for m in range(1, rep[2]):
-        v = np.array([0, 0, m])
-        repz = np.concatenate((repz, repy + v))
-
-    return repz / rep
+def replicate_positions(positions1, replica_vectors, grand_cellmat):
+    # レプリカ単位胞の数だけ、水分子位置を複製する。
+    inv = np.linalg.inv(grand_cellmat)
+    reppositions = []
+    for replica_vector in replica_vectors:
+        # レプリカ単位胞内での分子の位置
+        replica = positions1 + replica_vector
+        # 大セル内の位置に換算する
+        replica = replica @ inv
+        replica -= np.floor(replica)
+        # 束ねて
+        reppositions.append(replica)
+    # 一つの配列にまとめ
+    reppositions = np.vstack(reppositions)
+    return reppositions
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
@@ -309,63 +355,16 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     return dnei
 
 
-# They should be separate plugins in the future.
-
-
-# def pentyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", [
-#                         "Md", "Me"]]]])
-
-
-# def propyl(cage_center, root_position, cell, molname):
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc"]])
-
-
-# def ethyl(cage_center, root_position, cell, molname):
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", "Mb"])
-
-
-# def _2_2_dimethylpropyl(cage_center, root_position, cell, molname):
-#     """
-#     2,2-dimethylpropyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", "Mc", "Md", "Me"]])
-
-
-# def _2_3_dimethylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", "Md", "Me"], "Mf"]])
-
-
-# def _3_methylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(cage_center, root_position, cell, molname, ["Ma", ["Mb", ["Mc", "Md", "Me"]]])
-
-
-# def _3_3_dimethylbutyl(cage_center, root_position, cell, molname):
-#     """
-#     put a butyl group rooted at root_position toward cage_center.
-#     """
-#     return Alkyl(
-#         cage_center, root_position, cell, molname, [
-#             "Ma", [
-#                 "Mb", [
-#                     "Mc", "Md", "Me", "Mf"]]])
+def grandcell_wrap(
+    cell1frac_vec: np.ndarray, reshape: np.ndarray, invdet: np.ndarray, det: int
+):
+    """
+    単位胞の小数座標で表された点(単位胞内とは限らない)を、拡大単位胞内におさめる。
+    例えば、拡大単位胞が(-1,4), (6,1)なら、(5.1,5.1)と(6.1,1.1)は(0.1,0.1)になる。
+    """
+    frac = cell1frac_vec @ invdet
+    frac = frac % det
+    return frac @ reshape / det
 
 
 class GenIce:
@@ -384,6 +383,7 @@ class GenIce:
              The locations of functional groups that occupy the cages.
     as_is:   Avoids shuffling of the orientations of water molecules.
     signature: A text that is inserted in the output.
+    reshape: reshape matrix.
     """
 
     @timeit
@@ -393,7 +393,8 @@ class GenIce:
         lat: Type[Lattice],
         signature: str = "",
         density: float = 0,
-        rep=(1, 1, 1),
+        rep=None,
+        reshape=np.eye(3, dtype=int),
         cations: dict = {},
         anions: dict = {},
         spot_guests: dict = {},
@@ -416,18 +417,105 @@ class GenIce:
             spot_groups:Labels of cages in which a group is placed.
             asis:       Do not modify the orientations of the hydrogen bonds.
             shift:      A fractional value to be added to the positions.
-
+            reshape: reshape matrix.
         """
 
         # このconstructorが大きすぎ、複雑すぎ。
         # self変数も多すぎ。
         logger = getLogger()
-        self.rep = rep
         self.asis = asis
         self.cations = cations
         self.anions = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
+
+        # 変数名に1がついているのはunit cell
+
+        # ================================================================
+        # cell: cell dimension
+        #   see parse_cell for syntax.
+        #
+        self.cell1 = Cell(lat.cell)
+
+        # Reshaping matrix (Must be integers)
+        # for now they are hardcoded.  It will be given as options for the plugin in the future.
+        # ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
+        # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
+        # ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
+        # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+
+        # CLIからはrepは与えられない。API経由で設定される可能性はある。
+        if rep is not None:
+            logger.warning("rep for GenIce() is deprecated. Use reshape instead.")
+            # 直方体レプリカの順序指定。
+            self.replica_vectors = np.array(
+                [
+                    (x, y, z)
+                    for x in range(rep[0])
+                    for y in range(rep[1])
+                    for z in range(rep[2])
+                ]
+            )
+            # セルの複製後の大セルの形
+            self.reshape_matrix = np.diag(rep)
+        else:
+            logger.info("  Reshaping the unit cell.")
+
+            self.reshape_matrix = reshape
+
+            i, j, k = np.array(reshape)
+            logger.info(f"    i:{i}")
+            logger.info(f"    j:{j}")
+            logger.info(f"    k:{k}")
+
+            a, b, c, A, B, C = cellshape(reshape @ self.cell1.mat)
+            logger.info("  Reshaped cell:")
+            logger.info(f"    a,b,c = {a}, {b}, {c}")
+            logger.info(f"    A,B,C = {A}, {B}, {C}")
+            abc = reshape @ self.cell1.mat
+
+            # 単位胞を並べた格子を、大セルで切りとった時に、どの範囲の単位胞がかするか
+            corners = np.array(
+                [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+            )
+
+            mins = np.min(corners, axis=0)
+            maxs = np.max(corners, axis=0)
+
+            # 整数行列の逆行列に行列式をかけたものは整数行列になる。
+            det = np.linalg.det(reshape)
+            if det < 0:
+                det = -det
+            det = np.floor(det + 0.5).astype(int)
+            invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
+
+            vecs = set()
+            # かする単位胞のうち
+            for a in range(mins[0], maxs[0] + 1):
+                logger.debug(a)
+                for b in range(mins[1], maxs[1] + 1):
+                    for c in range(mins[2], maxs[2] + 1):
+                        # 単位胞の位置を、
+                        abc = np.array([a, b, c])
+                        # 大セルにおさめ
+                        rep = grandcell_wrap(abc, reshape, invdet, det).astype(int)
+                        # 記録する
+                        if tuple(rep) not in vecs:
+                            vecs.add(tuple(rep))
+
+            self.replica_vectors = np.array(list(vecs))
+
+            # 大セルの大きさは、単位胞の整数倍でなければいけない。
+            vol = abs(np.linalg.det(reshape))
+            assert np.allclose(vol, len(vecs)), (vol, vecs)
+
+            # 大セルの形
+            self.reshape_matrix = reshape
+
+        # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
+        self.replica_vector_labels = {
+            tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
+        }
 
         # Show the document of the module
         try:
@@ -441,48 +529,35 @@ class GenIce:
 
         for line in self.doc:
             logger.info("  " + line)
-        # ================================================================
-        # rotmatrices (analice)
-        #
-        try:
-            self.rotmatrices = lat.rotmat
-        except BaseException:
-            logger.info("No rotmatrices in lattice")
-            self.rotmatrices = None
-        # ================================================================
-        # cell: cell dimension
-        #   see parse_cell for syntax.
-        #
-        self.cell = Cell(lat.cell)
 
         # ================================================================
         # waters: positions of water molecules
         #
-        self.waters = put_in_array(lat.waters)
-        logger.debug(f"Waters: {len(self.waters)}")
-        self.waters = self.waters.reshape((self.waters.size // 3, 3))
+        self.waters1 = put_in_array(lat.waters)
+        logger.debug(f"Waters: {len(self.waters1)}")
+        self.waters1 = self.waters1.reshape((-1, 3))
 
         # ================================================================
         # coord: "relative" or "absolute"
         #   Inside genice, molecular positions are always treated as "relative", i.e. in fractional coordinates
         #
         if lat.coord == "absolute":
-            self.waters = self.cell.abs2rel(self.waters)
+            self.waters1 = self.cell1.abs2rel(self.waters1)
 
         # shift of the origin
-        self.waters = np.array(self.waters) + np.array(shift)
+        self.waters1 = np.array(self.waters1) + np.array(shift)
         # fractional coordinate between [0, 1)
-        self.waters -= np.floor(self.waters)
+        self.waters1 -= np.floor(self.waters1)
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
         #   Bond orientation will be shuffled later
         #   unless it is "fixed".
         #
-        self.pairs = None
+        self.pairs1 = None
 
         try:
-            self.pairs = parse_pairs(lat.pairs)
+            self.pairs1 = parse_pairs(lat.pairs)
         except AttributeError:
             logger.info("HB connectivity is not defined.")
 
@@ -491,8 +566,8 @@ class GenIce:
         #   This is used when "pairs" are not specified.
         #   It is applied to the original positions of molecules (before density setting).
         #
-        nmol = self.waters.shape[0]  # nmol in a unit cell
-        volume = self.cell.volume()  # volume of a unit cell in nm**3
+        nmol = self.waters1.shape[0]  # nmol in a unit cell
+        volume = self.cell1.volume()  # volume of a unit cell in nm**3
         self.bondlen = None
 
         try:
@@ -503,9 +578,9 @@ class GenIce:
             # very rough estimate of the pair distances assuming that the particles distribute homogeneously.
             rc = (volume / nmol) ** (1 / 3) * 1.5
             p = pl.pairs_iter(
-                self.waters, maxdist=rc, cell=self.cell.mat, distance=False
+                self.waters1, maxdist=rc, cell=self.cell1.mat, distance=False
             )
-            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
+            self.bondlen = 1.1 * shortest_distance(self.waters1, self.cell1, pairs=p)
             logger.info(f"Bond length (estim.): {self.bondlen}")
 
         # Set density
@@ -520,7 +595,7 @@ class GenIce:
                 logger.info(
                     "Density is not specified. Assume the density from lattice."
                 )
-                dmin = shortest_distance(self.waters, self.cell)
+                dmin = shortest_distance(self.waters1, self.cell1)
                 logger.info(
                     f"Closest pair distance: {dmin} (should be around 0.276 nm)"
                 )
@@ -534,7 +609,7 @@ class GenIce:
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density) ** (1.0 / 3.0)
-        self.cell.scale(ratio)
+        self.cell1.scale(ratio)
 
         if self.bondlen is not None:
             self.bondlen *= ratio
@@ -544,27 +619,27 @@ class GenIce:
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #
-        self.cagepos = None
-        self.cagetype = None
+        self.cagepos1 = None
+        self.cagetype1 = None
 
         if "cages" in lat.__dict__:
-            self.cagepos, self.cagetype = parse_cages(lat.cages)
+            self.cagepos1, self.cagetype1 = parse_cages(lat.cages)
             logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
         elif "cagepos" in lat.__dict__:
             # pre-parsed data
-            self.cagepos, self.cagetype = np.array(lat.cagepos), lat.cagetype
-        if self.cagepos is not None:
-            self.cagepos = np.array(self.cagepos) + np.array(shift)
-            self.cagepos -= np.floor(self.cagepos)
+            self.cagepos1, self.cagetype1 = np.array(lat.cagepos), lat.cagetype
+        if self.cagepos1 is not None:
+            self.cagepos1 = np.array(self.cagepos1) + np.array(shift)
+            self.cagepos1 -= np.floor(self.cagepos1)
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
         #   you can specify them in pairs at a time.
         #   You can also leave it undefined.
         #
-        self.fixed = []
+        self.fixed1 = []
         try:
-            self.fixed = parse_pairs(lat.fixed)
+            self.fixed1 = parse_pairs(lat.fixed)
             logger.info("Orientations of some edges are fixed.")
         except AttributeError:
             pass
@@ -573,29 +648,20 @@ class GenIce:
             self.dopeIonsToUnitCell = lat.dopeIonsToUnitCell
         else:
             self.dopeIonsToUnitCell = None
-        self.dopants = set()
+        self.dopants1 = set()
+
+        # self.immutables1 = set(self.dopants1)
+        # logger.info(f"{self.dopants1} dopants1")
 
         # if asis, make pairs to be fixed.
-        if self.asis and len(self.fixed) == 0:
-            self.fixed = self.pairs
+        if self.asis and len(self.fixed1) == 0:
+            self.fixed1 = self.pairs1
 
         # filled cages
         self.filled_cages = set()
 
         # groups info
-        self.groups = defaultdict(dict)
-
-        # groups for the semi-guest
-        # experimental; there are many variation of semi-guest inclusion.
-        # self.groups_placer = {"Bu-": butyl,
-        #                       "Butyl-": butyl,
-        #                       "Pentyl-": pentyl,
-        #                       "Propyl-": propyl,
-        #                       "2,2-dimethylpropyl-": _2_2_dimethylpropyl,
-        #                       "2,3-dimethylbutyl-": _2_3_dimethylbutyl,
-        #                       "3,3-dimethylbutyl-": _3_3_dimethylbutyl,
-        #                       "3-methylbutyl-": _3_methylbutyl,
-        #                       "Ethyl-": ethyl}
+        self.groups1 = defaultdict(dict)
 
     def generate_ice(
         self,
@@ -648,13 +714,8 @@ class GenIce:
             self.Stage2()
 
             # Count bonds
-            num_hb_disorder = 0
-            nfixed = 0
-            for i, j, data in self.graph.edges(data=True):
-                if self.graph[i][j]["fixed"]:  # fixed pair
-                    nfixed += 1
-                else:
-                    num_hb_disorder += 1
+            nfixed = self.fixedEdges.number_of_edges()
+            num_hb_disorder = self.graph.number_of_edges() - nfixed
             logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
             logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
             logger.info(
@@ -663,48 +724,18 @@ class GenIce:
                 )
             )
 
-            # test2==True means it is a z=4 graph.
-            test2 = self.test_undirected_graph(self.graph)
-            if not test2:
-                logger.warn("Ice rule is not satisfied.")
-
             if 2 in hooks:
                 abort = hooks[2](self)
                 if maxstage < 3 or abort:
                     return
 
-            # new_algorithm == fast algorithm
-            new_algorithm = True
-            # it makes the digraph obeying ice rule with zero net polarization
-            # but it works only for a perfect 4-graph.
-            if not test2 or self.asis or nfixed > 0 or depol != "strict":
-                # The network is not 4-connected.
-                new_algorithm = False
-
-            if new_algorithm:
-                # Fast track
-                self.Stage3D()
-            else:
-                # Normal path; make it random, and then remove the defects.
-                self.Stage3()
+            # GenIce-core
+            self.Stage34E(depol=depol)
 
             if 3 in hooks:
                 abort = hooks[3](self)
                 if maxstage < 4 or abort:
                     return
-
-            # spacegraph might be already set in Stage3D.
-            if self.spacegraph is None:
-                logger.debug(f"  graph? {self.spacegraph}")
-                if num_hb_disorder == 0:
-                    self.Stage4(depol="none")
-                else:
-                    self.Stage4(depol=depol)
-
-            dipole = self.spacegraph.net_polarization()
-            logger.info(
-                f"Residual net polarization: {dipole[0]:.2f} {dipole[1]:.2f} {dipole[2]:.2f}"
-            )
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -749,15 +780,21 @@ class GenIce:
         """
 
         logger = getLogger()
-        self.reppositions = replicate_positions(self.waters, self.rep)
+        self.reppositions = replicate_positions(
+            self.waters1, self.replica_vectors, self.reshape_matrix
+        )
 
         # This must be done before the replication of the cell.
         logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
-        self.graph = self.prepare_random_graph(self.fixed)
+
+        if self.pairs1 is None:
+            self.pairs1 = self.prepare_pairs()
+
+        self.graph1 = nx.Graph(self.pairs1)
+        logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
 
         # scale the cell
-        self.repcell = Cell(self.cell.mat)
-        self.repcell.scale2(self.rep)
+        self.repcell = Cell(self.reshape_matrix @ self.cell1.mat)
 
         if noise > 0.0:
             logger.info(f"  Add noise: {noise}.")
@@ -770,15 +807,17 @@ class GenIce:
 
         if assess_cages:
             logger.info("  Assessing the cages...")
-            self.cagepos, self.cagetype = cage.assess_cages(self.graph, self.waters)
+            self.cagepos1, self.cagetype1 = cage.assess_cages(self.graph1, self.waters1)
             logger.info("  Done assessment.")
 
-        if self.cagepos is not None and self.cagepos.shape[0] > 0:
+        if self.cagepos1 is not None and self.cagepos1.shape[0] > 0:
             logger.info("  Hints:")
-            self.repcagepos = replicate_positions(self.cagepos, self.rep)
+            self.repcagepos = replicate_positions(
+                self.cagepos1, self.replica_vectors, self.reshape_matrix
+            )
             nrepcages = self.repcagepos.shape[0]
             self.repcagetype = [
-                self.cagetype[i % len(self.cagetype)] for i in range(nrepcages)
+                self.cagetype1[i % len(self.cagetype1)] for i in range(nrepcages)
             ]
             self.cagetypes = defaultdict(set)
 
@@ -816,192 +855,79 @@ class GenIce:
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(self.dopants, len(self.waters), self.rep)
-        self.groups = replicate_groups(self.groups, self.waters, self.cagepos, self.rep)
+        self.dopants = replicate_labeldict(
+            self.dopants1, len(self.waters1), self.replica_vectors
+        )
+
+        self.groups = replicate_groups(
+            self.groups1, self.waters1, self.cagepos1, self.replica_vectors
+        )
 
         # self.groups_info(self.groups)
-        for root, cages in self.groups.items():
+        for _, cages in self.groups.items():
             self.filled_cages |= set(cages)
 
         # logger.info(("filled",self.filled_cages))
         # Replicate the graph
-        self.graph = replicate_graph(self.graph, self.waters, self.rep)
+        self.graph, self.fixedEdges = replicate_graph(
+            self.graph1,
+            self.waters1,
+            self.replica_vectors,
+            self.fixed1,
+            self.replica_vector_labels,
+            self.reshape_matrix,
+        )
+        # replicate "immutables" == dopants list in the graph
+        # self.repimmutables = replicate_labels(
+        #     self.immutables1, self.waters1.shape[0], self.rep
+        # )
 
+        self.repimmutables = set()
         # Dope ions by options.
         if len(self.anions) > 0:
             logger.info(f"  Anionize: {self.anions}.")
 
             for site, name in self.anions.items():
-                self.graph.anionize(site)
+                # self.graph.anionize(site)
+                for nei in self.graph[site]:
+                    self.fixedEdges.add_edge(nei, site)
                 self.dopants[site] = name
+                self.repimmutables.add(site)
 
         if len(self.cations) > 0:
             logger.info(f"  Cationize: {self.cations}.")
 
             for site, name in self.cations.items():
-                self.graph.cationize(site)
+                # self.graph.cationize(site)
+                for nei in self.graph[site]:
+                    self.fixedEdges.add_edge(site, nei)
                 self.dopants[site] = name
+                self.repimmutables.add(site)
 
     @timeit
     @banner
-    def Stage3(self):
+    def Stage34E(self, depol: str = "none"):
         """
-        Make a graph obeying the ice rule.
-
-        Provided variables:
-        graph: network obeying B-F rule.
+        Make a directed ice graph from an undirected ice graph.
         """
 
         logger = getLogger()
 
-        if self.asis:
-            logger.info("  Skip applying the ice rule by request.")
+        if depol == "none":
+            iter = 0
         else:
-            self.graph.purge_ice_defects()
-
-        self.spacegraph = None
-
-    @timeit
-    @banner
-    def Stage4(self, depol="strict"):
-        """
-        Depolarize.
-
-        Provided variables:
-        spacegraph: depolarized network with node positions.
-        """
-
-        logger = getLogger()
-
-        if self.asis:
-            depol = "none"
-
-        # self.spacegraph = dg.SpaceIceGraph(self.graph,
-        #                                    coord=self.reppositions,
-        #                                    immutables=self.graph.immutables)
-        # dg.depolarize(self.spacegraph, self.repcell.mat, draw=None, depol=depol)
-        digraph = dg.depolarize(
-            self.graph,
-            coord=self.reppositions,
-            immutables=self.graph.immutables,
-            cell=self.repcell.mat,
-            depol=depol,
-        )
-        # for debug
-        # digraph = dg.depolarize(digraph,
-        #                         coord=self.reppositions,
-        #                         immutables=self.graph.immutables,
-        #                         cell=self.repcell.mat,
-        #                         depol=depol)
-        self.spacegraph = dg.SpaceIceGraph(
-            digraph, coord=self.reppositions, immutables=self.graph.immutables
+            iter = 1000
+        self.digraph = genice_core.ice_graph(
+            self.graph.to_undirected(),
+            vertexPositions=self.reppositions,
+            isPeriodicBoundary=True,
+            dipoleOptimizationCycles=iter,
+            fixedEdges=self.fixedEdges,
         )
 
-    @timeit
-    @banner
-    def Stage3D(self):
-        """
-        Tile the graph with directed cycles.
-        """
+        # self.digraph = nx.compose(d, self.fixedEdges)
 
-        # Cに書きかえるなら、この下の3つをおきかえる。
-        def cycle_edges(cycle):
-            for i in range(len(cycle)):
-                yield cycle[i - 1], cycle[i]
-
-        @timeit
-        @banner
-        def spanningCycles(cycles):
-            """
-            Look up the traversal cycles.
-            """
-            dipoles = []
-            spanning = []
-            for j, cycle in enumerate(cycles):
-                dipole = 0
-                for a, b in cycle_edges(cycle):
-                    # displacement vector
-                    d = self.reppositions[b] - self.reppositions[a]
-                    d -= np.floor(d + 0.5)
-                    dipole += d
-                if not np.allclose(dipole, 0):
-                    # it is a cell-spanning cycle
-                    dipoles.append(dipole)
-                    spanning.append(j)
-            dipoles = np.array(dipoles)
-            return dipoles, spanning
-
-        @timeit
-        @banner
-        def direct(dipoles, spanning):
-            """
-            Re-orient the cycles so as to minimize the net polarization.
-            """
-            bestm = 999999
-            bestp = None
-            dir = np.random.randint(2, size=len(dipoles)) * 2 - 1  # +1 or -1
-            pol = dipoles.T @ dir
-            pol2 = pol @ pol
-            for i in range(len(dipoles) * 2):
-                r = random.randint(0, len(dipoles) - 1)
-                newpol = pol - 2 * dir[r] * dipoles[r]
-                newpol2 = newpol @ newpol
-                if newpol2 <= pol2:
-                    dir[r] = -dir[r]
-                    pol = newpol
-                    pol2 = newpol2
-                    if pol2 < 1e-6:
-                        break
-            logger.debug(f"  Depolarized to {pol} in {i} steps")
-            return dir
-
-        @timeit
-        @banner
-        def cycles2digraph(cycles):
-            """
-            Convert cycles to a digraph.
-            """
-            d = dg.IceGraph()
-            for cycle in cycles:
-                nx.add_cycle(d, cycle, fixed=False)
-            return d
-
-        logger = getLogger()
-
-        pairs = np.array([(i, j) for i, j in self.graph.edges()], dtype=int)
-        Nnode = len(self.reppositions)
-        # cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode, self.seed)]
-        # Now uses the python version of tilecycles because it is fast enough.
-        cycles = [list(cycle) for cycle in tc.tile(pairs, Nnode)]
-
-        # evaluate the dipole of each cycle
-        dipoles, spanning = spanningCycles(cycles)
-        logger.debug(f"  {len(spanning)} spanning cycles.")
-
-        # invert randomly to eliminate the net polarization.
-        # Rarely, it cannot be depolarized.
-
-        dir = direct(dipoles, spanning)
-        pol = dipoles.T @ dir
-        pol2 = pol @ pol
-
-        # invert cycles
-        for i, p in enumerate(dir):
-            if p < 0:
-                cycles[spanning[i]].reverse()
-
-        import networkx as nx
-
-        d = cycles2digraph(cycles)
-
-        self.graph = d
-        self.spacegraph = None
-        if pol2 < 1e-6:
-            # Skip Stage4
-            logger.debug("  Depolarized in Stage3D.")
-            self.spacegraph = dg.SpaceIceGraph(
-                d, coord=self.reppositions, immutables=self.graph.immutables
-            )
+        logger.debug("  Depolarized in Stage34E.")
 
     @timeit
     @banner
@@ -1019,7 +945,7 @@ class GenIce:
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
-            self.reppositions, self.spacegraph, self.repcell
+            self.reppositions, self.digraph, self.repcell, self.repimmutables
         )
 
         # Activate it.
@@ -1073,9 +999,9 @@ class GenIce:
 
         logger = getLogger()
 
-        if self.cagepos is not None:
+        if self.cagepos1 is not None:
             # the cages around the dopants.
-            dopants_neighbors = self.dopants_info(
+            dopants_neighbors = dopants_info(
                 self.dopants, self.reppositions, self.repcagepos, self.repcell
             )
 
@@ -1096,7 +1022,9 @@ class GenIce:
 
             # process the -g option
             for cagetype, contents in guests.items():
-                assert cagetype in self.cagetypes, f"Nonexistent cage type: {cagetype}"
+                if cagetype not in self.cagetypes:
+                    logger.info(f"Nonexistent cage type: {cagetype}")
+                    continue
                 resident = dict()
                 rooms = list(self.cagetypes[cagetype] - self.filled_cages)
 
@@ -1113,7 +1041,7 @@ class GenIce:
                     movedin = []
 
                     while remain > 0:
-                        r = random.randint(0, len(rooms) - 1)
+                        r = np.random.randint(0, len(rooms))
                         room = rooms[r]
 
                         if resident[room] is None:
@@ -1125,11 +1053,11 @@ class GenIce:
             # Now ge got the address book of the molecules.
             if len(molecules):
                 logger.info("  Summary of guest placements:")
-                self.guests_info(self.cagetypes, molecules)
+                guests_info(self.cagetypes, molecules)
 
             if len(self.spot_groups) > 0:
                 logger.info("  Summary of groups:")
-                self.groups_info(self.groups)
+                groups_info(self.groups)
 
             # semi-guests
             for root, cages in self.groups.items():
@@ -1179,128 +1107,21 @@ class GenIce:
             oneatom = one.Molecule(label=name)
             self.universe.append(arrange(pos, self.repcell, rot, oneatom))
 
-    def prepare_random_graph(self, fixed):
+    def prepare_pairs(self):
         logger = getLogger()
-        if self.pairs is None:
-            logger.info("  Pairs are not given explicitly.")
-            logger.info("  Estimating the bonds according to the pair distances.")
 
-            logger.debug(f"Bondlen: {self.bondlen}")
-            # make bonded pairs according to the pair distance.
-            # make before replicating them.
-            grid = pl.determine_grid(self.cell.mat, self.bondlen)
-            assert (
-                np.product(grid) > 0
-            ), "Too thin unit cell. Consider use of --rep option if the cell was made by cif2ice."
-            self.pairs = pl.pairs_fine(
-                self.waters, self.bondlen, self.cell.mat, grid, distance=False
+        logger.info("  Pairs are not given explicitly.")
+        logger.info("  Estimating the bonds according to the pair distances.")
+
+        logger.debug(f"Bondlen: {self.bondlen}")
+        # make bonded pairs according to the pair distance.
+        # make before replicating them.
+        return [
+            (i, j)
+            for i, j in pl.pairs_iter(
+                self.waters1, self.bondlen, self.cell1.mat, distance=False
             )
-
-            # self.pairs = [v for v in zip(j0,j1)]
-            # Check using a simpler algorithm.
-            # Do not use it for normal debug because it is too slow
-            if False:  # logger.level <= logging.DEBUG:
-                pairs1 = self.pairs
-                pairs2 = [
-                    v
-                    for v in pl.pairs_crude(
-                        self.waters,
-                        self.bondlen,
-                        self.cell.mat,
-                        distance=False,
-                    )
-                ]
-                logger.debug(f"pairs1: {len(pairs1)}")
-                logger.debug(f"pairs2: {len(pairs2)}")
-                for pair in pairs1:
-                    i, j = pair
-                    assert (i, j) in pairs2 or (j, i) in pairs2
-                for pair in pairs2:
-                    i, j = pair
-                    assert (i, j) in pairs1 or (j, i) in pairs1
-
-        graph = dg.IceGraph()
-        if fixed is not None:
-            for i, j in fixed:
-                graph.add_edge(i, j, fixed=True)
-
-        # Fixed pairs are default.
-        for pair in self.pairs:
-            i, j = pair
-
-            if graph.has_edge(i, j) or graph.has_edge(j, i):
-                pass
-            else:
-                if random.randint(0, 1) == 0:
-                    graph.add_edge(i, j, fixed=False)
-                else:
-                    graph.add_edge(j, i, fixed=False)
-
-        logger.info(f"  Number of water nodes: {graph.number_of_nodes()}")
-
-        return graph
-
-    def test_undirected_graph(self, graph):
-        # Test
-
-        logger = getLogger()
-        undir = graph.to_undirected()
-        for node in range(undir.number_of_nodes()):
-            if node not in undir:
-                logger.debug(f"z=0 at {node}")
-            else:
-                z = len(list(undir.neighbors(node)))
-                if z != 4:
-                    logger.debug(f"z={z} at {node}")
-
-        if graph.number_of_edges() != len(self.reppositions) * 2:
-            logger.info(
-                "Inconsistent number of HBs {0} for number of molecules {1}.".format(
-                    graph.number_of_edges(), len(self.reppositions)
-                )
-            )
-            return False
-
-        return True
-
-    def dopants_info(self, dopants=None, waters=None, cagepos=None, cell=None):
-        logger = getLogger()
-        if dopants is None:
-            dopants = self.dopants
-
-        if waters is None:
-            waters = self.waters
-
-        if cagepos is None:
-            cagepos = self.cagepos
-
-        if cell is None:
-            cell = self.cell
-
-        dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
-
-        for dopant, cages in dopants_neighbors.items():
-            logger.info(f"    Cages adjacent to dopant {dopant}: {cages}")
-
-        return dopants_neighbors
-
-    def groups_info(self, groups):
-        logger = getLogger()
-        for root, cages in groups.items():
-            for cage, group in cages.items():
-                logger.info(f"    Group {group} of dopant {root} in cage {cage}")
-
-    def guests_info(self, cagetypes, molecules):
-        logger = getLogger()
-        for cagetype, cageid in cagetypes.items():
-            logger.info(f"    Guests in cage type {cagetype}:")
-
-            for molec, cages in molecules.items():
-                cages = set(cages)
-                cages &= cageid
-
-                if len(cages):
-                    logger.info(f"      {molec} * {len(cages)} @ {cages}")
+        ]
 
     def add_group(self, cage, group, root):
         self.groups[root][cage] = group
@@ -1309,3 +1130,45 @@ class GenIce:
     def __del__(self):
         logger = getLogger()
         logger.info("Completed.")
+
+
+def dopants_info(dopants=None, waters=None, cagepos=None, cell=None):
+    logger = getLogger()
+    if dopants is None:
+        dopants = self.dopants
+
+    if waters is None:
+        waters = self.waters
+
+    if cagepos is None:
+        cagepos = self.cagepos
+
+    if cell is None:
+        cell = self.cell
+
+    dopants_neighbors = neighbor_cages_of_dopants(dopants, waters, cagepos, cell)
+
+    for dopant, cages in dopants_neighbors.items():
+        logger.info(f"    Cages adjacent to dopant {dopant}: {cages}")
+
+    return dopants_neighbors
+
+
+def groups_info(groups):
+    logger = getLogger()
+    for root, cages in groups.items():
+        for cage, group in cages.items():
+            logger.info(f"    Group {group} of dopant {root} in cage {cage}")
+
+
+def guests_info(cagetypes, molecules):
+    logger = getLogger()
+    for cagetype, cageid in cagetypes.items():
+        logger.info(f"    Guests in cage type {cagetype}:")
+
+        for molec, cages in molecules.items():
+            cages = set(cages)
+            cages &= cageid
+
+            if len(cages):
+                logger.info(f"      {molec} * {len(cages)} @ {cages}")

@@ -1,11 +1,11 @@
-import random
 from collections import defaultdict
 from logging import getLogger
 
 import numpy as np
 import pairlist as pl
+import networkx as nx
 
-from genice2 import digraph as dg
+# from genice2 import digraph_unused as dg
 from genice2.cell import Cell
 from genice2.decorators import banner, timeit
 from genice2.genice import GenIce, put_in_array, shortest_distance
@@ -35,6 +35,9 @@ class AnalIce(GenIce):
 
         for line in self.doc:
             logger.info("  " + line)
+
+        # unit cellに関する変数には1をつける。
+
         # ================================================================
         # rotmatrices (analice)
         #
@@ -46,34 +49,34 @@ class AnalIce(GenIce):
         # ================================================================
         # waters: positions of water molecules
         #
-        self.waters = put_in_array(lat.waters)
-        logger.debug("Waters: {0}".format(len(self.waters)))
-        self.waters = self.waters.reshape((self.waters.size // 3, 3))
+        self.waters1 = put_in_array(lat.waters)
+        logger.debug("Waters: {0}".format(len(self.waters1)))
+        self.waters1 = self.waters1.reshape((self.waters1.size // 3, 3))
 
         # ================================================================
         # cell: cell dimension
         #   see parse_cell for syntax.
         #
-        self.cell = Cell(lat.cell)
+        self.cell1 = Cell(lat.cell)
 
         # ================================================================
         # coord: "relative" or "absolute"
         #   Inside genice, molecular positions are always treated as "relative"
         #
         if lat.coord == "absolute":
-            self.waters = self.cell.abs2rel(self.waters)
+            self.waters1 = self.cell1.abs2rel(self.waters1)
 
-        self.waters = np.array([w - np.floor(w) for w in self.waters])
+        self.waters1 = np.array([w - np.floor(w) for w in self.waters1])
 
         # ================================================================
         # pairs: specify the pairs of molecules that are connected.
         #   Bond orientation will be shuffled later
         #   unless it is "fixed".
         #
-        self.pairs = None
+        self.pairs1 = None
 
         try:
-            self.pairs = parse_pairs(lat.pairs)
+            self.pairs1 = parse_pairs(lat.pairs)
         except AttributeError:
             logger.info("HB connectivity is not defined.")
 
@@ -82,8 +85,8 @@ class AnalIce(GenIce):
         #   This is used when "pairs" are not specified.
         #   It is applied to the original positions of molecules (before density setting).
         #
-        nmol = self.waters.shape[0]  # nmol in a unit cell
-        volume = self.cell.volume()  # volume of a unit cell in nm**3
+        nmol = self.waters1.shape[0]  # nmol in a unit cell
+        volume = self.cell1.volume()  # volume of a unit cell in nm**3
         self.bondlen = None
 
         try:
@@ -94,9 +97,9 @@ class AnalIce(GenIce):
             # assume that the particles distribute homogeneously.
             rc = (volume / nmol) ** (1 / 3) * 1.5
             p = pl.pairs_iter(
-                self.waters, maxdist=rc, cell=self.cell.mat, distance=False
+                self.waters1, maxdist=rc, cell=self.cell1.mat, distance=False
             )
-            self.bondlen = 1.1 * shortest_distance(self.waters, self.cell, pairs=p)
+            self.bondlen = 1.1 * shortest_distance(self.waters1, self.cell1, pairs=p)
             logger.info("Bond length (estim.): {0}".format(self.bondlen))
 
         # Set density
@@ -111,7 +114,7 @@ class AnalIce(GenIce):
                 logger.info(
                     "Density is not specified. Assume the density from lattice."
                 )
-                dmin = shortest_distance(self.waters, self.cell)
+                dmin = shortest_distance(self.waters1, self.cell1)
                 logger.info(
                     "Closest pair distance: {0} (should be around 0.276 nm)".format(
                         dmin
@@ -127,7 +130,7 @@ class AnalIce(GenIce):
 
         # scale the cell according to the (specified) density
         ratio = (density0 / self.density) ** (1.0 / 3.0)
-        self.cell.scale(ratio)
+        self.cell1.scale(ratio)
 
         if self.bondlen is not None:
             self.bondlen *= ratio
@@ -137,37 +140,42 @@ class AnalIce(GenIce):
         # cages: positions of the centers of cages
         #   In fractional coordinate.
         #
-        self.cagepos = None
-        self.cagetype = None
+        self.cagepos1 = None
+        self.cagetype1 = None
 
         # ================================================================
         # fixed: specify the bonds whose directions are fixed.
         #   you can specify them in pairs at a time.
         #   You can also leave it undefined.
         #
-        self.fixed = []
+        self.fixed1 = []
         try:
-            self.fixed = parse_pairs(lat.fixed)
+            self.fixed1 = parse_pairs(lat.fixed)
             logger.info("Orientations of some edges are fixed.")
         except AttributeError:
             pass
 
         self.dopeIonsToUnitCell = None
-        self.dopants = set()
+        self.dopants1 = set()
+        # analiceではセルの複製はしない?
+        self.dopants = self.dopants1
 
         # if asis, make pairs to be fixed.
-        if self.asis and len(self.fixed) == 0:
-            self.fixed = self.pairs
+        if self.asis and len(self.fixed1) == 0:
+            self.fixed1 = self.pairs1
+
+        # analiceではセルの複製はしない?
+        self.fixedEdges = nx.DiGraph(self.fixed1)
 
         # filled cages
-        self.filled_cages = set()
+        self.filled_cages1 = set()
 
         # groups info
-        self.groups = defaultdict(dict)
+        self.groups1 = defaultdict(dict)
 
         # unused but required
-        self.anions = []
-        self.cations = []
+        self.anions1 = []
+        self.cations1 = []
 
     def analyze_ice(self, water, formatter, noise=0.0):
         """
@@ -199,15 +207,28 @@ class AnalIce(GenIce):
                 if maxstage < 3 or abort:
                     return
 
-            if self.rotmatrices is None:
-                self.Stage3()
+            # if self.rotmatrices is None:
+            #     self.Stage3()
+
+            # if 3 in hooks:
+            #     abort = hooks[3](self)
+            #     if maxstage < 4 or abort:
+            #         return
+
+            # self.Stage4()
+
+            # if 4 in hooks:
+            #     abort = hooks[4](self)
+            #     if maxstage < 5 or abort:
+            #         return
+
+            # GenIce-core
+            self.Stage34E()
 
             if 3 in hooks:
                 abort = hooks[3](self)
                 if maxstage < 4 or abort:
                     return
-
-            self.Stage4()
 
             if 4 in hooks:
                 abort = hooks[4](self)
@@ -249,16 +270,21 @@ class AnalIce(GenIce):
         """
 
         logger = getLogger()
-        self.reppositions = self.waters
+        self.reppositions = self.waters1
 
         # This must be done before the replication of the cell.
         logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
 
         # self.graph = self.prepare_random_graph(self.fixed)
-        self.graph = self.prepare_random_graph(self.pairs)
+        if self.pairs1 is None:
+            self.pairs1 = self.prepare_pairs()
+
+        self.graph1 = nx.Graph(self.pairs1)
+        logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
+        self.graph = self.graph1
 
         # scale the cell
-        self.repcell = Cell(self.cell.mat)
+        self.repcell = Cell(self.cell1.mat)
 
         # self.repcell.scale2(self.rep)
         # add small perturbations to the molecular positions.
@@ -281,10 +307,5 @@ class AnalIce(GenIce):
         yapresult:  Animation of the depolarization process in YaPlot format.
         """
 
-        logger = getLogger()
         self.yapresult = ""
-        self.spacegraph = dg.SpaceIceGraph(
-            self.graph,
-            coord=self.reppositions,
-            immutables=self.graph.immutables,
-        )
+        self.digraph = self.graph

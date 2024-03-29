@@ -7,14 +7,17 @@ from genice2.decorators import timeit, banner
 from logging import getLogger
 import numpy as np
 from collections import defaultdict
-desc = {"ref": {},
-        "brief": "Povray.",
-        "usage": """
+
+desc = {
+    "ref": {},
+    "brief": "Povray.",
+    "usage": """
 Usage: genice2 icename -f povray
 
 options:
     No options available.
-"""}
+""",
+}
 
 
 def Block(name, content):
@@ -30,13 +33,25 @@ def Juxtapose(v):
 
 
 def Atom(atomtype, pos):
-    return Block("sphere", Juxtapose([Vector(pos), "R{0}".format(
-        atomtype)]) + Block("material", "MAT{0}".format(atomtype))) + "\n"
+    return (
+        Block(
+            "sphere",
+            Juxtapose([Vector(pos), "R{0}".format(atomtype)])
+            + Block("material", "MAT{0}".format(atomtype)),
+        )
+        + "\n"
+    )
 
 
 def Bond(bondtype, pos1, pos2):
-    return Block("cylinder", Juxtapose([Vector(pos1), Vector(pos2), "R{0}".format(
-        bondtype)]) + Block("material", "MAT{0}".format(bondtype))) + "\n"
+    return (
+        Block(
+            "cylinder",
+            Juxtapose([Vector(pos1), Vector(pos2), "R{0}".format(bondtype)])
+            + Block("material", "MAT{0}".format(bondtype)),
+        )
+        + "\n"
+    )
 
 
 def Include(filename):
@@ -45,8 +60,8 @@ def Include(filename):
 
 class Format(genice2.formats.Format):
     """
-The atomic positions of the molecules are output in Povray format.
-No options available.
+    The atomic positions of the molecules are output in Povray format.
+    No options available.
     """
 
     def __init__(self, **kwargs):
@@ -88,7 +103,7 @@ No options available.
             s += Atom("H", H1)
             s += Bond("OH", O, H0)
             s += Bond("OH", O, H1)
-        for i, j in ice.spacegraph.edges(data=False):
+        for i, j in ice.digraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -118,7 +133,10 @@ No options available.
         for atom in gatoms:
             resno, resname, atomname, position, order = atom
             s += Atom(atomname, position)
-        s = '//' + "\n//".join(ice.doc) + "\n" + s
-        s += "  translate " + \
-            Vector(-(cellmat[0, :] + cellmat[1, :] + cellmat[2, :]) / 2) + "\n}\n\n"
+        s = "//" + "\n//".join(ice.doc) + "\n" + s
+        s += (
+            "  translate "
+            + Vector(-(cellmat[0, :] + cellmat[1, :] + cellmat[2, :]) / 2)
+            + "\n}\n\n"
+        )
         self.output += s
