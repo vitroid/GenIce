@@ -3,7 +3,6 @@
 dynamic = ["version"]
 name = "genice2"
 
-
 [project.urls]
 "Homepage" = "https://github.com/vitroid/GenIce"
 "Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
@@ -21,6 +20,7 @@ authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
+readme = "README.md"
 license = "MIT"
 # package names should match these glob patterns (["*"] by default)
 include = ["genice2", "genice2/cli"]  
