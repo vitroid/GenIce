@@ -1,5 +1,5 @@
-PKGNAME=genice2
-REPNAME=GenIce
+PIPNAME=genice2
+GITNAME=GenIce
 
 all: README.md
 	echo Hello.
