@@ -18,9 +18,9 @@ test:
 test-deploy:
 	poetry publish --build -r testpypi
 test-install:
-	pip install --index-url https://test.pypi.org/simple/ $(PKGNAME)
+	pip install --index-url https://test.pypi.org/simple/ $(PIPNAME)
 uninstall:
-	-pip uninstall -y $(PKGNAME)
+	-pip uninstall -y $(PIPNAME)
 build: README.md $(wildcard genice2/*.py)
 	poetry build
 deploy:

@@ -7,7 +7,10 @@ name = "genice2"
 "Homepage" = "https://github.com/vitroid/GenIce"
 "Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
 "manual" = "https://vitroid.github.io/GenIce"
-"logo" = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
+
+[tool.genice.urls]
+repository = "https://github.com/vitroid/GenIce"
+logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
 
 # poetry self add poetry-version-plugin
 [tool.poetry-version-plugin]

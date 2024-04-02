@@ -1,4 +1,4 @@
-![Logo]({{project.urls.logo}})
+![Logo]({{tool.genice.urls.logo}})
 # GenIce2
 
 {{tool.poetry.description}}
