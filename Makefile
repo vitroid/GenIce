@@ -12,18 +12,26 @@ update-citations:
 	python Utilities/citation.py < old.citations.json > citations.json
 	-diff old.citations.json citations.json
 
+
+# change symlinks to copies
+prepare:
+	-rm -rf .genice2
+	mkdir .genice2
+	rsync -avL genice2/ .genice2/genice2/
+
+
 test:
 	make -C tests all
 
-test-deploy:
+test-deploy: clean prepare
 	poetry publish --build -r testpypi
 test-install:
 	pip install --index-url https://test.pypi.org/simple/ $(PIPNAME)
 uninstall:
 	-pip uninstall -y $(PIPNAME)
-build: README.md $(wildcard genice2/*.py)
-	poetry build
-deploy:
+build: README.md $(wildcard genice2/*.py) prepare
+	poetry build -f wheel
+deploy: clean prepare
 	poetry publish --build
 check:
 	poetry check
@@ -36,7 +44,7 @@ clone-myself-from-github:
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@
 clean:
-	-rm -rf build dist
+	-rm -rf build dist .genice2
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist

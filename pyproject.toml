@@ -1,8 +1,4 @@
 
-[project]
-dynamic = ["version"]
-name = "genice2"
-
 [project.urls]
 "Homepage" = "https://github.com/vitroid/GenIce"
 "Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
@@ -14,7 +10,7 @@ logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.
 
 # poetry self add poetry-version-plugin
 [tool.poetry-version-plugin]
-source = "init"
+source = "git-tag"
 
 [tool.poetry]
 name = "genice2"
@@ -25,8 +21,10 @@ authors = [
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 readme = "README.md"
 license = "MIT"
-# package names should match these glob patterns (["*"] by default)
-include = ["genice2", "genice2/cli"]  
+
+packages = [
+  { include = "genice2", from = ".genice2", to = "" }
+]
 
 # poetry install to make them work
 [tool.poetry.scripts]
@@ -59,18 +57,10 @@ requests = "^2.31.0"
 pytest = "^8.1.1"
 poetry-dynamic-versioning = "*"
 
-[tool.setuptools]
-packages=["genice2", "genice2.cli", "genice2.molecules", "genice2.formats", "genice2.lattices", "genice2.loaders", "genice2.groups"]
 
-# [tool.setuptools.packages.find]
-# where = ["."]  # list of folders that contain the packages (["."] by default)
-# include = ["genice2", "genice2/cli"]  # package names should match these glob patterns (["*"] by default)
-# exclude = []  # exclude packages matching these glob patterns (empty by default)
-# namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-path = "genice2/__init__.py"
+# [tool.hatch.version]
+# path = "genice2/__init__.py"
