@@ -23,16 +23,16 @@ prepare:
 test:
 	make -C tests all
 
-test-deploy: clean prepare
-	poetry publish --build -r testpypi
+test-deploy: clean prepare build
+	poetry publish -r testpypi
 test-install:
 	pip install --index-url https://test.pypi.org/simple/ $(PIPNAME)
 uninstall:
 	-pip uninstall -y $(PIPNAME)
 build: README.md $(wildcard genice2/*.py) prepare
 	poetry build -f wheel
-deploy: clean prepare
-	poetry publish --build
+deploy: clean prepare build
+	poetry publish
 check:
 	poetry check
 
