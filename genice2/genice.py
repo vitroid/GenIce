@@ -55,7 +55,7 @@ def assume_tetrahedral_vectors(v):
         return [v2, v3]
 
     if len(v) == 1:
-        vr = np.array([random.random() for i in range(3)])
+        vr = np.random.rand(3)
         vr /= np.linalg.norm(vr)
         z = v[0] / np.linalg.norm(v[0])
         x = np.cross(z, vr)

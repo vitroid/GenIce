@@ -41,6 +41,8 @@ README\.md\.1
 
 
 # folders ####################
+.genice2/
+
 docs/*.svg
 docs/*.png
 docs/*.cif
