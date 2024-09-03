@@ -48,13 +48,15 @@ for ice in ices:
         if testmode:
             rules.append(f"{product}.diff: {product} ../../genice2/lattices/{ice}.py\n")
             rules.append(
-                f"\t../../genice.x {target} {genice_options} | diff - $< \n"
+                f"\t$(GENICE) {target} {genice_options} | diff - $< \n"
             )  # > $@.diff\n")
             products.append(f"{product}.diff")
         else:
             rules.append(f"{product}: ../../genice2/lattices/{ice}.py\n")
-            rules.append(f"\t../../genice.x {target} {genice_options} > $@\n")
+            rules.append(f"\t$(GENICE) {target} {genice_options} > $@\n")
             products.append(product)
 
+print("GENICE=../../genice.x")
+# print("GENICE=genice2")
 print("all:", *products)
 print("".join(rules))
