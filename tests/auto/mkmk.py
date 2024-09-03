@@ -1,11 +1,21 @@
 # test of tests
 import sys
-sys.path.append("/Users/matto/Dropbox/gitbox/GenIce2")
+
+sys.path.append("/Users/matto/Unison/github/GenIce2")
 from genice2.plugin import scan
-import json
+from logging import getLogger, basicConfig, DEBUG, INFO
 
-testmode = (len(sys.argv) > 1 and sys.argv[1] == "test")
 
+def options_parser(options):
+    if type(options) == dict:
+        options = ":".join([f"{x}={y}" for x, y in options.items()])
+    return options
+
+
+basicConfig(level=DEBUG)
+logger = getLogger()
+
+testmode = len(sys.argv) > 1 and sys.argv[1] == "test"
 
 result = scan("lattice")
 # preinstalled (system) plugins only
@@ -21,21 +31,30 @@ for ice in ices:
         tests[ice] = ("",)
 
     for i, test in enumerate(tests[ice]):
+        genice_options = ""
+        module_options = ""
+
         if type(test) is dict:
-            options = test["options"]
-            test = test["args"]
-        else:
-            options = ""
+            logger.debug(f"{ice} {test}")
+            if "options" in test:
+                genice_options = test["options"]
+            if "args" in test:
+                module_options = options_parser(test["args"])
         product = f"{ice}_{i}.gro"
-        target = f"{ice}{test}"
+        if module_options != "":
+            module_options = "[" + module_options + "]"
+        target = f"{ice}{module_options}"
+        logger.debug(f"Target: {target}")
         if testmode:
             rules.append(f"{product}.diff: {product} ../../genice2/lattices/{ice}.py\n")
-            rules.append(f"\t../../genice.x {target} {options} | diff - $< \n") #> $@.diff\n")
+            rules.append(
+                f"\t../../genice.x {target} {genice_options} | diff - $< \n"
+            )  # > $@.diff\n")
             products.append(f"{product}.diff")
         else:
             rules.append(f"{product}: ../../genice2/lattices/{ice}.py\n")
-            rules.append(f"\t../../genice.x {target} {options} > $@\n")
+            rules.append(f"\t../../genice.x {target} {genice_options} > $@\n")
             products.append(product)
 
-print("all:",*products)
+print("all:", *products)
 print("".join(rules))
