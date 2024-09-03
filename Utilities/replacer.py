@@ -73,7 +73,7 @@ project |= {
     "waters": system_molecules(water=True),
     "guests": system_molecules(water=False),
     "citationlist": prefix(citationlist, "* "),
-    "version": genice2.__version__,
+    "version": project["tool"]["poetry"]["version"],
 }
 
 t = Template(sys.stdin.read())

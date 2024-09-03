@@ -2,13 +2,15 @@ import sys
 import argparse as ap
 from collections import defaultdict
 from genice2.plugin import safe_import, descriptions
-from genice2 import __version__
+
+# from genice2 import __version__
 from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
 from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
 import numpy as np
+from importlib.metadata import version
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 
@@ -28,14 +30,21 @@ def help_guest():
 
 
 def getoptions():
+    try:
+        genice2_version = version("genice2")
+    except:
+        genice2_version = "2.*.*.*"
     parser = ap.ArgumentParser(
-        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {__version__})",
+        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {genice2_version})",
         prog="genice2",
         formatter_class=SmartFormatter,
     )
     parser.add_argument(
-        "--version", "-V", action="version", version="%(prog)s {0}".format(__version__)
-    )
+        "--version",
+        "-V",
+        action="version",
+        version="%(prog)s {0}".format(genice2_version),
+    ),
     parser.add_argument(
         "--rep",
         "-r",

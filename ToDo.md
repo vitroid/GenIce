@@ -1,11 +1,9 @@
 ## Bug
 
 * poetryはシンボリックリンクをパッケージに含めない。そのため、いくつかのモジュールが使えなくなる。
-  * poetryを改造する?
-
+  * .genice2/を一時的に作成してsymlinkをコピーに変換し、そこからwheelを生成するようにした。
 
 ## ToDo
-
 
     
 * Stage5が異常に遅い。なんで?
@@ -17,6 +15,7 @@
 
 ## Future (GenIce3)
 * Prefectによるワークフローの解体。ステージとかもう要らない。
+* taipyかも。
 
 ## Done
 * genice-core

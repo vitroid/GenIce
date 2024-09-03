@@ -8,13 +8,13 @@
 repository = "https://github.com/vitroid/GenIce"
 logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
 
-# poetry self add poetry-version-plugin
-[tool.poetry-version-plugin]
-source = "git-tag"
-
 [tool.poetry]
 name = "genice2"
-version = "0.0.0" # worked!
+version = "2.2.5.8" # master version variable
+# 1st: major version
+# 2nd: minor version (refactorization)
+# 3rd: minor changes (new plugin, etc.)
+# 4th: bug fix.
 authors = [
   "Masakazu Matsumoto <vitroid@gmail.com>",
 ]
@@ -55,7 +55,6 @@ nbformat = "^5.9.2"
 genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
-poetry-dynamic-versioning = "*"
 
 
 # [build-system]
