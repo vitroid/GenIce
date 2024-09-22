@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.5.8
+version 2.2.6
 
 ## New in GenIce2.2
 
@@ -24,7 +24,7 @@ The new GenIce works very well with interactive execution.
 * graphstat>=0.2.1
 * yaplotlib>=0.1.2
 * openpyscad>=0.5.0
-* genice-core>=0.9
+* genice-core>=1.0
 
 
 **Note**: The package management system `poetry`, new in GenIce version 2.1, ignores all symlinks in package directories.
@@ -51,7 +51,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.5.8.1)
+    (version 2.2.6b1)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -82,6 +82,8 @@ Install with pip3.
                             12, XII, ice12  Metastable high-pressure ice XII.
                             13, XIII, ice13 Ice XIII, a hydrogen-ordered
                                             counterpart of ice V.
+                            14, ice14       Ice XIV, a partially hydrogen-ordered
+                                            counterpart of ice XII.
                             16, CS2, MTN, XVI, ice16, sII   Ultralow-density Ice
                                             XVI.
                             17, XVII, ice17 Ultralow-density Ice XVII.
@@ -541,6 +543,7 @@ Symbol | <div style="width:300px">Description</div>
 11i | Sixteen candidates for Ice XI. [Hirsch 2004]
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
+14, ice14 | Ice XIV, a partially hydrogen-ordered counterpart of ice XII. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
 17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
