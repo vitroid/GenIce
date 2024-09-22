@@ -10,8 +10,10 @@ Makefile.prepare: $(wildcard ../../genice2/*.py)
 
 # 比較元(autotest-ref)のbranchで実行してファイルを準備する。
 prepare: Makefile.prepare
-	make -f Makefile.prepare
+	make -f Makefile.prepare -j 8 -k 
 
+clean:
+	-rm *.gro
 
 
 # * gro以外のフォーマット

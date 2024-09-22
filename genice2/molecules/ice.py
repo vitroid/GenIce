@@ -29,3 +29,8 @@ class Molecule(genice2.molecules.Molecule):
         self.atoms_ = ["O", "H", "H", "."]
         self.labels_ = ["OW", "HW1", "HW2", "MW"]
         self.name_ = "ICE"
+
+
+if __name__ == "__main__":
+    water = Molecule()
+    print(np.array([16, 1, 1, 0]) @ water.sites_)

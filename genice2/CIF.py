@@ -4,7 +4,6 @@ Helpers for lattice plugin.
 Generate a lattice from CIF-like data.
 """
 
-
 from collections import defaultdict
 from logging import getLogger
 
@@ -93,21 +92,30 @@ def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
     # return symfuncs
 
 
-def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
+def waters_and_pairs(
+    cell,
+    atomd,
+    sops,
+    rep=(1, 1, 1),
+    O_labels=("O",),
+    H_labels="DH",
+    partial_order=False,
+):
+    # 部分秩序の場合は、位置が確定している水素だけをatomdに入れ、未確定の水素は省く。
     logger = getLogger()
 
     oxygens = []
     hydrogens = []
     for name, pos in fullatoms(atomd, sops):
-        if name[0] in ("O",):
+        if name[0] in O_labels:
             oxygens.append(pos)
-        elif name[0] in "DH":
+        elif name[0] in H_labels:
             hydrogens.append(pos)
 
-    assert len(oxygens) * 2 == len(hydrogens) or len(hydrogens) == 0, "{0}:{1}".format(
-        len(oxygens) * 2, len(hydrogens)
-    )
-
+    if not partial_order:
+        assert (
+            len(oxygens) * 2 == len(hydrogens) or len(hydrogens) == 0
+        ), f"H {len(oxygens) * 2}: O {len(hydrogens)}"
     cell *= np.array(rep)
 
     oo = [
@@ -120,6 +128,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
     oxygens = np.array(oo)
     oxygens /= np.array(rep)
 
+    # if no hydrogens are included in atomd,
     if len(hydrogens) == 0:
         return oxygens, None
 
@@ -141,6 +150,7 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
     ):
         oh[i].append(j)
         parent[j] = i
+    logger.debug(parent)
     pairs = []
     # find HBs
     for i, j in pl.pairs_iter(
@@ -152,6 +162,14 @@ def waters_and_pairs(cell, atomd, sops, rep=(1, 1, 1)):
             pairs.append([p, i])
 
     logger.debug(pairs)
+
+    if partial_order:
+        oo_pairs = [
+            (i, j)
+            for i, j in pl.pairs_iter(oxygens, maxdist=0.30, cell=cell, distance=False)
+        ]
+        # positions of the oxygen atoms, fixed edges, and unassigned edges.
+        return oxygens, pairs, oo_pairs
 
     waters = []
     for i in range(len(oh)):
