@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.6
+version 2.2.7
 
 ## New in GenIce2.2
 
@@ -51,7 +51,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.6b1)
+    (version 2.2.7)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -83,7 +83,10 @@ Install with pip3.
                             13, XIII, ice13 Ice XIII, a hydrogen-ordered
                                             counterpart of ice V.
                             14, ice14       Ice XIV, a partially hydrogen-ordered
-                                            counterpart of ice XII.
+                                            counterpart of ice XII. Note that it
+                                            does not reproduce the occupancies
+                                            (probability of occupation) of the
+                                            possible hydrogen sites.
                             16, CS2, MTN, XVI, ice16, sII   Ultralow-density Ice
                                             XVI.
                             17, XVII, ice17 Ultralow-density Ice XVII.
@@ -144,6 +147,8 @@ Install with pip3.
                             EMT             Hypothetical ice with a large cavity.
                             FAU             Hypothetical ice at negative pressure
                                             ice 'sIV'.
+                            M, iceM         A hypothetical hydrogen-ordered high-
+                                            density ice.
                             RHO             Hypothetical ice at negative pressure
                                             ice 'sIII'.
                             Struct02        A space fullerene. (I phase?)
@@ -543,7 +548,7 @@ Symbol | <div style="width:300px">Description</div>
 11i | Sixteen candidates for Ice XI. [Hirsch 2004]
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
-14, ice14 | Ice XIV, a partially hydrogen-ordered counterpart of ice XII. [Salzmann 2006]
+14, ice14 | Ice XIV, a partially hydrogen-ordered counterpart of ice XII. Note that it does not reproduce the occupancies (probability of occupation) of the possible hydrogen sites. [Salzmann 2006]
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
 17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
@@ -571,6 +576,7 @@ CS1, MEP, sI | Clathrate hydrates sI. [Frank 1959, Jeffrey 1984, Kosyakov 1999, 
 DOH, HS3, sH | Clathrate type H.
 EMT | Hypothetical ice with a large cavity. [Liu 2019, IZA Database]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017, IZA Database]
+M, iceM | A hypothetical hydrogen-ordered high-density ice. [Mochizuki 2024]
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Database]
 Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
 T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
@@ -815,6 +821,9 @@ MAYNARD-CASELY, H. E., BULL, C. L., GUTHRIE, M., LOA, I., MCMAHON, M. I., GREGOR
 
 * [Mochizuki 2014] 
 MOCHIZUKI, Kenji, HIMOTO, Kazuhiro and MATSUMOTO, Masakazu, 2014, Diversity of transition pathways in the course of crystallization into ice VII. Phys. Chem. Chem. Phys. [online]. 2014. Vol. 16, no. 31, p. 16419–16425. DOI 10.1039/c4cp01616e. Available from: http://dx.doi.org/10.1039/c4cp01616e
+
+* [Mochizuki 2024] 
+MOCHIZUKI, Kenji, 2024. Hydrogen Ordering in Ice Ih Facilitates the Transition from HDA to Ice XII. The Journal of Physical Chemistry C. Online. 16 October 2024. DOI 10.1021/acs.jpcc.4c05371. 
 
 * [Mousseau 2001] 
 MOUSSEAU, Normand and BARKEMA, G.T., 2001, Fast bond-transposition algorithms for generating covalent amorphous structures. Current Opinion in Solid State and Materials Science [online]. December 2001. Vol. 5, no. 6, p. 497–502. DOI 10.1016/s1359-0286(02)00005-0. Available from: http://dx.doi.org/10.1016/S1359-0286(02)00005-0
