@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.7
+version 2.2.7.1
 
 ## New in GenIce2.2
 

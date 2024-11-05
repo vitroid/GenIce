@@ -3,7 +3,8 @@ import sys
 # import logging
 import argparse as ap
 from genice2.cli import SmartFormatter, help_format, logger_setup
-from genice2 import __version__, load, analice
+from genice2 import load, analice
+from importlib.metadata import version
 
 # from genice2.plugin import descriptions
 from genice2.plugin import safe_import, descriptions
@@ -19,14 +20,21 @@ def help_file():
 
 
 def getoptions():
+    try:
+        genice2_version = version("genice2")
+    except:
+        genice2_version = "2.*.*.*"
     parser = ap.ArgumentParser(
-        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {__version__})",
+        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {genice2_version})",
         prog="analice2",
         usage="%(prog)s [options]",
         formatter_class=SmartFormatter,
     )
     parser.add_argument(
-        "--version", "-V", action="version", version="%(prog)s {0}".format(__version__)
+        "--version",
+        "-V",
+        action="version",
+        version="%(prog)s {0}".format(genice2_version),
     )
     parser.add_argument(
         "--format",
