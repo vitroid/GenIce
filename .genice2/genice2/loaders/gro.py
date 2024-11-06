@@ -45,7 +45,9 @@ def load_iter(file, oname="O", hname=None):
             natom -= 1
             logger.debug(f"NATOM {natom}")
             atomname = line[10:15].replace(" ", "")
-            pos = np.array([float(x) for x in line[20:].split()[:3]])  # drop velocity
+            pos = np.array(
+                [float(line[20 + i * 8 : 28 + i * 8]) for i in range(3)]
+            )  # drop velocity, fixed column width
             if re.fullmatch(oname, atomname):
                 oatoms.append(pos)
             elif hname is not None and re.fullmatch(hname, atomname):
