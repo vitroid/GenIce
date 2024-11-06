@@ -17,7 +17,7 @@ update-citations:
 prepare:
 	-rm -rf .genice2
 	mkdir .genice2
-	rsync -avL genice2/ .genice2/genice2/
+	rsync -avL --exclude="__pycache__" genice2/ .genice2/genice2/
 
 
 test:

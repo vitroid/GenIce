@@ -21,13 +21,16 @@ import numpy as np
 from math import atan2, pi, degrees
 from collections import defaultdict
 import sys
+
 desc = {
     "ref": {
         "MBO2007": "Matsumoto, M., Baba, A. & Ohmine, I. Topological building blocks of hydrogen bond network in water. J. Chem. Phys. 127, 134504 (2007).",
         "CountRings": "https://github.com/vitroid/CountRings",
-        "Yaplot": "https://github.com/vitroid/Yaplot"},
+        "Yaplot": "https://github.com/vitroid/Yaplot",
+    },
     "brief": "Show rings in Yaplot.",
-    "usage": __doc__}
+    "usage": __doc__,
+}
 
 
 # Basic primitives
@@ -89,8 +92,9 @@ def bond(p1, p2, r):
     R = np.linalg.norm(d[:2])
     theta = pi / 2 - atan2(d[2], R)
     phi = atan2(d[1], d[0])
-    return Cylinder(r=r, h=H).rotate(
-        [0, degrees(theta), degrees(phi)]).translate(list(p1))
+    return (
+        Cylinder(r=r, h=H).rotate([0, degrees(theta), degrees(phi)]).translate(list(p1))
+    )
 
 
 class ScadPrims(Prims):
@@ -104,19 +108,24 @@ class ScadPrims(Prims):
             if typ == "cyl":
                 p1, p2, r = args
                 layer = kwargs["layer"]
-                #pal   = "palette{0}".format(kwargs["color"])
-                layers[layer].append(bond(p1, p2, r).color(
-                    self.palette[kwargs["color"]]))
+                # pal   = "palette{0}".format(kwargs["color"])
+                layers[layer].append(
+                    bond(p1, p2, r).color(self.palette[kwargs["color"]])
+                )
             elif typ == "ply":
                 p = args[0]
                 r = 0.02
                 layer = kwargs["layer"]
-                #pal   = "palette{0}".format(kwargs["color"])
+                # pal   = "palette{0}".format(kwargs["color"])
                 for i in range(len(p)):
-                    layers[layer].append(Sphere(r).translate(
-                        list(p[i])).color(self.palette[kwargs["color"]]))
                     layers[layer].append(
-                        bond(p[i - 1], p[i], r).color(self.palette[kwargs["color"]]))
+                        Sphere(r)
+                        .translate(list(p[i]))
+                        .color(self.palette[kwargs["color"]])
+                    )
+                    layers[layer].append(
+                        bond(p[i - 1], p[i], r).color(self.palette[kwargs["color"]])
+                    )
             else:
                 logger.warn("Unknown primitive: {0}".format(typ))
         if file is None:
@@ -124,8 +133,12 @@ class ScadPrims(Prims):
             # for p, color in self.palette.items():
             #    output += "palette{0}={1};\n".format(p,list(color))
             for layer in layers:
-                output += "module layer{0}()".format(layer) + \
-                    "{" + layers[layer].dumps() + "}\n"
+                output += (
+                    "module layer{0}()".format(layer)
+                    + "{"
+                    + layers[layer].dumps()
+                    + "}\n"
+                )
             for layer in layers:
                 output += "layer{0}();\n".format(layer)
             return output
@@ -153,16 +166,6 @@ class Format(genice2.formats.Format):
             else:
                 logger.warn("Unknown keyword: {0}".format(k))
         logger.info("  Largest ring: {0}.".format(self.largestring))
-        if self.format == "yaplot":
-            self.p = YaPrims()
-        elif self.format == "openscad":
-            self.p = ScadPrims()
-        phi = (1 + 5**0.5) / 2  # golden ratio
-        self.p.SetPalette(0, [0, 0, 0])
-        for i in range(3, self.largestring + 1):
-            hue = (i / phi) % 1
-            r, g, b = colorsys.hsv_to_rgb(hue, 0.75, 1)
-            self.p.SetPalette(i, [r, g, b])
         super().__init__()
 
     def hooks(self):
@@ -173,6 +176,18 @@ class Format(genice2.formats.Format):
     def Hook2(self, ice):
         "Show rings."
         logger = getLogger()
+
+        if self.format == "yaplot":
+            self.p = YaPrims()
+        elif self.format == "openscad":
+            self.p = ScadPrims()
+        phi = (1 + 5**0.5) / 2  # golden ratio
+        self.p.SetPalette(0, [0, 0, 0])
+        for i in range(3, self.largestring + 1):
+            hue = (i / phi) % 1
+            r, g, b = colorsys.hsv_to_rgb(hue, 0.75, 1)
+            self.p.SetPalette(i, [r, g, b])
+
         # copied from svg_poly
         graph = nx.Graph(ice.graph)  # undirected
         cellmat = ice.repcell.mat
@@ -180,9 +195,9 @@ class Format(genice2.formats.Format):
             pi, pj = ice.reppositions[i], ice.reppositions[j]
             d = pj - pi
             d -= np.floor(d + 0.5)
-            self.p.Cylinder(pi @ cellmat, (pi + d) @ cellmat, 0.01,  # 0.2 AA
-                            color=0,
-                            layer=2)
+            self.p.Cylinder(
+                pi @ cellmat, (pi + d) @ cellmat, 0.01, color=0, layer=2  # 0.2 AA
+            )
         for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             deltas = np.zeros((len(ring), 3))
             for k, i in enumerate(ring):
