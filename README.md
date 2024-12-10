@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.7.3
+version 2.2.7.6
 
 ## New in GenIce2.2
 
@@ -17,14 +17,14 @@ The new GenIce works very well with interactive execution.
 ## Requirements
 
 * networkx>=2.0.dev20160901144005
-* python^3.9
+* python^3.10
 * numpy>=1.26.2
 * pairlist>=0.5.1.2
 * cycless>=0.4.2
 * graphstat>=0.2.1
 * yaplotlib>=0.1.2
 * openpyscad>=0.5.0
-* genice-core>=1.0
+* genice-core>=1.0.1
 
 
 **Note**: The package management system `poetry`, new in GenIce version 2.1, ignores all symlinks in package directories.
@@ -51,7 +51,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.7)
+    (version 2.2.7.5)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -156,6 +156,7 @@ Install with pip3.
                             XIc-a           A candidate for the proton-ordered
                                             counterpart of ice Ic. The structure
                                             'a' in Figure 1.
+                            YKD             Ice in a d-surface (testing).
                             bilayer         A Bilayer Honeycomb Ice Phase in
                                             Hydrophobic Nanopores.
                             c0te            Filled ice C0 by Teeratchanan
@@ -172,6 +173,8 @@ Install with pip3.
                             ice1hte         Filled ice Ih by Teeratchanan (Hydrogen
                                              disordered). (Positions of guests are
                                             supplied.)
+                            iceMd           A hydrogen-disordered counterpart of
+                                            ice M.
                             iceR            Hypothetical ice R.
                             iceT            Hypothetical ice T.
                             iceT2           Hypothetical ice T2.
@@ -581,6 +584,7 @@ RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Databas
 Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
 T | Hypothetical clathrate type T. [Sikiric 2010, Karttunen 2011]
 XIc-a | A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1. [Geiger 2014]
+YKD | Ice in a d-surface (testing). [Kawano 2024]
 bilayer | A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores. [Koga 1997]
 c0te | Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.) [Teeratchanan 2015]
 c1te | Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.) [Teeratchanan 2015]
@@ -588,6 +592,7 @@ c2te | Filled ice C2 (cubic ice) by Teeratchanan (Hydrogen disordered). (Positio
 eleven | Ice XI w/ stacking faults.
 i | Hypothetical ice "i". [Fennell 2005]
 ice1hte | Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.) [Teeratchanan 2015]
+iceMd | A hydrogen-disordered counterpart of ice M. [Mochizuki 2024]
 iceR | Hypothetical ice R. [Maynard-Casely 2010, Mochizuki 2014]
 iceT | Hypothetical ice T. [Hirata 2017]
 iceT2 | Hypothetical ice T2. [Yagasaki 2018]
