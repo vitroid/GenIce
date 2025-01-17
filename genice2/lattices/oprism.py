@@ -19,14 +19,9 @@ from logging import getLogger
 from math import sin, pi, cos
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {"prism": "Koga 2001"},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "Hydrogen-ordered ice nanotubes.",
     "test": [{"args": {}}, {"args": "5"}, {"args": "8,6"}],
 }

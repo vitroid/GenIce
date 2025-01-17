@@ -14,30 +14,27 @@ from genice2.cell import cellvectors
 from logging import getLogger
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "Ice XI w/ stacking faults.",
-    "test": ("[ccchchc]",)
+    "test": ("[ccchchc]",),
 }
 
 
-lat = [[[0, 0], [2, 0], [1, 3], [3, 3]],
-       [[0, 2], [2, 2], [1, 5], [3, 5]],
-       [[0, 4], [2, 4], [1, 1], [3, 1]]]
+lat = [
+    [[0, 0], [2, 0], [1, 3], [3, 3]],
+    [[0, 2], [2, 2], [1, 5], [3, 5]],
+    [[0, 4], [2, 4], [1, 1], [3, 1]],
+]
 
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self, **kwargs):
         logger = getLogger()
-        arg = 'hh'
+        arg = "hh"
         for k, v in kwargs.items():
-            if k == 'layers':
+            if k == "layers":
                 arg = v
             elif v:  # in case only the char string is given
                 arg = k
@@ -47,7 +44,7 @@ class Lattice(genice2.lattices.Lattice):
         height = 0
         dir = 1
         L = []
-        N = 0   # number of molecules
+        N = 0  # number of molecules
         edges = []  # hydrogen bonds to be fixed
         for ch in arg:
             grid = dict()
@@ -100,7 +97,7 @@ class Lattice(genice2.lattices.Lattice):
             if ch in "Hh":
                 # hexagonal = alternative
                 dir = -dir
-                #cubic = progressive
+                # cubic = progressive
         assert layer == 0 and dir == 1, "Incompatible number of layers."
         self.fixed = [(A % N, B % N) for A, B in edges]
         self.pairs = self.fixed.copy()

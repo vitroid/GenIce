@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-version 2.2.7.6
+Version 2.2.7.7
 
 ## New in GenIce2.2
 
@@ -78,6 +78,7 @@ Install with pip3.
                                             engel23, engel24, engel26, engel29,
                                             engel30, engel31, engel34, sVII
                                             Hypothetical zeolitic ice
+                            11alt           A layered ferroelectric Ice XI.
                             11i             Sixteen candidates for Ice XI.
                             12, XII, ice12  Metastable high-pressure ice XII.
                             13, XIII, ice13 Ice XIII, a hydrogen-ordered
@@ -91,7 +92,11 @@ Install with pip3.
                                             XVI.
                             17, XVII, ice17 Ultralow-density Ice XVII.
                             1c, Ic, ice1c   Cubic type of ice I.
-                            1h, Ih, ice1h   Most popular Ice I (hexagonal)
+                            1h, Ih, ice1h   Most popular Ice I (hexagonal). NOTE:
+                                            Due to a historical reason, the crystal
+                                             axes of hexagonal ice are exchanged.
+                                            If you want the basal plane to be Z
+                                            axis, please use 'one[hh]' instead.
                             2, II, ice2     Hydrogen-ordered ice II.
                             2D3             Trilayer honeycomb ice.
                             2d, ice2d, ice2rect             A hydrogen-disordered
@@ -548,6 +553,7 @@ Symbol | <div style="width:300px">Description</div>
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Jackson 1997, Fan 2010]
 115_2_114, 12_1_11, 144_2_7301, 151_2_4949650, 153_2_155471, 176_2_5256, 207_1_4435, 2_2_623457, ACO, CS4, DDR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel03, engel04, engel17, engel20, engel23, engel24, engel26, engel29, engel30, engel31, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984, Kosyakov 1999, Engel 2018, IZA Database]
+11alt | A layered ferroelectric Ice XI.
 11i | Sixteen candidates for Ice XI. [Hirsch 2004]
 12, XII, ice12 | Metastable high-pressure ice XII. [Lobban 1998, Koza 2000]
 13, XIII, ice13 | Ice XIII, a hydrogen-ordered counterpart of ice V. [Salzmann 2006]
@@ -555,7 +561,7 @@ Symbol | <div style="width:300px">Description</div>
 16, CS2, MTN, XVI, ice16, sII | Ultralow-density Ice XVI. [Jeffrey 1984, Kosyakov 1999, Sikiric 2010, Falenty 2014, IZA Database]
 17, XVII, ice17 | Ultralow-density Ice XVII. [Smirnov 2013, Rosso 2016, Strobel 2016]
 1c, Ic, ice1c | Cubic type of ice I. [Vos 1993]
-1h, Ih, ice1h | Most popular Ice I (hexagonal)
+1h, Ih, ice1h | Most popular Ice I (hexagonal). NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. If you want the basal plane to be Z axis, please use 'one[hh]' instead.
 2, II, ice2 | Hydrogen-ordered ice II. [Kamb 1964, Londono 1988, Kamb 2003]
 2D3 | Trilayer honeycomb ice.
 2d, ice2d, ice2rect | A hydrogen-disordered counterpart of ice II. [Nakamura 2015]

@@ -24,14 +24,9 @@ from cycless.cycles import cycles_iter
 from logging import getLogger
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {"bilayer": "Koga 1997"},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.",
     "test": ({"args": {"size": "6,10"}}, {"args": {"size": "15,18", "sw": "0.2"}}),
 }

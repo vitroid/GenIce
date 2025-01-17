@@ -9,14 +9,9 @@ from logging import getLogger
 import numpy as np
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {"C0": "Teeratchanan 2015"},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.)",
     "test": ({"options": "-r 2 2 2"},),
 }
