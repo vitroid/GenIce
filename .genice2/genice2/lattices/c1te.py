@@ -7,15 +7,11 @@ from logging import getLogger
 import numpy as np
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
-desc = {"ref": {"C1": "Teeratchanan 2015"},
-        "usage": usage(),
-        "brief": "Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.)"
-        }
+desc = {
+    "ref": {"C1": "Teeratchanan 2015"},
+    "usage": __doc__,
+    "brief": "Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.)",
+}
 
 
 def pick_atoms(atoms, names, repeat=(1, 1, 1)):
@@ -70,7 +66,9 @@ class Lattice(genice2.lattices.Lattice):
          -x+1/3,           -y+2/3,          -z+2/3
           y+1/3,         -x+y+2/3,          -z+2/3
         x-y+1/3,            x+2/3,          -z+2/3
-        """.replace(',', ' ')
+        """.replace(
+            ",", " "
+        )
 
         # Ref. C1
         a = 12.673 / 10.0  # nm
@@ -78,10 +76,12 @@ class Lattice(genice2.lattices.Lattice):
         C = 120
 
         from genice2.cell import cellvectors
+
         self.cell = cellvectors(a, a, c, C=C)
 
         # helper routines to make from CIF-like data
         from genice2 import CIF
+
         atomd = CIF.atomdic(atoms)
         atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
 
@@ -97,6 +97,7 @@ class Lattice(genice2.lattices.Lattice):
         # set pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        self.density = (
+            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        )
         self.coord = "relative"

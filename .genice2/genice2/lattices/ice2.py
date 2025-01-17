@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-Usage: genice2 two
+Usage: genice2 2
 """
 from logging import getLogger
 from genice2 import CIF
@@ -9,17 +9,11 @@ from genice2.cell import cellvectors
 import genice2.lattices
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
-desc = {"ref": {"2atom": "Kamb 2003",
-                "2cell": "Kamb 1964",
-                "C1": "Londono 1988"},
-        "usage": usage(),
-        "brief": "Hydrogen-ordered ice II."
-        }
+desc = {
+    "ref": {"2atom": "Kamb 2003", "2cell": "Kamb 1964", "C1": "Londono 1988"},
+    "usage": __doc__,
+    "brief": "Hydrogen-ordered ice II.",
+}
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -46,7 +40,9 @@ class Lattice(genice2.lattices.Lattice):
          -x,           -y,           -z
          -z,           -x,           -y
          -y,           -z,           -x
-        """.replace(',', ' ')
+        """.replace(
+            ",", " "
+        )
 
         # Ref. 2cell
         a = 7.78 / 10.0  # nm
@@ -62,7 +58,8 @@ class Lattice(genice2.lattices.Lattice):
         # set pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        self.density = (
+            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        )
 
         self.coord = "relative"

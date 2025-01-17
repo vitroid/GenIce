@@ -20,14 +20,9 @@ from collections import defaultdict
 from math import acos, pi, sin, cos
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {"xFAU": "Matsui 2017"},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "Aeroice xFAU.",
     "test": (
         {"args": "0"},

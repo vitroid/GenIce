@@ -2,10 +2,16 @@
 
 from genice2.cell import cellvectors
 import genice2.lattices
-desc = {"ref": {},
-        "usage": "No options available.",
-        "brief": "Most popular Ice I (hexagonal)"
-        }
+
+desc = {
+    "ref": {},
+    "usage": "No options available.",
+    "brief": (
+        "Most popular Ice I (hexagonal). "
+        + "NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. "
+        + "If you want the basal plane to be Z axis, please use 'one[hh]' instead."
+    ),
+}
 
 
 class Lattice(genice2.lattices.Lattice):
@@ -15,7 +21,8 @@ class Lattice(genice2.lattices.Lattice):
         self.bondlen = 3  # bond threshold
 
         self.cell = cellvectors(
-            a=7.84813412606925, b=7.37735062301457, c=9.06573834219084)
+            a=7.84813412606925, b=7.37735062301457, c=9.06573834219084
+        )
 
         self.waters = """
         1.328 1.802 3.38

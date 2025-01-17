@@ -7,15 +7,11 @@ from logging import getLogger
 import numpy as np
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
-desc = {"ref": {"C0": "Teeratchanan 2015"},
-        "usage": usage(),
-        "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.)"
-        }
+desc = {
+    "ref": {"C0": "Teeratchanan 2015"},
+    "usage": __doc__,
+    "brief": "Filled ice Ih by Teeratchanan (Hydrogen disordered). (Positions of guests are supplied.)",
+}
 
 
 def pick_atoms(atoms, names, repeat=(1, 1, 1)):
@@ -50,7 +46,9 @@ class Lattice(genice2.lattices.Lattice):
          -x+1/2,            y+1/2,            z
           x+1/2,           -y+1/2,          1/2+z
          -x+1/2,           -y+1/2,          1/2+z
-        """.replace(',', ' ')
+        """.replace(
+            ",", " "
+        )
 
         # Ref. Ih
         a = 4.568 / 10.0  # nm
@@ -58,10 +56,12 @@ class Lattice(genice2.lattices.Lattice):
         c = 6.894 / 10.0  # nm
 
         from genice2.cell import cellvectors
+
         self.cell = cellvectors(a, b, c)
 
         # helper routines to make from CIF-like data
         from genice2 import CIF
+
         atomd = CIF.atomdic(atoms)
         atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
 
@@ -72,8 +72,10 @@ class Lattice(genice2.lattices.Lattice):
             self.cagepos.append(pos)
 
         self.waters, self.pairs = CIF.waters_and_pairs(
-            self.cell, atomd, CIF.symmetry_operators(symops), rep=(2, 1, 1))
+            self.cell, atomd, CIF.symmetry_operators(symops), rep=(2, 1, 1)
+        )
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        self.density = (
+            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        )
         self.coord = "relative"

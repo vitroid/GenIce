@@ -4,7 +4,8 @@ Generate a hydrogen-disordered ice I with stacking disorder.
 
 Usage:
   genice2 one[hcchchcc]            Specify layer types with "c" or "h".
-
+  genice2 one[hh]                  Pure hexagonal ice one. (Stacking cycle of 2)
+  genice2 one[ccc]                 Pure cubic ice one. (Stacking cycle of 3)
 """
 
 
@@ -14,14 +15,9 @@ from genice2.cell import cellvectors
 from logging import getLogger
 
 
-def usage():
-    logger = getLogger()
-    logger.info(__doc__)
-
-
 desc = {
     "ref": {},
-    "usage": usage(),
+    "usage": __doc__,
     "brief": "Ice I w/ stacking disorder.",
     "test": (
         {
