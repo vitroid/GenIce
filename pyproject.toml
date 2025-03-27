@@ -13,7 +13,7 @@ logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.7.7" # master version variable
+version = "2.2.9" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
@@ -37,10 +37,10 @@ analice2 = "genice2.cli.analice:main"
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
 "python" = "^3.10"
-numpy = ">=1.26.2"
-pairlist = ">=0.5.1.2"
+numpy = "^2.0"
+pairlist = ">=0.6"
 cycless = ">=0.4.2"
-graphstat = ">=0.2.1"
+graphstat = ">=0.3.3"
 yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
 genice-core = ">=1.0.1"
@@ -50,7 +50,6 @@ toml = "^0.10.2"
 ipykernel = "^6.27.1"
 py3dmol = "^2.0.4"
 matplotlib = "^3.8.2"
-genice2-cage = "^2.2"
 genice2-svg = "^2.2"
 plotly = "^5.18.0"
 nbformat = "^5.9.2"
@@ -58,6 +57,7 @@ genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
+genice2-cage = ">=2.4.4"
 
 
 

@@ -72,7 +72,7 @@ project |= {
     "ices": system_ices(),
     "waters": system_molecules(water=True),
     "guests": system_molecules(water=False),
-    "citationlist": prefix(citationlist, "* "),
+    "citationlist": prefix(citationlist, "- "),
     "version": project["tool"]["poetry"]["version"],
 }
 
