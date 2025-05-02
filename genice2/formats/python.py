@@ -11,12 +11,12 @@ from genice2.decorators import banner, timeit
 
 desc = {
     "ref": {},
-    "brief": "Cell-reshaper.",
+    "brief": "A formatter plugin to produce a python lattice plugin.",
     "usage": """
 A formatter plugin for GenIce to produce a python lattice plugin.
 
 Usage:
-    genice2 ice5 --reshape 3,0,0,1,1,0,0,0,1 -f python > reshaped_ice5.py
+    genice2 ice5 -f python > reshaped_ice5.py
 
 Options:
     None.
