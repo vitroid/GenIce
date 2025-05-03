@@ -5,7 +5,7 @@ from genice2.plugin import safe_import, descriptions
 
 # from genice2 import __version__
 from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
-from genice2.genice import GenIce
+from genice2.genice import GenIce, GenIceConfig
 from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
@@ -258,17 +258,19 @@ def main():
     # Initialize the Lattice class with arguments which are required for
     # plugins.
     lat = GenIce(
-        safe_import("lattice", lattice_type).Lattice(**lattice_options),
-        signature=signature,
-        density=density,
-        reshape=reshape,
-        cations=cations,
-        anions=anions,
-        spot_guests=spot_guests,
-        spot_groups=groups,
-        asis=asis,
-        shift=sh,
-        rep=None,
+        lat=safe_import("lattice", lattice_type).Lattice(**lattice_options),
+        config=GenIceConfig(
+            signature=signature,
+            density=density,
+            reshape=reshape,
+            cations=cations,
+            anions=anions,
+            spot_guests=spot_guests,
+            spot_groups=groups,
+            asis=asis,
+            shift=sh,
+            rep=None,
+        ),
     )
 
     guests = defaultdict(dict)

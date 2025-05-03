@@ -5,17 +5,17 @@ GenIce class
 import itertools as it
 from collections import defaultdict
 from logging import getLogger
-from typing import Type, Union
+from typing import Type, Union, List, Dict, Set, Optional, Tuple
 
 import numpy as np
 import pairlist as pl
 import networkx as nx
 
-from genice2 import cage
+# from genice2 import cage
 
 # from genice2 import digraph_unused as dg
 from genice2.cell import Cell, rel_wrap, cellshape
-from genice2.decorators import banner, timeit
+from genice2.decorators import banner, timeit, debug_args
 from genice2.formats import Format
 from genice2.lattices import Lattice
 import genice_core
@@ -26,9 +26,11 @@ from genice2.plugin import Group, safe_import
 from genice2.valueparser import (
     parse_cages,
     parse_pairs,
-    plugin_option_parser,
+    # plugin_option_parser,
     put_in_array,
 )
+
+from dataclasses import dataclass, field
 
 
 def assume_tetrahedral_vectors(v):
@@ -79,18 +81,21 @@ def assume_tetrahedral_vectors(v):
 #     return True
 
 
-def orientations(coord, graph, cell, immutables: set):
+def orientations(coord, digraph, cell, fixed_nodes: set):
     """
     Does not work when two OHs are colinear
     """
 
     logger = getLogger()
     # just for a test of pure water
-    assert len(coord) == graph.number_of_nodes(), (len(coord), graph.number_of_nodes())
-    logger.info(f"{immutables} immutables")
+    assert len(coord) == digraph.number_of_nodes(), (
+        len(coord),
+        digraph.number_of_nodes(),
+    )
+    logger.info(f"{fixed_nodes} fixed nodes")
     # 通常の氷であればアルゴリズムを高速化できる。
 
-    nnode = len(list(graph))
+    nnode = len(list(digraph))
     neis = np.zeros([nnode, 2], dtype=int)
 
     # 仮想ノード用の配列。第0要素は実際には第nnode要素を表す。
@@ -98,8 +103,8 @@ def orientations(coord, graph, cell, immutables: set):
 
     # v0 = np.zeros([nnode, 3])
     # v1 = np.zeros([nnode, 3])
-    for node in graph:
-        if node in immutables:
+    for node in digraph:
+        if node in fixed_nodes:
             h1 = np.array([0.0, 1, 1]) / (2**0.5)
             h2 = np.array([0.0, -1, 1]) / (2**0.5)
             r1 = cell.abs2rel(h1)
@@ -108,10 +113,10 @@ def orientations(coord, graph, cell, immutables: set):
             neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
             extended_coord += [coord[node] + r1, coord[node] + r2]
             continue
-        succ = list(graph.successors(node))
+        succ = list(digraph.successors(node))
         if len(succ) < 2:
             vsucc = cell.rel2abs(rel_wrap(coord[succ] - coord[node]))
-            pred = list(graph.predecessors(node))
+            pred = list(digraph.predecessors(node))
             vpred = cell.rel2abs(rel_wrap(coord[pred] - coord[node]))
             vsucc /= np.linalg.norm(vsucc, axis=1)[:, np.newaxis]
             vpred /= np.linalg.norm(vpred, axis=1)[:, np.newaxis]
@@ -246,7 +251,6 @@ def replicate_labeldict(labels, nmol, replica_vectors):
     return newlabels
 
 
-@timeit
 def replicate_graph(
     graph1,
     cell1frac_coords,
@@ -367,301 +371,621 @@ def grandcell_wrap(
     return frac @ reshape / det
 
 
-class GenIce:
-    """
-    The core of GenIce.
+@dataclass
+class Stage1Output:
+    """Stage1の出力データ"""
 
-    lat:     An instance of a Lattice class.
-    density: Density of target ice in g/cm3.
-    rep:     Repetition of the cell. A tuple of three integers.
-    anions, cations:
-             The locations of monovalent anions and cations that replace
-             the water molecules.
-    spot_guests:
-             The locations of guest molecules that occupy the specified cages.
-    spot_group: (EXPERIMENTAL)
-             The locations of functional groups that occupy the cages.
-    as_is:   Avoids shuffling of the orientations of water molecules.
-    signature: A text that is inserted in the output.
-    reshape: reshape matrix.
-    """
+    reppositions: np.ndarray  # 複製された分子位置
+    repcell: Cell  # 複製されたセル
+    repcagetype: Optional[List[str]]  # 複製されたケージタイプ
+    repcagepos: Optional[np.ndarray]  # 複製されたケージ位置
+    cagetypes: Optional[Dict[str, Set[int]]]  # ケージタイプの集合
+
+
+@dataclass
+class Stage2Output:
+    """Stage2の出力データ"""
+
+    graph: nx.Graph  # ネットワークトポロジー
+    dopants: Dict[int, str]  # ドーパント情報
+    fixed_edges: nx.DiGraph  # 固定エッジ
+    fixed_nodes: Set[int]  # ドーパントの原子のインデックスの集合
+    groups: Dict[int, Dict[int, str]]  # グループ情報
+    filled_cages: Set[int]  # 埋められたケージ
+
+
+@dataclass
+class Stage34EOutput:
+    """Stage34Eの出力データ"""
+
+    digraph: nx.DiGraph  # 有向グラフ
+
+
+@dataclass
+class Stage5Output:
+    """Stage5の出力データ"""
+
+    rotmatrices: np.ndarray  # 回転行列
+
+
+@dataclass
+class Stage6Output:
+    """Stage6の出力データ"""
+
+    universe: List[np.ndarray]  # 原子位置
+
+
+@dataclass
+class Stage7Output:
+    """Stage7の出力データ"""
+
+    universe: List[np.ndarray]  # 原子位置（ゲスト分子を含む）
+
+
+class Stage1:
+    """単位胞の複製を行うステージ"""
+
+    def __init__(
+        self,
+        waters1: np.ndarray,
+        replica_vectors: np.ndarray,
+        reshape_matrix: np.ndarray,
+        cell1: Cell,
+        cagepos1: Optional[np.ndarray] = None,
+        cagetype1: Optional[List[str]] = None,
+    ):
+        self.waters1 = waters1
+        self.replica_vectors = replica_vectors
+        self.reshape_matrix = reshape_matrix
+        self.cell1 = cell1
+        self.cagepos1 = cagepos1
+        self.cagetype1 = cagetype1
 
     @timeit
     @banner
+    def execute(self) -> Stage1Output:
+        """Stage 1: Replicates the unit cell."""
+        reppositions = replicate_positions(
+            self.waters1, self.replica_vectors, self.reshape_matrix
+        )
+        repcell = Cell(self.reshape_matrix @ self.cell1.mat)
+
+        if self.cagepos1 is not None:
+            repcagepos = replicate_positions(
+                self.cagepos1, self.replica_vectors, self.reshape_matrix
+            )
+            repcagetype = [
+                self.cagetype1[i % len(self.cagetype1)] for i in range(len(repcagepos))
+            ]
+            cagetypes = defaultdict(set)
+            for i, typ in enumerate(repcagetype):
+                cagetypes[typ].add(i)
+        else:
+            repcagepos = None
+            repcagetype = None
+            cagetypes = None
+
+        return Stage1Output(
+            reppositions=reppositions,
+            repcell=repcell,
+            repcagetype=repcagetype,
+            repcagepos=repcagepos,
+            cagetypes=cagetypes,
+        )
+
+
+class Stage2:
+    """ランダムグラフの生成と複製を行うステージ"""
+
+    def __init__(
+        self,
+        graph1: nx.Graph,
+        waters1: np.ndarray,
+        replica_vectors: np.ndarray,
+        fixed1: List[Tuple[int, int]],
+        replica_vector_labels: Dict[Tuple[int, int, int], int],
+        reshape_matrix: np.ndarray,
+        anions: Dict[int, str],
+        cations: Dict[int, str],
+        groups1: Dict[int, Dict[int, str]],
+        cagepos1: np.ndarray,
+    ):
+        self.graph1 = graph1
+        self.waters1 = waters1
+        self.replica_vectors = replica_vectors
+        self.fixed1 = fixed1
+        self.replica_vector_labels = replica_vector_labels
+        self.reshape_matrix = reshape_matrix
+        self.anions = anions
+        self.cations = cations
+        self.dopants1 = anions | cations
+        self.groups1 = groups1
+        self.cagepos1 = cagepos1
+
+    @timeit
+    @banner
+    def execute(self) -> Stage2Output:
+        """Stage 2: Makes a random graph and replicates it."""
+        logger = getLogger()
+
+        # # Some edges are directed when ions are doped.
+        # if self.doping_hook_function is not None:
+        #     self.doping_hook_function(self)  # may be defined in the plugin
+
+        # Replicate the dopants in the unit cell
+        dopants = replicate_labeldict(
+            self.dopants1, len(self.waters1), self.replica_vectors
+        )
+
+        groups = replicate_groups(
+            self.groups1, self.waters1, self.cagepos1, self.replica_vectors
+        )
+
+        # self.groups_info(self.groups)
+        filled_cages = set()
+        for _, cages in groups.items():
+            filled_cages |= set(cages)
+
+        graph, fixed_edges = replicate_graph(
+            self.graph1,
+            self.waters1,
+            self.replica_vectors,
+            self.fixed1,
+            self.replica_vector_labels,
+            self.reshape_matrix,
+        )
+        # ドーパントの原子のインデックスの集合
+        fixed_nodes = set(dopants)
+
+        for site, _ in self.anions.items():
+            for nei in self.graph1[site]:
+                fixed_edges.add_edge(nei, site)
+        for site, _ in self.cations.items():
+            for nei in self.graph1[site]:
+                fixed_edges.add_edge(site, nei)
+
+        # dopants = replicate_labeldict(
+        #     self.dopants1, len(self.waters1), self.replica_vectors
+        # )
+        # groups = replicate_groups(
+        #     self.groups1, self.waters1, self.cagepos1, self.replica_vectors
+        # )
+        # filled_cages = set()
+        # for _, cages in groups.items():
+        #     filled_cages |= set(cages)
+        logger.info(f"graph: {self.graph1} {graph}")
+        # return Stage2Output(dopants, groups, filled_cages, graph, fixedEdges)
+        return Stage2Output(
+            graph=graph,
+            dopants=dopants,
+            fixed_edges=fixed_edges,
+            fixed_nodes=fixed_nodes,
+            groups=groups,
+            filled_cages=filled_cages,
+        )
+
+
+class Stage34E:
+    """有向氷グラフの生成を行うステージ"""
+
+    def __init__(
+        self, graph: nx.Graph, reppositions: np.ndarray, fixedEdges: nx.DiGraph
+    ):
+        self.graph = graph
+        self.reppositions = reppositions
+        self.fixedEdges = fixedEdges
+
+    @timeit
+    @banner
+    def execute(self, depol: str = "none") -> Stage34EOutput:
+        """Stage 3: Makes a directed graph."""
+        iter = 0 if depol == "none" else 1000
+        digraph = genice_core.ice_graph(
+            self.graph.to_undirected(),
+            vertexPositions=self.reppositions,
+            isPeriodicBoundary=True,
+            dipoleOptimizationCycles=iter,
+            fixedEdges=self.fixedEdges,
+        )
+        return Stage34EOutput(digraph=digraph)
+
+
+class Stage5:
+    """剛体分子の配向を準備するステージ"""
+
+    def __init__(
+        self,
+        reppositions: np.ndarray,
+        digraph: nx.DiGraph,
+        repcell: Cell,
+        repimmutables: Set[int],
+    ):
+        self.reppositions = reppositions
+        self.digraph = digraph
+        self.repcell = repcell
+        self.repimmutables = repimmutables
+
+    @timeit
+    @banner
+    def execute(self) -> Stage5Output:
+        """Stage 5: Prepare orientations for rigid molecules."""
+        rotmatrices = orientations(
+            self.reppositions, self.digraph, self.repcell, self.repimmutables
+        )
+        return Stage5Output(rotmatrices=rotmatrices)
+
+
+class Stage6:
+    """水分子と置換分子の原子配置を行うステージ"""
+
+    def __init__(
+        self,
+        reppositions: np.ndarray,
+        repcell: Cell,
+        rotmatrices: np.ndarray,
+        water: Molecule,
+        dopants: Dict[int, str],
+    ):
+        self.reppositions = reppositions
+        self.repcell = repcell
+        self.rotmatrices = rotmatrices
+        self.water = water
+        self.dopants = dopants
+
+    @timeit
+    @banner
+    def execute(self) -> Stage6Output:
+        """Stage 6: Arrange atoms of water and replacements"""
+        universe = []
+        universe.append(
+            arrange(
+                self.reppositions,
+                self.repcell,
+                self.rotmatrices,
+                self.water,
+                immutables=set(self.dopants),
+            )
+        )
+        return Stage6Output(universe=universe)
+
+
+class Stage7:
+    """ゲスト分子の配置を行うステージ"""
+
+    def __init__(
+        self,
+        universe: List[np.ndarray],
+        repcagepos: np.ndarray,
+        repcagetype: List[str],
+        cagetypes: Dict[str, Set[int]],
+        filled_cages: Set[int],
+        guests: Dict[str, Dict[str, float]],
+        spot_guests: Dict[int, str],
+        spot_groups: Dict[int, str],
+        groups: Dict[int, Dict[int, str]],
+        dopants: Dict[int, str],
+        reppositions: np.ndarray,
+        rotmatrices: np.ndarray,
+        repcell: Cell,
+    ):
+        self.universe = universe
+        self.repcagepos = repcagepos
+        self.repcagetype = repcagetype
+        self.cagetypes = cagetypes
+        self.filled_cages = filled_cages
+        self.guests = guests
+        self.spot_guests = spot_guests
+        self.spot_groups = spot_groups
+        self.groups = groups
+        self.dopants = dopants
+        self.reppositions = reppositions
+        self.rotmatrices = rotmatrices
+        self.repcell = repcell
+
+    @timeit
+    @banner
+    def execute(self) -> Stage7Output:
+        """Stage 7: Place guest molecules."""
+        # ゲスト分子の配置処理
+        # ... (既存のStage7の処理を実装)
+        return Stage7Output(self.universe)
+
+
+@dataclass
+class GenIceConfig:
+    """GenIceの設定を保持するデータクラス"""
+
+    signature: str = ""
+    density: float = 0
+    rep: Optional[Tuple[int, int, int]] = None
+    reshape: np.ndarray = field(default_factory=lambda: np.eye(3, dtype=int))
+    cations: Dict[int, str] = field(default_factory=dict)
+    anions: Dict[int, str] = field(default_factory=dict)
+    spot_guests: Dict[int, str] = field(default_factory=dict)
+    spot_groups: Dict[int, str] = field(default_factory=dict)
+    asis: bool = False
+    shift: Tuple[float, float, float] = (0.0, 0.0, 0.0)
+
+
+@dataclass
+class GenIceState:
+    """GenIceの状態を保持するデータクラス"""
+
+    waters1: np.ndarray
+    cell1: Cell
+    pairs1: Optional[List[Tuple[int, int]]] = None
+    bondlen: Optional[float] = None
+    cagepos1: Optional[np.ndarray] = None
+    cagetype1: Optional[List[str]] = None
+    fixed1: List[Tuple[int, int]] = field(default_factory=list)
+    dopants1: Set[int] = field(default_factory=set)
+    # groups1: Dict[int, Dict[int, str]] = field(
+    #     default_factory=lambda: defaultdict(dict)
+    # )
+    filled_cages: Set[int] = field(default_factory=set)
+    graph1: nx.Graph = field(default_factory=nx.Graph)
+
+
+class GenIce:
+    """氷の結晶構造を生成するクラス"""
+
     def __init__(
         self,
         lat: Type[Lattice],
-        signature: str = "",
-        density: float = 0,
-        rep=None,
-        reshape=np.eye(3, dtype=int),
-        cations: dict = {},
-        anions: dict = {},
-        spot_guests: dict = {},
-        spot_groups: dict = {},
-        asis: bool = False,
-        shift=(0.0, 0.0, 0.0),
-        # seed=1000,
+        config: Optional[GenIceConfig] = None,
     ):
-        """
-        Constructor of GenIce.
-
-        Arguments:
-            lat:        The ice lattice.
-            signature:  A string for a signature.
-            density:    Target density.
-            rep:        Cell repetitions.
-            cations:    Labels of water molecules that are replaced by the cations.
-            anions:
-            spot_guests:Labels of cages in which a guest is placed.
-            spot_groups:Labels of cages in which a group is placed.
-            asis:       Do not modify the orientations of the hydrogen bonds.
-            shift:      A fractional value to be added to the positions.
-            reshape: reshape matrix.
-        """
-
-        # このconstructorが大きすぎ、複雑すぎ。
-        # self変数も多すぎ。
         logger = getLogger()
-        self.asis = asis
-        self.cations = cations
-        self.anions = anions
-        self.spot_guests = spot_guests
-        self.spot_groups = spot_groups
+        self.config = config or GenIceConfig()
+        self.state = self._initialize_state(lat)
+        self._setup_replica_vectors()
+        self._setup_documentation(lat)
+        self._setup_waters(lat)
+        self._setup_bond_length(lat)
+        self._setup_pairs(lat)
+        self._setup_density(lat)
+        self._setup_cages(lat)
+        self._setup_fixed_bonds(lat)
+        # self._setup_dopants(lat)
+        self._setup_graph(lat)
+        self._setup_groups(lat)
 
-        # 変数名に1がついているのはunit cell
+    def _initialize_state(self, lat: Type[Lattice]) -> GenIceState:
+        """初期状態を設定"""
+        return GenIceState(
+            waters1=np.array([]),
+            cell1=Cell(lat.cell),
+        )
 
-        # ================================================================
-        # cell: cell dimension
-        #   see parse_cell for syntax.
-        #
-        self.cell1 = Cell(lat.cell)
-
-        # Reshaping matrix (Must be integers)
-        # for now they are hardcoded.  It will be given as options for the plugin in the future.
-        # ijk = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]])
-        # ijk = np.array([[2, 0, 1], [0, 1, 0], [-1, 0, 2]])
-        # ijk = np.array([[1, 0, 0], [0, 1, 0], [1, 0, 2]])
-        # ijk = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
-
-        # CLIからはrepは与えられない。API経由で設定される可能性はある。
-        if rep is not None:
+    def _setup_replica_vectors(self):
+        """レプリカベクトルの設定"""
+        logger = getLogger()
+        if self.config.rep is not None:
             logger.warning("rep for GenIce() is deprecated. Use reshape instead.")
-            # 直方体レプリカの順序指定。
             self.replica_vectors = np.array(
                 [
                     (x, y, z)
-                    for x in range(rep[0])
-                    for y in range(rep[1])
-                    for z in range(rep[2])
+                    for x in range(self.config.rep[0])
+                    for y in range(self.config.rep[1])
+                    for z in range(self.config.rep[2])
                 ]
             )
-            # セルの複製後の大セルの形
-            self.reshape_matrix = np.diag(rep)
+            self.reshape_matrix = np.diag(self.config.rep)
         else:
-            logger.info("  Reshaping the unit cell.")
+            self._setup_reshape_matrix()
 
-            self.reshape_matrix = reshape
+    def _setup_reshape_matrix(self):
+        """reshape行列の設定"""
+        logger = getLogger()
+        logger.info("  Reshaping the unit cell.")
+        self.reshape_matrix = self.config.reshape
 
-            i, j, k = np.array(reshape)
-            logger.info(f"    i:{i}")
-            logger.info(f"    j:{j}")
-            logger.info(f"    k:{k}")
+        i, j, k = np.array(self.reshape_matrix)
+        logger.info(f"    i:{i}")
+        logger.info(f"    j:{j}")
+        logger.info(f"    k:{k}")
 
-            a, b, c, A, B, C = cellshape(reshape @ self.cell1.mat)
-            logger.info("  Reshaped cell:")
-            logger.info(f"    a,b,c = {a}, {b}, {c}")
-            logger.info(f"    A,B,C = {A}, {B}, {C}")
-            abc = reshape @ self.cell1.mat
+        a, b, c, A, B, C = cellshape(self.reshape_matrix @ self.state.cell1.mat)
+        logger.info("  Reshaped cell:")
+        logger.info(f"    a,b,c = {a}, {b}, {c}")
+        logger.info(f"    A,B,C = {A}, {B}, {C}")
 
-            # 単位胞を並べた格子を、大セルで切りとった時に、どの範囲の単位胞がかするか
-            corners = np.array(
-                [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
-            )
-
-            mins = np.min(corners, axis=0)
-            maxs = np.max(corners, axis=0)
-
-            # 整数行列の逆行列に行列式をかけたものは整数行列になる。
-            det = np.linalg.det(reshape)
-            if det < 0:
-                det = -det
-            det = np.floor(det + 0.5).astype(int)
-            invdet = np.floor(np.linalg.inv(reshape) * det + 0.5).astype(int)
-
-            vecs = set()
-            # かする単位胞のうち
-            for a in range(mins[0], maxs[0] + 1):
-                logger.debug(a)
-                for b in range(mins[1], maxs[1] + 1):
-                    for c in range(mins[2], maxs[2] + 1):
-                        # 単位胞の位置を、
-                        abc = np.array([a, b, c])
-                        # 大セルにおさめ
-                        rep = grandcell_wrap(abc, reshape, invdet, det).astype(int)
-                        # 記録する
-                        if tuple(rep) not in vecs:
-                            vecs.add(tuple(rep))
-
-            self.replica_vectors = np.array(list(vecs))
-
-            # 大セルの大きさは、単位胞の整数倍でなければいけない。
-            vol = abs(np.linalg.det(reshape))
-            assert np.allclose(vol, len(vecs)), (vol, vecs)
-
-            # 大セルの形
-            self.reshape_matrix = reshape
+        self.replica_vectors = self._calculate_replica_vectors(i, j, k)
 
         # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
         self.replica_vector_labels = {
             tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
         }
 
-        # Show the document of the module
+    def _calculate_replica_vectors(
+        self, i: np.ndarray, j: np.ndarray, k: np.ndarray
+    ) -> np.ndarray:
+        """レプリカベクトルの計算"""
+        logger = getLogger()
+        corners = np.array(
+            [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+        )
+
+        mins = np.min(corners, axis=0)
+        maxs = np.max(corners, axis=0)
+        logger.info(f"mins: {mins}, maxs: {maxs}")
+
+        det = abs(np.linalg.det(self.reshape_matrix))
+        det = np.floor(det + 0.5).astype(int)
+        invdet = np.floor(np.linalg.inv(self.reshape_matrix) * det + 0.5).astype(int)
+
+        vecs = set()
+        for a in range(mins[0], maxs[0] + 1):
+            for b in range(mins[1], maxs[1] + 1):
+                for c in range(mins[2], maxs[2] + 1):
+                    abc = np.array([a, b, c])
+                    rep = grandcell_wrap(abc, self.reshape_matrix, invdet, det).astype(
+                        int
+                    )
+                    if tuple(rep) not in vecs:
+                        vecs.add(tuple(rep))
+
+        vecs = np.array(list(vecs))
+        vol = abs(np.linalg.det(self.reshape_matrix))
+        assert np.allclose(vol, len(vecs)), (vol, vecs)
+
+        return vecs
+
+    def _setup_documentation(self, lat: Type[Lattice]):
+        """ドキュメントの設定"""
+        logger = getLogger()
         try:
             self.doc = lat.__doc__.splitlines()
         except BaseException:
             self.doc = []
 
-        if len(signature) > 0:
+        if len(self.config.signature) > 0:
             self.doc.append("")
-            self.doc.append(signature)
+            self.doc.append(self.config.signature)
 
         for line in self.doc:
             logger.info("  " + line)
 
-        # ================================================================
-        # waters: positions of water molecules
-        #
-        self.waters1 = put_in_array(lat.waters)
-        logger.debug(f"Waters: {len(self.waters1)}")
-        self.waters1 = self.waters1.reshape((-1, 3))
+    def _setup_waters(self, lat: Type[Lattice]):
+        """水分子の設定"""
+        logger = getLogger()
+        self.state.waters1 = put_in_array(lat.waters)
+        logger.debug(f"Waters: {len(self.state.waters1)}")
+        self.state.waters1 = self.state.waters1.reshape((-1, 3))
 
-        # ================================================================
-        # coord: "relative" or "absolute"
-        #   Inside genice, molecular positions are always treated as "relative", i.e. in fractional coordinates
-        #
         if lat.coord == "absolute":
-            self.waters1 = self.cell1.abs2rel(self.waters1)
+            self.state.waters1 = self.state.cell1.abs2rel(self.state.waters1)
 
-        # shift of the origin
-        self.waters1 = np.array(self.waters1) + np.array(shift)
-        # fractional coordinate between [0, 1)
-        self.waters1 -= np.floor(self.waters1)
+        self.state.waters1 = np.array(self.state.waters1) + np.array(self.config.shift)
+        self.state.waters1 -= np.floor(self.state.waters1)
 
-        # ================================================================
-        # pairs: specify the pairs of molecules that are connected.
-        #   Bond orientation will be shuffled later
-        #   unless it is "fixed".
-        #
-        self.pairs1 = None
+    def _setup_pairs(self, lat: Type[Lattice]):
+        """分子間結合の設定"""
+        logger = getLogger()
+
+        if "pairs" in lat.__dict__ and lat.pairs is not None:
+            self.state.pairs1 = parse_pairs(lat.pairs)
+        else:
+            logger.info("  Pairs are not given explicitly.")
+            logger.info("  Estimating the bonds according to the pair distances.")
+
+            logger.debug(f"Bondlen: {self.state.bondlen}")
+            # make bonded pairs according to the pair distance.
+            # make before replicating them.
+            self.state.pairs1 = [
+                (i, j)
+                for i, j in pl.pairs_iter(
+                    self.state.waters1,
+                    self.state.bondlen,
+                    self.state.cell1.mat,
+                    distance=False,
+                )
+            ]
+
+    def _setup_bond_length(self, lat: Type[Lattice]):
+        """結合長の設定"""
+        logger = getLogger()
+        nmol = self.state.waters1.shape[0]
+        volume = self.state.cell1.volume()
 
         try:
-            self.pairs1 = parse_pairs(lat.pairs)
-        except AttributeError:
-            logger.info("HB connectivity is not defined.")
-
-        # ================================================================
-        # bondlen: specify the bond length threshold.
-        #   This is used when "pairs" are not specified.
-        #   It is applied to the original positions of molecules (before density setting).
-        #
-        nmol = self.waters1.shape[0]  # nmol in a unit cell
-        volume = self.cell1.volume()  # volume of a unit cell in nm**3
-        self.bondlen = None
-
-        try:
-            self.bondlen = lat.bondlen
-            logger.info(f"Bond length (specified): {self.bondlen}")
+            self.state.bondlen = lat.bondlen
+            logger.info(f"Bond length (specified): {self.state.bondlen}")
         except AttributeError:
             logger.debug("  Estimating the bond threshold length...")
-            # very rough estimate of the pair distances assuming that the particles distribute homogeneously.
             rc = (volume / nmol) ** (1 / 3) * 1.5
             p = pl.pairs_iter(
-                self.waters1, maxdist=rc, cell=self.cell1.mat, distance=False
+                self.state.waters1,
+                maxdist=rc,
+                cell=self.state.cell1.mat,
+                distance=False,
             )
-            self.bondlen = 1.1 * shortest_distance(self.waters1, self.cell1, pairs=p)
-            logger.info(f"Bond length (estim.): {self.bondlen}")
+            self.state.bondlen = 1.1 * shortest_distance(
+                self.state.waters1, self.state.cell1, pairs=p
+            )
+            logger.info(f"Bond length (estim.): {self.state.bondlen}")
 
-        # Set density
+    def _setup_density(self, lat: Type[Lattice]):
+        """密度の設定"""
+        logger = getLogger()
+        nmol = self.state.waters1.shape[0]
+        volume = self.state.cell1.volume()
         mass = 18  # water
         NB = 6.022e23
         density0 = mass * nmol / (NB * volume * 1e-21)
 
-        if density <= 0:
+        if self.config.density <= 0:
             try:
                 self.density = lat.density
             except AttributeError:
                 logger.info(
                     "Density is not specified. Assume the density from lattice."
                 )
-                dmin = shortest_distance(self.waters1, self.cell1)
+                dmin = shortest_distance(self.state.waters1, self.state.cell1)
                 logger.info(
                     f"Closest pair distance: {dmin} (should be around 0.276 nm)"
                 )
                 self.density = density0 / (0.276 / dmin) ** 3
-                # self.density = density0
         else:
-            self.density = density
+            self.density = self.config.density
 
         logger.info(f"Target Density: {self.density}")
         logger.info(f"Original Density: {density0}")
 
-        # scale the cell according to the (specified) density
         ratio = (density0 / self.density) ** (1.0 / 3.0)
-        self.cell1.scale(ratio)
+        self.state.cell1.scale(ratio)
 
-        if self.bondlen is not None:
-            self.bondlen *= ratio
-        logger.info(f"Bond length (scaled, nm): {self.bondlen}")
+        if self.state.bondlen is not None:
+            self.state.bondlen *= ratio
+        logger.info(f"Bond length (scaled, nm): {self.state.bondlen}")
 
-        # ================================================================
-        # cages: positions of the centers of cages
-        #   In fractional coordinate.
-        #
-        self.cagepos1 = None
-        self.cagetype1 = None
-
+    def _setup_cages(self, lat: Type[Lattice]):
+        """ケージの設定"""
+        logger = getLogger()
         if "cages" in lat.__dict__:
-            self.cagepos1, self.cagetype1 = parse_cages(lat.cages)
+            self.state.cagepos1, self.state.cagetype1 = parse_cages(lat.cages)
             logger.warn("Use of 'cages' in a lattice-plugin is deprecated.")
         elif "cagepos" in lat.__dict__:
-            # pre-parsed data
-            self.cagepos1, self.cagetype1 = np.array(lat.cagepos), lat.cagetype
-        if self.cagepos1 is not None:
-            self.cagepos1 = np.array(self.cagepos1) + np.array(shift)
-            self.cagepos1 -= np.floor(self.cagepos1)
+            self.state.cagepos1, self.state.cagetype1 = (
+                np.array(lat.cagepos),
+                lat.cagetype,
+            )
 
-        # ================================================================
-        # fixed: specify the bonds whose directions are fixed.
-        #   you can specify them in pairs at a time.
-        #   You can also leave it undefined.
-        #
-        self.fixed1 = []
-        try:
-            self.fixed1 = parse_pairs(lat.fixed)
+        if self.state.cagepos1 is not None:
+            self.state.cagepos1 = np.array(self.state.cagepos1) + np.array(
+                self.config.shift
+            )
+            self.state.cagepos1 -= np.floor(self.state.cagepos1)
+
+    def _setup_fixed_bonds(self, lat: Type[Lattice]):
+        """固定結合の設定"""
+        logger = getLogger()
+        if "fixed" in lat.__dict__ and lat.fixed is not None:
+            self.state.fixed1 = parse_pairs(lat.fixed)
             logger.info("Orientations of some edges are fixed.")
-        except AttributeError:
-            pass
 
-        if "dopeIonsToUnitCell" in lat.__dict__:
-            self.dopeIonsToUnitCell = lat.dopeIonsToUnitCell
-        else:
-            self.dopeIonsToUnitCell = None
-        self.dopants1 = set()
+        if self.config.asis and len(self.state.fixed1) == 0:
+            self.state.fixed1 = self.state.pairs1
 
-        # self.immutables1 = set(self.dopants1)
-        # logger.info(f"{self.dopants1} dopants1")
+    # def __setup_dopants(self, lat: Type[Lattice]):
+    #     """Hook関数の設定"""
+    #     if "dopeIonsToUnitCell" in lat.__dict__:
+    #         self.doping_hook_function = lat.dopeIonsToUnitCell
+    #     else:
+    #         self.doping_hook_function = None
 
-        # if asis, make pairs to be fixed.
-        if self.asis and len(self.fixed1) == 0:
-            self.fixed1 = self.pairs1
+    def _setup_graph(self, lat: Type[Lattice]):
+        """グラフの設定"""
+        logger = getLogger()
+        logger.info(f"Generating the graph...")
 
-        # filled cages
-        self.filled_cages = set()
+        self.state.graph1 = nx.Graph(self.state.pairs1)
+        logger.info(f"graph: {self.state.graph1}")
 
-        # groups info
-        self.groups1 = defaultdict(dict)
+    def _setup_groups(self, lat: Type[Lattice]):
+        """グループの設定"""
+        logger = getLogger()
+        logger.info("Generating the groups...")
+        self.state.groups1 = defaultdict(dict)
 
     def generate_ice(
         self,
@@ -672,464 +996,129 @@ class GenIce:
         noise=0.0,
         assess_cages=False,
     ):
-        """
-        Generate an ice structure and dump it with the aid of a formatter plugin.
-
-            formatter: genice2.format.Format() class
-            water:     genice2.molecules.Molecule() class
-            assess_cages:   Cages will be assessed on the fly instead of
-                        pre-specified in the lattice plugin.
-        """
-
+        """氷の結晶構造を生成する"""
         logger = getLogger()
 
-        # in old syntax, the arguments water and formatter were mandatory, but
-        # in new syntax, water is optional and their order is exchanged.
-        # therefore i prepare a backward compatibility.
-        from genice2.molecules import Molecule
-
-        if isinstance(formatter, Molecule):
-            formatter, water = water, formatter
-            logger.warn(
-                "generate_ice(water, formatter) is deprecated. "
-                "New syntax is: generate_ice(formatter, water=water)."
-            )
-
-        def Stages():
-            hooks = formatter.hooks()
-            maxstage = max(0, *hooks.keys())
-
-            if 0 in hooks:
-                abort = hooks[0](self)
-                if maxstage < 1 or abort:
-                    return
-
-            self.Stage1(noise, assess_cages=assess_cages)
-
-            if 1 in hooks:
-                abort = hooks[1](self)
-                if maxstage < 2 or abort:
-                    return
-
-            self.Stage2()
-
-            # Count bonds
-            nfixed = self.fixedEdges.number_of_edges()
-            num_hb_disorder = self.graph.number_of_edges() - nfixed
-            logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
-            logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
-            logger.info(
-                "  Number of hydrogen bonds: {0} (regular num: {1})".format(
-                    nfixed + num_hb_disorder, len(self.reppositions) * 2
-                )
-            )
-
-            if 2 in hooks:
-                abort = hooks[2](self)
-                if maxstage < 3 or abort:
-                    return
-
-            # GenIce-core
-            self.Stage34E(depol=depol)
-
-            if 3 in hooks:
-                abort = hooks[3](self)
-                if maxstage < 4 or abort:
-                    return
-
-            if 4 in hooks:
-                abort = hooks[4](self)
-                if maxstage < 5 or abort:
-                    return
-
-            self.Stage5()
-
-            if 5 in hooks:
-                abort = hooks[5](self)
-                if maxstage < 6 or abort:
-                    return
-
-            self.Stage6(water)
-
-            if 6 in hooks:
-                abort = hooks[6](self)
-                if maxstage < 7 or abort:
-                    return
-
-            self.Stage7(guests)
-
-            if 7 in hooks:
-                hooks[7](self)
-
-        abort = Stages()
-        if not abort:
-            return formatter.dump()
-
-    @timeit
-    @banner
-    def Stage1(self, noise=0.0, assess_cages=False):
-        """
-        Replicate water molecules to make a repeated cell.
-
-        Provided variables:
-        repposition: replicated molecular positions (CoM, relative)
-        repcell:     replicated simulation cell shape matrix
-        repcagetype: replicated cage types array
-        repcagepos:  replicated cage positions (CoM, relative)
-        cagetypes:   set of cage types
-        """
-
-        logger = getLogger()
-        self.reppositions = replicate_positions(
-            self.waters1, self.replica_vectors, self.reshape_matrix
-        )
-
-        # This must be done before the replication of the cell.
-        logger.info("  Number of water molecules: {0}".format(len(self.reppositions)))
-
-        if self.pairs1 is None:
-            self.pairs1 = self.prepare_pairs()
-
-        self.graph1 = nx.Graph(self.pairs1)
-        logger.info(f"  Number of water nodes: {self.graph1.number_of_nodes()}")
-
-        # scale the cell
-        self.repcell = Cell(self.reshape_matrix @ self.cell1.mat)
-
-        if noise > 0.0:
-            logger.info(f"  Add noise: {noise}.")
-            perturb = np.random.normal(
-                loc=0.0,
-                scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
-                size=self.reppositions.shape,
-            )
-            self.reppositions += self.repcell.abs2rel(perturb)
-
-        if assess_cages:
-            logger.info("  Assessing the cages...")
-            self.cagepos1, self.cagetype1 = cage.assess_cages(self.graph1, self.waters1)
-            logger.info("  Done assessment.")
-
-        if self.cagepos1 is not None and self.cagepos1.shape[0] > 0:
-            logger.info("  Hints:")
-            self.repcagepos = replicate_positions(
-                self.cagepos1, self.replica_vectors, self.reshape_matrix
-            )
-            nrepcages = self.repcagepos.shape[0]
-            self.repcagetype = [
-                self.cagetype1[i % len(self.cagetype1)] for i in range(nrepcages)
-            ]
-            self.cagetypes = defaultdict(set)
-
-            for i, typ in enumerate(self.repcagetype):
-                self.cagetypes[typ].add(i)
-
-            # INFO for cage types
-            logger.info("    Cage types: {0}".format(list(self.cagetypes)))
-
-            for typ, cages in self.cagetypes.items():
-                logger.info(f"    Cage type {typ}: {cages}")
-            # Up here move to stage 1.
-        else:
-            self.repcagetype = None
-            self.repcagepos = None
-            self.cagetypes = None
-
-    @timeit
-    @banner
-    def Stage2(self):
-        """
-        Make a random graph and replicate.
-
-        Provided variables:
-        dopants:
-        groups:  replicated positions of the chemical groups (CoM, relative)
-        filled_cages:
-        graph:   replicated network topology (bond orientation may be random)
-        """
-
-        logger = getLogger()
-
-        # Some edges are directed when ions are doped.
-        if self.dopeIonsToUnitCell is not None:
-            self.dopeIonsToUnitCell(self)  # may be defined in the plugin
-
-        # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(
-            self.dopants1, len(self.waters1), self.replica_vectors
-        )
-
-        self.groups = replicate_groups(
-            self.groups1, self.waters1, self.cagepos1, self.replica_vectors
-        )
-
-        # self.groups_info(self.groups)
-        for _, cages in self.groups.items():
-            self.filled_cages |= set(cages)
-
-        # logger.info(("filled",self.filled_cages))
-        # Replicate the graph
-        self.graph, self.fixedEdges = replicate_graph(
-            self.graph1,
-            self.waters1,
+        hooks = formatter.hooks()
+        max_stage = max(0, *hooks.keys())
+        parameters = dict()
+        # Stage1: 水分子の複製
+        stage1 = Stage1(
+            self.state.waters1,
             self.replica_vectors,
-            self.fixed1,
+            self.reshape_matrix,
+            self.state.cell1,
+            self.state.cagepos1,
+            self.state.cagetype1,
+        )
+        stage1_output = stage1.execute()
+
+        if 1 in hooks:
+            parameters[1] = stage1_output
+            if hooks[1] is not None:
+                hooks[1](self.state, parameters)
+            if max_stage == 1:
+                return formatter.dump()
+
+        # Stage2: ランダムグラフの生成と複製
+        stage2 = Stage2(
+            self.state.graph1,
+            self.state.waters1,
+            self.replica_vectors,
+            self.state.fixed1,
             self.replica_vector_labels,
             self.reshape_matrix,
+            self.config.anions,
+            self.config.cations,
+            self.state.groups1,
+            self.state.cagepos1,
         )
-        # replicate "immutables" == dopants list in the graph
-        # self.repimmutables = replicate_labels(
-        #     self.immutables1, self.waters1.shape[0], self.rep
-        # )
+        stage2_output = stage2.execute()
 
-        self.repimmutables = set()
-        # Dope ions by options.
-        if len(self.anions) > 0:
-            logger.info(f"  Anionize: {self.anions}.")
+        if 2 in hooks:
+            parameters[2] = stage2_output
+            if hooks[2] is not None:
+                hooks[2](self.state, parameters)
+            if max_stage == 2:
+                return formatter.dump()
 
-            for site, name in self.anions.items():
-                # self.graph.anionize(site)
-                for nei in self.graph[site]:
-                    self.fixedEdges.add_edge(nei, site)
-                self.dopants[site] = name
-                self.repimmutables.add(site)
-
-        if len(self.cations) > 0:
-            logger.info(f"  Cationize: {self.cations}.")
-
-            for site, name in self.cations.items():
-                # self.graph.cationize(site)
-                for nei in self.graph[site]:
-                    self.fixedEdges.add_edge(site, nei)
-                self.dopants[site] = name
-                self.repimmutables.add(site)
-
-    @timeit
-    @banner
-    def Stage34E(self, depol: str = "none"):
-        """
-        Make a directed ice graph from an undirected ice graph.
-        """
-
-        logger = getLogger()
-
-        if depol == "none":
-            iter = 0
-        else:
-            iter = 1000
-        self.digraph = genice_core.ice_graph(
-            self.graph.to_undirected(),
-            vertexPositions=self.reppositions,
-            isPeriodicBoundary=True,
-            dipoleOptimizationCycles=iter,
-            fixedEdges=self.fixedEdges,
+        # Stage34E: 有向氷グラフの生成
+        stage34e = Stage34E(
+            stage2_output.graph, stage1_output.reppositions, stage2_output.fixed_edges
         )
+        stage34e_output = stage34e.execute(depol)
 
-        # self.digraph = nx.compose(d, self.fixedEdges)
+        if 3 in hooks:
+            parameters[3] = stage34e_output
+            if hooks[3] is not None:
+                hooks[3](self.state, parameters)
+            if max_stage == 3:
+                return formatter.dump()
 
-        logger.debug("  Depolarized in Stage34E.")
+        if 4 in hooks:
+            parameters[4] = stage34e_output
+            if hooks[4] is not None:
+                hooks[4](self.state, parameters)
+            if max_stage == 4:
+                return formatter.dump()
 
-    @timeit
-    @banner
-    def Stage5(self):
-        """
-        Prepare orientations for rigid molecules.
-
-        Provided variables:
-        reppositions: molecular positions.
-        rotmatrices:  rotation matrices for water molecules
-        """
-
-        logger = getLogger()
-
-        # determine the orientations of the water molecules based on edge
-        # directions.
-        self.rotmatrices = orientations(
-            self.reppositions, self.digraph, self.repcell, self.repimmutables
+        # Stage5: 剛体分子の配向を準備
+        stage5 = Stage5(
+            stage1_output.reppositions,
+            stage34e_output.digraph,
+            stage1_output.repcell,
+            stage2_output.fixed_nodes,
         )
+        stage5_output = stage5.execute()
 
-        # Activate it.
-        # logger.info("The network is not specified.  Water molecules will be orinented randomly.")
-        # rotmatrices = [rigid.rand_rotation_matrix() for pos in positions]
+        if 5 in hooks:
+            parameters[5] = stage5_output
+            if hooks[5] is not None:
+                hooks[5](self.state, parameters)
+            if max_stage == 5:
+                return formatter.dump()
 
-    @timeit
-    @banner
-    def Stage6(self, water):
-        """
-        Arrange atoms of water and replacements
-
-        Provided variables:
-        atoms: atomic positions of water molecules. (absolute)
-        """
-
-        logger = getLogger()
-
-        # assert audit_name(water_type), "Dubious water name: {0}".format(water_type)
-        # water = importlib.import_module("genice.molecules."+water_type)
-        # water = safe_import("molecule", water_type)
-
-        try:
-            mdoc = water.__doc__.splitlines()
-        except BaseException:
-            mdoc = []
-
-        for line in mdoc:
-            logger.info("  " + line)
-
-        self.universe = []
-        self.universe.append(
-            arrange(
-                self.reppositions,
-                self.repcell,
-                self.rotmatrices,
-                water,
-                immutables=set(self.dopants),
-            )
+        # Stage6: 水分子と置換分子の原子配置
+        stage6 = Stage6(
+            stage1_output.reppositions,
+            stage1_output.repcell,
+            stage5_output.rotmatrices,
+            water,
+            stage2_output.dopants,
         )
+        stage6_output = stage6.execute()
 
-    @timeit
-    @banner
-    def Stage7(self, guests):
-        """
-        Arrange guest atoms.
+        if 6 in hooks:
+            parameters[6] = stage6_output
+            if hooks[6] is not None:
+                hooks[6](self.state, parameters)
+            if max_stage == 6:
+                return formatter.dump()
 
-        Provided variables:
-        atoms: atomic positions of all molecules.
-        """
+        # Stage7: ゲスト分子の配置
+        stage7 = Stage7(
+            stage6_output.universe,
+            stage1_output.repcagepos,
+            stage1_output.repcagetype,
+            stage1_output.cagetypes,
+            stage2_output.filled_cages,
+            guests,
+            self.config.spot_guests,
+            self.config.spot_groups,
+            stage2_output.groups,
+            stage2_output.dopants,
+            stage1_output.reppositions,
+            stage5_output.rotmatrices,
+            stage1_output.repcell,
+        )
+        stage7_output = stage7.execute()
 
-        logger = getLogger()
+        if 7 in hooks:
+            parameters[7] = stage7_output
+            if hooks[7] is not None:
+                hooks[7](self.state, parameters)
 
-        if self.cagepos1 is not None:
-            # the cages around the dopants.
-            dopants_neighbors = dopants_info(
-                self.dopants, self.reppositions, self.repcagepos, self.repcell
-            )
-
-            # put the (one-off) groups
-            if len(self.spot_groups) > 0:
-                # process the -H option
-                for cage, group_to in self.spot_groups.items():
-                    group, root = group_to.split(":")
-                    self.add_group(cage, group, int(root))
-
-            molecules = defaultdict(list)
-
-            if len(self.spot_guests) > 0:
-                # process the -G option
-                for cage, molec in self.spot_guests.items():
-                    molecules[molec].append(cage)
-                    self.filled_cages.add(cage)
-
-            # process the -g option
-            for cagetype, contents in guests.items():
-                if cagetype not in self.cagetypes:
-                    logger.info(f"Nonexistent cage type: {cagetype}")
-                    continue
-                resident = dict()
-                rooms = list(self.cagetypes[cagetype] - self.filled_cages)
-
-                for room in rooms:
-                    resident[room] = None
-
-                vacant = len(rooms)
-
-                for molec, frac in contents.items():
-                    nmolec = int(frac * len(rooms) + 0.5)
-                    vacant -= nmolec
-                    assert vacant >= 0, "Too many guests."
-                    remain = nmolec
-                    movedin = []
-
-                    while remain > 0:
-                        r = np.random.randint(0, len(rooms))
-                        room = rooms[r]
-
-                        if resident[room] is None:
-                            resident[room] = molec
-                            molecules[molec].append(room)
-                            movedin.append(room)
-                            remain -= 1
-
-            # Now ge got the address book of the molecules.
-            if len(molecules):
-                logger.info("  Summary of guest placements:")
-                guests_info(self.cagetypes, molecules)
-
-            if len(self.spot_groups) > 0:
-                logger.info("  Summary of groups:")
-                groups_info(self.groups)
-
-            # semi-guests
-            for root, cages in self.groups.items():
-                assert root in self.dopants
-                name = self.dopants[root]
-                molname = f"G{root}"
-                pos = self.reppositions[root]
-                rot = self.rotmatrices[root]
-                self.universe.append(monatom(pos, self.repcell, name))
-                del self.dopants[root]  # processed.
-                logger.debug((root, cages, name, molname, pos, rot))
-
-                for cage, group in cages.items():
-                    # assert group in self.groups_placer
-                    assert cage in dopants_neighbors[root]
-                    cage_center = self.repcagepos[cage]
-                    self.universe.append(
-                        Group(group).arrange_atoms(
-                            cage_center, pos, self.repcell, molname, origin_atom=name
-                        )
-                    )
-
-            # molecular guests
-            for molec, cages in molecules.items():
-                guest_type, guest_options = plugin_option_parser(molec)
-                logger.debug(f"Guest type: {guest_type}")
-                gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
-
-                try:
-                    mdoc = gmol.__doc__.splitlines()
-                except BaseException:
-                    mdoc = []
-                for line in mdoc:
-                    logger.info("  " + line)
-                cage_center = [self.repcagepos[i] for i in cages]
-                cmat = [np.identity(3) for i in cages]
-                self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
-
-        # Assume the dopant is monatomic and replaces one water molecule
-        atomset = defaultdict(set)
-        for label, name in self.dopants.items():
-            atomset[name].add(label)
-
-        for name, labels in atomset.items():
-            pos = [self.reppositions[i] for i in sorted(labels)]
-            rot = [self.rotmatrices[i] for i in sorted(labels)]
-            oneatom = one.Molecule(label=name)
-            self.universe.append(arrange(pos, self.repcell, rot, oneatom))
-
-    def prepare_pairs(self):
-        logger = getLogger()
-
-        logger.info("  Pairs are not given explicitly.")
-        logger.info("  Estimating the bonds according to the pair distances.")
-
-        logger.debug(f"Bondlen: {self.bondlen}")
-        # make bonded pairs according to the pair distance.
-        # make before replicating them.
-        return [
-            (i, j)
-            for i, j in pl.pairs_iter(
-                self.waters1, self.bondlen, self.cell1.mat, distance=False
-            )
-        ]
-
-    def add_group(self, cage, group, root):
-        self.groups[root][cage] = group
-        self.filled_cages.add(cage)
-
-    def __del__(self):
-        logger = getLogger()
-        logger.info("Completed.")
+        return formatter.dump()
 
 
 def dopants_info(dopants=None, waters=None, cagepos=None, cell=None):

@@ -2,11 +2,13 @@
 
 from logging import getLogger
 
+import numpy as np
+
 import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
 from genice2.cell import cellvectors
-import numpy as np
+from genice2.genice import GenIceState, Stage7Output
 
 desc = {
     "ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
@@ -25,14 +27,19 @@ class Format(genice2.formats.Format):
         super().__init__(**kwargs)
 
     def hooks(self):
-        return {7: self.Hook7}
+        # stage2と7の変数を用い、stage7では独自の処理も行う。
+        return {1: None, 7: self.Hook7}
 
     @timeit
     @banner
-    def Hook7(self, ice):
-        "Output in Gromacs format."
+    def Hook7(self, state: GenIceState, parameters: dict):
+        """Output in Gromacs format.
+
+        parametersには、hooksで指定したstageの結果が含まれる。
+        """
         logger = getLogger()
-        cellmat = ice.repcell.mat
+        p1, p7 = parameters[1], parameters[7]
+        cellmat = p1.repcell.mat
 
         if not (cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0):
             logger.info(
@@ -53,7 +60,7 @@ class Format(genice2.formats.Format):
             rotmat = np.eye(3)
 
         atoms = []
-        for mols in ice.universe:
+        for mols in p7.universe:
             atoms += serialize(mols)
 
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
