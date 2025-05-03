@@ -1,7 +1,7 @@
 # test of tests
 import sys
 
-sys.path.append("/Users/matto/Unison/github/GenIce2")
+sys.path.append("../..")
 from genice2.plugin import scan
 from logging import getLogger, basicConfig, DEBUG, INFO
 
