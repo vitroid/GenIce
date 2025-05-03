@@ -1,8 +1,30 @@
 from functools import wraps
 import time
 from logging import getLogger
+from typing import Any, Callable, Dict, TypeVar, cast
+from icecream import ic
 
 # decorator
+
+T = TypeVar("T", bound=Callable[..., Any])
+
+
+def debug_args(func: T) -> T:
+    """関数の引数を表示するデコレータ"""
+
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # 関数名を取得
+        func_name = func.__name__
+
+        ic(func_name)
+        ic(args)
+        ic(kwargs)
+
+        # 元の関数を実行
+        return func(*args, **kwargs)
+
+    return cast(T, wrapper)
 
 
 def timeit(func):
@@ -15,7 +37,9 @@ def timeit(func):
         finally:
             end_ = int(round(time.time() * 1000)) - start
             logger.info(f"{func.__name__}: {end_ if end_ > 0 else 0} ms")
+
     return _time_it
+
 
 # decorator
 
@@ -34,4 +58,5 @@ def banner(func):
             return func(*args, **kwargs)
         finally:
             logger.info(f"{func.__name__}: end.")
+
     return _banner
