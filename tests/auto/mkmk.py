@@ -58,12 +58,11 @@ for ice in ices:
 
         additional_options = [
             "--reshape 1,1,1,1,-1,0,1,1,-2",
-            "--noise 0.01",
-            "--assess_cages",
-            "--shift 0.5,0.4,0.3",
+            # "--assess_cages",
+            "--shift 0.5 0.4 0.3",
             "--add_noise 0.01",
             "--water 4site",
-            "--cation 0=Na --anion 2=Cl",
+            "--cation 0=Na --anion 3=Cl",
             "--asis",
         ]
 

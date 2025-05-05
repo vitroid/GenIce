@@ -13,7 +13,7 @@ prepare: Makefile.prepare
 	make -f Makefile.prepare -j 8 -k 
 
 clean:
-	-rm *.gro
+	-rm *.gro Makefile.prepare
 
 
 # * gro以外のフォーマット
