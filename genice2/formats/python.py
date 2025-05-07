@@ -1,13 +1,13 @@
 # coding: utf-8
 
-import itertools as it
-import re
 from logging import getLogger
-from math import floor
+from io import TextIOWrapper
+import sys
 
 import genice2.formats
 import numpy as np
 from genice2.decorators import banner, timeit
+from genice2.genice import GenIce
 
 desc = {
     "ref": {},
@@ -40,28 +40,24 @@ class Format(genice2.formats.Format):
             unknown[k] = v
         if len(unknown) > 0:
             logger.warning("Options in the python-formatting plugin is deprecated.")
-        super().__init__(**unknown)
-
-    def hooks(self):
-        return {1: self.Hook1}
 
     @timeit
     @banner
-    def Hook1(self, ice):
+    def dump(self, genice: GenIce, file: TextIOWrapper):
         "Make a python module."
         # Original cell matrix.
-        cellmat = ice.repcell.mat
+        cellmat = genice.cell_matrix()
 
         # header
         s = ""
         s += '"""\n'
-        s += "\n".join(ice.doc) + "\n"
+        s += "\nCommand line: " + " ".join(sys.argv) + "\n"
         s += '"""\n'
         s += "import genice2.lattices\n\n"
 
         s += "class Lattice(genice2.lattices.Lattice):\n"
         s += "    def __init__(self):\n"
-        s += "        self.bondlen={0}\n".format(ice.bondlen)
+        s += "        self.bondlen={0}\n".format(genice.state.bondlen)
         s += "        self.coord='relative'\n"
         if (
             np.allclose(cellmat[1, 0], 0)
@@ -76,11 +72,11 @@ class Format(genice2.formats.Format):
             for d in range(3):
                 s += f"        [{cellmat[d, 0]:.8f}, {cellmat[d, 1]:.8f}, {cellmat[d, 2]:.8f}], "
             s += "        ])\n"
-        s += "        self.density={0}\n".format(ice.density)
+        s += "        self.density={0}\n".format(genice.density)
         s += "        self.waters="
 
         ss = '"""' + "\n".join(
-            [" ".join([f"{y:.4f}" for y in x]) for x in ice.reppositions]
+            [" ".join([f"{y:.4f}" for y in x]) for x in genice.water_positions()]
         )
 
         s += ss + '\n"""' + "\n"
@@ -93,4 +89,4 @@ class Format(genice2.formats.Format):
         #     )
         #     s += ss + '"""' + "\n\n"
 
-        self.output = s
+        file.write(s)

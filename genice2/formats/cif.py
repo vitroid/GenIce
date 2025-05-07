@@ -77,9 +77,10 @@ _atom_site_fract_z
         for pos in universe:
             atoms += serialize(pos)
 
+        cell = Cell(genice.cell_matrix())
         for i, atom in enumerate(atoms):
             molorder, resname, atomname, position, order = atom
-            pos = Cell(genice.cell_matrix()).abs2rel(position)
+            pos = cell.abs2rel(position)
             label = f"{atomname}{i}"
             s += f"{label:>6}{atomname:>6}{pos[0]:10.4f}{pos[1]:10.4f}{pos[2]:10.4f}\n"
         s += "\n"
