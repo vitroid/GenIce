@@ -9,10 +9,10 @@ class Format:
     """
 
     def __init__(self, **kwargs):
-        pass
+        raise NotImplementedError
 
     def dump(self, genice, file):
         """
         This method returns self.output.
         """
-        pass
+        raise NotImplementedError
