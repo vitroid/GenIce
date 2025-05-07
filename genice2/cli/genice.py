@@ -250,13 +250,13 @@ def main():
             groups[int(key)] = value
 
     lattice_type, lattice_options = plugin_option_parser(options.Type)
-    logger.debug("Lattice: {0}".format(lattice_type))
+    logger.debug(f"Lattice: {lattice_type}")
     assert lattice_type is not None
 
-    signature = "Command line: {0}".format(" ".join(sys.argv))
+    signature = f"Command line: {' '.join(sys.argv)}"
 
     water_type, water_options = plugin_option_parser(options.water)
-    logger.debug("Water type: {0}".format(water_type))
+    logger.debug(f"Water type: {water_type}")
     water = safe_import("molecule", water_type).Molecule(**water_options)
 
     guests = defaultdict(dict)
@@ -276,7 +276,6 @@ def main():
         config=GenIceConfig(
             water=water,
             guests=guests,
-            signature=signature,
             density=density,
             reshape=reshape,
             cations=cations,
@@ -296,7 +295,7 @@ def main():
 
     # Main part of the program is contained in th Formatter object. (See
     # formats/)
-    logger.debug("Output file format: {0}".format(file_format))
+    logger.debug(f"Output file format: {file_format}")
     formatter_module = safe_import("format", file_format)
     formatter = formatter_module.Format(**format_options)
 
