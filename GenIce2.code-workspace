@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../genice-cage"
+		},
+		{
+			"path": "../cycless"
+		},
+		{
+			"path": "../graphstat"
+		}
+	],
+	"settings": {}
+}
