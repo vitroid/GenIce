@@ -3,16 +3,17 @@ import numpy as np
 import networkx as nx
 from genice2.decorators import banner, timeit
 import genice_core
+from genice2 import ConfigurationError
 
 
 @dataclass
-class Stage34EOutput:
-    """Stage34Eの出力データ"""
+class Stage4Output:
+    """Stage3の出力データ"""
 
     digraph: nx.DiGraph  # 有向グラフ
 
 
-class Stage34E:
+class Stage4:
     """有向氷グラフの生成を行うステージ"""
 
     def __init__(
@@ -24,7 +25,7 @@ class Stage34E:
 
     @timeit
     @banner
-    def execute(self, depol: str = "none") -> Stage34EOutput:
+    def execute(self, depol: str = "none") -> Stage4Output:
         """Makes a directed graph."""
         iter = 0 if depol == "none" else 1000
         digraph = genice_core.ice_graph(
@@ -34,4 +35,6 @@ class Stage34E:
             dipoleOptimizationCycles=iter,
             fixedEdges=self.fixedEdges,
         )
-        return Stage34EOutput(digraph=digraph)
+        if not digraph:
+            raise ConfigurationError("Failed to generate a directed graph.")
+        return Stage4Output(digraph=digraph)

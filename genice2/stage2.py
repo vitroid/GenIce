@@ -7,6 +7,7 @@ import numpy as np
 import networkx as nx
 
 from genice2.decorators import banner, timeit
+from genice2 import ConfigurationError
 
 
 def grandcell_wrap(
@@ -245,7 +246,7 @@ class Stage2:
             logger.info(f"  Anionize: {anions}.")
             for site, _ in anions.items():
                 for nei in graph[site]:
-                    if fixed_edges.has_edge(nei, site):
+                    if fixed_edges.has_edge(site, nei):
                         raise ConfigurationError(
                             f"Impossible to dope an anion at {site}."
                         )

@@ -7,6 +7,7 @@ from collections import defaultdict
 from logging import getLogger
 from typing import Type, Union, List, Dict, Set, Optional, Tuple
 from dataclasses import dataclass, field
+import sys
 
 import numpy as np
 import pairlist as pl
@@ -29,16 +30,11 @@ from genice2.valueparser import (
 )
 from genice2.stage1 import Stage1
 from genice2.stage2 import Stage2, grandcell_wrap
-from genice2.stage34 import Stage34E
+from genice2.stage4 import Stage4
 from genice2.stage5 import Stage5
 from genice2.stage6 import Stage6
 from genice2.stage7 import Stage7
-
-
-class ConfigurationError(Exception):
-    """設定に関するエラーを表す例外"""
-
-    pass
+from genice2 import ConfigurationError
 
 
 # def ice_rule(dg: nx.DiGraph, strict=False) -> bool:
@@ -119,6 +115,7 @@ class GenIce:
         config: Optional[GenIceConfig] = None,
     ):
         logger = getLogger()
+        logger.info(sys.argv)
         self.config = config or GenIceConfig()
         self.state = self._initialize_state(lat)
         self._setup_replica_vectors()
@@ -356,7 +353,9 @@ class GenIce:
         self.state.groups1 = defaultdict(dict)
 
     def _requires(self, stage: int):
+        logger = getLogger()
         if f"stage{stage}_output" in self.state.__dict__:
+            logger.debug(f"Stage {stage} is already done.")
             return
         if stage > 1:
             self._requires(stage - 1)
@@ -385,7 +384,7 @@ class GenIce:
         elif stage == 3:
             pass
         elif stage == 4:
-            self.state.stage34e_output = Stage34E(
+            self.state.stage4_output = Stage4(
                 self.state.stage2_output.graph,
                 self.state.stage1_output.reppositions,
                 self.state.stage2_output.fixed_edges,
@@ -393,7 +392,7 @@ class GenIce:
         elif stage == 5:
             self.state.stage5_output = Stage5(
                 self.state.stage1_output.reppositions,
-                self.state.stage34e_output.digraph,
+                self.state.stage4_output.digraph,
                 self.state.stage1_output.repcell,
                 self.state.stage2_output.dopants,
             ).execute()
@@ -452,7 +451,7 @@ class GenIce:
     def hydrogen_bond_digraph(self):
         """Hydrogen bond graph."""
         self._requires(4)
-        return self.state.stage34e_output.digraph
+        return self.state.stage4_output.digraph
 
     def hydrogen_bond_graph(self):
         """Hydrogen bond graph."""
