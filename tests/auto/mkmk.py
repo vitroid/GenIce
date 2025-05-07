@@ -75,7 +75,7 @@ for ice in ices:
         # if testmode:
         rules.append(f"{product}.diff: {product} ../../genice2/lattices/{ice}.py\n")
         rules.append(
-            f"\t$(GENICE) {target} {genice_options} | diff - $< \n"
+            f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
         )  # > $@.diff\n")
         products_test.append(f"{product}.diff")
         # else:
