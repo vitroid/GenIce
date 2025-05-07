@@ -8,7 +8,7 @@ Makefile.rules: $(wildcard ../../genice2/*.py) mkmk.py
 
 # 比較元(autotest-ref)のbranchで実行してファイルを準備する。
 prepare: Makefile.rules
-	make -f Makefile.rules -j 8 -k prepare 
+	make -f Makefile.rules -k prepare 
 
 clean:
 	-rm *.output *.gro *.diff Makefile.rules

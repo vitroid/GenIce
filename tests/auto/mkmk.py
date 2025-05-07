@@ -40,7 +40,7 @@ formatter_paths = {}
 for filepath in glob.glob("../../genice2/formats/*.py"):
     if not os.path.islink(filepath):
         formatter_prefix = os.path.basename(filepath).split(".")[0]
-        if formatter_prefix == "raw":
+        if formatter_prefix in ("raw", "null", "__init__"):
             continue
         formatter_paths[f" -f {formatter_prefix}"] = filepath
 
