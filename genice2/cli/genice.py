@@ -255,11 +255,27 @@ def main():
 
     signature = "Command line: {0}".format(" ".join(sys.argv))
 
+    water_type, water_options = plugin_option_parser(options.water)
+    logger.debug("Water type: {0}".format(water_type))
+    water = safe_import("molecule", water_type).Molecule(**water_options)
+
+    guests = defaultdict(dict)
+    if options.guests is not None:
+        logger.info(options.guests)
+        for guest_spec in options.guests:
+            parse_guest(guests, guest_spec)
+
+    noise = options.noise
+    depol = options.depol
+    assess_cages = options.assess_cages
+
     # Initialize the Lattice class with arguments which are required for
     # plugins.
     lat = GenIce(
         lat=safe_import("lattice", lattice_type).Lattice(**lattice_options),
         config=GenIceConfig(
+            water=water,
+            guests=guests,
             signature=signature,
             density=density,
             reshape=reshape,
@@ -270,22 +286,13 @@ def main():
             asis=asis,
             shift=sh,
             rep=None,
+            noise=noise,
+            depol=depol,
+            assess_cages=assess_cages,
         ),
     )
 
-    guests = defaultdict(dict)
-    if options.guests is not None:
-        logger.info(options.guests)
-        for guest_spec in options.guests:
-            parse_guest(guests, guest_spec)
-    noise = options.noise
-    depol = options.depol
-    assess_cages = options.assess_cages
     file_format, format_options = plugin_option_parser(options.format)
-
-    water_type, water_options = plugin_option_parser(options.water)
-    logger.debug("Water type: {0}".format(water_type))
-    water = safe_import("molecule", water_type).Molecule(**water_options)
 
     # Main part of the program is contained in th Formatter object. (See
     # formats/)
@@ -295,20 +302,22 @@ def main():
 
     del options  # Dispose for safety.
 
-    result = lat.generate_ice(
-        water=water,
-        guests=guests,
-        formatter=formatter,
-        noise=noise,
-        depol=depol,
-        assess_cages=assess_cages,
-    )
-    if isinstance(result, bytes):
-        sys.stdout.buffer.write(result)
-    elif isinstance(result, str):
-        sys.stdout.write(result)
-    elif result is not None:
-        pickle.dump(result, sys.stdout.buffer)
+    formatter.dump(lat, sys.stdout)
+
+    # result = lat.generate_ice(
+    #     water=water,
+    #     guests=guests,
+    #     formatter=formatter,
+    #     noise=noise,
+    #     depol=depol,
+    #     assess_cages=assess_cages,
+    # )
+    # if isinstance(result, bytes):
+    #     sys.stdout.buffer.write(result)
+    # elif isinstance(result, str):
+    #     sys.stdout.write(result)
+    # elif result is not None:
+    #     pickle.dump(result, sys.stdout.buffer)
 
 
 if __name__ == "__main__":
