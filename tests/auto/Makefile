@@ -1,16 +1,14 @@
 # 改造したあとのbranchで実行する。
 test:
-	# run it in the new branch.
-	python mkmk.py test > Makefile.test
-	make -f Makefile.test
+	make -f Makefile.rules test
 
  
-Makefile.prepare: $(wildcard ../../genice2/*.py)
+Makefile.rules: $(wildcard ../../genice2/*.py) mkmk.py
 	python mkmk.py > $@
 
 # 比較元(autotest-ref)のbranchで実行してファイルを準備する。
-prepare: Makefile.prepare
-	make -f Makefile.prepare -j 8 -k 
+prepare: Makefile.rules
+	make -f Makefile.rules -j 8 -k prepare 
 
 clean:
 	-rm *.gro Makefile.prepare
