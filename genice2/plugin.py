@@ -272,18 +272,24 @@ def safe_import(category, name):
     try:
         module = importlib.import_module(fullname)  # at ~/.genice
         logger.debug("Succeeded.")
-    except ImportError:
-        logger.debug("Failed.")
-        pass
+    except ModuleNotFoundError:
+        logger.debug(f"Module not found: {fullname}")
+        module = None
+    except ImportError as e:
+        logger.error(f"Error importing module {fullname}: {str(e)}")
+        raise
     if module is None:
         fullname = "genice2." + category + "s." + name
         logger.debug(f"Try to load a system module: {fullname}")
         try:
             module = importlib.import_module(fullname)
             logger.debug("Succeeded.")
-        except ImportError:
-            logger.debug("Failed.")
-            pass
+        except ModuleNotFoundError:
+            logger.debug(f"Module not found: {fullname}")
+            module = None
+        except ImportError as e:
+            logger.error(f"Error importing module {fullname}: {str(e)}")
+            raise
     if module is None:
         logger.debug(f"Try to load an extra module: {fullname}")
         module = import_extra(category, name)
