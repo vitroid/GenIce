@@ -436,8 +436,8 @@ class GenIce:
         # self変数も多すぎ。
         logger = getLogger()
         self.asis = asis
-        self.cations = cations
-        self.anions = anions
+        self.cations1 = cations
+        self.anions1 = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
 
@@ -867,8 +867,11 @@ class GenIce:
             self.dopeIonsToUnitCell(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        self.dopants = replicate_labeldict(
-            self.dopants1, len(self.waters1), self.replica_vectors
+        self.anions = replicate_labeldict(
+            self.anions1, len(self.waters1), self.replica_vectors
+        )
+        self.cations = replicate_labeldict(
+            self.cations1, len(self.waters1), self.replica_vectors
         )
 
         self.groups = replicate_groups(
@@ -894,7 +897,8 @@ class GenIce:
         #     self.immutables1, self.waters1.shape[0], self.rep
         # )
 
-        self.repimmutables = set()
+        self.dopants = self.anions | self.cations
+
         # Dope ions by options.
         if len(self.anions) > 0:
             logger.info(f"  Anionize: {self.anions}.")
@@ -909,7 +913,6 @@ class GenIce:
                     self.fixedEdges.add_edge(nei, site)
                     logger.info(f"  Fix edge: {nei} --> {site}")
                 self.dopants[site] = name
-                self.repimmutables.add(site)
 
         if len(self.cations) > 0:
             logger.info(f"  Cationize: {self.cations}.")
@@ -924,7 +927,6 @@ class GenIce:
                     self.fixedEdges.add_edge(site, nei)
                     logger.info(f"  Fix edge: {site} --> {nei}")
                 self.dopants[site] = name
-                self.repimmutables.add(site)
 
     @timeit
     @banner
@@ -967,7 +969,7 @@ class GenIce:
         # determine the orientations of the water molecules based on edge
         # directions.
         self.rotmatrices = orientations(
-            self.reppositions, self.digraph, self.repcell, self.repimmutables
+            self.reppositions, self.digraph, self.repcell, set(self.dopants)
         )
 
         # Activate it.
