@@ -743,6 +743,8 @@ class GenIce:
 
             # GenIce-core
             self.Stage34E(depol=depol)
+            if not self.digraph:
+                raise ConfigurationError("Failed to generate a directed graph.")
 
             if 3 in hooks:
                 abort = hooks[3](self)
