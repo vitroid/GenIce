@@ -26,6 +26,24 @@ tests = result["tests"]
 products_prepare = []
 products_test = []
 rules = []
+
+additional_options = [
+    "--reshape 1,1,1,1,-1,0,1,1,-2",
+    # "--assess_cages",
+    "--shift 0.5 0.4 0.3",
+    "--add_noise 0.01",
+    "--water 4site",
+    "--cation 0=Na --anion 2=Cl",
+    # "--asis",
+]
+formatter_paths = {}
+for filepath in glob.glob("../../genice2/formats/*.py"):
+    if not os.path.islink(filepath):
+        formatter_prefix = os.path.basename(filepath).split(".")[0]
+        if formatter_prefix == "raw":
+            continue
+        formatter_paths[f" -f {formatter_prefix}"] = filepath
+
 for ice in ices:
     if ice in ("iceR",):
         continue
@@ -57,36 +75,26 @@ for ice in ices:
         # - spot_groups: dict
         # - asis: bool
 
-        additional_options = [
-            "--reshape 1,1,1,1,-1,0,1,1,-2",
-            # "--assess_cages",
-            "--shift 0.5 0.4 0.3",
-            "--add_noise 0.01",
-            "--water 4site",
-            "--cation 0=Na --anion 2=Cl",
-            "--asis",
-        ]
-        format_options = []
-        for filepath in glob.glob("../../genice2/formats/*.py"):
-            if not os.path.islink(filepath):
-                prefix = os.path.basename(filepath).split(".")[0]
-                format_options.append(f" -f {prefix}")
-
         genice_options += " " + " ".join(random.sample(additional_options, 3))
-        genice_options += random.choice(format_options)
+        format_option = random.choice(list(formatter_paths.keys()))
+        genice_options += format_option
         product = f"{ice}_{i}.output"
         if module_options != "":
             module_options = "[" + module_options + "]"
         target = f"{ice}{module_options}"
         logger.debug(f"Target: {target}")
         # if testmode:
-        rules.append(f"{product}.diff: {product} ../../genice2/lattices/{ice}.py\n")
+        rules.append(
+            f"{product}.diff: {product} ../../genice2/lattices/{ice}.py {formatter_paths[format_option]}\n"
+        )
         rules.append(
             f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
         )  # > $@.diff\n")
         products_test.append(f"{product}.diff")
         # else:
-        rules.append(f"{product}: ../../genice2/lattices/{ice}.py\n")
+        rules.append(
+            f"{product}: ../../genice2/lattices/{ice}.py  {formatter_paths[format_option]}\n"
+        )
         rules.append(f"\t$(GENICE) {target} {genice_options} > $@\n")
         products_prepare.append(product)
 
