@@ -34,12 +34,14 @@ additional_options = [
     "--add_noise 0.01",
     "--water 4site",
     "--cation 0=Na --anion 2=Cl",
-    "--asis",
+    # "--asis",
 ]
 formatter_paths = {}
 for filepath in glob.glob("../../genice2/formats/*.py"):
     if not os.path.islink(filepath):
         formatter_prefix = os.path.basename(filepath).split(".")[0]
+        if formatter_prefix in ("raw", "null"):
+            continue
         formatter_paths[f" -f {formatter_prefix}"] = filepath
 
 for ice in ices:
