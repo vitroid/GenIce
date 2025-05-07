@@ -844,7 +844,6 @@ class GenIceConfig:
 
     water: Molecule
     guests: Dict[str, Dict[str, float]] = field(default_factory=dict)
-    signature: str = ""
     density: float = 0
     rep: Optional[Tuple[int, int, int]] = None
     reshape: np.ndarray = field(default_factory=lambda: np.eye(3, dtype=int))
@@ -890,7 +889,6 @@ class GenIce:
         self.config = config or GenIceConfig()
         self.state = self._initialize_state(lat)
         self._setup_replica_vectors()
-        self._setup_documentation(lat)
         self._setup_waters(lat)
         self._setup_bond_length(lat)
         self._setup_pairs(lat)
@@ -981,21 +979,6 @@ class GenIce:
         assert np.allclose(vol, len(vecs)), (vol, vecs)
 
         return vecs
-
-    def _setup_documentation(self, lat: Type[Lattice]):
-        """ドキュメントの設定"""
-        logger = getLogger()
-        try:
-            self.doc = lat.__doc__.splitlines()
-        except BaseException:
-            self.doc = []
-
-        if len(self.config.signature) > 0:
-            self.doc.append("")
-            self.doc.append(self.config.signature)
-
-        for line in self.doc:
-            logger.info("  " + line)
 
     def _setup_waters(self, lat: Type[Lattice]):
         """水分子の設定"""
@@ -1213,6 +1196,16 @@ class GenIce:
         self._requires(7)
         return self.state.stage7_output.universe
 
+    def water_atomic_positions(self):
+        """Atomic positions of water molecules."""
+        self._requires(6)
+        return self.state.stage6_output.universe
+
+    def rotation_matrices(self):
+        """Rotation matrices."""
+        self._requires(5)
+        return self.state.stage5_output.rotmatrices
+
     def cell_matrix(self):
         """Cell matrix."""
         self._requires(1)
@@ -1222,6 +1215,11 @@ class GenIce:
         """Molecular positions of water molecules in the fractional coordinates."""
         self._requires(1)
         return self.state.stage1_output.reppositions
+
+    def hydrogen_bond_digraph(self):
+        """Hydrogen bond graph."""
+        self._requires(4)
+        return self.state.stage34e_output.digraph
 
 
 def dopants_info(dopants=None, waters=None, cagepos=None, cell=None):
