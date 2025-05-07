@@ -53,10 +53,15 @@ def banner(func):
             msg = lines[1]
         else:
             msg = lines[0]
-        logger.info(f"{func.__name__}: {msg.strip()}")
+        # クラスメソッドの場合はクラス名のみを表示
+        if hasattr(func, "__qualname__"):
+            func_name = func.__qualname__.split(".")[0]
+        else:
+            func_name = func.__name__
+        logger.info(f"{func_name}: {msg.strip()}")
         try:
             return func(*args, **kwargs)
         finally:
-            logger.info(f"{func.__name__}: end.")
+            logger.info(f"{func_name}: end.")
 
     return _banner
