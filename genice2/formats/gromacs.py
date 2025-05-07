@@ -24,7 +24,7 @@ class Format(genice2.formats.Format):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        pass
 
     @timeit
     @banner

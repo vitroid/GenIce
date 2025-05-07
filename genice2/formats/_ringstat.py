@@ -46,17 +46,21 @@ Finally, dKL between expectiations and observations is also shown.
 
 """
 
-from genice2.decorators import timeit, banner
-import genice2.formats
 from logging import getLogger
 import numpy as np
 import fractions
 from math import log
-import networkx as nx
 from collections import defaultdict
 import sys
-from cycless.cycles import cycles_iter
 import itertools as it
+from io import TextIOWrapper
+
+import networkx as nx
+from cycless.cycles import cycles_iter
+
+from genice2.decorators import timeit, banner
+import genice2.formats
+from genice2.genice import GenIce
 
 desc = {
     "ref": {
@@ -204,17 +208,14 @@ class Format(genice2.formats.Format):
                 logger.error(f"Unknown keyword: {k}")
                 sys.exit(1)
         logger.info("  Largest ring: {0}.".format(self.largestring))
-        super().__init__(**kwargs)
-
-    def hooks(self):
-        return {4: self.Hook4}
 
     @timeit
     @banner
-    def Hook4(self, ice):
+    def dump(self, genice: GenIce, file: TextIOWrapper):
         "Statistics on the HBs along a ring."
         logger = getLogger()
-        graph = nx.Graph(ice.digraph)  # undirected
+        digraph = genice.hydrogen_bond_digraph()
+        graph = nx.Graph(digraph)
         stat = dict()
         prob = defaultdict(int)
 
@@ -223,8 +224,8 @@ class Format(genice2.formats.Format):
             prob[n] = probabilities(n)
             stat[n] = defaultdict(int)
 
-        for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
-            ori = orientations(ring, ice.digraph)
+        for ring in cycles_iter(graph, self.largestring, pos=genice.water_positions()):
+            ori = orientations(ring, digraph)
             c = encode(ori)
             n = len(ring)
             stat[n][c] += 1
@@ -266,4 +267,4 @@ class Format(genice2.formats.Format):
                 dKL /= log(2.0)  # bit
                 s += "{1} {0} dKL[{0}-ring]\n".format(n, dKL)
                 logger.info("  dKL[{0}-ring]={1}".format(n, dKL))
-        self.output = s
+        file.write(s)
