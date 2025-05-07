@@ -1,14 +1,14 @@
 # coding: utf-8
 
 from logging import getLogger
-
+from io import TextIOWrapper
 import numpy as np
 
 import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
 from genice2.cell import cellvectors
-from genice2.genice import GenIceState, Stage7Output
+from genice2.genice import GenIce
 
 desc = {
     "ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
@@ -26,20 +26,16 @@ class Format(genice2.formats.Format):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def hooks(self):
-        # stage2と7の変数を用い、stage7では独自の処理も行う。
-        return {1: None, 7: self.Hook7}
-
     @timeit
     @banner
-    def Hook7(self, state: GenIceState, parameters: dict):
+    def dump(self, genice: GenIce, file: TextIOWrapper):
         """Output in Gromacs format.
 
         parametersには、hooksで指定したstageの結果が含まれる。
         """
         logger = getLogger()
-        p1, p7 = parameters[1], parameters[7]
-        cellmat = p1.repcell.mat
+
+        cellmat = genice.cell_matrix()
 
         if not (cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0):
             logger.info(
@@ -54,13 +50,13 @@ class Format(genice2.formats.Format):
             A = np.degrees(np.arccos(eb @ ec))
             B = np.degrees(np.arccos(ec @ ea))
             C = np.degrees(np.arccos(ea @ eb))
-            rotmat = ice.repcell.inv @ cellvectors(a, b, c, A, B, C)
+            rotmat = np.linalg.inv(cellmat) @ cellvectors(a, b, c, A, B, C)
             logger.info("  The reshape matrix is reoriented.")
         else:
             rotmat = np.eye(3)
 
         atoms = []
-        for mols in p7.universe:
+        for mols in genice.full_atomic_positions():
             atoms += serialize(mols)
 
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
@@ -108,5 +104,5 @@ class Format(genice2.formats.Format):
                 cellmat[2, 0],
                 cellmat[2, 1],
             )
+        file.write(s)
         # s += '#' + "\n#".join(ice.doc) + "\n"
-        self.output = s
