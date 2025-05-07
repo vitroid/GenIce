@@ -367,6 +367,18 @@ def grandcell_wrap(
     return frac @ reshape / det
 
 
+class ConfigurationError(Exception):
+    """設定に関するエラーを表す例外"""
+
+    pass
+
+
+class ValidationError(Exception):
+    """データ検証に関するエラーを表す例外"""
+
+    pass
+
+
 class GenIce:
     """
     The core of GenIce.
@@ -890,7 +902,12 @@ class GenIce:
             for site, name in self.anions.items():
                 # self.graph.anionize(site)
                 for nei in self.graph[site]:
+                    if self.fixedEdges.has_edge(site, nei):
+                        raise ConfigurationError(
+                            f"Impossible to dope an anion at {site}."
+                        )
                     self.fixedEdges.add_edge(nei, site)
+                    logger.info(f"  Fix edge: {nei} --> {site}")
                 self.dopants[site] = name
                 self.repimmutables.add(site)
 
@@ -900,7 +917,12 @@ class GenIce:
             for site, name in self.cations.items():
                 # self.graph.cationize(site)
                 for nei in self.graph[site]:
+                    if self.fixedEdges.has_edge(nei, site):
+                        raise ConfigurationError(
+                            f"Impossible to dope a cation at {site}."
+                        )
                     self.fixedEdges.add_edge(site, nei)
+                    logger.info(f"  Fix edge: {site} --> {nei}")
                 self.dopants[site] = name
                 self.repimmutables.add(site)
 

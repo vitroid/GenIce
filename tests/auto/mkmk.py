@@ -61,8 +61,8 @@ for ice in ices:
             "--shift 0.5 0.4 0.3",
             "--add_noise 0.01",
             "--water 4site",
-            "--cation 0=Na --anion 2=Cl",
-            "--asis",
+            "--cation 0=Na --anion 1=Cl",
+            # "--asis",
         ]
 
         genice_options += " " + " ".join(random.sample(additional_options, 3))

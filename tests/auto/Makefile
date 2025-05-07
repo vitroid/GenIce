@@ -11,7 +11,7 @@ prepare: Makefile.rules
 	make -f Makefile.rules -j 8 -k prepare 
 
 clean:
-	-rm *.gro Makefile.prepare
+	-rm *.gro Makefile.rules
 
 
 # * gro以外のフォーマット
