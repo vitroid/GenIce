@@ -64,7 +64,7 @@ for ice in ices:
             "--add_noise 0.01",
             "--water 4site",
             "--cation 0=Na --anion 2=Cl",
-            "--asis",
+            # "--asis",
         ]
         format_options = []
         for filepath in glob.glob("../../genice2/formats/*.py"):
