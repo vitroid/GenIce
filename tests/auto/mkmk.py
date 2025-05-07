@@ -1,6 +1,8 @@
 # test of tests
 import sys
 import random
+import glob
+import os
 
 sys.path.append("../..")
 from genice2.plugin import scan
@@ -61,13 +63,18 @@ for ice in ices:
             "--shift 0.5 0.4 0.3",
             "--add_noise 0.01",
             "--water 4site",
-            "--cation 0=Na --anion 1=Cl",
-            # "--asis",
+            "--cation 0=Na --anion 2=Cl",
+            "--asis",
         ]
+        format_options = []
+        for filepath in glob.glob("../../genice2/formats/*.py"):
+            if not os.path.islink(filepath):
+                prefix = os.path.basename(filepath).split(".")[0]
+                format_options.append(f" -f {prefix}")
 
         genice_options += " " + " ".join(random.sample(additional_options, 3))
-
-        product = f"{ice}_{i}.gro"
+        genice_options += random.choice(format_options)
+        product = f"{ice}_{i}.output"
         if module_options != "":
             module_options = "[" + module_options + "]"
         target = f"{ice}{module_options}"
@@ -75,7 +82,7 @@ for ice in ices:
         # if testmode:
         rules.append(f"{product}.diff: {product} ../../genice2/lattices/{ice}.py\n")
         rules.append(
-            f"\t$(GENICE) {target} {genice_options} | diff - $< \n"
+            f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
         )  # > $@.diff\n")
         products_test.append(f"{product}.diff")
         # else:
@@ -85,6 +92,7 @@ for ice in ices:
 
 print("GENICE=../../genice.x")
 # print("GENICE=genice2")
-print("prepare:", *products_prepare)
-print("test:", *products_test)
+print("TARGETS=", *products_prepare)
+print("prepare: $(TARGETS)")
+print("test: $(patsubst %, %.diff, $(TARGETS))")
 print("".join(rules))
