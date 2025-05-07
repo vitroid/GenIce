@@ -3,7 +3,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.9
+Version 2.2.10
 
 ## New in GenIce2.2
 
@@ -51,7 +51,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.7.7)
+    (version 2.*.*.*)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -246,7 +246,8 @@ Install with pip3.
                             graph           Undirected graph of HBs.
                             m, mdview       MDView file (in Angdtrom).
                             mdv_au          MDView file (in au).
-                            p, python       Cell-reshaper.
+                            p, python       A formatter plugin to produce a python
+                                            lattice plugin.
                             povray          Povray.
                             q, quaternion   Rigid rotor (Quaternion).
                             raw             Raw data. (For use with Jupyter)
