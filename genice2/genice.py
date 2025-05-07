@@ -33,6 +33,12 @@ from genice2.valueparser import (
 from dataclasses import dataclass, field
 
 
+class ConfigurationError(Exception):
+    """設定に関するエラーを表す例外"""
+
+    pass
+
+
 def assume_tetrahedral_vectors(v):
     """
     Assume missing vectors at a tetrahedral node.
@@ -81,7 +87,7 @@ def assume_tetrahedral_vectors(v):
 #     return True
 
 
-def orientations(coord, digraph, cell, fixed_nodes: set):
+def orientations(coord, digraph, cell, dopants: dict):
     """
     Does not work when two OHs are colinear
     """
@@ -92,7 +98,7 @@ def orientations(coord, digraph, cell, fixed_nodes: set):
         len(coord),
         digraph.number_of_nodes(),
     )
-    logger.info(f"{fixed_nodes} fixed nodes")
+    logger.info(f"{dopants} dopants")
     # 通常の氷であればアルゴリズムを高速化できる。
 
     nnode = len(list(digraph))
@@ -104,7 +110,7 @@ def orientations(coord, digraph, cell, fixed_nodes: set):
     # v0 = np.zeros([nnode, 3])
     # v1 = np.zeros([nnode, 3])
     for node in digraph:
-        if node in fixed_nodes:
+        if node in dopants:
             h1 = np.array([0.0, 1, 1]) / (2**0.5)
             h2 = np.array([0.0, -1, 1]) / (2**0.5)
             r1 = cell.abs2rel(h1)
@@ -389,7 +395,6 @@ class Stage2Output:
     graph: nx.Graph  # ネットワークトポロジー
     dopants: Dict[int, str]  # ドーパント情報
     fixed_edges: nx.DiGraph  # 固定エッジ
-    fixed_nodes: Set[int]  # ドーパントの原子のインデックスの集合
     groups: Dict[int, Dict[int, str]]  # グループ情報
     filled_cages: Set[int]  # 埋められたケージ
 
@@ -443,12 +448,26 @@ class Stage1:
 
     @timeit
     @banner
-    def execute(self) -> Stage1Output:
-        """Stage 1: Replicates the unit cell."""
+    def execute(self, noise: float = 0.0, assess_cages: bool = False) -> Stage1Output:
+        """Replicates the unit cell."""
+        logger = getLogger()
         reppositions = replicate_positions(
             self.waters1, self.replica_vectors, self.reshape_matrix
         )
         repcell = Cell(self.reshape_matrix @ self.cell1.mat)
+        if noise > 0.0:
+            logger.info(f"  Add noise: {noise}.")
+            perturb = np.random.normal(
+                loc=0.0,
+                scale=noise * 0.01 * 3.0 * 0.5,  # in percent, radius of water
+                size=reppositions.shape,
+            )
+            reppositions += repcell.abs2rel(perturb)
+
+        if assess_cages:
+            logger.info("  Assessing the cages...")
+            self.cagepos1, self.cagetype1 = cage.assess_cages(self.graph1, self.waters1)
+            logger.info("  Done assessment.")
 
         if self.cagepos1 is not None:
             repcagepos = replicate_positions(
@@ -496,16 +515,16 @@ class Stage2:
         self.fixed1 = fixed1
         self.replica_vector_labels = replica_vector_labels
         self.reshape_matrix = reshape_matrix
-        self.anions = anions
-        self.cations = cations
-        self.dopants1 = anions | cations
+        self.anions1 = anions
+        self.cations1 = cations
+        # self.dopants1 = anions | cations
         self.groups1 = groups1
         self.cagepos1 = cagepos1
 
     @timeit
     @banner
     def execute(self) -> Stage2Output:
-        """Stage 2: Makes a random graph and replicates it."""
+        """Makes a random graph and replicates it."""
         logger = getLogger()
 
         # # Some edges are directed when ions are doped.
@@ -513,8 +532,14 @@ class Stage2:
         #     self.doping_hook_function(self)  # may be defined in the plugin
 
         # Replicate the dopants in the unit cell
-        dopants = replicate_labeldict(
-            self.dopants1, len(self.waters1), self.replica_vectors
+        # dopants = replicate_labeldict(
+        #     self.dopants1, len(self.waters1), self.replica_vectors
+        # )
+        anions = replicate_labeldict(
+            self.anions1, len(self.waters1), self.replica_vectors
+        )
+        cations = replicate_labeldict(
+            self.cations1, len(self.waters1), self.replica_vectors
         )
 
         groups = replicate_groups(
@@ -535,31 +560,41 @@ class Stage2:
             self.reshape_matrix,
         )
         # ドーパントの原子のインデックスの集合
-        fixed_nodes = set(dopants)
 
-        for site, _ in self.anions.items():
-            for nei in self.graph1[site]:
-                fixed_edges.add_edge(nei, site)
-        for site, _ in self.cations.items():
-            for nei in self.graph1[site]:
-                fixed_edges.add_edge(site, nei)
+        # Dope ions by options.
+        # replicateされた構造にドープする。
+        dopants = anions | cations
+        if len(anions) > 0:
+            logger.info(f"  Anionize: {anions}.")
+            for site, _ in anions.items():
+                for nei in graph[site]:
+                    if fixed_edges.has_edge(nei, site):
+                        raise ConfigurationError(
+                            f"Impossible to dope an anion at {site}."
+                        )
+                    fixed_edges.add_edge(nei, site)
+        if len(cations) > 0:
+            logger.info(f"  Cationize: {cations}.")
+            for site, _ in cations.items():
+                for nei in graph[site]:
+                    if fixed_edges.has_edge(nei, site):
+                        raise ConfigurationError(
+                            f"Impossible to dope a cation at {site}."
+                        )
+                    fixed_edges.add_edge(site, nei)
 
-        # dopants = replicate_labeldict(
-        #     self.dopants1, len(self.waters1), self.replica_vectors
-        # )
-        # groups = replicate_groups(
-        #     self.groups1, self.waters1, self.cagepos1, self.replica_vectors
-        # )
-        # filled_cages = set()
-        # for _, cages in groups.items():
-        #     filled_cages |= set(cages)
-        logger.info(f"graph: {self.graph1} {graph}")
+        # Count bonds
+        nfixed = fixed_edges.number_of_edges()
+        num_hb_disorder = graph.number_of_edges() - nfixed
+        logger.info(f"  Number of pre-oriented hydrogen bonds: {nfixed}")
+        logger.info(f"  Number of unoriented hydrogen bonds: {num_hb_disorder}")
+        logger.info(f"  Total number of hydrogen bonds: {nfixed + num_hb_disorder}")
+
         # return Stage2Output(dopants, groups, filled_cages, graph, fixedEdges)
         return Stage2Output(
             graph=graph,
             dopants=dopants,
             fixed_edges=fixed_edges,
-            fixed_nodes=fixed_nodes,
             groups=groups,
             filled_cages=filled_cages,
         )
@@ -578,7 +613,7 @@ class Stage34E:
     @timeit
     @banner
     def execute(self, depol: str = "none") -> Stage34EOutput:
-        """Stage 3: Makes a directed graph."""
+        """Makes a directed graph."""
         iter = 0 if depol == "none" else 1000
         digraph = genice_core.ice_graph(
             self.graph.to_undirected(),
@@ -598,19 +633,19 @@ class Stage5:
         reppositions: np.ndarray,
         digraph: nx.DiGraph,
         repcell: Cell,
-        repimmutables: Set[int],
+        dopants: Dict[int, str],
     ):
         self.reppositions = reppositions
         self.digraph = digraph
         self.repcell = repcell
-        self.repimmutables = repimmutables
+        self.dopants = dopants
 
     @timeit
     @banner
     def execute(self) -> Stage5Output:
-        """Stage 5: Prepare orientations for rigid molecules."""
+        """Prepare orientations for rigid molecules."""
         rotmatrices = orientations(
-            self.reppositions, self.digraph, self.repcell, self.repimmutables
+            self.reppositions, self.digraph, self.repcell, set(self.dopants)
         )
         return Stage5Output(rotmatrices=rotmatrices)
 
@@ -635,7 +670,7 @@ class Stage6:
     @timeit
     @banner
     def execute(self) -> Stage6Output:
-        """Stage 6: Arrange atoms of water and replacements"""
+        """Arrange atoms of water and replacements"""
         universe = []
         universe.append(
             arrange(
@@ -685,9 +720,121 @@ class Stage7:
     @timeit
     @banner
     def execute(self) -> Stage7Output:
-        """Stage 7: Place guest molecules."""
+        """Place guest molecules."""
         # ゲスト分子の配置処理
-        # ... (既存のStage7の処理を実装)
+
+        logger = getLogger()
+
+        if self.repcagepos is not None:
+            # the cages around the dopants.
+            dopants_neighbors = dopants_info(
+                self.dopants, self.reppositions, self.repcagepos, self.repcell
+            )
+
+            # put the (one-off) groups
+            if len(self.spot_groups) > 0:
+                # process the -H option
+                for cage, group_to in self.spot_groups.items():
+                    group, root = group_to.split(":")
+                    self.add_group(cage, group, int(root))
+
+            molecules = defaultdict(list)
+
+            if len(self.spot_guests) > 0:
+                # process the -G option
+                for cage, molec in self.spot_guests.items():
+                    molecules[molec].append(cage)
+                    self.filled_cages.add(cage)
+
+            # process the -g option
+            for cagetype, contents in self.guests.items():
+                if cagetype not in self.cagetypes:
+                    logger.info(f"Nonexistent cage type: {cagetype}")
+                    continue
+                resident = dict()
+                rooms = list(self.cagetypes[cagetype] - self.filled_cages)
+
+                for room in rooms:
+                    resident[room] = None
+
+                vacant = len(rooms)
+
+                for molec, frac in contents.items():
+                    nmolec = int(frac * len(rooms) + 0.5)
+                    vacant -= nmolec
+                    assert vacant >= 0, "Too many guests."
+                    remain = nmolec
+                    movedin = []
+
+                    while remain > 0:
+                        r = np.random.randint(0, len(rooms))
+                        room = rooms[r]
+
+                        if resident[room] is None:
+                            resident[room] = molec
+                            molecules[molec].append(room)
+                            movedin.append(room)
+                            remain -= 1
+
+            # Now ge got the address book of the molecules.
+            if len(molecules):
+                logger.info("  Summary of guest placements:")
+                guests_info(self.cagetypes, molecules)
+
+            if len(self.spot_groups) > 0:
+                logger.info("  Summary of groups:")
+                groups_info(self.groups)
+
+            # semi-guests
+            for root, cages in self.groups.items():
+                assert root in self.dopants
+                name = self.dopants[root]
+                molname = f"G{root}"
+                pos = self.reppositions[root]
+                rot = self.rotmatrices[root]
+                self.universe.append(monatom(pos, self.repcell, name))
+                del self.dopants[root]  # processed.
+                logger.debug((root, cages, name, molname, pos, rot))
+
+                for cage, group in cages.items():
+                    # assert group in self.groups_placer
+                    assert cage in dopants_neighbors[root]
+                    cage_center = self.repcagepos[cage]
+                    self.universe.append(
+                        Group(group).arrange_atoms(
+                            cage_center, pos, self.repcell, molname, origin_atom=name
+                        )
+                    )
+
+            # molecular guests
+            for molec, cages in molecules.items():
+                guest_type, guest_options = plugin_option_parser(molec)
+                logger.debug(f"Guest type: {guest_type}")
+                gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
+
+                try:
+                    mdoc = gmol.__doc__.splitlines()
+                except BaseException:
+                    mdoc = []
+                for line in mdoc:
+                    logger.info("  " + line)
+                cage_center = [self.repcagepos[i] for i in cages]
+                cmat = [np.identity(3) for i in cages]
+                self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
+
+        logger.info(f"  Dopants: {self.dopants}")
+
+        # Assume the dopant is monatomic and replaces one water molecule
+        atomset = defaultdict(set)
+        for label, name in self.dopants.items():
+            atomset[name].add(label)
+
+        for name, labels in atomset.items():
+            pos = [self.reppositions[i] for i in sorted(labels)]
+            rot = [self.rotmatrices[i] for i in sorted(labels)]
+            oneatom = one.Molecule(label=name)
+            self.universe.append(arrange(pos, self.repcell, rot, oneatom))
+
         return Stage7Output(self.universe)
 
 
@@ -695,6 +842,8 @@ class Stage7:
 class GenIceConfig:
     """GenIceの設定を保持するデータクラス"""
 
+    water: Molecule
+    guests: Dict[str, Dict[str, float]] = field(default_factory=dict)
     signature: str = ""
     density: float = 0
     rep: Optional[Tuple[int, int, int]] = None
@@ -705,6 +854,9 @@ class GenIceConfig:
     spot_groups: Dict[int, str] = field(default_factory=dict)
     asis: bool = False
     shift: Tuple[float, float, float] = (0.0, 0.0, 0.0)
+    depol: str = "strict"
+    assess_cages: bool = False
+    noise: float = 0.0
 
 
 @dataclass
@@ -987,138 +1139,89 @@ class GenIce:
         logger.info("Generating the groups...")
         self.state.groups1 = defaultdict(dict)
 
-    def generate_ice(
-        self,
-        formatter: Type[Format],
-        water: Union[Type[Molecule], None] = None,
-        guests={},
-        depol="strict",
-        noise=0.0,
-        assess_cages=False,
-    ):
-        """氷の結晶構造を生成する"""
-        logger = getLogger()
+    def _requires(self, stage: int):
+        if f"stage{stage}_output" in self.state.__dict__:
+            return
+        if stage > 1:
+            self._requires(stage - 1)
+        if stage == 1:
+            self.state.stage1_output = Stage1(
+                self.state.waters1,
+                self.replica_vectors,
+                self.reshape_matrix,
+                self.state.cell1,
+                self.state.cagepos1,
+                self.state.cagetype1,
+            ).execute(self.config.noise, self.config.assess_cages)
+        elif stage == 2:
+            self.state.stage2_output = Stage2(
+                self.state.graph1,
+                self.state.waters1,
+                self.replica_vectors,
+                self.state.fixed1,
+                self.replica_vector_labels,
+                self.reshape_matrix,
+                self.config.anions,
+                self.config.cations,
+                self.state.groups1,
+                self.state.cagepos1,
+            ).execute()
+        elif stage == 3:
+            pass
+        elif stage == 4:
+            self.state.stage34e_output = Stage34E(
+                self.state.stage2_output.graph,
+                self.state.stage1_output.reppositions,
+                self.state.stage2_output.fixed_edges,
+            ).execute(self.config.depol)
+        elif stage == 5:
+            self.state.stage5_output = Stage5(
+                self.state.stage1_output.reppositions,
+                self.state.stage34e_output.digraph,
+                self.state.stage1_output.repcell,
+                self.state.stage2_output.dopants,
+            ).execute()
+        elif stage == 6:
+            self.state.stage6_output = Stage6(
+                self.state.stage1_output.reppositions,
+                self.state.stage1_output.repcell,
+                self.state.stage5_output.rotmatrices,
+                self.config.water,
+                self.state.stage2_output.dopants,
+            ).execute()
+        elif stage == 7:
+            self.state.stage7_output = Stage7(
+                self.state.stage6_output.universe,
+                self.state.stage1_output.repcagepos,
+                self.state.stage1_output.repcagetype,
+                self.state.stage1_output.cagetypes,
+                self.state.stage2_output.filled_cages,
+                self.config.guests,
+                self.config.spot_guests,
+                self.config.spot_groups,
+                self.state.stage2_output.groups,
+                self.state.stage2_output.dopants,
+                self.state.stage1_output.reppositions,
+                self.state.stage5_output.rotmatrices,
+                self.state.stage1_output.repcell,
+            ).execute()
+        else:
+            raise ValueError(f"Invalid stage: {stage}")
 
-        hooks = formatter.hooks()
-        max_stage = max(0, *hooks.keys())
-        parameters = dict()
-        # Stage1: 水分子の複製
-        stage1 = Stage1(
-            self.state.waters1,
-            self.replica_vectors,
-            self.reshape_matrix,
-            self.state.cell1,
-            self.state.cagepos1,
-            self.state.cagetype1,
-        )
-        stage1_output = stage1.execute()
+    def full_atomic_positions(self):
+        """Atomic positions of all atoms."""
+        self._requires(7)
+        return self.state.stage7_output.universe
 
-        if 1 in hooks:
-            parameters[1] = stage1_output
-            if hooks[1] is not None:
-                hooks[1](self.state, parameters)
-            if max_stage == 1:
-                return formatter.dump()
+    def cell_matrix(self):
+        """Cell matrix."""
+        self._requires(1)
+        return self.state.stage1_output.repcell.mat
 
-        # Stage2: ランダムグラフの生成と複製
-        stage2 = Stage2(
-            self.state.graph1,
-            self.state.waters1,
-            self.replica_vectors,
-            self.state.fixed1,
-            self.replica_vector_labels,
-            self.reshape_matrix,
-            self.config.anions,
-            self.config.cations,
-            self.state.groups1,
-            self.state.cagepos1,
-        )
-        stage2_output = stage2.execute()
-
-        if 2 in hooks:
-            parameters[2] = stage2_output
-            if hooks[2] is not None:
-                hooks[2](self.state, parameters)
-            if max_stage == 2:
-                return formatter.dump()
-
-        # Stage34E: 有向氷グラフの生成
-        stage34e = Stage34E(
-            stage2_output.graph, stage1_output.reppositions, stage2_output.fixed_edges
-        )
-        stage34e_output = stage34e.execute(depol)
-
-        if 3 in hooks:
-            parameters[3] = stage34e_output
-            if hooks[3] is not None:
-                hooks[3](self.state, parameters)
-            if max_stage == 3:
-                return formatter.dump()
-
-        if 4 in hooks:
-            parameters[4] = stage34e_output
-            if hooks[4] is not None:
-                hooks[4](self.state, parameters)
-            if max_stage == 4:
-                return formatter.dump()
-
-        # Stage5: 剛体分子の配向を準備
-        stage5 = Stage5(
-            stage1_output.reppositions,
-            stage34e_output.digraph,
-            stage1_output.repcell,
-            stage2_output.fixed_nodes,
-        )
-        stage5_output = stage5.execute()
-
-        if 5 in hooks:
-            parameters[5] = stage5_output
-            if hooks[5] is not None:
-                hooks[5](self.state, parameters)
-            if max_stage == 5:
-                return formatter.dump()
-
-        # Stage6: 水分子と置換分子の原子配置
-        stage6 = Stage6(
-            stage1_output.reppositions,
-            stage1_output.repcell,
-            stage5_output.rotmatrices,
-            water,
-            stage2_output.dopants,
-        )
-        stage6_output = stage6.execute()
-
-        if 6 in hooks:
-            parameters[6] = stage6_output
-            if hooks[6] is not None:
-                hooks[6](self.state, parameters)
-            if max_stage == 6:
-                return formatter.dump()
-
-        # Stage7: ゲスト分子の配置
-        stage7 = Stage7(
-            stage6_output.universe,
-            stage1_output.repcagepos,
-            stage1_output.repcagetype,
-            stage1_output.cagetypes,
-            stage2_output.filled_cages,
-            guests,
-            self.config.spot_guests,
-            self.config.spot_groups,
-            stage2_output.groups,
-            stage2_output.dopants,
-            stage1_output.reppositions,
-            stage5_output.rotmatrices,
-            stage1_output.repcell,
-        )
-        stage7_output = stage7.execute()
-
-        if 7 in hooks:
-            parameters[7] = stage7_output
-            if hooks[7] is not None:
-                hooks[7](self.state, parameters)
-
-        return formatter.dump()
+    def water_positions(self):
+        """Molecular positions of water molecules in the fractional coordinates."""
+        self._requires(1)
+        return self.state.stage1_output.reppositions
 
 
 def dopants_info(dopants=None, waters=None, cagepos=None, cell=None):
