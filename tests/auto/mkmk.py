@@ -1,6 +1,8 @@
 # test of tests
 import sys
 import random
+import glob
+import os
 
 sys.path.append("../..")
 from genice2.plugin import scan
@@ -64,10 +66,15 @@ for ice in ices:
             "--cation 0=Na --anion 2=Cl",
             "--asis",
         ]
+        format_options = []
+        for filepath in glob.glob("../../genice2/formats/*.py"):
+            if not os.path.islink(filepath):
+                prefix = os.path.basename(filepath).split(".")[0]
+                format_options.append(f" -f {prefix}")
 
         genice_options += " " + " ".join(random.sample(additional_options, 3))
-
-        product = f"{ice}_{i}.gro"
+        genice_options += random.choice(format_options)
+        product = f"{ice}_{i}.output"
         if module_options != "":
             module_options = "[" + module_options + "]"
         target = f"{ice}{module_options}"

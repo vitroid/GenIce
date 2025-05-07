@@ -11,12 +11,4 @@ prepare: Makefile.rules
 	make -f Makefile.rules -j 8 -k prepare 
 
 clean:
-	-rm *.gro
-
-
-# * gro以外のフォーマット
-# 以下はランダム選択でもいいかも
-# * ion-doped
-# * 乱数の違い
-# * ゲスト、セミゲスト
-# * プラグインのオプションごと。これについては、プラグインのほうでテスト方法を準備する必要がある。
+	-rm *.output *.gro *.diff Makefile.rules
