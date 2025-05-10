@@ -179,6 +179,6 @@ class Format(genice2.formats.Format):
             d = position1 - position2
             if d @ d < 0.16**2:
                 s += yp.Line(position1, position2)
-        s = "#" + "\n#".join(ice.doc) + "\n" + s
+        s += "#" + "\n#".join(ice.doc) + "\n"
         s += yp.NewPage()
         self.output += s
