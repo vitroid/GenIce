@@ -12,6 +12,19 @@ from genice2.valueparser import plugin_option_parser
 from genice2.cell import Cell, rel_wrap
 
 
+def guests_info(cagetypes, molecules):
+    logger = getLogger()
+    for cagetype, cageid in cagetypes.items():
+        logger.info(f"    Guests in cage type {cagetype}:")
+
+        for molec, cages in molecules.items():
+            cages = set(cages)
+            cages &= cageid
+
+            if len(cages):
+                logger.info(f"      {molec} * {len(cages)} @ {cages}")
+
+
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
     """
     Just shows the environments of the dopants

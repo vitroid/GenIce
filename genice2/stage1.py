@@ -4,9 +4,11 @@ from collections import defaultdict
 from logging import getLogger
 
 import numpy as np
+import networkx as nx
 
 from genice2.cell import Cell
 from genice2.decorators import banner, timeit
+from genice2 import cage
 
 
 def replicate_positions(positions1, replica_vectors, grand_cellmat):
@@ -43,6 +45,7 @@ class Stage1:
     def __init__(
         self,
         waters1: np.ndarray,
+        graph1: nx.Graph,
         replica_vectors: np.ndarray,
         reshape_matrix: np.ndarray,
         cell1: Cell,
@@ -50,6 +53,7 @@ class Stage1:
         cagetype1: Optional[List[str]] = None,
     ):
         self.waters1 = waters1
+        self.graph1 = graph1
         self.replica_vectors = replica_vectors
         self.reshape_matrix = reshape_matrix
         self.cell1 = cell1
@@ -87,8 +91,16 @@ class Stage1:
                 self.cagetype1[i % len(self.cagetype1)] for i in range(len(repcagepos))
             ]
             cagetypes = defaultdict(set)
+
             for i, typ in enumerate(repcagetype):
                 cagetypes[typ].add(i)
+
+            # INFO for cage types
+            logger.info("    Cage types: {0}".format(list(cagetypes)))
+
+            for typ, cages in cagetypes.items():
+                logger.info(f"    Cage type {typ}: {cages}")
+
         else:
             repcagepos = None
             repcagetype = None

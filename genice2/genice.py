@@ -362,6 +362,7 @@ class GenIce:
         if stage == 1:
             self.state.stage1_output = Stage1(
                 self.state.waters1,
+                self.state.graph1,
                 self.replica_vectors,
                 self.reshape_matrix,
                 self.state.cell1,
@@ -464,16 +465,3 @@ def groups_info(groups):
     for root, cages in groups.items():
         for cage, group in cages.items():
             logger.info(f"    Group {group} of dopant {root} in cage {cage}")
-
-
-def guests_info(cagetypes, molecules):
-    logger = getLogger()
-    for cagetype, cageid in cagetypes.items():
-        logger.info(f"    Guests in cage type {cagetype}:")
-
-        for molec, cages in molecules.items():
-            cages = set(cages)
-            cages &= cageid
-
-            if len(cages):
-                logger.info(f"      {molec} * {len(cages)} @ {cages}")
