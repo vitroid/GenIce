@@ -120,8 +120,9 @@ def getoptions():
         help=help_guest(),
     )
     parser.add_argument(
-        "--Guest",
+        "--spot_guest",
         "-G",
+        "--Guest",  # obsolete
         # nargs=1,
         dest="spot_guests",
         metavar="13=me",
