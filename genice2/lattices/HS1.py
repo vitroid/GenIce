@@ -17,6 +17,13 @@ desc = {
         {"options": "--assess_cages"},
         {"options": "--guest 12=me"},  # fill type 12 cage with methane molecules.
         {"options": "--spot_guest 12=me"},
+        {
+            "options": (
+                "--anion 1=Br --cation 3=N "
+                "--depol=optimal "
+                "-H 9=Bu:3 -H 11=Bu:3 -H 13=Bu:3 -H 7=Bu:3"
+            )
+        },
     ),
 }
 
