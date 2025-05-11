@@ -8,6 +8,24 @@
 import genice2.lattices
 from genice2.cell import cellvectors
 
+desc = {
+    "ref": {"HS1": "Kosyakov and Polyanskaya 1999"},
+    "usage": "No options available.",
+    "brief": "Hydrogen-disordered ice Ih.",
+    "test": (
+        {"options": "--assess_cages"},
+        {"options": "--guest 12=me"},  # fill type 12 cage with methane molecules.
+        {"options": "--spot_guest 12=me"},
+        {
+            "options": (
+                "--anion 1=Br --cation 3=N "
+                "--depol=optimal "
+                "-H 9=Bu:3 -H 11=Bu:3 -H 13=Bu:3 -H 7=Bu:3"
+            )
+        },
+    ),
+}
+
 
 class Lattice(genice2.lattices.Lattice):
     def __init__(self):
@@ -121,6 +139,4 @@ class Lattice(genice2.lattices.Lattice):
         15    0.6667    0.0000    1.0000
         """
 
-        self.cell = cellvectors(a=20.0715,
-                                b=11.588333333,
-                                c=11.754333333)
+        self.cell = cellvectors(a=20.0715, b=11.588333333, c=11.754333333)
