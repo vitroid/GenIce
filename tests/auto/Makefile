@@ -11,4 +11,7 @@ prepare: Makefile.rules
 	make -f Makefile.rules -k prepare 
 
 clean:
-	-rm *.output *.gro *.diff Makefile.rules
+	-rm *.diff
+
+distclean: clean
+	-rm *.output Makefile.rules
