@@ -230,10 +230,6 @@ class Format(genice2.formats.Format):
             stat[n][c] += 1
 
         # size code code(binary) Approx. Stat.
-        logger.info(
-            """
-        """
-        )
         s = ""
         for n in range(3, self.largestring + 1):
             fmtstr = (

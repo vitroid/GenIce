@@ -70,7 +70,7 @@ def make_test(ice: str, tests: dict, formatters: dict):
             logger.debug(f"Target: {target}")
             # if testmode:
             rule = f"{product}.diff: {product} ../../genice2/lattices/{ice}.py {formatter_path}\n"
-            rule += f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
+            rule += f"\t$(GENICE) {target} {genice_options} | diff - $<\n\ttouch $@\n"
             rule += f"{product}: ../../genice2/lattices/{ice}.py  {formatter_path}\n"
             rule += f"\t$(GENICE) {target} {genice_options} > $@\n"
             yield product, rule
