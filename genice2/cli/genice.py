@@ -1,6 +1,9 @@
 import sys
 import argparse as ap
 from collections import defaultdict
+import logging
+from typing import Optional
+
 from genice2.plugin import safe_import, descriptions
 
 # from genice2 import __version__
@@ -10,14 +13,14 @@ from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
 import numpy as np
-from importlib.metadata import version
+from importlib.metadata import version, PackageNotFoundError
 import click
 from genice2.genice import GenIce, GenIceConfig
 
-# from genice2.lattices import Lattice
+from genice2.lattices import Lattice
 from genice2.molecules import Molecule
+from genice2.formats import Format
 
-# from genice2.formats import Format
 # from genice2.water import water_models
 # from genice2.lattices import lattices
 # from genice2.decorators import SmartFormatter
@@ -62,11 +65,12 @@ HELP_ASSESS_CAGES = (
     "Assess the locations of cages based on the HB network topology. "
     "Note: it may fail when the unit cell is too small."
 )
-HELP_TYPE = (
-    "R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\n"
-    "If you want to analyze your own structures, please try analice tool.\n\n"
-    + descriptions("lattice", width=55)
-)
+HELP_OUTPUT = "Output file name"
+# HELP_TYPE = (
+#     "R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\n"
+#     "If you want to analyze your own structures, please try analice tool.\n\n"
+#     + descriptions("lattice", width=55)
+# )
 
 
 def help_type():
@@ -83,12 +87,89 @@ def help_guest():
     )
 
 
-@timeit
-@banner
+def get_version():
+    """パッケージのバージョンを取得する。見つからない場合はデフォルト値を返す。"""
+    try:
+        return version("genice2")
+    except PackageNotFoundError:
+        return "2.*.*.*"
+
+
+def setup_logging(debug: bool, quiet: bool) -> logging.Logger:
+    """ログレベルの設定を行う"""
+    logger = logging.getLogger()
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+    elif quiet:
+        logging.basicConfig(level=logging.WARNING)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    return logger
+
+
+def setup_water_model(water_spec: str, logger: logging.Logger) -> Molecule:
+    """水分子モデルの設定を行う"""
+    water_type, water_options = plugin_option_parser(water_spec)
+    logger.debug(f"Water type: {water_type}")
+    return safe_import("molecule", water_type).Molecule(**water_options)
+
+
+def setup_lattice(ice_type: str, logger: logging.Logger) -> Lattice:
+    """格子の設定を行う"""
+    lattice_type, lattice_options = plugin_option_parser(ice_type)
+    logger.debug(f"Lattice: {lattice_type}")
+    assert lattice_type is not None
+    return safe_import("lattice", lattice_type).Lattice(**lattice_options)
+
+
+def setup_formatter(format_spec: str, logger: logging.Logger) -> Format:
+    """フォーマッターの設定を行う"""
+    file_format, format_options = plugin_option_parser(format_spec)
+    logger.debug(f"Output file format: {file_format}")
+    formatter_module = safe_import("format", file_format)
+    return formatter_module.Format(**format_options)
+
+
+def create_config(kwargs: dict, water: Molecule) -> GenIceConfig:
+    """設定オブジェクトの作成"""
+    config = GenIceConfig(
+        water=water,
+        density=kwargs["dens"],
+        rep=tuple(kwargs["rep"]),
+        reshape=parse_reshape(kwargs["reshape"]),
+        shift=tuple(kwargs["shift"]),
+        noise=kwargs["add_noise"],
+        depol=kwargs["depol"],
+        asis=kwargs["asis"],
+        assess_cages=kwargs["assess_cages"],
+    )
+
+    # ゲスト分子の設定
+    if kwargs["guest"]:
+        config.guests = parse_guests(kwargs["guest"])
+    if kwargs["spot_guest"]:
+        config.spot_guests = parse_spot_guests(kwargs["spot_guest"])
+    if kwargs["group"]:
+        config.spot_groups = parse_groups(kwargs["group"])
+    if kwargs["anion"]:
+        config.anions = parse_ions(kwargs["anion"])
+    if kwargs["cation"]:
+        config.cations = parse_ions(kwargs["cation"])
+
+    return config
+
+
+def output_result(ice: GenIce, formatter: Format, output_file: Optional[str] = None):
+    """結果の出力"""
+    if output_file:
+        with open(output_file, "w") as f:
+            formatter.dump(ice, f)
+    else:
+        formatter.dump(ice, sys.stdout)
+
+
 @click.command()
-@click.version_option(
-    version=version("genice2"), prog_name="genice2", help=HELP_VERSION
-)
+@click.version_option(version=get_version(), prog_name="genice2", help=HELP_VERSION)
 @click.option("--rep", "-r", nargs=3, type=int, default=[1, 1, 1], help=HELP_REP)
 @click.option("--reshape", "-R", type=str, default="", help=HELP_RESHAPE)
 @click.option(
@@ -105,7 +186,7 @@ def help_guest():
 @click.option(
     "--spot_guest", "-G", multiple=True, metavar="13=me", help=HELP_SPOT_GUEST
 )
-@click.option("--Group", "-H", multiple=True, metavar="13=bu-:0", help=HELP_GROUP)
+@click.option("--group", "-H", multiple=True, metavar="13=bu-:0", help=HELP_GROUP)
 @click.option("--anion", "-a", multiple=True, metavar="3=Cl", help=HELP_ANION)
 @click.option("--cation", "-c", multiple=True, metavar="3=Na", help=HELP_CATION)
 @click.option("--depol", default="strict", help=HELP_DEPOL)
@@ -113,50 +194,34 @@ def help_guest():
 @click.option("--debug", "-D", is_flag=True, help=HELP_DEBUG)
 @click.option("--quiet", "-q", is_flag=True, help=HELP_QUIET)
 @click.option("--assess_cages", "-A", is_flag=True, help=HELP_ASSESS_CAGES)
-@click.argument("type", help=HELP_TYPE)
-def main_click(type, **kwargs):
+@click.option("--output", "-o", type=str, help=HELP_OUTPUT)
+@click.argument("ice_type", type=str)
+def main_click(ice_type, **kwargs):
     """GenIce is a swiss army knife to generate hydrogen-disordered ice structures."""
-    # 設定の準備
-    config = GenIceConfig(
-        water=Molecule(kwargs["water"]),
-        density=kwargs["dens"],
-        rep=tuple(kwargs["rep"]),
-        reshape=parse_reshape(kwargs["reshape"]),
-        shift=tuple(kwargs["shift"]),
-        noise=kwargs["add_noise"],
-        depol=kwargs["depol"],
-        asis=kwargs["asis"],
-        assess_cages=kwargs["assess_cages"],
-    )
-
-    # ゲスト分子の設定
-    if kwargs["guest"]:
-        config.guests = parse_guests(kwargs["guest"])
-    if kwargs["spot_guest"]:
-        config.spot_guests = parse_spot_guests(kwargs["spot_guest"])
-    if kwargs["Group"]:
-        config.spot_groups = parse_groups(kwargs["Group"])
-    if kwargs["anion"]:
-        config.anions = parse_ions(kwargs["anion"])
-    if kwargs["cation"]:
-        config.cations = parse_ions(kwargs["cation"])
+    # ログレベルの設定
+    logger = setup_logging(kwargs["debug"], kwargs["quiet"])
 
     # ランダムシードの設定
     if kwargs["seed"] is not None:
         np.random.seed(kwargs["seed"])
 
-    # ログレベルの設定
-    if kwargs["debug"]:
-        logging.basicConfig(level=logging.DEBUG)
-    elif kwargs["quiet"]:
-        logging.basicConfig(level=logging.WARNING)
-    else:
-        logging.basicConfig(level=logging.INFO)
+    # 水分子モデルの設定
+    water = setup_water_model(kwargs["water"], logger)
+
+    # 格子の設定
+    lattice = setup_lattice(ice_type, logger)
+
+    # フォーマッターの設定
+    formatter = setup_formatter(kwargs["format"], logger)
+
+    # 設定オブジェクトの作成
+    config = create_config(kwargs, water)
 
     # 氷の生成
-    ice = GenIce(lattices[type], config)
-    format = formats[kwargs["format"]]
-    format.dump(ice)
+    ice = GenIce(lattice, config)
+
+    # 結果の出力
+    output_result(ice, formatter, kwargs.get("output"))
 
 
 def parse_reshape(reshape_str):
