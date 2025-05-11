@@ -56,7 +56,7 @@ def make_test(ice: str, tests: dict, format: str, formatter_path: str):
             module_options = options_parser(test["args"])
 
         genice_options += " " + " ".join(random.sample(additional_options, 3))
-        genice_options += f" -f {format} "
+        genice_options += format
         if module_options != "":
             module_options = "[" + module_options + "]"
         target = f"{ice}{module_options}"
