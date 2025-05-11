@@ -49,7 +49,6 @@ def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
 
             if sqdistance < 0.57**2:
                 dnei[site].add(i)
-                # logger.info((i,cagepos[i]))
 
     return dnei
 
@@ -165,7 +164,6 @@ class Stage7:
             rot = self.rotmatrices[root]
             self.universe.append(monatom(pos, self.repcell, name))
             del self.dopants[root]  # processed.
-            logger.debug((root, cages, name, molname, pos, rot))
 
             for cage, group in cages.items():
                 assert cage in dopants_neighbors[root]
@@ -189,7 +187,7 @@ class Stage7:
         # ケージタイプごとのゲスト配置
         for cagetype, contents in self.guests.items():
             if cagetype not in self.cagetypes:
-                logger.info(f"Nonexistent cage type: {cagetype}")
+                logger.info(f"  Nonexistent cage type: {cagetype}")
                 continue
 
             resident = dict()
@@ -222,7 +220,7 @@ class Stage7:
         # 分子ゲストの配置
         for molec, cages in molecules.items():
             guest_type, guest_options = plugin_option_parser(molec)
-            logger.debug(f"Guest type: {guest_type}")
+            logger.debug(f"  Guest type: {guest_type}")
             gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
 
             try:
@@ -240,7 +238,8 @@ class Stage7:
 
     def _process_dopants(self, logger):
         """ドーパントの処理"""
-        logger.info(f"  Dopants: {self.dopants}")
+        if len(self.dopants):
+            logger.info(f"  Dopants: {self.dopants}")
 
         # ドーパントは単原子で、1つの水分子を置換すると仮定
         atomset = defaultdict(set)

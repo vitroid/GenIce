@@ -70,7 +70,7 @@ def make_test(ice: str, tests: dict, formatters: dict):
             logger.debug(f"Target: {target}")
             # if testmode:
             rule = f"{product}.diff: {product} ../../genice2/lattices/{ice}.py {formatter_path}\n"
-            rule += f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
+            rule += f"\t$(GENICE) {target} {genice_options} | diff - $<\n\ttouch $@\n"
             rule += f"{product}: ../../genice2/lattices/{ice}.py  {formatter_path}\n"
             rule += f"\t$(GENICE) {target} {genice_options} > $@\n"
             yield product, rule
@@ -128,5 +128,7 @@ print("GENICE=../../genice.x")
 targets = compose_long_line_from_list(products_prepare)
 print("TARGETS=", *targets)
 print("prepare: $(TARGETS)")
-print("test: $(patsubst %, %.diff, $(TARGETS))")
+print(
+    "test: $(foreach file,$(TARGETS),$(if $(shell test -s $(file) && echo 1),$(file).diff,))"
+)
 print(rules)
