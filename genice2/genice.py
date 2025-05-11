@@ -153,6 +153,11 @@ class GenIce:
         else:
             self._setup_reshape_matrix()
 
+        # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
+        self.replica_vector_labels = {
+            tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
+        }
+
     def _setup_reshape_matrix(self):
         """reshape行列の設定"""
         logger = getLogger()
@@ -170,11 +175,6 @@ class GenIce:
         logger.info(f"    A,B,C = {A}, {B}, {C}")
 
         self.replica_vectors = self._calculate_replica_vectors(i, j, k)
-
-        # レプリカ単位胞には0から順に番号ラベルがついている。replica_vector_labelsは単位胞の位置をラベルに変換する
-        self.replica_vector_labels = {
-            tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)
-        }
 
     def _calculate_replica_vectors(
         self, i: np.ndarray, j: np.ndarray, k: np.ndarray
@@ -458,10 +458,3 @@ class GenIce:
         """Hydrogen bond graph."""
         self._requires(2)
         return self.state.stage2_output.graph
-
-
-def groups_info(groups):
-    logger = getLogger()
-    for root, cages in groups.items():
-        for cage, group in cages.items():
-            logger.info(f"    Group {group} of dopant {root} in cage {cage}")
