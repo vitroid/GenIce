@@ -14,4 +14,26 @@ clean:
 	-rm *.diff
 
 distclean: clean
-	-rm *.output Makefile.rules
+	-rm @*
+	-rm *._KG
+	-rm *._ringstat
+	-rm *.cif
+	-rm *.cif2
+	-rm *.com
+	-rm *.digraph
+	-rm *.euler
+	-rm *.exmol
+	-rm *.exyz
+	-rm *.graph
+	-rm *.gromacs
+	-rm *.mdview
+	-rm *.output
+	-rm *.povray
+	-rm *.python
+	-rm *.quaternion
+	-rm *.rcom
+	-rm *.rings
+	-rm *.towhee
+	-rm *.xyz
+	-rm *.yaplot
+	-rm Makefile.rules

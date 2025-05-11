@@ -15,7 +15,18 @@ def options_parser(options):
     return options
 
 
-basicConfig(level=DEBUG)
+def compose_long_line_from_list(items: list, N=70):
+    while True:
+        line = ""
+        while len(line) < N and items:
+            line += " " + items.pop(0)
+        yield line + "\\\n"
+        if not items:
+            yield line + "\\\n"
+            break
+
+
+basicConfig(level=INFO)
 logger = getLogger()
 
 # print(tests)
@@ -37,36 +48,32 @@ logger = getLogger()
 # - asis: bool
 
 
-def make_test(ice: str, tests: dict, format: str, formatter_path: str):
-    if ice == "HS1":
-        logger.info(
-            f"Make tests of {ice} tests {tests} in {format} via {formatter_path}"
-        )
+def make_test(ice: str, tests: dict, formatters: dict):
+    for formatter_prefix, formatter_path in formatters.items():
+        for i, test in enumerate(tests):
+            product = f"{ice}_{i}.{formatter_prefix}"
 
-    for i, test in enumerate(tests):
-        product = f"{ice}_{i}.output"
+            genice_options = ""
+            module_options = ""
 
-        genice_options = ""
-        module_options = ""
+            logger.debug(f"{ice} {test}")
+            if "options" in test:
+                genice_options = test["options"]
+            if "args" in test:
+                module_options = options_parser(test["args"])
 
-        logger.debug(f"{ice} {test}")
-        if "options" in test:
-            genice_options = test["options"]
-        if "args" in test:
-            module_options = options_parser(test["args"])
-
-        genice_options += " " + " ".join(random.sample(additional_options, 3))
-        genice_options += format
-        if module_options != "":
-            module_options = "[" + module_options + "]"
-        target = f"{ice}{module_options}"
-        logger.debug(f"Target: {target}")
-        # if testmode:
-        rule = f"{product}.diff: {product} ../../genice2/lattices/{ice}.py {formatter_path}\n"
-        rule += f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
-        rule += f"{product}: ../../genice2/lattices/{ice}.py  {formatter_path}\n"
-        rule += f"\t$(GENICE) {target} {genice_options} > $@\n"
-        yield product, rule
+            genice_options += " " + " ".join(random.sample(additional_options, 3))
+            genice_options += f" -f {formatter_prefix}"
+            if module_options != "":
+                module_options = "[" + module_options + "]"
+            target = f"{ice}{module_options}"
+            logger.debug(f"Target: {target}")
+            # if testmode:
+            rule = f"{product}.diff: {product} ../../genice2/lattices/{ice}.py {formatter_path}\n"
+            rule += f"\t$(GENICE) {target} {genice_options} | diff - $< && touch $@\n"
+            rule += f"{product}: ../../genice2/lattices/{ice}.py  {formatter_path}\n"
+            rule += f"\t$(GENICE) {target} {genice_options} > $@\n"
+            yield product, rule
 
 
 additional_options = [
@@ -87,7 +94,7 @@ def formatter_list():
             formatter_prefix = os.path.basename(filepath).split(".")[0]
             if formatter_prefix in ("raw", "null", "__init__"):
                 continue
-            formatter_paths[f" -f {formatter_prefix}"] = filepath
+            formatter_paths[formatter_prefix] = filepath
     return formatter_paths
 
 
@@ -110,16 +117,16 @@ for ice in ices:
         continue
     if ice not in tests:
         tests[ice] = ("",)
-    format = random.choice(list(formatters.keys()))
 
-    for product, rule in make_test(ice, tests[ice], format, formatters[format]):
+    for product, rule in make_test(ice, tests[ice], formatters):
         products_prepare.append(product)
         products_test.append(product)
         rules += rule
 
 print("GENICE=../../genice.x")
 # print("GENICE=genice2")
-print("TARGETS=", *products_prepare)
+targets = compose_long_line_from_list(products_prepare)
+print("TARGETS=", *targets)
 print("prepare: $(TARGETS)")
 print("test: $(patsubst %, %.diff, $(TARGETS))")
 print(rules)
