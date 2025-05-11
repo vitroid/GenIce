@@ -128,5 +128,7 @@ print("GENICE=../../genice.x")
 targets = compose_long_line_from_list(products_prepare)
 print("TARGETS=", *targets)
 print("prepare: $(TARGETS)")
-print("test: $(patsubst %, %.diff, $(TARGETS))")
+print(
+    "test: $(foreach file,$(TARGETS),$(if $(shell test -s $(file) && echo 1),$(file).diff,))"
+)
 print(rules)
