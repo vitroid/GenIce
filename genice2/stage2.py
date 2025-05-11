@@ -62,21 +62,6 @@ def replicate_groups(groups, waters, cagepos, rep):
                 newgroups[newroot][newcage] = group_name
                 # たぶんこれでいいと思うのだが、この部分は今は使っていないので検証不能。
 
-            # for x in range(rep[0]):
-            #     for y in range(rep[1]):
-            #         for z in range(rep[2]):
-            #             r = np.array((x, y, z))
-            #             # label of the root (water) in the replica
-            #             newroot = root + len(waters) * (z + rep[2] * (y + rep[1] * x))
-            #             # replicated cell in which the cage resides.
-            #             # modulo by positive number is always positive.
-            #             cr = (r + gcell) % rep
-            #             newcage = cage + len(cagepos) * (
-            #                 cr[2] + rep[2] * (cr[1] + rep[1] * cr[0])
-            #             )
-            #             newcage = int(newcage)
-            #             newgroups[newroot][newcage] = group_name
-            #             # logger.info(("root",newroot,"newcage", newcage))
     return newgroups
 
 
