@@ -6,7 +6,7 @@ from collections import defaultdict
 import numpy as np
 
 from genice2.decorators import banner, timeit
-from genice2.molecules import Molecule, arrange, one
+from genice2.molecules import Molecule, arrange, one, monatom
 from genice2.plugin import Group, safe_import
 from genice2.valueparser import plugin_option_parser
 from genice2.cell import Cell, rel_wrap
@@ -23,6 +23,13 @@ def guests_info(cagetypes, molecules):
 
             if len(cages):
                 logger.info(f"      {molec} * {len(cages)} @ {cages}")
+
+
+def groups_info(groups):
+    logger = getLogger()
+    for root, cages in groups.items():
+        for cage, group in cages.items():
+            logger.info(f"    Group {group} of dopant {root} in cage {cage}")
 
 
 def neighbor_cages_of_dopants(dopants, waters, cagepos, cell):
@@ -109,114 +116,133 @@ class Stage7:
         self.rotmatrices = rotmatrices
         self.repcell = repcell
 
+    def _add_group(self, cage, group, root):
+        self.groups[root][cage] = group
+        self.filled_cages.add(cage)
+
     @timeit
     @banner
     def execute(self) -> Stage7Output:
         """Place guest molecules."""
-        # ゲスト分子の配置処理
-
         logger = getLogger()
 
-        if self.repcagepos is not None:
-            # the cages around the dopants.
-            dopants_neighbors = dopants_info(
-                self.dopants, self.reppositions, self.repcagepos, self.repcell
-            )
+        if self.repcagepos is None:
+            return Stage7Output(self.universe)
 
-            # put the (one-off) groups
-            if len(self.spot_groups) > 0:
-                # process the -H option
-                for cage, group_to in self.spot_groups.items():
-                    group, root = group_to.split(":")
-                    self.add_group(cage, group, int(root))
+        # 1. ドーパント周辺のケージの処理
+        dopants_neighbors = dopants_info(
+            self.dopants, self.reppositions, self.repcagepos, self.repcell
+        )
 
-            molecules = defaultdict(list)
+        # 2. グループの配置
+        self._process_groups(dopants_neighbors, logger)
 
-            if len(self.spot_guests) > 0:
-                # process the -G option
-                for cage, molec in self.spot_guests.items():
-                    molecules[molec].append(cage)
-                    self.filled_cages.add(cage)
+        # 3. ゲスト分子の配置
+        molecules = self._process_guests(logger)
 
-            # process the -g option
-            for cagetype, contents in self.guests.items():
-                if cagetype not in self.cagetypes:
-                    logger.info(f"Nonexistent cage type: {cagetype}")
-                    continue
-                resident = dict()
-                rooms = list(self.cagetypes[cagetype] - self.filled_cages)
+        # 4. ドーパントの処理
+        self._process_dopants(logger)
 
-                for room in rooms:
-                    resident[room] = None
+        return Stage7Output(self.universe)
 
-                vacant = len(rooms)
+    def _process_groups(self, dopants_neighbors, logger):
+        """グループの配置を処理"""
+        if len(self.spot_groups) > 0:
+            # process the -H option
+            for cage, group_to in self.spot_groups.items():
+                group, root = group_to.split(":")
+                self._add_group(cage, group, int(root))
 
-                for molec, frac in contents.items():
-                    nmolec = int(frac * len(rooms) + 0.5)
-                    vacant -= nmolec
-                    assert vacant >= 0, "Too many guests."
-                    remain = nmolec
-                    movedin = []
+            logger.info("  Summary of groups:")
+            groups_info(self.groups)
 
-                    while remain > 0:
-                        r = np.random.randint(0, len(rooms))
-                        room = rooms[r]
+        # semi-guests
+        for root, cages in self.groups.items():
+            assert root in self.dopants
+            name = self.dopants[root]
+            molname = f"G{root}"
+            pos = self.reppositions[root]
+            rot = self.rotmatrices[root]
+            self.universe.append(monatom(pos, self.repcell, name))
+            del self.dopants[root]  # processed.
+            logger.debug((root, cages, name, molname, pos, rot))
 
-                        if resident[room] is None:
-                            resident[room] = molec
-                            molecules[molec].append(room)
-                            movedin.append(room)
-                            remain -= 1
-
-            # Now ge got the address book of the molecules.
-            if len(molecules):
-                logger.info("  Summary of guest placements:")
-                guests_info(self.cagetypes, molecules)
-
-            if len(self.spot_groups) > 0:
-                logger.info("  Summary of groups:")
-                groups_info(self.groups)
-
-            # semi-guests
-            for root, cages in self.groups.items():
-                assert root in self.dopants
-                name = self.dopants[root]
-                molname = f"G{root}"
-                pos = self.reppositions[root]
-                rot = self.rotmatrices[root]
-                self.universe.append(monatom(pos, self.repcell, name))
-                del self.dopants[root]  # processed.
-                logger.debug((root, cages, name, molname, pos, rot))
-
-                for cage, group in cages.items():
-                    # assert group in self.groups_placer
-                    assert cage in dopants_neighbors[root]
-                    cage_center = self.repcagepos[cage]
-                    self.universe.append(
-                        Group(group).arrange_atoms(
-                            cage_center, pos, self.repcell, molname, origin_atom=name
-                        )
+            for cage, group in cages.items():
+                assert cage in dopants_neighbors[root]
+                cage_center = self.repcagepos[cage]
+                self.universe.append(
+                    Group(group).arrange_atoms(
+                        cage_center, pos, self.repcell, molname, origin_atom=name
                     )
+                )
 
-            # molecular guests
-            for molec, cages in molecules.items():
-                guest_type, guest_options = plugin_option_parser(molec)
-                logger.debug(f"Guest type: {guest_type}")
-                gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
+    def _process_guests(self, logger):
+        """ゲスト分子の配置を処理"""
+        molecules = defaultdict(list)
 
-                try:
-                    mdoc = gmol.__doc__.splitlines()
-                except BaseException:
-                    mdoc = []
-                for line in mdoc:
-                    logger.info("  " + line)
-                cage_center = [self.repcagepos[i] for i in cages]
-                cmat = [np.identity(3) for i in cages]
-                self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
+        # 特定のケージにゲストを配置
+        if len(self.spot_guests) > 0:
+            for cage, molec in self.spot_guests.items():
+                molecules[molec].append(cage)
+                self.filled_cages.add(cage)
 
+        # ケージタイプごとのゲスト配置
+        for cagetype, contents in self.guests.items():
+            if cagetype not in self.cagetypes:
+                logger.info(f"Nonexistent cage type: {cagetype}")
+                continue
+
+            resident = dict()
+            rooms = list(self.cagetypes[cagetype] - self.filled_cages)
+            for room in rooms:
+                resident[room] = None
+
+            vacant = len(rooms)
+            for molec, frac in contents.items():
+                nmolec = int(frac * len(rooms) + 0.5)
+                vacant -= nmolec
+                assert vacant >= 0, "Too many guests."
+                remain = nmolec
+                movedin = []
+
+                while remain > 0:
+                    r = np.random.randint(0, len(rooms))
+                    room = rooms[r]
+                    if resident[room] is None:
+                        resident[room] = molec
+                        molecules[molec].append(room)
+                        movedin.append(room)
+                        remain -= 1
+
+        # ゲスト分子の配置情報を表示
+        if len(molecules):
+            logger.info("  Summary of guest placements:")
+            guests_info(self.cagetypes, molecules)
+
+        # 分子ゲストの配置
+        for molec, cages in molecules.items():
+            guest_type, guest_options = plugin_option_parser(molec)
+            logger.debug(f"Guest type: {guest_type}")
+            gmol = safe_import("molecule", guest_type).Molecule(**guest_options)
+
+            try:
+                mdoc = gmol.__doc__.splitlines()
+            except BaseException:
+                mdoc = []
+            for line in mdoc:
+                logger.info("  " + line)
+
+            cage_center = [self.repcagepos[i] for i in cages]
+            cmat = [np.identity(3) for i in cages]
+            self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
+
+        return molecules
+
+    def _process_dopants(self, logger):
+        """ドーパントの処理"""
         logger.info(f"  Dopants: {self.dopants}")
 
-        # Assume the dopant is monatomic and replaces one water molecule
+        # ドーパントは単原子で、1つの水分子を置換すると仮定
         atomset = defaultdict(set)
         for label, name in self.dopants.items():
             atomset[name].add(label)
@@ -226,5 +252,3 @@ class Stage7:
             rot = [self.rotmatrices[i] for i in sorted(labels)]
             oneatom = one.Molecule(label=name)
             self.universe.append(arrange(pos, self.repcell, rot, oneatom))
-
-        return Stage7Output(self.universe)
