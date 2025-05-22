@@ -92,7 +92,7 @@ def formatter_list():
     for filepath in glob.glob("../../genice2/formats/*.py"):
         if not os.path.islink(filepath):
             formatter_prefix = os.path.basename(filepath).split(".")[0]
-            if formatter_prefix in ("raw", "null", "__init__"):
+            if formatter_prefix in ("raw", "null", "__init__", "_KG"):
                 continue
             formatter_paths[formatter_prefix] = filepath
     return formatter_paths
@@ -103,6 +103,7 @@ result = plugin.scan("lattice")
 ices = result["system"]
 tests = result["tests"]
 formatters = formatter_list()
+
 
 # print(tests)
 # sys.exit(0)
