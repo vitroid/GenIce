@@ -5,8 +5,6 @@ import numpy as np
 from logging import getLogger
 import genice2.molecules
 
-water = 1  # Identify
-
 
 class Molecule(genice2.molecules.Molecule):
 
@@ -18,9 +16,10 @@ class Molecule(genice2.molecules.Molecule):
         ohy = oh * math.sin(hangle)
         oz = -ohz * 2 / mass
 
-        self.sites_ = np.array(
+        self.sites = np.array(
             [[0, 0, oz], [0, ohy, ohz + oz], [0, -ohy, ohz + oz]]
         )  # nm
 
-        self.labels_ = ["Ow", "Hw", "Hw"]
-        self.name_ = "SOL"
+        self.labels = ["Ow", "Hw", "Hw"]
+        self.name = "SOL"
+        self.is_water = True

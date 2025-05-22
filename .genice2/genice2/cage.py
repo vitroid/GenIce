@@ -48,7 +48,7 @@ def assess_cages(graph, node_pos):
     ]
 
     # Positions of the centers of the rings.
-    ringpos = [centerOfMass(ringnodes, node_pos) for ringnodes in ringlist]
+    ringpos = np.array([centerOfMass(ringnodes, node_pos) for ringnodes in ringlist])
 
     MaxCageSize = 22
     cagepos = []

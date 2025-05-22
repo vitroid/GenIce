@@ -8,6 +8,6 @@ class Molecule(genice2.molecules.Molecule):
     def __init__(self):
         # placeholder for empty cage
 
-        self.sites_ = []
-        self.labels_ = []
-        self.name_ = "empty"
+        self.sites = []
+        self.labels = []
+        self.name = "empty"

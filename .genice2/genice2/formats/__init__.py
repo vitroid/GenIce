@@ -3,19 +3,16 @@
 import sys
 
 
-class Format():
+class Format:
     """
     Base class for Format()
     """
 
     def __init__(self, **kwargs):
-        self.output = ""
+        raise NotImplementedError
 
-    def hooks(self):
-        return {}
-
-    def dump(self):
+    def dump(self, genice, file):
         """
         This method returns self.output.
         """
-        return self.output
+        raise NotImplementedError
