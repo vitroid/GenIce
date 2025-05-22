@@ -44,6 +44,7 @@ graphstat = ">=0.3.3"
 yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
 genice-core = ">=1.1"
+jinja2 = "^3.1.4"
 
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
@@ -59,13 +60,13 @@ pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
 genice2-cage = ">=2.4.4"
 
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools.command.build_py"]
+build-backend = "setuptools.build_meta"
 
-
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
+[tool.setuptools]
+cmdclass = {build_py = "genice2.build:BuildPyCommand"}
 
 # [tool.hatch.version]
 # path = "genice2/__init__.py"
-jinja2 = "^3.1.4"
 
