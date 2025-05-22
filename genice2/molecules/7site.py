@@ -10,8 +10,6 @@ desc = {
     "usage": "No options available.",
 }
 
-water = 1  # Identify
-
 
 class Molecule(genice2.molecules.Molecule):
 
@@ -27,7 +25,7 @@ class Molecule(genice2.molecules.Molecule):
         olx = ol * math.sin(mangle)
         oz = -ohz * 2 / mass
 
-        self.sites_ = np.array(
+        self.sites = np.array(
             [
                 [0, 0, oz],
                 [0, ohy, ohz + oz],
@@ -39,6 +37,6 @@ class Molecule(genice2.molecules.Molecule):
             ]
         )  # nm, OHHMMLL
 
-        self.atoms_ = ["O", "H", "H", ".", ".", ".", "."]
-        self.labels_ = ["OW", "HW1", "HW2", "MW1", "MW2", "LW1", "LW2"]
-        self.name_ = "SOL"
+        self.labels = ["OW", "HW1", "HW2", "MW1", "MW2", "LW1", "LW2"]
+        self.name = "SOL"
+        self.is_water = True

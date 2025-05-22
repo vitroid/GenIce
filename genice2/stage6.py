@@ -5,7 +5,7 @@ import numpy as np
 
 from genice2.cell import Cell
 from genice2.decorators import banner, timeit
-from genice2.molecules import Molecule, arrange
+from genice2.molecules import Molecule, AtomicStructure
 
 
 @dataclass
@@ -38,7 +38,7 @@ class Stage6:
         """Arrange atoms of water and replacements"""
         universe = []
         universe.append(
-            arrange(
+            AtomicStructure.from_molecule(
                 self.reppositions,
                 self.repcell,
                 self.rotmatrices,

@@ -20,7 +20,7 @@ class Molecule(genice2.molecules.Molecule):
             ]
         )  # CHHHH
         CH = 0.109  # nm
-        self.sites_ *= CH / (3.0**0.5)
+        self.sites *= CH / (3.0**0.5)
 
-        self.labels_ = ["C", "H", "H", "H", "H"]
-        self.name_ = "CH4"
+        self.labels = ["C", "H", "H", "H", "H"]
+        self.name = "CH4"

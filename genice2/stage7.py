@@ -6,7 +6,7 @@ from collections import defaultdict
 import numpy as np
 
 from genice2.decorators import banner, timeit
-from genice2.molecules import Molecule, arrange, one, monatom
+from genice2.molecules import Molecule, AtomicStructure, one
 from genice2.plugin import Group, safe_import
 from genice2.valueparser import plugin_option_parser
 from genice2.cell import Cell, rel_wrap
@@ -162,7 +162,7 @@ class Stage7:
             molname = f"G{root}"
             pos = self.reppositions[root]
             rot = self.rotmatrices[root]
-            self.universe.append(monatom(pos, self.repcell, name))
+            self.universe.append(AtomicStructure.from_monatom(pos, self.repcell, name))
             del self.dopants[root]  # processed.
 
             for cage, group in cages.items():
@@ -232,7 +232,9 @@ class Stage7:
 
             cage_center = [self.repcagepos[i] for i in cages]
             cmat = [np.identity(3) for i in cages]
-            self.universe.append(arrange(cage_center, self.repcell, cmat, gmol))
+            self.universe.append(
+                AtomicStructure.from_molecules(cage_center, self.repcell, cmat, gmol)
+            )
 
         return molecules
 
@@ -250,4 +252,6 @@ class Stage7:
             pos = [self.reppositions[i] for i in sorted(labels)]
             rot = [self.rotmatrices[i] for i in sorted(labels)]
             oneatom = one.Molecule(label=name)
-            self.universe.append(arrange(pos, self.repcell, rot, oneatom))
+            self.universe.append(
+                AtomicStructure.from_monatom(pos, self.repcell, rot, oneatom)
+            )
