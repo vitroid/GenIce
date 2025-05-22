@@ -38,7 +38,7 @@ class Stage6:
         """Arrange atoms of water and replacements"""
         universe = []
         universe.append(
-            AtomicStructure.from_molecule(
+            AtomicStructure(
                 self.reppositions,
                 self.repcell,
                 self.rotmatrices,

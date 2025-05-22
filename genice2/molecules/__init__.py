@@ -1,7 +1,6 @@
 # coding: utf-8
 from logging import getLogger
 from dataclasses import dataclass, field
-
 import numpy as np
 
 from genice2.cell import Cell
@@ -19,56 +18,39 @@ class Molecule:
     is_water: bool = False
 
 
-@dataclass(frozen=True)
 class AtomicStructure:
-    resname: str
-    atomnames: list[str]
-    positions: list[np.ndarray]
-    orig_order: list[int]
-
-    @classmethod
-    def from_molecule(
-        cls,
+    def __init__(
+        self,
         rel_coords: np.ndarray,
         cell: Cell,
-        rotmatrices: np.ndarray,
-        molecule: Molecule,
-        immutables=set(),
+        rotmatrices: np.ndarray = None,
+        molecule: Molecule = None,
+        immutables: set = None,
+        name: str = None,
     ):
         logger = getLogger()
-        logger.info(f"from_molecule: {molecule}")
-        cls.resname = molecule.name
-        cls.atomnames = molecule.labels
-        cls.positions = []
-        cls.orig_order = []
+
+        if rotmatrices is None:
+            # a shortcut for monatomic molecules
+            self.resname = name
+            self.atomnames = [name] * len(rel_coords)
+            self.positions = cell.rel2abs(rel_coords).reshape(-1, 1, 3)
+            self.orig_order = [0] * len(rel_coords)
+            return
+
+        self.resname = molecule.name
+        self.atomnames = molecule.labels
+        self.positions = []
+        self.orig_order = []
 
         for order, rel_coord in enumerate(rel_coords):
             if order in immutables:
                 continue
-            cls.orig_order.append(order)
+            self.orig_order.append(order)
 
             abscom = cell.rel2abs(rel_coord)  # relative to absolute
             rotated = molecule.sites @ rotmatrices[order]
-            cls.positions.append(abscom + rotated)
-
-        return cls
-
-    @classmethod
-    def monatom(cls, rel_coord: np.ndarray, cell: Cell, name: str):
-        logger = getLogger()
-
-        cls.resname = name
-        cls.atomnames = [name]
-        cls.positions = [
-            np.array(
-                [
-                    cell.rel2abs(rel_coord),
-                ]
-            )
-        ]
-        cls.orig_order = [0]
-
-        return cls
+            self.positions.append(abscom + rotated)
 
 
 def serialize(mols: AtomicStructure):

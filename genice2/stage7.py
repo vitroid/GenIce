@@ -6,7 +6,7 @@ from collections import defaultdict
 import numpy as np
 
 from genice2.decorators import banner, timeit
-from genice2.molecules import Molecule, AtomicStructure, one
+from genice2.molecules import AtomicStructure
 from genice2.plugin import Group, safe_import
 from genice2.valueparser import plugin_option_parser
 from genice2.cell import Cell, rel_wrap
@@ -160,9 +160,9 @@ class Stage7:
             assert root in self.dopants
             name = self.dopants[root]
             molname = f"G{root}"
-            pos = self.reppositions[root]
+            pos = np.array(self.reppositions[root])
             rot = self.rotmatrices[root]
-            self.universe.append(AtomicStructure.from_monatom(pos, self.repcell, name))
+            self.universe.append(AtomicStructure(pos, self.repcell, name))
             del self.dopants[root]  # processed.
 
             for cage, group in cages.items():
@@ -230,11 +230,9 @@ class Stage7:
             for line in mdoc:
                 logger.info("  " + line)
 
-            cage_center = [self.repcagepos[i] for i in cages]
+            cage_center = np.array([self.repcagepos[i] for i in cages])
             cmat = [np.identity(3) for i in cages]
-            self.universe.append(
-                AtomicStructure.from_molecules(cage_center, self.repcell, cmat, gmol)
-            )
+            self.universe.append(AtomicStructure(cage_center, self.repcell, cmat, gmol))
 
         return molecules
 
@@ -245,13 +243,9 @@ class Stage7:
 
         # ドーパントは単原子で、1つの水分子を置換すると仮定
         atomset = defaultdict(set)
-        for label, name in self.dopants.items():
-            atomset[name].add(label)
+        for index, name in self.dopants.items():
+            atomset[name].add(index)
 
-        for name, labels in atomset.items():
-            pos = [self.reppositions[i] for i in sorted(labels)]
-            rot = [self.rotmatrices[i] for i in sorted(labels)]
-            oneatom = one.Molecule(label=name)
-            self.universe.append(
-                AtomicStructure.from_monatom(pos, self.repcell, rot, oneatom)
-            )
+        for name, indices in atomset.items():
+            pos = self.reppositions[sorted(indices)]
+            self.universe.append(AtomicStructure(pos, self.repcell, name=name))
