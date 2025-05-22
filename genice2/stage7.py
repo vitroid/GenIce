@@ -162,7 +162,7 @@ class Stage7:
             molname = f"G{root}"
             pos = np.array(self.reppositions[root])
             rot = self.rotmatrices[root]
-            self.universe.append(AtomicStructure(pos, self.repcell, name))
+            self.universe.append(AtomicStructure(pos, self.repcell, name=name))
             del self.dopants[root]  # processed.
 
             for cage, group in cages.items():
