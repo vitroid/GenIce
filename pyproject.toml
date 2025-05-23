@@ -62,11 +62,13 @@ genice2-cage = ">=2.4.4"
 setuptools = "^80.8.0"
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools.command.build_py"]
+requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-cmdclass = {build_py = "genice2.build:BuildPyCommand"}
+cmdclass = {"build_py" = "genice2.build.BuildPyCommand"}
+packages = ["genice2"]
+package-dir = {"" = ".genice2"}
 
 # [tool.hatch.version]
 # path = "genice2/__init__.py"

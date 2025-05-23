@@ -3,7 +3,10 @@ import os
 import shutil
 
 
-def clone_to(dst=".genice2"):
+def clone_to(dst=".genice2/genice2", delete=False):
+    if delete:
+        shutil.rmtree(dst, ignore_errors=True)
+
     if not os.path.exists(dst):
         os.makedirs(dst)
 
@@ -38,4 +41,4 @@ class BuildPyCommand(build_py):
 
 
 if __name__ == "__main__":
-    clone_to()
+    clone_to(delete=True)
