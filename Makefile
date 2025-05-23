@@ -15,10 +15,7 @@ update-citations:
 
 # change symlinks to copies
 prepare:
-	-rm -rf .genice2
-	mkdir .genice2
-	rsync -avL --exclude="__pycache__" genice2/ .genice2/genice2/
-
+	python -m genice2.build
 
 test:
 	make -C tests all
