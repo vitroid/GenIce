@@ -4,7 +4,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.10
+Version 2.2.10.1
 
 ## New in GenIce2.2
 
@@ -57,7 +57,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.9)
+    (version 2.2.10.1)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -158,6 +158,7 @@ Install with pip3.
                             EMT             Hypothetical ice with a large cavity.
                             FAU             Hypothetical ice at negative pressure
                                             ice 'sIV'.
+                            HS1, sIV        Hydrogen-disordered ice Ih.
                             M, iceM         A hypothetical hydrogen-ordered high-
                                             density ice.
                             RHO             Hypothetical ice at negative pressure
@@ -196,7 +197,7 @@ Install with pip3.
                             xFAU            Aeroice xFAU.
                             xdtc            A porous ice with cylindrical channels.
                             ----
-                            (Undocumented) 1h_unit HS1 TS1 dtc ice1h_unit sIII sIV
+                            (Undocumented) 1h_unit TS1 dtc ice1h_unit sIII
     
     
                             2. Lattice structures served by external plugins
@@ -595,6 +596,7 @@ CS1, MEP, sI | Clathrate hydrates sI. [Frank 1959, Jeffrey 1984, Kosyakov 1999, 
 DOH, HS3, sH | Clathrate type H.
 EMT | Hypothetical ice with a large cavity. [Liu 2019, IZA Database]
 FAU | Hypothetical ice at negative pressure ice 'sIV'. [Huang 2017, IZA Database]
+HS1, sIV | Hydrogen-disordered ice Ih. [Kosyakov and Polyanskaya 1999]
 M, iceM | A hypothetical hydrogen-ordered high-density ice. [Mochizuki 2024]
 RHO | Hypothetical ice at negative pressure ice 'sIII'. [Huang 2016, IZA Database]
 Struct02 | A space fullerene. (I phase?) [Sikiric 2010]
@@ -618,7 +620,7 @@ oprism | Hydrogen-ordered ice nanotubes. [Koga 2001]
 sTprime | Filled ice sT'. [Smirnov 2013]
 xFAU | Aeroice xFAU. [Matsui 2017]
 xdtc | A porous ice with cylindrical channels. [Matsumoto 2021]
-1h_unit, HS1, TS1, dtc, ice1h_unit, sIII, sIV | (Undocumented)
+1h_unit, TS1, dtc, ice1h_unit, sIII | (Undocumented)
 
 
 Ice names with double quotations are not experimentally verified.
