@@ -10,7 +10,7 @@ from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
 import numpy as np
-from importlib.metadata import version
+from importlib.metadata import version, PackageNotFoundError
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 
@@ -29,11 +29,22 @@ def help_guest():
     )
 
 
-def getoptions():
+def get_version():
     try:
-        genice2_version = version("genice2")
-    except:
-        genice2_version = "2.*.*.*"
+        return version("genice2")
+    except PackageNotFoundError:
+        # インストール前の場合は、プロジェクトのルートディレクトリからバージョンを取得
+        try:
+            import toml
+
+            with open("pyproject.toml") as f:
+                return toml.load(f)["project"]["version"]
+        except (ImportError, FileNotFoundError, KeyError):
+            return "unknown"
+
+
+def getoptions():
+    genice2_version = get_version()
     parser = ap.ArgumentParser(
         description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {genice2_version})",
         prog="genice2",

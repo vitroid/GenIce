@@ -1,6 +1,7 @@
 [project]
-name="genice2"
-dynamic=["version"]
+name = "genice2"
+version = "2.3.0.dev0"
+dynamic = []
 
 [project.urls]
 "Homepage" = "https://github.com/vitroid/GenIce"
@@ -67,9 +68,17 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 cmdclass = {"build_py" = "genice2.build.BuildPyCommand"}
-packages = ["genice2"]
+packages = ["genice2", "genice2.cli", "genice2.formats", "genice2.lattices", "genice2.groups", "genice2.loaders", "genice2.molecules"]
 package-dir = {"" = ".genice2"}
+zip-safe = false
 
 # [tool.hatch.version]
 # path = "genice2/__init__.py"
+
+[project.scripts]
+genice2 = "genice2.cli.genice:main"
+analice2 = "genice2.cli.analice:main"
+
+[tool.poetry.build]
+script = "genice2/build.py"
 
