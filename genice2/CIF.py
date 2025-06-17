@@ -23,6 +23,7 @@ def fullatoms(atomd, sops):
             x, y, z = pos
             # print(x,sop)
             p = sop(x, y, z)
+            logger.debug(f"{x} {y} {z} -> {p}")
             tooclose = False
             for n, f in atoms:
                 d = f - p
@@ -60,12 +61,6 @@ def atomdic(atoms):
 from typing import Iterable
 
 
-import deprecation
-from genice2 import get_version
-
-@deprecation.deprecated(deprecated_in="2.2.12", removed_in="2.3.0",
-                        current_version=get_version(),
-                        details="Use the symmetry_operator_functions() instead")
 def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
     """Generator of the symmetry operations
 
@@ -95,33 +90,8 @@ def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
             for col, offs in zip(cols, offset):
                 ops.append(col + offs)
             yield lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops]))
-    # return symfuncs
 
 
-def symmetry_operator_functions(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
-
-    def _wrap(x):
-        return x - np.floor(x)
-    
-    def eval_(v, x, y, z):
-        return eval(v)
-
-    # まず、座標変数を小文字に変換する
-    symops = symops.translate(str.maketrans("XYZ", "xyz"))
-    symfuncs = []
-    for symop in symops.split("\n"):
-        # コンマまたは空白で分割
-        cols = symop.split(",")
-        if len(cols) <= 1:
-            cols = symop.split()
-            if len(cols) <= 1:
-                continue
-        for offset in offsets:
-            ops = []
-            for col, offs in zip(cols, offset):
-                ops.append(col + offs)
-            symfuncs.append(lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops])))
-    return symfuncs
 
 
 def waters_and_pairs(
