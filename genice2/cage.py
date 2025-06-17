@@ -48,7 +48,7 @@ def assess_cages(graph, node_pos):
     ]
 
     # Positions of the centers of the rings.
-    ringpos = [centerOfMass(ringnodes, node_pos) for ringnodes in ringlist]
+    ringpos = np.array([centerOfMass(ringnodes, node_pos) for ringnodes in ringlist])
 
     MaxCageSize = 22
     cagepos = []
@@ -61,6 +61,7 @@ def assess_cages(graph, node_pos):
     # Detect cages and classify
     cages = [cage for cage in polyhedra_iter(ringlist, MaxCageSize)]
     cagepos = [centerOfMass(list(cage), ringpos) for cage in cages]
+    FrankKasper = True
     for cage in cages:
         g = cage_to_graph(cage, ringlist)
         cagesize = len(cage)
@@ -79,9 +80,34 @@ def assess_cages(graph, node_pos):
             # cage expression
             index = make_cage_expression(cage, ringlist)
             logger.info(f"    Cage type: {label} ({index})")
+            if index not in ("5^12", "5^12 6^2", "5^12 6^3", "5^12 6^4"):
+                FrankKasper = False
         else:
             label = g_id2label[g_id]
         cagetypes.append(label)
+    if FrankKasper:
+        logger.info("    Frank-Kasper type.")
+        cagecount = dict(A12=0, A14=0, A15=0, A16=0)
+        for label in cagetypes:
+            cagecount[label] += 1
+        logger.info(f"    Cage count: {cagecount}")
+        # Three canonical structure types: CS1, CS2, HS1
+        M = np.array(
+            [
+                [2 / 46, 6 / 46, 0, 0],
+                [16 / 136, 0, 0, 8 / 136],
+                [3 / 40, 2 / 40, 2 / 40, 0],
+            ]
+        ).T
+        b = np.array(
+            [cagecount["A12"], cagecount["A14"], cagecount["A15"], cagecount["A16"]]
+        )
+        Mplus = np.linalg.inv(M.T @ M) @ M.T
+        x = Mplus @ b
+        x /= np.sum(x)
+        logger.info(
+            f"    Composition of the canonical structure types (CS1, CS2, HS1): {x}"
+        )
     if len(cagepos) == 0:
         logger.info("    No cages detected.")
     return np.array(cagepos), cagetypes
