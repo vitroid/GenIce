@@ -2,7 +2,7 @@ import sys
 import argparse as ap
 from collections import defaultdict
 from genice2.plugin import safe_import, descriptions
-
+from genice2 import get_version
 # from genice2 import __version__
 from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
 from genice2.genice import GenIce
@@ -10,26 +10,10 @@ from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
 import numpy as np
-from importlib.metadata import version, PackageNotFoundError
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
 
 
-def get_version():
-    try:
-        return version("genice2")
-    except PackageNotFoundError:
-        # インストール前の場合は、プロジェクトのルートディレクトリからバージョンを取得
-        try:
-            import toml
-
-            with open("pyproject.toml") as f:
-                t = toml.load(f)
-                if "version" in t["project"]:
-                    return t["project"]["version"]
-                return t["tool"]["poetry"]["version"]
-        except (ImportError, FileNotFoundError, KeyError):
-            return "unknown"
 
 
 def help_type():

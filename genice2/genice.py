@@ -557,7 +557,7 @@ class GenIce:
             self.waters1 = self.cell1.abs2rel(self.waters1)
 
         # shift of the origin
-        self.waters1 = np.array(self.waters1) + np.array(shift)
+        self.waters1 += np.array(shift)
         # fractional coordinate between [0, 1)
         self.waters1 -= np.floor(self.waters1)
 

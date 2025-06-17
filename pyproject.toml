@@ -13,7 +13,7 @@ logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.10.1" # master version variable
+version = "2.2.12" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
@@ -44,6 +44,7 @@ graphstat = ">=0.3.3"
 yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
 genice-core = ">=1.1"
+deprecation = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
