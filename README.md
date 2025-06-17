@@ -4,7 +4,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.10.1
+Version 2.2.12
 
 ## New in GenIce2.2
 
@@ -26,6 +26,7 @@ The new GenIce works very well with interactive execution.
 - yaplotlib>=0.1.2
 - openpyscad>=0.5.0
 - genice-core>=1.1
+- deprecation^2.1.0
 
 
 <!-- **Note**: The package management system `poetry`, new in GenIce version 2.1, ignores all symlinks in package directories.
@@ -57,7 +58,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.10.1)
+    (version 2.2.10)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
