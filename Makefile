@@ -15,8 +15,7 @@ update-citations:
 
 # change symlinks to copies
 prepare:
-	-rm -rf .genice2
-	mkdir .genice2
+	-rm -rf .genice2/genice2
 	rsync -avL --exclude="__pycache__" genice2/ .genice2/genice2/
 
 
@@ -44,7 +43,7 @@ clone-myself-from-github:
 %.png: %.pov
 	povray +I$< +W1000 +H1000 +D +FN +O$@
 clean:
-	-rm -rf build dist .genice2
+	-rm -rf build dist .genice2/genice2
 distclean:
 	-rm *.scad *.yap @*
 	-rm -rf build dist

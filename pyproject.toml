@@ -13,7 +13,7 @@ logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.
 
 [tool.poetry]
 name = "genice2"
-version = "2.2.12" # master version variable
+version = "2.2.12.2" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
@@ -24,10 +24,13 @@ authors = [
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 readme = "README.md"
 license = "MIT"
-# a kind of src-layout; .genice2 is generated automatically.
 packages = [
-  { include = "genice2", from = ".genice2", to = "" }
+  { include = "genice2", from = ".genice2" }
 ]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 # poetry install to make them work
 [tool.poetry.scripts]
@@ -59,12 +62,6 @@ requests = "^2.31.0"
 pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
 genice2-cage = ">=2.4.4"
-
-
-
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
 
 # [tool.hatch.version]
 # path = "genice2/__init__.py"

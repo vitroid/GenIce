@@ -80,5 +80,3 @@ ToDo.md
 1h_unit.pdb
 GenIce2.code-workspace
 
-# .genice2はdeployには必要だが、バージョン管理する必要はない。
-.genice2

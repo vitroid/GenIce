@@ -4,7 +4,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.12
+Version 2.2.12.2
 
 ## New in GenIce2.2
 
@@ -58,7 +58,7 @@ Install with pip3.
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.10)
+    (version 2.2.12.2)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
