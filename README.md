@@ -4,7 +4,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.12.3
+Version 2.2.12.4
 
 ## New in GenIce2.2
 
@@ -52,13 +52,13 @@ Install with pip3.
     usage: genice2 [-h] [--version] [--rep REP REP REP] [--reshape RESHAPE]
                    [--shift SHIFT SHIFT SHIFT] [--dens DENS] [--add_noise percent]
                    [--seed SEED] [--format name] [--water model] [--guest 14=me]
-                   [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
-                   [--cation 3=Na] [--depol DEPOL] [--asis] [--debug] [--quiet]
-                   [--assess_cages]
+                   [--topo 14,16] [--Guest 13=me] [--Group 13=bu-:0]
+                   [--anion 3=Cl] [--cation 3=Na] [--depol DEPOL] [--asis]
+                   [--debug] [--quiet] [--assess_cages]
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.12.3)
+    (version 2.2.12.4)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -293,6 +293,9 @@ Install with pip3.
                             5site, tip5p    A typical 5-site model.
                             6site, NvdE     A 6-site water model.
                             7site           A seven-site water model.
+                            ideal_water     Ideal model of water; Oxygen atom is on
+                                             the lattice point and the H-O-H angle
+                                            is 109.5 degrees.
                             physical_water  Physical model of water; Oxygen atom is
                                              on the lattice point.
                             ----
@@ -346,6 +349,9 @@ Install with pip3.
                             ----
     
     
+      --topo 14,16, -T 14,16
+                            Specify the position of a pair of topological defects
+                            (H3O and OH-).
       --Guest 13=me, -G 13=me
                             Specify guest in the specific cage. (13=me, 32=co2,
                             etc.)
@@ -561,7 +567,6 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 | Symbol | <div style="width:300px">Description</div> |
 | ------ | ------------------------------------------ |
-
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Jackson 1997, Fan 2010]
 115_2_114, 12_1_11, 144_2_7301, 151_2_4949650, 153_2_155471, 176_2_5256, 207_1_4435, 2_2_623457, ACO, CS4, DDR, IWV, LTA, MAR, NON, PCOD8007225, PCOD8036144, PCOD8204698, PCOD8301974, PCOD8321499, PCOD8324623, SGT, SOD, engel01, engel03, engel04, engel17, engel20, engel23, engel24, engel26, engel29, engel30, engel31, engel34, sVII | Hypothetical zeolitic ice [Jeffrey 1984, Kosyakov 1999, Engel 2018, IZA Database]
@@ -659,12 +664,12 @@ A water model can be chosen with `--water` option.
 
 | symbol | type |
 | ------ | ---- |
-
 3site, tip3p | A typical 3-site model.
 4site, tip4p | A typical 4-site model. [Jorgensen 1983, Jorgensen 1985]
 5site, tip5p | A typical 5-site model.
 6site, NvdE | A 6-site water model. [Nada 2003]
 7site | A seven-site water model. [Zhao 2019]
+ideal_water | Ideal model of water; Oxygen atom is on the lattice point and the H-O-H angle is 109.5 degrees. [Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983).]
 physical_water | Physical model of water; Oxygen atom is on the lattice point. [Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983).]
 ice, spce | (Undocumented)
 
@@ -673,7 +678,6 @@ ice, spce | (Undocumented)
 
 | symbol | type |
 | ------ | ---- |
-
 H2 | Hydrogen molecule. [https://www.britannica.com/science/hydrogen]
 ch4 | An all-atom methane model.
 et | A united-atom ethane model.
