@@ -11,11 +11,12 @@
     - 現状、anion/cation ドーピングでひっかかっている。
     - ひととおり、現在の tests/auto/make を通るようになったら、commit する。でないと、中途半端すぎる。
 - 機能をあとから追加しやすいようにしたい。
-  - 例えば、イオンのドーピングは別pluginでも構わない。
-    - そのpluginをとりつけると、各ステージに新しい依存関係が追加されるのがよい。
+  - 例えば、イオンのドーピングは別 plugin でも構わない。
+    - その plugin をとりつけると、各ステージに新しい依存関係が追加されるのがよい。
 - requires()の機構が単純すぎる。
-  - ステージが必要なのではなく、あくまでデータが必要なのだ。makeのような微小プロセスを自動編成したい。
-  - reactive programmingと言うらしい。
+  - ステージが必要なのではなく、あくまでデータが必要なのだ。make のような微小プロセスを自動編成したい。
+  - reactive programming と言うらしい。
+  - genice3.py で、試しに Reactive に書いてみた。stage4 相当までは動くことを確認した。
 
 * Stage5 が異常に遅い。なんで?
 * hydrates with guests (using networkx.subgraph.isomorphism)
