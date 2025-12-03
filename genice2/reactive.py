@@ -96,22 +96,29 @@ class DependencyCacheMixin:
 
             # カスタム lazy_property であることと、依存関係があることを確認
             # lazy_property ディスクリプタは __init__ で _dependencies を持っている
-            if (
-                hasattr(prop, "_dependencies")
-                and changed_attr_name in prop._dependencies
-            ):
-                # 依存プロパティのキャッシュを無効化
-                if prop_name in self.__dict__:
-                    logger.debug(
-                        "--- 依存元 '%s' の変更により、キャッシュ '%s' を無効化 ---",
-                        changed_attr_name,
-                        prop_name,
-                    )
-                    del self.__dict__[prop_name]
+            if hasattr(prop, "_dependencies"):
+                # 依存関係のチェック:
+                # 1. 直接マッチ（changed_attr_name が依存関係に含まれる）
+                # 2. _で始まる属性の場合、_を削除した名前でもチェック
+                #    （例: "_unitcell" -> "unitcell" もチェック）
+                dependency_matched = changed_attr_name in prop._dependencies or (
+                    changed_attr_name.startswith("_")
+                    and changed_attr_name[1:] in prop._dependencies
+                )
 
-                # **重要: ここから連鎖が発生**
-                self._notify_dependents(prop_name)
-                # この再帰呼び出しが make のような連鎖的な無効化を実現します。
+                if dependency_matched:
+                    # 依存プロパティのキャッシュを無効化
+                    if prop_name in self.__dict__:
+                        logger.debug(
+                            "--- 依存元 '%s' の変更により、キャッシュ '%s' を無効化 ---",
+                            changed_attr_name,
+                            prop_name,
+                        )
+                        del self.__dict__[prop_name]
+
+                    # **重要: ここから連鎖が発生**
+                    self._notify_dependents(prop_name)
+                    # この再帰呼び出しが make のような連鎖的な無効化を実現します。
 
 
 # lazy_property デコレータはそのまま使用
