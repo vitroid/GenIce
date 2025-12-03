@@ -14,6 +14,7 @@ import numpy as np
 from dataclasses import dataclass
 from logging import getLogger, DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig
 from typing import Optional
+import click
 
 
 def replicate_graph(
@@ -43,7 +44,6 @@ def replicate_graph(
     Stage2のもとの関数と違い、fixedの複製は行いません。
     """
     # repgraph = dg.IceGraph()
-    logger = getLogger()
     repgraph = nx.Graph()
     nmol = cell1frac_coords.shape[0]
 
@@ -98,8 +98,8 @@ class UnitCell:
     """
     単位胞を定義する基底クラス。
 
-    各サブクラスは、単位胞タイプに応じて必要なパラメータのセットを定義し、
-    _calculate_cell()メソッドで単位胞を計算する。
+    Reactiveではないので、GenIce3に与えたあとで内容を変更しても、GenIce3の依存関係に影響しない。
+    もし内容を変更したいなら、新たなUnitCellオブジェクトを作成して、GenIce3に与える。
     """
 
     # 単位胞タイプごとに必要なパラメータのセットを定義
@@ -143,6 +143,10 @@ class UnitCell:
 
 
 class ice1h(UnitCell):
+    # UnitCellオブジェクトの具体例。
+
+    logger = getLogger("ice1h")
+
     def __init__(self):
         #
         waters = np.fromstring(
@@ -191,6 +195,9 @@ class GenIce3(DependencyCacheMixin):
     # digraph = genice.digraph
     # geniceの引数も省略可能とするが、不可欠であればエラーとする。
 
+    # Class名でlog表示したい。
+    logger = getLogger("GenIce3")
+
     def __init__(
         self,
         unitcell,
@@ -199,7 +206,6 @@ class GenIce3(DependencyCacheMixin):
         reshape_matrix=np.eye(3, dtype=int),
         **kwargs,
     ):
-        self.logger = getLogger()
         self.unitcell = unitcell
         self.water = safe_import("molecule", water_model)
         self.depol_loop = depol_loop
@@ -209,9 +215,21 @@ class GenIce3(DependencyCacheMixin):
         self.reshape_matrix = reshape_matrix
 
         a, b, c, A, B, C = cellshape(self.reshape_matrix @ self.unitcell.cell.mat)
-        self.logger.info("  Reshaped cell:")
-        self.logger.info(f"    a,b,c = {a}, {b}, {c}")
-        self.logger.info(f"    A,B,C = {A}, {B}, {C}")
+        self.logger.debug("  Reshaped cell:")
+        self.logger.debug(f"    {a=:.4f}, {b=:.4f}, {c=:.4f}")
+        self.logger.debug(f"    {A=:.3f}, {B=:.3f}, {C=:.3f}")
+
+    @property
+    def unitcell(self):
+        return self._unitcell
+
+    @unitcell.setter
+    def unitcell(self, unitcell):
+        self._unitcell = unitcell
+        self.logger.debug(f"  {unitcell=}")
+        self.logger.debug(f"  {unitcell.waters=}")
+        self.logger.debug(f"  {unitcell.graph=}")
+        self.logger.debug(f"  {unitcell.fixed=}")
 
     @property
     def reshape_matrix(self):
@@ -222,14 +240,13 @@ class GenIce3(DependencyCacheMixin):
         self._reshape_matrix = reshape_matrix
 
         i, j, k = np.array(reshape_matrix)
-        self.logger.info(f"    i:{i}")
-        self.logger.info(f"    j:{j}")
-        self.logger.info(f"    k:{k}")
+        self.logger.debug(f"    {i=}")
+        self.logger.debug(f"    {j=}")
+        self.logger.debug(f"    {k=}")
 
     @property_depending_on("_reshape_matrix")
     def replica_vectors(self) -> np.ndarray:
         """レプリカベクトルの計算"""
-        logger = getLogger()
         i, j, k = np.array(self.reshape_matrix)
         corners = np.array(
             [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
@@ -237,7 +254,7 @@ class GenIce3(DependencyCacheMixin):
 
         mins = np.min(corners, axis=0)
         maxs = np.max(corners, axis=0)
-        logger.info(f"mins: {mins}, maxs: {maxs}")
+        self.logger.debug(f"  {mins=}, {maxs=}")
 
         det = abs(np.linalg.det(self.reshape_matrix))
         det = np.floor(det + 0.5).astype(int)
@@ -269,7 +286,7 @@ class GenIce3(DependencyCacheMixin):
     def digraph(self):
         """Makes a directed graph."""
         dg = genice_core.ice_graph(
-            self.graph.to_undirected(),
+            self.graph,
             vertexPositions=self.reppositions,
             isPeriodicBoundary=True,
             dipoleOptimizationCycles=self.depol_loop,
@@ -306,9 +323,13 @@ class GenIce3(DependencyCacheMixin):
         return replicate_fixed_edges(self.graph, self.unitcell.fixed)
 
 
-def main():
-    basicConfig(level=INFO)
+# clickを用い、-dオプションでデバッグレベルを指定できるようにする。
+@click.command()
+@click.option("--debug", "-d", is_flag=True, help="Enable debug mode")
+def main(debug):
+    basicConfig(level=DEBUG if debug else INFO)
     logger = getLogger()
+    logger.debug("Debug mode enabled")
     genice = GenIce3(unitcell=ice1h(), water_model="4site")
     print(genice.digraph)
 
