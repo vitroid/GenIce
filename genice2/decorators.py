@@ -2,7 +2,6 @@ from functools import wraps
 import time
 from logging import getLogger
 from typing import Any, Callable, Dict, TypeVar, cast
-from icecream import ic
 
 # decorator
 
@@ -16,10 +15,6 @@ def debug_args(func: T) -> T:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         # 関数名を取得
         func_name = func.__name__
-
-        ic(func_name)
-        ic(args)
-        ic(kwargs)
 
         # 元の関数を実行
         return func(*args, **kwargs)
