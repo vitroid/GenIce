@@ -332,6 +332,8 @@ def main(debug):
     logger.debug("Debug mode enabled")
     genice = GenIce3(unitcell=ice1h(), water_model="4site")
     print(genice.digraph)
+    genice.unitcell = ice1h()
+    print(genice.graph)
 
 
 if __name__ == "__main__":
