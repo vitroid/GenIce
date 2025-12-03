@@ -1,11 +1,17 @@
 import inspect
 import logging
 
+try:
+    import numpy as np
+
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
 
 logger = logging.getLogger(__name__)
 
 
-class lazy_property:
+class property_depending_on:
     """
     依存関係情報を保持し、遅延評価とキャッシュを行うディスクリプタ。
     """
@@ -59,9 +65,24 @@ class DependencyCacheMixin:
 
         # 3. 値が実際に変更されたか、または依存元として定義されている属性かを確認
         #    （ここでは、簡略化のため、_で始まる属性が変更されたら通知をトリガーすると仮定）
-        if name.startswith("_") and value != old_value:
-            # 変更があった属性を「通知」の起点とする
-            self._notify_dependents(name)
+        if name.startswith("_"):
+            # numpy配列の場合は適切な比較を行う
+            if HAS_NUMPY and isinstance(value, np.ndarray):
+                if isinstance(old_value, np.ndarray):
+                    value_changed = not np.array_equal(value, old_value)
+                else:
+                    # old_valueがnumpy配列でない場合は変更ありとみなす
+                    value_changed = True
+            elif HAS_NUMPY and isinstance(old_value, np.ndarray):
+                # valueがnumpy配列でない場合は変更ありとみなす
+                value_changed = True
+            else:
+                # 通常の比較（numpy配列でない場合）
+                value_changed = value != old_value
+
+            if value_changed:
+                # 変更があった属性を「通知」の起点とする
+                self._notify_dependents(name)
 
     def _notify_dependents(self, changed_attr_name):
         """
@@ -70,7 +91,7 @@ class DependencyCacheMixin:
         # クラス内の全ての lazy_property (および標準 property) を走査
         for prop_name, prop in inspect.getmembers(
             self.__class__,
-            lambda x: isinstance(x, (property, lazy_property)),  # <<< 修正点
+            lambda x: isinstance(x, (property, property_depending_on)),  # <<< 修正点
         ):
 
             # カスタム lazy_property であることと、依存関係があることを確認
@@ -112,13 +133,13 @@ def main():
                 self._radius = new_radius  # __setattr__ がここでトリガーされる
 
         # 直接の依存先は _radius
-        @lazy_property("_radius")
+        @property_depending_on("_radius")
         def circumference(self):
             print(">>> circumferenceを計算しています...")
             return 2 * 3.14159 * self.radius
 
         # 直接の依存先は circumference プロパティ
-        @lazy_property("circumference")
+        @property_depending_on("circumference")
         def area(self):
             print(">>> areaを計算しています...")
             return self.circumference * self.radius / 2
