@@ -30,6 +30,9 @@ class property_depending_on:
         # クラス定義時に、プロパティ名を記録
         self.attr_name = name
 
+        # 依存関係がreactiveな変数かどうかを検証
+        self._validate_dependencies(owner)
+
     def __get__(self, instance, owner=None):
         if instance is None:
             return self  # クラスからアクセスされた場合はディスクリプタ自身を返す
@@ -41,6 +44,67 @@ class property_depending_on:
             instance.__dict__[self.attr_name] = self.func(instance)
 
         return instance.__dict__[self.attr_name]
+
+    def _validate_dependencies(self, owner):
+        """
+        依存関係がreactiveな変数かどうかを検証する。
+
+        reactiveな変数とは:
+        1. `_`で始まる属性名（例: `_replication_matrix`）
+        2. 他の`@property_depending_on`でデコレートされたproperty（例: `replica_vectors`）
+
+        reactiveでない変数が依存関係に含まれていたらエラーを発生させる。
+        """
+        non_reactive = []
+
+        for dep in self._dependencies:
+            if not self._is_reactive(dep, owner):
+                non_reactive.append(dep)
+
+        if non_reactive:
+            raise ValueError(
+                f"property '{self.attr_name}' in class '{owner.__name__}' "
+                f"depends on non-reactive variables: {', '.join(non_reactive)}. "
+                f"Non-reactive variables will not trigger cache invalidation. "
+                f"Please use reactive variables (starting with '_' or other "
+                f"@property_depending_on properties) instead."
+            )
+
+    def _is_reactive(self, dependency_name, owner):
+        """
+        指定された依存関係がreactiveな変数かどうかを判定する。
+
+        Args:
+            dependency_name: 依存関係の名前
+            owner: クラスオブジェクト
+
+        Returns:
+            bool: reactiveな変数の場合True、そうでなければFalse
+        """
+        # 1. `_`で始まる名前はreactive
+        if dependency_name.startswith("_"):
+            return True
+
+        # 2. クラス内のすべてのメンバーを確認
+        for name, prop in inspect.getmembers(
+            owner, lambda x: isinstance(x, (property, property_depending_on))
+        ):
+            if name == dependency_name:
+                # `@property_depending_on`でデコレートされたpropertyはreactive
+                if isinstance(prop, property_depending_on):
+                    return True
+                # 通常の`@property`でsetterがある場合、対応する`_`で始まる属性が
+                # 変更されると`_notify_dependents`が`_name`→`name`としてもマッチさせるため、
+                # このような`@property`もreactiveとして扱う
+                # 例: `replication_matrix`のsetterが`_replication_matrix`を変更する場合
+                if isinstance(prop, property) and prop.fset is not None:
+                    # setterが存在する場合、`_notify_dependents`のロジックにより、
+                    # `_name`が変更されると`name`としてもマッチするためreactive
+                    # （`_notify_dependents`の159-162行目のロジックを参照）
+                    return True
+
+        # 3. それ以外はreactiveではない
+        return False
 
 
 # ----------------------------------------------------
@@ -58,7 +122,13 @@ class DependencyCacheMixin:
 
     def __setattr__(self, name, value):
         # 1. 属性を更新する前に、以前の値を取得しておく（変更されたかどうかの判定用）
-        old_value = getattr(self, name, object())
+        # プロパティのgetterが例外を投げる可能性があるため、例外をキャッチする
+        try:
+            old_value = getattr(self, name, object())
+        except Exception:
+            # 属性が存在しない、またはgetterが例外を投げた場合
+            # 初回設定時など、属性がまだ存在しない場合はobject()をデフォルト値として使用
+            old_value = object()
 
         # 2. 属性の更新を実行
         super().__setattr__(name, value)
