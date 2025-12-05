@@ -750,10 +750,7 @@ class GenIce3(DependencyCacheMixin):
                 rel_position = self.lattice_sites[site]
                 orientation = self.orientations[site]
 
-                sites = (
-                    water_model.sites @ orientation
-                    + rel_position @ self.unitcell.cell.mat
-                )
+                sites = water_model.sites @ orientation + rel_position @ self.cell
                 mols[site] = Molecule(
                     name=water_model.name,
                     sites=sites,
@@ -777,7 +774,7 @@ class GenIce3(DependencyCacheMixin):
                         mols.append(
                             Molecule(
                                 name=molecule.name,
-                                sites=molecule.sites + pos,
+                                sites=molecule.sites + pos @ self.cell,
                                 labels=molecule.labels,
                                 is_water=molecule.is_water,
                             )
@@ -792,7 +789,7 @@ class GenIce3(DependencyCacheMixin):
         for label, name in self.anions.items():
             ions[label] = Molecule(
                 name=name,
-                sites=[self.lattice_sites[label]],
+                sites=[self.lattice_sites[label] @ self.cell],
                 labels=[
                     name,
                 ],
@@ -801,7 +798,7 @@ class GenIce3(DependencyCacheMixin):
         for label, name in self.cations.items():
             ions[label] = Molecule(
                 name=name,
-                sites=[self.lattice_sites[label]],
+                sites=[self.lattice_sites[label] @ self.cell],
                 labels=[
                     name,
                 ],
