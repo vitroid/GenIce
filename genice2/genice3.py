@@ -250,33 +250,22 @@ class UnitCell:
     def __init__(
         self,
         cell: np.ndarray,
-        waters,
-        bondlen,
-        coord="relative",
-        density=None,
-        graph=None,
-        fixed=None,
-        cages=None,
-        assess_cages=False,
-        shift=(0.0, 0.0, 0.0),
-        anions=[],
-        cations=[],
+        waters: np.ndarray,
+        bondlen: float,
+        coord: str = "relative",
+        density: float = None,
+        graph: nx.Graph = None,
+        fixed: nx.DiGraph = nx.DiGraph(),
+        cages: tuple = None,
+        assess_cages: bool = False,
+        shift: tuple = (0.0, 0.0, 0.0),
+        anions: dict = {},
+        cations: dict = {},
     ):
 
         self.cell = cell
 
-        nmol = len(waters)
-        volume = np.linalg.det(self.cell)
-        original_density = 18 * nmol / (volume * 1e-21 * 6.022e23)
-        self.logger.info(f"{original_density=}")
-        if density is not None:
-            self.logger.info(f"{density=} specified.")
-            scale = (density / original_density) ** (1 / 3)
-            self.logger.info(f"{scale=}")
-            self.cell /= scale
-
-        self.bondlen = bondlen
-
+        # 格子点の位置をfractional coordinateにする。
         if coord == "absolute":
             self.waters = self.cell.abs2rel(waters)
         else:
@@ -285,33 +274,50 @@ class UnitCell:
         self.logger.debug(f"  {shift=}")
         self.waters += np.array(shift)
         self.waters -= np.floor(self.waters)
+
         # もしkwargsに"pairs"がなければ、watersなどから再計算する。
+        # この時はまだ与えられたセルサイズのままで作業する。
         if graph is None:
             self.graph = nx.Graph(
                 [
                     (i, j)
                     for i, j in pl.pairs_iter(
-                        self.waters, self.bondlen, self.cell.mat, distance=False
+                        self.waters, bondlen, self.cell, distance=False
                     )
                 ]
             )
         else:
             self.graph = graph
 
-        self.fixed = nx.DiGraph(fixed)
-        if cages:
+        nmol = len(waters)
+        volume = np.linalg.det(self.cell)
+        original_density = 18 * nmol / (volume * 1e-21 * 6.022e23)
+        self.logger.info(f"{original_density=}")
+
+        # 密度を指定した場合は、セルサイズを調整する。
+        if density is not None:
+            self.logger.info(f"{density=} specified.")
+            scale = (density / original_density) ** (1 / 3)
+            self.logger.info(f"{scale=}")
+            self.cell /= scale
+
+        self.fixed = fixed
+
+        if cages is not None and assess_cages:
+            raise ValueError("Cages cannot be assessed if cages are provided.")
+
+        if cages is not None:
             self.cages = cages
             self.logger.info("Cages are provided...")
-            for pos, label in zip(self.cages[0], self.cages[1]):
-                self.logger.info(f"  {label} @ {pos}")
-            if assess_cages:
-                raise ValueError("Cages cannot be assessed if cages are provided.")
         elif assess_cages:
             self.logger.info("Assessing cages...")
             self.cages = genice2.cage.assess_cages(self.graph, self.waters)
         else:
             self.cages = None
-        # cagesは必要ない場合もある。また、格子の情報から推定することもできる。しかし、計算コストは大きいので、明示的に指示して推定すべき。
+
+        if self.cages is not None:
+            for pos, label in zip(self.cages[0], self.cages[1]):
+                self.logger.info(f"  {label} @ {pos}")
 
         # anion, cationは単位胞内でのイオンの位置を示すので、番号が単位胞の水分子数未満でなければならない。
         if any(label >= len(self.waters) for label in anions):
