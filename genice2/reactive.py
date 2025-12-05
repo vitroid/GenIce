@@ -1,5 +1,6 @@
 import inspect
 import logging
+import threading
 
 try:
     import numpy as np
@@ -9,6 +10,9 @@ except ImportError:
     HAS_NUMPY = False
 
 logger = logging.getLogger(__name__)
+
+# スレッドローカルなスタックで処理階層を追跡
+_processing_stack = threading.local()
 
 
 class property_depending_on:
@@ -39,9 +43,28 @@ class property_depending_on:
 
         # 2. キャッシュロジック（初回アクセス時のみ実行）
         if self.attr_name not in instance.__dict__:
-            logger.info("Processing %s based on dependencies...", self.attr_name)
-            # 関数を実行し、インスタンスの辞書に直接キャッシュする
-            instance.__dict__[self.attr_name] = self.func(instance)
+            # 処理スタックの初期化（スレッドローカル）
+            if not hasattr(_processing_stack, "stack"):
+                _processing_stack.stack = []
+
+            # 現在のインデントレベル
+            indent_level = len(_processing_stack.stack)
+            indent = "  " * indent_level
+
+            # 依存関係を表示
+            deps_str = ", ".join(self._dependencies) if self._dependencies else "(none)"
+            logger.info(
+                "%sProcessing %s (depends on: %s)...", indent, self.attr_name, deps_str
+            )
+
+            # スタックに追加
+            _processing_stack.stack.append(self.attr_name)
+            try:
+                # 関数を実行し、インスタンスの辞書に直接キャッシュする
+                instance.__dict__[self.attr_name] = self.func(instance)
+            finally:
+                # スタックから削除
+                _processing_stack.stack.pop()
 
         return instance.__dict__[self.attr_name]
 
