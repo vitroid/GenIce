@@ -39,7 +39,7 @@ class property_depending_on:
 
         # 2. キャッシュロジック（初回アクセス時のみ実行）
         if self.attr_name not in instance.__dict__:
-            logger.debug(">>> %s を計算しています...", self.attr_name)
+            logger.info("Processing %s based on dependencies...", self.attr_name)
             # 関数を実行し、インスタンスの辞書に直接キャッシュする
             instance.__dict__[self.attr_name] = self.func(instance)
 
