@@ -780,7 +780,7 @@ class GenIce3(DependencyCacheMixin):
             self.unitcell.waters, self.replica_vectors, self.replication_matrix
         )
 
-    @property_depending_on("lattice_sites", "unitcell", "replica_vectors")
+    @property_depending_on("unitcell", "replica_vectors")
     def anions(self):
         anion_dict = dict()
         Z = len(self.unitcell.waters)
@@ -790,7 +790,7 @@ class GenIce3(DependencyCacheMixin):
                 anion_dict[site] = ion_name
         return anion_dict
 
-    @property_depending_on("lattice_sites", "unitcell", "replica_vectors")
+    @property_depending_on("unitcell", "replica_vectors")
     def cations(self):
         cation_dict = dict()
         Z = len(self.unitcell.waters)
@@ -815,7 +815,7 @@ class GenIce3(DependencyCacheMixin):
             self.graph, self.unitcell.fixed, len(self.unitcell.waters)
         )
 
-    @property_depending_on("lattice_sites", "digraph", "unitcell")
+    @property_depending_on("lattice_sites", "digraph", "unitcell", "anions", "cations")
     def orientations(self):
         # stages 5
         # the last parameter is self.dopants (if any)
