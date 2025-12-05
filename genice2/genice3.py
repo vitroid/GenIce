@@ -6,10 +6,9 @@ from genice2.molecules import Molecule
 from genice2 import ConfigurationError
 from genice2.stage1 import replicate_positions
 from genice2.stage2 import grandcell_wrap
-from genice2.stage5 import orientations
 from genice2.plugin import safe_import
 from genice2.valueparser import put_in_array
-from genice2.cell import Cell, cellvectors, cellshape
+from genice2.cell import cellvectors, cellshape
 import genice_core
 import pairlist as pl
 import networkx as nx
@@ -39,6 +38,89 @@ class GuestSpec:
 
     molecule: Molecule
     occupancy: float
+
+
+def orientations(coord, digraph, cellmat, dopants: dict):
+    """
+    Does not work when two OHs are colinear
+    """
+
+    logger = getLogger()
+    # just for a test of pure water
+    assert len(coord) == digraph.number_of_nodes(), (
+        len(coord),
+        digraph.number_of_nodes(),
+    )
+    if len(dopants):
+        logger.info(f"  {dopants} dopants")
+    # 通常の氷であればアルゴリズムを高速化できる。
+
+    nnode = len(list(digraph))
+    neis = np.zeros([nnode, 2], dtype=int)
+
+    # 仮想ノード用の配列。第0要素は実際には第nnode要素を表す。
+    extended_coord = []
+
+    celli = np.linalg.inv(cellmat)
+    # v0 = np.zeros([nnode, 3])
+    # v1 = np.zeros([nnode, 3])
+    for node in digraph:
+        if node in dopants:
+            h1 = np.array([0.0, 1, 1]) / (2**0.5)
+            h2 = np.array([0.0, -1, 1]) / (2**0.5)
+            r1 = h1 @ celli
+            r2 = h2 @ celli
+            # 仮想ノードにさしかえる
+            neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
+            extended_coord += [coord[node] + r1, coord[node] + r2]
+            continue
+        succ = list(digraph.successors(node))
+        if len(succ) < 2:
+            vsucc = (coord[succ] - coord[node]) @ cellmat
+            pred = list(digraph.predecessors(node))
+            vpred = (coord[pred] - coord[node]) @ cellmat
+            vsucc /= np.linalg.norm(vsucc, axis=1)[:, np.newaxis]
+            vpred /= np.linalg.norm(vpred, axis=1)[:, np.newaxis]
+            if len(vpred) > 2:
+                # number of incoming bonds should be <= 2
+                vpred = vpred[:2]
+            vcomp = assume_tetrahedral_vectors(np.vstack([vpred, vsucc]))
+            logger.debug(f"Node {node} vcomp {vcomp} vsucc {vsucc} vpred {vpred}")
+            vsucc = np.vstack([vsucc, vcomp])[:2]
+            rsucc = vsucc @ celli
+            # 仮想ノードにさしかえる
+            neis[node] = [nnode + len(extended_coord), nnode + len(extended_coord) + 1]
+            extended_coord += [coord[node] + rsucc[0], coord[node] + rsucc[1]]
+        else:
+            neis[node] = succ
+
+    if len(extended_coord) == 0:
+        extended_coord = coord
+    else:
+        extended_coord = np.vstack([coord, extended_coord])
+
+    # array of donating vectors
+    v0 = extended_coord[neis[:, 0]] - coord[:]
+    v0 -= np.floor(v0 + 0.5)
+    v0 = v0 @ cellmat
+    v0 /= np.linalg.norm(v0, axis=1)[:, np.newaxis]
+    v1 = extended_coord[neis[:, 1]] - coord[:]
+    v1 -= np.floor(v1 + 0.5)
+    v1 = v1 @ cellmat
+    v1 /= np.linalg.norm(v1, axis=1)[:, np.newaxis]
+    # intramolecular axes
+    y = v1 - v0
+    y /= np.linalg.norm(y, axis=1)[:, np.newaxis]
+    z = v0 + v1
+    z /= np.linalg.norm(z, axis=1)[:, np.newaxis]
+    x = np.cross(y, z, axisa=1, axisb=1)
+
+    rotmatrices = np.zeros([nnode, 3, 3])
+
+    rotmatrices[:, 0, :] = x
+    rotmatrices[:, 1, :] = y
+    rotmatrices[:, 2, :] = z
+    return rotmatrices
 
 
 def guest_parser(guest_options: list):
@@ -167,11 +249,11 @@ class UnitCell:
 
     def __init__(
         self,
-        cell: Cell,
+        cell: np.ndarray,
         waters,
-        density,
         bondlen,
         coord="relative",
+        density=None,
         graph=None,
         fixed=None,
         cages=None,
@@ -182,7 +264,17 @@ class UnitCell:
     ):
 
         self.cell = cell
-        self.density = density
+
+        nmol = len(waters)
+        volume = np.linalg.det(self.cell)
+        original_density = 18 * nmol / (volume * 1e-21 * 6.022e23)
+        self.logger.info(f"{original_density=}")
+        if density is not None:
+            self.logger.info(f"{density=} specified.")
+            scale = (density / original_density) ** (1 / 3)
+            self.logger.info(f"{scale=}")
+            self.cell /= scale
+
         self.bondlen = bondlen
 
         if coord == "absolute":
@@ -279,12 +371,10 @@ class Ice1h(UnitCell):
         ).reshape(-1, 3)
 
         super().__init__(
-            cell=Cell(
-                desc=cellvectors(
-                    a=7.84813412606925, b=7.37735062301457, c=9.06573834219084
-                )
+            cell=cellvectors(
+                a=7.84813412606925, b=7.37735062301457, c=9.06573834219084
             ),
-            density=0.92,
+            # density=0.92,
             bondlen=3,
             waters=waters,
             coord="absolute",
@@ -478,19 +568,19 @@ class A15(UnitCell):
 
         bondlen = 3
 
-        density = 0.6637037332735554
+        # density = 0.6637037332735554
 
         cell = cellvectors(
             a=1.2747893943706936, b=1.2747893943706936, c=1.2747893943706936
         )
         super().__init__(
-            cell=Cell(desc=cell),
+            cell=cell,
             waters=waters,
             graph=nx.Graph(pairs),
             cages=cages,
             coord=coord,
             bondlen=bondlen,
-            density=density,
+            # density=density,
             **kwargs,
         )
 
@@ -583,7 +673,7 @@ class GenIce3(DependencyCacheMixin):
         self.logger.debug(f"  {unitcell.graph=}")
         self.logger.debug(f"  {unitcell.fixed=}")
 
-        a, b, c, A, B, C = cellshape(self.replication_matrix @ self.unitcell.cell.mat)
+        a, b, c, A, B, C = cellshape(self.replication_matrix @ self.unitcell.cell)
         self.logger.debug("  Reshaped cell:")
         self.logger.debug(f"    {a=:.4f}, {b=:.4f}, {c=:.4f}")
         self.logger.debug(f"    {A=:.3f}, {B=:.3f}, {C=:.3f}")
@@ -603,7 +693,8 @@ class GenIce3(DependencyCacheMixin):
 
     @property_depending_on("replication_matrix", "unitcell")
     def cell(self):
-        return self.unitcell.cell.mat @ self.replication_matrix
+        # 前後逆かも
+        return self.unitcell.cell @ self.replication_matrix
 
     @property_depending_on("replication_matrix")
     def replica_vectors(self) -> np.ndarray:
@@ -998,6 +1089,9 @@ class GenIce3(DependencyCacheMixin):
     multiple=True,
     help="Specify a monatomic cation that replaces a water molecule., e.g. -c 1=Na, -c 35=K, etc., where the number is the label of a water molecule in the unit cell.",
 )
+@click.option(
+    "--density", "--dens", type=float, default=None, help="Density of the ice"
+)
 def main(
     debug,
     shift,
@@ -1008,6 +1102,7 @@ def main(
     guest,
     anion,
     cation,
+    density,
 ):
     basicConfig(level=DEBUG if debug else INFO)
     logger = getLogger()
@@ -1032,7 +1127,11 @@ def main(
     logger.info(f"  Public: {genice.list_public_settable_reactive_properties().keys()}")
     # genice.unitcell = Ice1h(shift=shift, assess_cages=assess_cages)
     genice.unitcell = A15(
-        shift=shift, assess_cages=assess_cages, anions=anion_info, cations=cation_info
+        shift=shift,
+        assess_cages=assess_cages,
+        anions=anion_info,
+        cations=cation_info,
+        density=density,
     )
 
     # # stage 2
