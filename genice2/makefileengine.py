@@ -1,7 +1,10 @@
 import inspect
+from logging import getLogger
 
 
 class MakefileEngine:
+    logger = getLogger("MakefileEngine")
+
     def __init__(self):
         self.registry = {}  # { 'output_name': function }
         self.cache = {}
@@ -33,7 +36,7 @@ class MakefileEngine:
             dependencies[param_name] = self.resolve(param_name, inputs)
 
         # 4. 実行して結果を保存
-        print(f"Executing: {target}")  # 実行ログ
+        self.logger.info(f"Executing: {target}")  # 実行ログ
         result = func(**dependencies)
         self.cache[target] = result
         return result
