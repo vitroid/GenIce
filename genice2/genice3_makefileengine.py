@@ -556,12 +556,11 @@ class GenIce3:
 
     def _get_inputs(self) -> Dict[str, Any]:
         """engine.resolve()に渡すinputs辞書を取得"""
-        inputs = {
+        return {
             "unitcell": self.unitcell,
             "replication_matrix": self.replication_matrix,
             "depol_loop": self.depol_loop,
         }
-        return inputs
 
     def __getattr__(self, name: str):
         """
