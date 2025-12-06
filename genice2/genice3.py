@@ -593,6 +593,11 @@ class GenIce3:
         return mols
 
     def guest_molecules(self, guests: Dict[str, List[GuestSpec]]) -> List[Molecule]:
+        # guest_specで指定されているのに存在しない種類のケージはエラーにする。
+        for label in guests:
+            if label not in self.cages[1]:
+                raise ConfigurationError(f"Cage type {label} is not defined.")
+
         randoms = np.random.random(len(self.cages[0]))
 
         mols = []
