@@ -17,7 +17,7 @@ import networkx as nx
 import numpy as np
 from dataclasses import dataclass
 from logging import getLogger, DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig
-from typing import Optional
+from typing import Optional, Dict, Tuple, List, Any
 import click
 from enum import Enum
 from math import cos, radians, sin
@@ -42,7 +42,9 @@ class GuestSpec:
     occupancy: float
 
 
-def assume_water_orientations(coord, digraph, cellmat, dopants: dict):
+def _assume_water_orientations(
+    coord: np.ndarray, digraph: nx.DiGraph, cellmat: np.ndarray, dopants: Dict[int, str]
+) -> np.ndarray:
     """
     Does not work when two OHs are colinear
     """
@@ -125,7 +127,7 @@ def assume_water_orientations(coord, digraph, cellmat, dopants: dict):
     return rotmatrices
 
 
-def guest_parser(guest_options: list):
+def _guest_parser(guest_options: List[str]) -> Dict[str, List[GuestSpec]]:
     # optionで与えられたguest情報をGuestSpecのリストにする。
     logger = getLogger("guest_parser")
     result = {}
@@ -151,7 +153,7 @@ def guest_parser(guest_options: list):
     return result
 
 
-def ion_parser(ion_options: list):
+def _ion_parser(ion_options: List[str]) -> Dict[int, str]:
     result = {}
     for ion_option in ion_options:
         label, ion_name = ion_option.split("=")
@@ -159,13 +161,13 @@ def ion_parser(ion_options: list):
     return result
 
 
-def replicate_graph(
-    graph1,
-    cell1frac_coords,
-    replica_vectors,
-    replica_vector_labels,
-    reshape,
-):
+def _replicate_graph(
+    graph1: nx.Graph,
+    cell1frac_coords: np.ndarray,
+    replica_vectors: np.ndarray,
+    replica_vector_labels: Dict[Tuple[int, ...], int],
+    reshape: np.ndarray,
+) -> nx.Graph:
     """
     関数 `replicate_graph` は、グラフに関連するさまざまな入力を受け取り、指定されたレプリカ ベクトルと形状に基づいてそれを複製し、複製されたグラフと固定エッジを返します。
 
@@ -216,7 +218,7 @@ def replicate_graph(
     return repgraph
 
 
-def replicate_fixed_edges(
+def _replicate_fixed_edges(
     repgraph: nx.Graph, fixed: nx.DiGraph, nmol: int
 ) -> nx.DiGraph:
     # replicate_graphの結果を利用してもっとシンプルに処理したい。
@@ -258,6 +260,178 @@ class FourSiteWater(Molecule):
         super().__init__(sites=sites, labels=labels, name=name, is_water=is_water)
 
 
+# ============================================================================
+# MakefileEngineタスク関数定義: 依存関係は引数名から自動推論される
+# ============================================================================
+
+_genice3_logger = getLogger("GenIce3")
+
+
+def cell(unitcell: UnitCell, replication_matrix: np.ndarray) -> np.ndarray:
+    """拡大単位胞のセル行列"""
+    return unitcell.cell @ replication_matrix
+
+
+def replica_vectors(replication_matrix: np.ndarray) -> np.ndarray:
+    """レプリカベクトルの計算"""
+    i, j, k = np.array(replication_matrix)
+    corners = np.array(
+        [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+    )
+
+    mins = np.min(corners, axis=0)
+    maxs = np.max(corners, axis=0)
+    _genice3_logger.debug(f"  {mins=}, {maxs=}")
+
+    det = abs(np.linalg.det(replication_matrix))
+    det = np.floor(det + 0.5).astype(int)
+    invdet = np.floor(np.linalg.inv(replication_matrix) * det + 0.5).astype(int)
+
+    vecs = set()
+    for a in range(mins[0], maxs[0] + 1):
+        for b in range(mins[1], maxs[1] + 1):
+            for c in range(mins[2], maxs[2] + 1):
+                abc = np.array([a, b, c])
+                rep = grandcell_wrap(abc, replication_matrix, invdet, det).astype(int)
+                if tuple(rep) not in vecs:
+                    vecs.add(tuple(rep))
+
+    vecs = np.array(list(vecs))
+    vol = abs(np.linalg.det(replication_matrix))
+    assert np.allclose(vol, len(vecs)), (vol, vecs)
+    return vecs
+
+
+def replica_vector_labels(replica_vectors: np.ndarray) -> Dict[Tuple[int, ...], int]:
+    """レプリカベクトルラベルの生成"""
+    return {tuple(xyz): i for i, xyz in enumerate(replica_vectors)}
+
+
+def graph(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replica_vector_labels: Dict[Tuple[int, ...], int],
+    replication_matrix: np.ndarray,
+) -> nx.Graph:
+    """グラフの複製"""
+    g = _replicate_graph(
+        unitcell.graph,
+        unitcell.waters,
+        replica_vectors,
+        replica_vector_labels,
+        replication_matrix,
+    )
+    return g
+
+
+def lattice_sites(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replication_matrix: np.ndarray,
+) -> np.ndarray:
+    """格子サイト位置の複製"""
+    return replicate_positions(unitcell.waters, replica_vectors, replication_matrix)
+
+
+def anions(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+    """アニオンの複製"""
+    anion_dict: Dict[int, str] = {}
+    Z = len(unitcell.waters)
+    for label, ion_name in unitcell.anions.items():
+        for i in range(len(replica_vectors)):
+            site = i * Z + label
+            anion_dict[site] = ion_name
+    return anion_dict
+
+
+def cations(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+    """カチオンの複製"""
+    cation_dict: Dict[int, str] = {}
+    Z = len(unitcell.waters)
+    for label, ion_name in unitcell.cations.items():
+        for i in range(len(replica_vectors)):
+            site = i * Z + label
+            cation_dict[site] = ion_name
+    return cation_dict
+
+
+def site_occupants(
+    anions: Dict[int, str], cations: Dict[int, str], lattice_sites: np.ndarray
+) -> List[str]:
+    """サイト占有種のリスト"""
+    occupants = ["water"] * len(lattice_sites)
+    for site, ion_name in anions.items():
+        occupants[site] = ion_name
+    for site, ion_name in cations.items():
+        occupants[site] = ion_name
+    return occupants
+
+
+def fixedEdges(graph: nx.Graph, unitcell: UnitCell) -> nx.DiGraph:
+    """固定エッジの複製"""
+    return _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
+
+
+def digraph(
+    graph: nx.Graph,
+    depol_loop: int,
+    lattice_sites: np.ndarray,
+    fixedEdges: nx.DiGraph,
+) -> nx.DiGraph:
+    """有向グラフの生成"""
+    for edge in fixedEdges.edges():
+        _genice3_logger.debug(f"+ {edge=}")
+    dg = genice_core.ice_graph(
+        graph,
+        vertexPositions=lattice_sites,
+        isPeriodicBoundary=True,
+        dipoleOptimizationCycles=depol_loop,
+        fixedEdges=fixedEdges,
+    )
+    if not dg:
+        raise ConfigurationError("Failed to generate a directed graph.")
+    return dg
+
+
+def orientations(
+    lattice_sites: np.ndarray,
+    digraph: nx.DiGraph,
+    cell: np.ndarray,
+    anions: Dict[int, str],
+    cations: Dict[int, str],
+) -> np.ndarray:
+    """分子の配向行列の計算"""
+    return _assume_water_orientations(
+        lattice_sites,
+        digraph,
+        cell,
+        anions | cations,
+    )
+
+
+def cages(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replication_matrix: np.ndarray,
+) -> Tuple[np.ndarray, List[str]]:
+    """ケージ位置とタイプの複製"""
+    repcagepos = replicate_positions(
+        unitcell.cages[0], replica_vectors, replication_matrix
+    )
+    num_cages_in_unitcell = len(unitcell.cages[0])
+    repcagetype = [
+        unitcell.cages[1][i % num_cages_in_unitcell] for i in range(len(repcagepos))
+    ]
+    # unit cellのcagesと同じ構造。
+    _genice3_logger.debug(f"{repcagepos=}, {repcagetype=}")
+    return repcagepos, repcagetype
+
+
+# ============================================================================
+# GenIce3クラス: MakefileEngineをラップ
+# ============================================================================
+
+
 class GenIce3:
     # __init__で与える基本的な情報以外を可能な限りreactiveにする。
     # たとえば、digraphが必要になったら、それを生成するために必要な変数をどんどんさかのぼって計算していく。
@@ -285,10 +459,10 @@ class GenIce3:
 
     def __init__(
         self,
-        depol_loop=1000,
-        replication_matrix=np.eye(3, dtype=int),
-        **kwargs,
-    ):
+        depol_loop: int = 1000,
+        replication_matrix: np.ndarray = np.eye(3, dtype=int),
+        **kwargs: Any,
+    ) -> None:
         # MakefileEngineインスタンスを作成
         self.engine = MakefileEngine()
 
@@ -296,7 +470,7 @@ class GenIce3:
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
 
-        # タスクを登録
+        # タスクを登録（モジュールレベルの関数を登録）
         self._register_tasks()
 
         # Default値が不要なもの
@@ -307,149 +481,31 @@ class GenIce3:
             raise ConfigurationError(f"Invalid keyword arguments: {kwargs}.")
 
     def _register_tasks(self):
-        """MakefileEngineにタスクを登録する"""
+        """MakefileEngineにモジュールレベルのタスク関数を登録する"""
         engine = self.engine
-
-        # モジュールレベルのassume_water_orientations関数をクロージャでキャプチャ
-        # （名前衝突を避けるため）
-        # モジュールレベルの関数を参照するために、グローバル名前空間から取得
+        # モジュールから関数を取得して登録
         import sys
 
-        mod = sys.modules[__name__]
-        _compute_orientations = (
-            mod.assume_water_orientations
-        )  # モジュールレベルの関数をキャプチャ
+        current_module = sys.modules[__name__]
 
-        @engine.task
-        def cell(unitcell, replication_matrix):
-            return unitcell.cell @ replication_matrix
+        task_names = [
+            "cell",
+            "replica_vectors",
+            "replica_vector_labels",
+            "graph",
+            "lattice_sites",
+            "anions",
+            "cations",
+            "site_occupants",
+            "fixedEdges",
+            "digraph",
+            "orientations",
+            "cages",
+        ]
 
-        @engine.task
-        def replica_vectors(replication_matrix):
-            """レプリカベクトルの計算"""
-            i, j, k = np.array(replication_matrix)
-            corners = np.array(
-                [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
-            )
-
-            mins = np.min(corners, axis=0)
-            maxs = np.max(corners, axis=0)
-            self.logger.debug(f"  {mins=}, {maxs=}")
-
-            det = abs(np.linalg.det(replication_matrix))
-            det = np.floor(det + 0.5).astype(int)
-            invdet = np.floor(np.linalg.inv(replication_matrix) * det + 0.5).astype(int)
-
-            vecs = set()
-            for a in range(mins[0], maxs[0] + 1):
-                for b in range(mins[1], maxs[1] + 1):
-                    for c in range(mins[2], maxs[2] + 1):
-                        abc = np.array([a, b, c])
-                        rep = grandcell_wrap(
-                            abc, replication_matrix, invdet, det
-                        ).astype(int)
-                        if tuple(rep) not in vecs:
-                            vecs.add(tuple(rep))
-
-            vecs = np.array(list(vecs))
-            vol = abs(np.linalg.det(replication_matrix))
-            assert np.allclose(vol, len(vecs)), (vol, vecs)
-            return vecs
-
-        @engine.task
-        def replica_vector_labels(replica_vectors):
-            return {tuple(xyz): i for i, xyz in enumerate(replica_vectors)}
-
-        @engine.task
-        def graph(unitcell, replica_vectors, replica_vector_labels, replication_matrix):
-            g = replicate_graph(
-                unitcell.graph,
-                unitcell.waters,
-                replica_vectors,
-                replica_vector_labels,
-                replication_matrix,
-            )
-            return g
-
-        @engine.task
-        def lattice_sites(unitcell, replica_vectors, replication_matrix):
-            return replicate_positions(
-                unitcell.waters, replica_vectors, replication_matrix
-            )
-
-        @engine.task
-        def anions(unitcell, replica_vectors):
-            anion_dict = dict()
-            Z = len(unitcell.waters)
-            for label, ion_name in unitcell.anions.items():
-                for i in range(len(replica_vectors)):
-                    site = i * Z + label
-                    anion_dict[site] = ion_name
-            return anion_dict
-
-        @engine.task
-        def cations(unitcell, replica_vectors):
-            cation_dict = dict()
-            Z = len(unitcell.waters)
-            for label, ion_name in unitcell.cations.items():
-                for i in range(len(replica_vectors)):
-                    site = i * Z + label
-                    cation_dict[site] = ion_name
-            return cation_dict
-
-        @engine.task
-        def site_occupants(anions, cations, lattice_sites):
-            occupants = ["water"] * len(lattice_sites)
-            for site, ion_name in anions.items():
-                occupants[site] = ion_name
-            for site, ion_name in cations.items():
-                occupants[site] = ion_name
-            return occupants
-
-        @engine.task
-        def fixedEdges(graph, unitcell):
-            return replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
-
-        @engine.task
-        def digraph(graph, depol_loop, lattice_sites, fixedEdges):
-            """Makes a directed graph."""
-            for edge in fixedEdges.edges():
-                self.logger.debug(f"+ {edge=}")
-            dg = genice_core.ice_graph(
-                graph,
-                vertexPositions=lattice_sites,
-                isPeriodicBoundary=True,
-                dipoleOptimizationCycles=depol_loop,
-                fixedEdges=fixedEdges,
-            )
-            if not dg:
-                raise ConfigurationError("Failed to generate a directed graph.")
-            return dg
-
-        @engine.task
-        def orientations(lattice_sites, digraph, cell, anions, cations):
-            # stages 5
-            # モジュールレベルのorientations関数を呼び出す（名前衝突を避けるため）
-            return _compute_orientations(
-                lattice_sites,
-                digraph,
-                cell,
-                anions | cations,
-            )
-
-        @engine.task
-        def cages(unitcell, replica_vectors, replication_matrix):
-            repcagepos = replicate_positions(
-                unitcell.cages[0], replica_vectors, replication_matrix
-            )
-            num_cages_in_unitcell = len(unitcell.cages[0])
-            repcagetype = [
-                unitcell.cages[1][i % num_cages_in_unitcell]
-                for i in range(len(repcagepos))
-            ]
-            # unit cellのcagesと同じ構造。
-            self.logger.debug(f"{repcagepos=}, {repcagetype=}")
-            return repcagepos, repcagetype
+        for name in task_names:
+            func = getattr(current_module, name)
+            engine.task(func)
 
     @property
     def depol_loop(self):
@@ -498,7 +554,7 @@ class GenIce3:
         # キャッシュをクリア（replication_matrixに依存するすべてのタスクを再計算させる）
         self.engine.cache.clear()
 
-    def _get_inputs(self):
+    def _get_inputs(self) -> Dict[str, Any]:
         """engine.resolve()に渡すinputs辞書を取得"""
         inputs = {
             "unitcell": self.unitcell,
@@ -521,7 +577,7 @@ class GenIce3:
             f"'{self.__class__.__name__}' object has no attribute '{name}'"
         )
 
-    def water_molecules(self, water_model: Molecule):
+    def water_molecules(self, water_model: Molecule) -> Dict[int, Molecule]:
         mols = {}
         for site in range(len(self.lattice_sites)):
             if "water" == self.site_occupants[site]:
@@ -537,7 +593,7 @@ class GenIce3:
                 )
         return mols
 
-    def guest_molecules(self, guests: dict):
+    def guest_molecules(self, guests: Dict[str, List[GuestSpec]]) -> List[Molecule]:
         randoms = np.random.random(len(self.cages[0]))
 
         mols = []
@@ -560,9 +616,9 @@ class GenIce3:
                         break
         return mols
 
-    def substitutional_ions(self):
+    def substitutional_ions(self) -> Dict[int, Molecule]:
         # 将来は分子イオン(H3O+など)を置く可能性もあることに留意。
-        ions = {}
+        ions: Dict[int, Molecule] = {}
         # ならべかえはここではしない。formatterにまかせる。
         for label, name in self.anions.items():
             ions[label] = Molecule(
@@ -634,7 +690,12 @@ class GenIce3:
             if name in cls.PUBLIC_API_PROPERTIES
         }
 
-    def to_gro(self, waters: dict, guests: dict, ions: dict):
+    def to_gro(
+        self,
+        waters: Dict[int, Molecule],
+        guests: List[Molecule],
+        ions: Dict[int, Molecule],
+    ) -> str:
         """Output in Gromacs format.
 
         parametersには、hooksで指定したstageの結果が含まれる。
@@ -773,17 +834,17 @@ class GenIce3:
     "--density", "--dens", type=float, default=None, help="Density of the ice"
 )
 def main(
-    debug,
-    shift,
-    depol_loop,
-    replication_matrix,
-    replication_factors,
-    assess_cages,
-    guest,
-    anion,
-    cation,
-    density,
-):
+    debug: bool,
+    shift: Tuple[float, float, float],
+    depol_loop: int,
+    replication_matrix: Optional[Tuple[int, int, int, int, int, int, int, int, int]],
+    replication_factors: Tuple[int, int, int],
+    assess_cages: bool,
+    guest: Tuple[str, ...],
+    anion: Tuple[str, ...],
+    cation: Tuple[str, ...],
+    density: Optional[float],
+) -> None:
     basicConfig(level=DEBUG if debug else INFO)
     logger = getLogger()
     # shift = tuple(shift)
@@ -791,9 +852,9 @@ def main(
         replication_matrix = np.diag(replication_factors)
     else:
         replication_matrix = np.array(replication_matrix)
-    guest_info = guest_parser(guest)
-    anion_info = ion_parser(anion)
-    cation_info = ion_parser(cation)
+    guest_info = _guest_parser(guest)
+    anion_info = _ion_parser(anion)
+    cation_info = _ion_parser(cation)
     logger.debug("Debug mode enabled")
     genice = GenIce3(
         depol_loop=depol_loop,
