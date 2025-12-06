@@ -1,7 +1,7 @@
 # Another plan of reactive GenIce3.
 
 import genice2
-from genice2.reactive import DependencyCacheMixin, property_depending_on
+from genice2.makefileengine import MakefileEngine
 from genice2.molecules import Molecule
 from genice2 import ConfigurationError
 from genice2.stage1 import replicate_positions
@@ -17,7 +17,7 @@ import networkx as nx
 import numpy as np
 from dataclasses import dataclass
 from logging import getLogger, DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig
-from typing import Optional
+from typing import Optional, Dict, Tuple, List, Any
 import click
 from enum import Enum
 from math import cos, radians, sin
@@ -42,7 +42,9 @@ class GuestSpec:
     occupancy: float
 
 
-def orientations(coord, digraph, cellmat, dopants: dict):
+def _assume_water_orientations(
+    coord: np.ndarray, digraph: nx.DiGraph, cellmat: np.ndarray, dopants: Dict[int, str]
+) -> np.ndarray:
     """
     Does not work when two OHs are colinear
     """
@@ -125,7 +127,7 @@ def orientations(coord, digraph, cellmat, dopants: dict):
     return rotmatrices
 
 
-def guest_parser(guest_options: list):
+def _guest_parser(guest_options: List[str]) -> Dict[str, List[GuestSpec]]:
     # optionで与えられたguest情報をGuestSpecのリストにする。
     logger = getLogger("guest_parser")
     result = {}
@@ -151,7 +153,7 @@ def guest_parser(guest_options: list):
     return result
 
 
-def ion_parser(ion_options: list):
+def _ion_parser(ion_options: List[str]) -> Dict[int, str]:
     result = {}
     for ion_option in ion_options:
         label, ion_name = ion_option.split("=")
@@ -159,13 +161,13 @@ def ion_parser(ion_options: list):
     return result
 
 
-def replicate_graph(
-    graph1,
-    cell1frac_coords,
-    replica_vectors,
-    replica_vector_labels,
-    reshape,
-):
+def _replicate_graph(
+    graph1: nx.Graph,
+    cell1frac_coords: np.ndarray,
+    replica_vectors: np.ndarray,
+    replica_vector_labels: Dict[Tuple[int, ...], int],
+    reshape: np.ndarray,
+) -> nx.Graph:
     """
     関数 `replicate_graph` は、グラフに関連するさまざまな入力を受け取り、指定されたレプリカ ベクトルと形状に基づいてそれを複製し、複製されたグラフと固定エッジを返します。
 
@@ -216,7 +218,7 @@ def replicate_graph(
     return repgraph
 
 
-def replicate_fixed_edges(
+def _replicate_fixed_edges(
     repgraph: nx.Graph, fixed: nx.DiGraph, nmol: int
 ) -> nx.DiGraph:
     # replicate_graphの結果を利用してもっとシンプルに処理したい。
@@ -258,7 +260,179 @@ class FourSiteWater(Molecule):
         super().__init__(sites=sites, labels=labels, name=name, is_water=is_water)
 
 
-class GenIce3(DependencyCacheMixin):
+# ============================================================================
+# MakefileEngineタスク関数定義: 依存関係は引数名から自動推論される
+# ============================================================================
+
+_genice3_logger = getLogger("GenIce3")
+
+
+def cell(unitcell: UnitCell, replication_matrix: np.ndarray) -> np.ndarray:
+    """拡大単位胞のセル行列"""
+    return unitcell.cell @ replication_matrix
+
+
+def replica_vectors(replication_matrix: np.ndarray) -> np.ndarray:
+    """レプリカベクトルの計算"""
+    i, j, k = np.array(replication_matrix)
+    corners = np.array(
+        [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+    )
+
+    mins = np.min(corners, axis=0)
+    maxs = np.max(corners, axis=0)
+    _genice3_logger.debug(f"  {mins=}, {maxs=}")
+
+    det = abs(np.linalg.det(replication_matrix))
+    det = np.floor(det + 0.5).astype(int)
+    invdet = np.floor(np.linalg.inv(replication_matrix) * det + 0.5).astype(int)
+
+    vecs = set()
+    for a in range(mins[0], maxs[0] + 1):
+        for b in range(mins[1], maxs[1] + 1):
+            for c in range(mins[2], maxs[2] + 1):
+                abc = np.array([a, b, c])
+                rep = grandcell_wrap(abc, replication_matrix, invdet, det).astype(int)
+                if tuple(rep) not in vecs:
+                    vecs.add(tuple(rep))
+
+    vecs = np.array(list(vecs))
+    vol = abs(np.linalg.det(replication_matrix))
+    assert np.allclose(vol, len(vecs)), (vol, vecs)
+    return vecs
+
+
+def replica_vector_labels(replica_vectors: np.ndarray) -> Dict[Tuple[int, ...], int]:
+    """レプリカベクトルラベルの生成"""
+    return {tuple(xyz): i for i, xyz in enumerate(replica_vectors)}
+
+
+def graph(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replica_vector_labels: Dict[Tuple[int, ...], int],
+    replication_matrix: np.ndarray,
+) -> nx.Graph:
+    """グラフの複製"""
+    g = _replicate_graph(
+        unitcell.graph,
+        unitcell.waters,
+        replica_vectors,
+        replica_vector_labels,
+        replication_matrix,
+    )
+    return g
+
+
+def lattice_sites(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replication_matrix: np.ndarray,
+) -> np.ndarray:
+    """格子サイト位置の複製"""
+    return replicate_positions(unitcell.waters, replica_vectors, replication_matrix)
+
+
+def anions(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+    """アニオンの複製"""
+    anion_dict: Dict[int, str] = {}
+    Z = len(unitcell.waters)
+    for label, ion_name in unitcell.anions.items():
+        for i in range(len(replica_vectors)):
+            site = i * Z + label
+            anion_dict[site] = ion_name
+    return anion_dict
+
+
+def cations(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+    """カチオンの複製"""
+    cation_dict: Dict[int, str] = {}
+    Z = len(unitcell.waters)
+    for label, ion_name in unitcell.cations.items():
+        for i in range(len(replica_vectors)):
+            site = i * Z + label
+            cation_dict[site] = ion_name
+    return cation_dict
+
+
+def site_occupants(
+    anions: Dict[int, str], cations: Dict[int, str], lattice_sites: np.ndarray
+) -> List[str]:
+    """サイト占有種のリスト"""
+    occupants = ["water"] * len(lattice_sites)
+    for site, ion_name in anions.items():
+        occupants[site] = ion_name
+    for site, ion_name in cations.items():
+        occupants[site] = ion_name
+    return occupants
+
+
+def fixedEdges(graph: nx.Graph, unitcell: UnitCell) -> nx.DiGraph:
+    """固定エッジの複製"""
+    return _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
+
+
+def digraph(
+    graph: nx.Graph,
+    depol_loop: int,
+    lattice_sites: np.ndarray,
+    fixedEdges: nx.DiGraph,
+) -> nx.DiGraph:
+    """有向グラフの生成"""
+    for edge in fixedEdges.edges():
+        _genice3_logger.debug(f"+ {edge=}")
+    dg = genice_core.ice_graph(
+        graph,
+        vertexPositions=lattice_sites,
+        isPeriodicBoundary=True,
+        dipoleOptimizationCycles=depol_loop,
+        fixedEdges=fixedEdges,
+    )
+    if not dg:
+        raise ConfigurationError("Failed to generate a directed graph.")
+    return dg
+
+
+def orientations(
+    lattice_sites: np.ndarray,
+    digraph: nx.DiGraph,
+    cell: np.ndarray,
+    anions: Dict[int, str],
+    cations: Dict[int, str],
+) -> np.ndarray:
+    """分子の配向行列の計算"""
+    return _assume_water_orientations(
+        lattice_sites,
+        digraph,
+        cell,
+        anions | cations,
+    )
+
+
+def cages(
+    unitcell: UnitCell,
+    replica_vectors: np.ndarray,
+    replication_matrix: np.ndarray,
+) -> Tuple[np.ndarray, List[str]]:
+    """ケージ位置とタイプの複製"""
+    repcagepos = replicate_positions(
+        unitcell.cages[0], replica_vectors, replication_matrix
+    )
+    num_cages_in_unitcell = len(unitcell.cages[0])
+    repcagetype = [
+        unitcell.cages[1][i % num_cages_in_unitcell] for i in range(len(repcagepos))
+    ]
+    # unit cellのcagesと同じ構造。
+    _genice3_logger.debug(f"{repcagepos=}, {repcagetype=}")
+    return repcagepos, repcagetype
+
+
+# ============================================================================
+# GenIce3クラス: MakefileEngineをラップ
+# ============================================================================
+
+
+class GenIce3:
     # __init__で与える基本的な情報以外を可能な限りreactiveにする。
     # たとえば、digraphが必要になったら、それを生成するために必要な変数をどんどんさかのぼって計算していく。
     # 依存関係を指示し、一旦計算したpropertyは変更がなければcacheして利用する。
@@ -285,13 +459,19 @@ class GenIce3(DependencyCacheMixin):
 
     def __init__(
         self,
-        depol_loop=1000,
-        replication_matrix=np.eye(3, dtype=int),
-        **kwargs,
-    ):
+        depol_loop: int = 1000,
+        replication_matrix: np.ndarray = np.eye(3, dtype=int),
+        **kwargs: Any,
+    ) -> None:
+        # MakefileEngineインスタンスを作成
+        self.engine = MakefileEngine()
+
         # Default値が必要なもの
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
+
+        # タスクを登録（モジュールレベルの関数を登録）
+        self._register_tasks()
 
         # Default値が不要なもの
         for key in self.list_settable_reactive_properties():
@@ -299,6 +479,33 @@ class GenIce3(DependencyCacheMixin):
                 setattr(self, key, kwargs.pop(key))
         if kwargs:
             raise ConfigurationError(f"Invalid keyword arguments: {kwargs}.")
+
+    def _register_tasks(self):
+        """MakefileEngineにモジュールレベルのタスク関数を登録する"""
+        engine = self.engine
+        # モジュールから関数を取得して登録
+        import sys
+
+        current_module = sys.modules[__name__]
+
+        task_names = [
+            "cell",
+            "replica_vectors",
+            "replica_vector_labels",
+            "graph",
+            "lattice_sites",
+            "anions",
+            "cations",
+            "site_occupants",
+            "fixedEdges",
+            "digraph",
+            "orientations",
+            "cages",
+        ]
+
+        for name in task_names:
+            func = getattr(current_module, name)
+            engine.task(func)
 
     @property
     def depol_loop(self):
@@ -308,6 +515,9 @@ class GenIce3(DependencyCacheMixin):
     def depol_loop(self, depol_loop):
         self._depol_loop = depol_loop
         self.logger.debug(f"  {depol_loop=}")
+        # キャッシュをクリア（depol_loopに依存するタスクを再計算させる）
+        if "digraph" in self.engine.cache:
+            del self.engine.cache["digraph"]
 
     @property
     def unitcell(self):
@@ -327,6 +537,8 @@ class GenIce3(DependencyCacheMixin):
         self.logger.debug("  Reshaped cell:")
         self.logger.debug(f"    {a=:.4f}, {b=:.4f}, {c=:.4f}")
         self.logger.debug(f"    {A=:.3f}, {B=:.3f}, {C=:.3f}")
+        # キャッシュをクリア（unitcellに依存するすべてのタスクを再計算させる）
+        self.engine.cache.clear()
 
     @property
     def replication_matrix(self):
@@ -335,156 +547,36 @@ class GenIce3(DependencyCacheMixin):
     @replication_matrix.setter
     def replication_matrix(self, replication_matrix):
         self._replication_matrix = replication_matrix
-
         i, j, k = np.array(replication_matrix)
         self.logger.debug(f"    {i=}")
         self.logger.debug(f"    {j=}")
         self.logger.debug(f"    {k=}")
+        # キャッシュをクリア（replication_matrixに依存するすべてのタスクを再計算させる）
+        self.engine.cache.clear()
 
-    @property_depending_on("replication_matrix", "unitcell")
-    def cell(self):
-        # 前後逆かも
-        return self.unitcell.cell @ self.replication_matrix
+    def _get_inputs(self) -> Dict[str, Any]:
+        """engine.resolve()に渡すinputs辞書を取得"""
+        return {
+            "unitcell": self.unitcell,
+            "replication_matrix": self.replication_matrix,
+            "depol_loop": self.depol_loop,
+        }
 
-    @property_depending_on("replication_matrix")
-    def replica_vectors(self) -> np.ndarray:
-        """レプリカベクトルの計算"""
-        i, j, k = np.array(self.replication_matrix)
-        corners = np.array(
-            [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
+    def __getattr__(self, name: str):
+        """
+        登録されているタスクに対してプロパティアクセスを自動解決する。
+        これにより、タスク関数を定義するだけでプロパティとしてアクセス可能になる。
+        """
+        # MakefileEngineに登録されているタスクかチェック
+        if name in self.engine.registry:
+            return self.engine.resolve(name, self._get_inputs())
+
+        # それ以外は通常のAttributeErrorを発生
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute '{name}'"
         )
 
-        mins = np.min(corners, axis=0)
-        maxs = np.max(corners, axis=0)
-        self.logger.debug(f"  {mins=}, {maxs=}")
-
-        det = abs(np.linalg.det(self.replication_matrix))
-        det = np.floor(det + 0.5).astype(int)
-        invdet = np.floor(np.linalg.inv(self.replication_matrix) * det + 0.5).astype(
-            int
-        )
-
-        vecs = set()
-        for a in range(mins[0], maxs[0] + 1):
-            for b in range(mins[1], maxs[1] + 1):
-                for c in range(mins[2], maxs[2] + 1):
-                    abc = np.array([a, b, c])
-                    rep = grandcell_wrap(
-                        abc, self.replication_matrix, invdet, det
-                    ).astype(int)
-                    if tuple(rep) not in vecs:
-                        vecs.add(tuple(rep))
-
-        vecs = np.array(list(vecs))
-        vol = abs(np.linalg.det(self.replication_matrix))
-        assert np.allclose(vol, len(vecs)), (vol, vecs)
-
-        return vecs
-
-    @property_depending_on("replica_vectors")
-    def replica_vector_labels(self):
-        return {tuple(xyz): i for i, xyz in enumerate(self.replica_vectors)}
-
-    # 例えば、digraphをreactiveにするにはどう書けばいい?
-    @property_depending_on("graph", "depol_loop", "lattice_sites", "fixedEdges")
-    def digraph(self):
-        """Makes a directed graph."""
-        for edge in self.fixedEdges.edges():
-            self.logger.debug(f"+ {edge=}")
-        dg = genice_core.ice_graph(
-            self.graph,
-            vertexPositions=self.lattice_sites,
-            isPeriodicBoundary=True,
-            dipoleOptimizationCycles=self.depol_loop,
-            fixedEdges=self.fixedEdges,
-        )
-        if not dg:
-            raise ConfigurationError("Failed to generate a directed graph.")
-        return dg
-
-    @property_depending_on(
-        "unitcell",
-        "replica_vectors",
-        "replica_vector_labels",
-        "replication_matrix",
-    )
-    def graph(self):
-        g = replicate_graph(
-            self.unitcell.graph,
-            self.unitcell.waters,
-            self.replica_vectors,
-            self.replica_vector_labels,
-            self.replication_matrix,
-        )
-        return g
-
-    @property_depending_on("unitcell", "replica_vectors", "replication_matrix")
-    def lattice_sites(self):
-        return replicate_positions(
-            self.unitcell.waters, self.replica_vectors, self.replication_matrix
-        )
-
-    @property_depending_on("unitcell", "replica_vectors")
-    def anions(self):
-        anion_dict = dict()
-        Z = len(self.unitcell.waters)
-        for label, ion_name in self.unitcell.anions.items():
-            for i in range(len(self.replica_vectors)):
-                site = i * Z + label
-                anion_dict[site] = ion_name
-        return anion_dict
-
-    @property_depending_on("unitcell", "replica_vectors")
-    def cations(self):
-        cation_dict = dict()
-        Z = len(self.unitcell.waters)
-        for label, ion_name in self.unitcell.cations.items():
-            for i in range(len(self.replica_vectors)):
-                site = i * Z + label
-                cation_dict[site] = ion_name
-        return cation_dict
-
-    @property_depending_on("anions", "cations", "lattice_sites")
-    def site_occupants(self):
-        occupants = ["water"] * len(self.lattice_sites)
-        for site, ion_name in self.anions.items():
-            occupants[site] = ion_name
-        for site, ion_name in self.cations.items():
-            occupants[site] = ion_name
-        return occupants
-
-    @property_depending_on("graph", "unitcell")
-    def fixedEdges(self) -> nx.DiGraph:
-        return replicate_fixed_edges(
-            self.graph, self.unitcell.fixed, len(self.unitcell.waters)
-        )
-
-    @property_depending_on("lattice_sites", "digraph", "unitcell", "anions", "cations")
-    def orientations(self):
-        # stages 5
-        # the last parameter is self.dopants (if any)
-        return orientations(
-            self.lattice_sites,
-            self.digraph,
-            self.unitcell.cell,
-            self.anions | self.cations,
-        )
-
-    @property_depending_on("unitcell", "replica_vectors", "replication_matrix")
-    def cages(self):
-        repcagepos = replicate_positions(
-            self.unitcell.cages[0], self.replica_vectors, self.replication_matrix
-        )
-        num_cages_in_unitcell = len(self.unitcell.cages[0])
-        repcagetype = [
-            self.unitcell.cages[1][i % num_cages_in_unitcell]
-            for i in range(len(repcagepos))
-        ]
-        # unit cellのcagesと同じ構造。
-        self.logger.debug(f"{repcagepos=}, {repcagetype=}")
-        return repcagepos, repcagetype
-
-    def water_molecules(self, water_model: Molecule):
+    def water_molecules(self, water_model: Molecule) -> Dict[int, Molecule]:
         mols = {}
         for site in range(len(self.lattice_sites)):
             if "water" == self.site_occupants[site]:
@@ -500,7 +592,7 @@ class GenIce3(DependencyCacheMixin):
                 )
         return mols
 
-    def guest_molecules(self, guests: dict):
+    def guest_molecules(self, guests: Dict[str, List[GuestSpec]]) -> List[Molecule]:
         randoms = np.random.random(len(self.cages[0]))
 
         mols = []
@@ -523,9 +615,9 @@ class GenIce3(DependencyCacheMixin):
                         break
         return mols
 
-    def substitutional_ions(self):
+    def substitutional_ions(self) -> Dict[int, Molecule]:
         # 将来は分子イオン(H3O+など)を置く可能性もあることに留意。
-        ions = {}
+        ions: Dict[int, Molecule] = {}
         # ならべかえはここではしない。formatterにまかせる。
         for label, name in self.anions.items():
             ions[label] = Molecule(
@@ -557,38 +649,31 @@ class GenIce3(DependencyCacheMixin):
         """
         return cls.PUBLIC_API_PROPERTIES.copy()
 
-    @classmethod
-    def list_all_reactive_properties(cls):
+    def list_all_reactive_properties(self):
         """
-        すべてのreactive property（@property_depending_onでデコレートされたもの）を列挙する。
+        すべてのreactive property（MakefileEngineに登録されたタスク）を列挙する。
 
         Returns:
-            dict: property名をキー、propertyオブジェクトを値とする辞書
+            dict: property名をキー、タスク関数を値とする辞書
         """
-        return {
-            name: prop
-            for name, prop in inspect.getmembers(
-                cls, lambda x: isinstance(x, property_depending_on)
-            )
-        }
+        return self.engine.registry.copy()
 
-    @classmethod
-    def list_public_reactive_properties(cls):
+    def list_public_reactive_properties(self):
         """
         ユーザー向けAPIとして公開されているreactive propertyのみを列挙する。
 
         Returns:
-            dict: property名をキー、propertyオブジェクトを値とする辞書
+            dict: property名をキー、タスク関数を値とする辞書
         """
-        all_reactive = cls.list_all_reactive_properties()
-        public_names = set(cls.PUBLIC_API_PROPERTIES)
+        all_reactive = self.list_all_reactive_properties()
+        public_names = set(self.PUBLIC_API_PROPERTIES)
         return {
-            name: prop for name, prop in all_reactive.items() if name in public_names
+            name: func for name, func in all_reactive.items() if name in public_names
         }
 
-    # setterを持つreactiveな変数を列挙。
     @classmethod
     def list_settable_reactive_properties(cls):
+        """setterを持つreactiveな変数を列挙する"""
         return {
             name: prop
             for name, prop in inspect.getmembers(
@@ -604,7 +689,12 @@ class GenIce3(DependencyCacheMixin):
             if name in cls.PUBLIC_API_PROPERTIES
         }
 
-    def to_gro(self, waters: dict, guests: dict, ions: dict):
+    def to_gro(
+        self,
+        waters: Dict[int, Molecule],
+        guests: List[Molecule],
+        ions: Dict[int, Molecule],
+    ) -> str:
         """Output in Gromacs format.
 
         parametersには、hooksで指定したstageの結果が含まれる。
@@ -743,17 +833,17 @@ class GenIce3(DependencyCacheMixin):
     "--density", "--dens", type=float, default=None, help="Density of the ice"
 )
 def main(
-    debug,
-    shift,
-    depol_loop,
-    replication_matrix,
-    replication_factors,
-    assess_cages,
-    guest,
-    anion,
-    cation,
-    density,
-):
+    debug: bool,
+    shift: Tuple[float, float, float],
+    depol_loop: int,
+    replication_matrix: Optional[Tuple[int, int, int, int, int, int, int, int, int]],
+    replication_factors: Tuple[int, int, int],
+    assess_cages: bool,
+    guest: Tuple[str, ...],
+    anion: Tuple[str, ...],
+    cation: Tuple[str, ...],
+    density: Optional[float],
+) -> None:
     basicConfig(level=DEBUG if debug else INFO)
     logger = getLogger()
     # shift = tuple(shift)
@@ -761,9 +851,9 @@ def main(
         replication_matrix = np.diag(replication_factors)
     else:
         replication_matrix = np.array(replication_matrix)
-    guest_info = guest_parser(guest)
-    anion_info = ion_parser(anion)
-    cation_info = ion_parser(cation)
+    guest_info = _guest_parser(guest)
+    anion_info = _ion_parser(anion)
+    cation_info = _ion_parser(cation)
     logger.debug("Debug mode enabled")
     genice = GenIce3(
         depol_loop=depol_loop,

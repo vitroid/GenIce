@@ -45,7 +45,6 @@ yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
 genice-core = ">=1.1"
 icecream = "^2.1.4"
-sf-hamilton = "^1.89.0"
 
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
@@ -60,8 +59,6 @@ requests = "^2.31.0"
 pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
 genice2-cage = ">=2.4.4"
-dagster = "^1.8.0"
-dagster-webserver = "^1.8.0"
 
 
 
