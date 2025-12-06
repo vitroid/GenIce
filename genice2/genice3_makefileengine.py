@@ -42,7 +42,7 @@ class GuestSpec:
     occupancy: float
 
 
-def orientations(coord, digraph, cellmat, dopants: dict):
+def assume_water_orientations(coord, digraph, cellmat, dopants: dict):
     """
     Does not work when two OHs are colinear
     """
@@ -310,13 +310,15 @@ class GenIce3:
         """MakefileEngineにタスクを登録する"""
         engine = self.engine
 
-        # モジュールレベルのorientations関数をクロージャでキャプチャ
+        # モジュールレベルのassume_water_orientations関数をクロージャでキャプチャ
         # （名前衝突を避けるため）
         # モジュールレベルの関数を参照するために、グローバル名前空間から取得
         import sys
 
         mod = sys.modules[__name__]
-        _compute_orientations = mod.orientations  # モジュールレベルの関数をキャプチャ
+        _compute_orientations = (
+            mod.assume_water_orientations
+        )  # モジュールレベルの関数をキャプチャ
 
         @engine.task
         def cell(unitcell, replication_matrix):
@@ -505,55 +507,19 @@ class GenIce3:
         }
         return inputs
 
-    @property
-    def cell(self):
-        return self.engine.resolve("cell", self._get_inputs())
+    def __getattr__(self, name: str):
+        """
+        登録されているタスクに対してプロパティアクセスを自動解決する。
+        これにより、タスク関数を定義するだけでプロパティとしてアクセス可能になる。
+        """
+        # MakefileEngineに登録されているタスクかチェック
+        if name in self.engine.registry:
+            return self.engine.resolve(name, self._get_inputs())
 
-    @property
-    def replica_vectors(self) -> np.ndarray:
-        """レプリカベクトルの計算"""
-        return self.engine.resolve("replica_vectors", self._get_inputs())
-
-    @property
-    def replica_vector_labels(self):
-        return self.engine.resolve("replica_vector_labels", self._get_inputs())
-
-    @property
-    def digraph(self):
-        """Makes a directed graph."""
-        return self.engine.resolve("digraph", self._get_inputs())
-
-    @property
-    def graph(self):
-        return self.engine.resolve("graph", self._get_inputs())
-
-    @property
-    def lattice_sites(self):
-        return self.engine.resolve("lattice_sites", self._get_inputs())
-
-    @property
-    def anions(self):
-        return self.engine.resolve("anions", self._get_inputs())
-
-    @property
-    def cations(self):
-        return self.engine.resolve("cations", self._get_inputs())
-
-    @property
-    def site_occupants(self):
-        return self.engine.resolve("site_occupants", self._get_inputs())
-
-    @property
-    def fixedEdges(self) -> nx.DiGraph:
-        return self.engine.resolve("fixedEdges", self._get_inputs())
-
-    @property
-    def orientations(self):
-        return self.engine.resolve("orientations", self._get_inputs())
-
-    @property
-    def cages(self):
-        return self.engine.resolve("cages", self._get_inputs())
+        # それ以外は通常のAttributeErrorを発生
+        raise AttributeError(
+            f"'{self.__class__.__name__}' object has no attribute '{name}'"
+        )
 
     def water_molecules(self, water_model: Molecule):
         mols = {}
