@@ -93,7 +93,12 @@ class UnitCell:
         else:
             self.cages = None
 
+        # ケージ位置をshiftして、fractional coordinateにする。
         if self.cages is not None:
+            _pos = self.cages[0]
+            _pos += np.array(shift)
+            _pos -= np.floor(_pos)
+            self.cages = (_pos, self.cages[1])
             for pos, label in zip(self.cages[0], self.cages[1]):
                 self.logger.info(f"  {label} @ {pos}")
 
@@ -361,7 +366,7 @@ class A15(UnitCell):
             cell=cell,
             waters=waters,
             graph=nx.Graph(pairs),
-            cages=cages,
+            # cages=cages,
             coord=coord,
             bondlen=bondlen,
             # density=density,
