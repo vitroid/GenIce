@@ -1,5 +1,5 @@
 [project]
-name="genice2"
+name="genice3"
 dynamic=["version"]
 
 [project.urls]
@@ -12,8 +12,8 @@ repository = "https://github.com/vitroid/GenIce"
 logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
 
 [tool.poetry]
-name = "genice2"
-version = "2.2.9" # master version variable
+name = "genice3"
+version = "3.0.a1" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
