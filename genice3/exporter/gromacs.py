@@ -1,7 +1,9 @@
+import sys
 from logging import getLogger
 from io import TextIOWrapper
-import numpy as np
 from typing import Dict, List
+
+import numpy as np
 from genice3.molecule import Molecule
 from genice3.genice import GenIce3, ConfigurationError, ShowUsageError, GuestSpec
 from genice3.plugin import safe_import
@@ -142,7 +144,7 @@ def water_model_processor(arg: str) -> Molecule:
 # デコレータは不要：safe_importが自動的に適用する
 
 
-def dump(genice: GenIce3, file: TextIOWrapper, **options):
+def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
     """
     Gromacs形式で出力
 
@@ -164,7 +166,7 @@ def dump(genice: GenIce3, file: TextIOWrapper, **options):
     guests = genice.guest_molecules(guests=guest_info, spot_guests=spot_guest_info)
     ions = genice.substitutional_ions()
 
-    command_line = options.get("command_line").rstrip()
+    command_line = options.get("command_line")
     output = to_gro(
         cellmat=genice.cell,
         waters=waters,

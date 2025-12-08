@@ -426,7 +426,6 @@ class GenIce3:
         "graph",
         "lattice_sites",
         "orientations",
-        "molecules",
         "unitcell",
         "replication_matrix",
         "depol_loop",

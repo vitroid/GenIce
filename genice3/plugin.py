@@ -407,18 +407,11 @@ def parse_plugin_specification(spec_str: str) -> tuple[str, Dict[str, Any]]:
         return spec_str, {}
 
 
-def Lattice(name, **kwargs):
+def UnitCell(name, **kwargs):
     """
     Shortcut for safe_import.
     """
-    return safe_import("lattice", name).Lattice(**kwargs)
-
-
-def Format(name, **kwargs):
-    """
-    Shortcut for safe_import.
-    """
-    return safe_import("format", name).Format(**kwargs)
+    return safe_import("unitcell", name).UnitCell(**kwargs)
 
 
 def Molecule(name, **kwargs):
@@ -428,11 +421,11 @@ def Molecule(name, **kwargs):
     return safe_import("molecule", name).Molecule(**kwargs)
 
 
-def Loader(name, **kwargs):
+def Exporter(name, **kwargs):
     """
     Shortcut for safe_import.
     """
-    return safe_import("loader", name).Loader(**kwargs)
+    return safe_import("exporter", name)
 
 
 def Group(name, **kwargs):
