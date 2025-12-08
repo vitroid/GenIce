@@ -85,14 +85,28 @@ HELP_SPOT_GUEST = (
     "Multiple spot guests can be specified with multiple -G options."
     "When the option argument is entered as ? (question mark), detailed information such as the position, type, and number of water molecules constituting the cage is displayed."
 )
+HELP_SPOT_ANION = (
+    "Specify anion replacing the specified water molecule. "
+    "Format: WATER_INDEX=ION_NAME, where WATER_INDEX is the index of the water molecule and ION_NAME is the anion name. "
+    "Examples: -a 13=Cl (place Cl- in cage 13), -a 32=Br (place Br- in cage 32). "
+    "Multiple spot anions can be specified with multiple -a options."
+)
+HELP_SPOT_CATION = (
+    "Specify cation replacing the specified water molecule. "
+    "Format: WATER_INDEX=ION_NAME, where WATER_INDEX is the index of the water molecule and ION_NAME is the cation name. "
+    "Examples: -c 13=Na (place Na+ in cage 13), -c 32=K (place K+ in cage 32). "
+    "Multiple spot cations can be specified with multiple -c options."
+)
 
 
 def _ion_parser(ion_options: List[str]) -> Dict[int, str]:
     """イオンオプションをパースする。常にDict[int, str]を返す。"""
-    result: Dict[int, str] = {}
+    from genice3.molecule.one import Molecule
+
+    result: Dict[int, Molecule] = {}
     for ion_option in ion_options:
         label, ion_name = ion_option.split("=")
-        result[int(label)] = ion_name
+        result[int(label)] = Molecule(name=ion_name, label=ion_name)
     return result
 
 
@@ -120,6 +134,8 @@ def _ion_parser(ion_options: List[str]) -> Dict[int, str]:
 @click.option("--exporter", "-e", default="gromacs")
 # assess_cagesをGenIce3のオプションに戻す。
 @click.option("--assess_cages", "-A", is_flag=True, help=HELP_ASSESS_CAGES)
+@click.option("--spot_anion", "-a", multiple=True, help=HELP_SPOT_ANION)
+@click.option("--spot_cation", "-c", multiple=True, help=HELP_SPOT_CATION)
 def main(
     unitcell: str,
     debug: bool,
@@ -129,9 +145,13 @@ def main(
     seed: int,
     exporter: str,
     assess_cages: bool,
+    spot_anion: List[str],
+    spot_cation: List[str],
 ) -> None:
     basicConfig(level=DEBUG if debug else INFO)
     logger = getLogger()
+
+    # option文字列をさらに加工する
     if replication_matrix is None:
         replication_matrix = np.diag(replication_factors)
     else:
@@ -145,25 +165,14 @@ def main(
     unitcell_name, unitcell_options = parse_plugin_specification(unitcell)
     unitcell_module = safe_import("unitcell", unitcell_name)
 
-    # # cage?フラグがある場合、GenIce3の作成に必要な情報をunitcell_optionsに追加
-    # # （UnitCell.__init__内でデフォルト値が使われるが、CLI側の値を使うため）
-    # if "cage?" in unitcell_options:
-    #     unitcell_options["replication_matrix"] = replication_matrix
-    #     unitcell_options["depol_loop"] = depol_loop
-    #     unitcell_options["seed"] = seed
-
     logger.debug("Debug mode enabled")
     genice = GenIce3(
         depol_loop=depol_loop,
         replication_matrix=replication_matrix,
         seed=seed,
+        spot_anions=_ion_parser(spot_anion),
+        spot_cations=_ion_parser(spot_cation),
     )
-    logger.info("Reactive properties:")
-    logger.info(f"     All: {genice.list_all_reactive_properties().keys()}")
-    logger.info(f"  Public: {genice.list_public_reactive_properties().keys()}")
-    logger.info("Settabe reactive properties:")
-    logger.info(f"     All: {genice.list_settable_reactive_properties().keys()}")
-    logger.info(f"  Public: {genice.list_public_settable_reactive_properties().keys()}")
     # genice.unitcell = Ice1h(shift=shift, assess_cages=assess_cages)
     genice.unitcell = unitcell_module.UnitCell(**unitcell_options)
 
@@ -172,32 +181,9 @@ def main(
         survey_result = genice.cage_survey
         print(survey_result)
         sys.exit(0)
-    # # stage 2
-    # print(genice.graph)
-    # # stage 4
-    # print(genice.digraph)
-    # # genice.unitcell = ice1h(shift=shift)
-    # # stage 5
-    # # print(genice.orientations)
-    # # stage 6 and 7
-    # print(genice.molecules(types=[MoleculeType.WATER]))
-    # waters = genice.water_molecules(water_model=FourSiteWater())
-    # guests = genice.guest_molecules(guests=guest_info, spot_guests=spot_guest_info)
-    # ions = genice.substitutional_ions()
-    # spot_dopants: これも要るだろうね。
-    # spot_guest: その前に、replicate後のcageの場所を何らかの方法でユーザーに知らせないといけない。まああとまわしでいいだろう。
-    # group
-
-    # 試しにgroファイルにしてみるか。
-    # with open("genice3.gro", "w") as f:
-    #     f.write(to_gro(cellmat=genice.cell, waters=waters, guests=guests, ions=ions))
 
     # コマンドライン全体を取得
     command_line = " ".join(sys.argv)
-
-    # パース済みのオプション辞書をプラグインに渡す
-    # プラグイン側のデコレータは文字列をパースするが、辞書が渡された場合はそのまま通す
-    # logger.info(f"{exporter_options=}")
     exporter_options["command_line"] = command_line
     exporter_module.dump(genice, sys.stdout, **exporter_options)
 

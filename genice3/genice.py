@@ -298,7 +298,9 @@ def lattice_sites(
     return replicate_positions(unitcell.waters, replica_vectors, replication_matrix)
 
 
-def anions(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+def anions(
+    unitcell: UnitCell, replica_vectors: np.ndarray, spot_anions: Dict[int, str]
+) -> Dict[int, str]:
     """アニオンの複製"""
     anion_dict: Dict[int, str] = {}
     Z = len(unitcell.waters)
@@ -306,10 +308,14 @@ def anions(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
         for i in range(len(replica_vectors)):
             site = i * Z + label
             anion_dict[site] = ion_name
+    for label, ion_name in spot_anions.items():
+        anion_dict[label] = ion_name
     return anion_dict
 
 
-def cations(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
+def cations(
+    unitcell: UnitCell, replica_vectors: np.ndarray, spot_cations: Dict[int, str]
+) -> Dict[int, str]:
     """カチオンの複製"""
     cation_dict: Dict[int, str] = {}
     Z = len(unitcell.waters)
@@ -317,6 +323,8 @@ def cations(unitcell: UnitCell, replica_vectors: np.ndarray) -> Dict[int, str]:
         for i in range(len(replica_vectors)):
             site = i * Z + label
             cation_dict[site] = ion_name
+    for label, ion_name in spot_cations.items():
+        cation_dict[label] = ion_name
     return cation_dict
 
 
@@ -332,9 +340,27 @@ def site_occupants(
     return occupants
 
 
-def fixedEdges(graph: nx.Graph, unitcell: UnitCell) -> nx.DiGraph:
+def fixedEdges(
+    graph: nx.Graph,
+    unitcell: UnitCell,
+    spot_anions: Dict[int, str],
+    spot_cations: Dict[int, str],
+) -> nx.DiGraph:
     """固定エッジの複製"""
-    return _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
+    dg = _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
+    for label in spot_anions:
+        for nei in graph.neighbors(label):
+            if dg.has_edge(label, nei):
+                raise ConfigurationError(f"矛盾する辺の固定 at {label}.")
+            else:
+                dg.add_edge(nei, label)
+    for label in spot_cations:
+        for nei in graph.neighbors(label):
+            if dg.has_edge(nei, label):
+                raise ConfigurationError(f"矛盾する辺の固定 at {label}.")
+            else:
+                dg.add_edge(label, nei)
+    return dg
 
 
 def digraph(
@@ -429,6 +455,8 @@ class GenIce3:
         "unitcell",
         "replication_matrix",
         "depol_loop",
+        "spot_anions",
+        "spot_cations",
     ]
 
     def __init__(
@@ -436,6 +464,8 @@ class GenIce3:
         depol_loop: int = 1000,
         replication_matrix: np.ndarray = np.eye(3, dtype=int),
         seed: int = 1,
+        spot_anions: Dict[int, str] = {},
+        spot_cations: Dict[int, str] = {},
         **kwargs: Any,
     ) -> None:
         # MakefileEngineインスタンスを作成
@@ -445,6 +475,8 @@ class GenIce3:
         np.random.seed(seed)
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
+        self.spot_anions = spot_anions
+        self.spot_cations = spot_cations
 
         # タスクを登録（モジュールレベルの関数を登録）
         self._register_tasks()
@@ -484,6 +516,32 @@ class GenIce3:
             func = getattr(current_module, name)
             engine.task(func)
 
+    # spot_anions
+    @property
+    def spot_anions(self):
+        if not hasattr(self, "_spot_anions"):
+            self._spot_anions = {}
+        return self._spot_anions
+
+    @spot_anions.setter
+    def spot_anions(self, spot_anions):
+        self._spot_anions = spot_anions
+        self.logger.debug(f"  {spot_anions=}")
+        self.engine.cache.clear()
+
+    # spot_cations
+    @property
+    def spot_cations(self):
+        if not hasattr(self, "_spot_cations"):
+            self._spot_cations = {}
+        return self._spot_cations
+
+    @spot_cations.setter
+    def spot_cations(self, spot_cations):
+        self._spot_cations = spot_cations
+        self.logger.debug(f"  {spot_cations=}")
+        self.engine.cache.clear()
+
     @property
     def depol_loop(self):
         return self._depol_loop
@@ -492,9 +550,8 @@ class GenIce3:
     def depol_loop(self, depol_loop):
         self._depol_loop = depol_loop
         self.logger.debug(f"  {depol_loop=}")
-        # キャッシュをクリア（depol_loopに依存するタスクを再計算させる）
-        if "digraph" in self.engine.cache:
-            del self.engine.cache["digraph"]
+        # キャッシュをクリア（depol_loopに依存するすべてのタスクを再計算させる）
+        self.engine.cache.clear()
 
     @property
     def unitcell(self):
@@ -537,6 +594,8 @@ class GenIce3:
             "unitcell": self.unitcell,
             "replication_matrix": self.replication_matrix,
             "depol_loop": self.depol_loop,
+            "spot_anions": self.spot_anions,
+            "spot_cations": self.spot_cations,
         }
 
     def __getattr__(self, name: str):
@@ -645,33 +704,41 @@ class GenIce3:
             )
         return ions
 
-    def get_atomic_structure(
-        self,
-        water_model: Optional[Molecule] = None,
-        guests: Optional[Dict[str, List[GuestSpec]]] = None,
-        spot_guests: Optional[Dict[int, Molecule]] = None,
-    ) -> AtomicStructure:
-        """
-        原子構造データを統合的に取得する。
-        exporterプラグインが使用するための統一インターフェース。
+    def dope_anions(self, anions: Dict[int, Molecule]):
+        for label, molecule in anions.items():
+            self.anions[label] = molecule
 
-        Args:
-            water_model: 水分子モデル（デフォルト: FourSiteWater()）
-            guests: ケージタイプごとのゲスト分子の指定（デフォルト: {}）
-            spot_guests: 特定ケージ位置へのゲスト分子の指定（デフォルト: {}）
+    def dope_cations(self, cations: Dict[int, Molecule]):
+        for label, molecule in cations.items():
+            self.cations[label] = molecule
 
-        Returns:
-            AtomicStructure: 水分子、ゲスト分子、イオン、セル行列を含む統合データ構造
-        """
+    # def get_atomic_structure(
+    #     self,
+    #     water_model: Optional[Molecule] = None,
+    #     guests: Optional[Dict[str, List[GuestSpec]]] = None,
+    #     spot_guests: Optional[Dict[int, Molecule]] = None,
+    # ) -> AtomicStructure:
+    #     """
+    #     原子構造データを統合的に取得する。
+    #     exporterプラグインが使用するための統一インターフェース。
 
-        return AtomicStructure(
-            waters=self.water_molecules(water_model=water_model),
-            guests=self.guest_molecules(
-                guests=guests or {}, spot_guests=spot_guests or {}
-            ),
-            ions=self.substitutional_ions(),
-            cell=self.cell,
-        )
+    #     Args:
+    #         water_model: 水分子モデル（デフォルト: FourSiteWater()）
+    #         guests: ケージタイプごとのゲスト分子の指定（デフォルト: {}）
+    #         spot_guests: 特定ケージ位置へのゲスト分子の指定（デフォルト: {}）
+
+    #     Returns:
+    #         AtomicStructure: 水分子、ゲスト分子、イオン、セル行列を含む統合データ構造
+    #     """
+
+    #     return AtomicStructure(
+    #         waters=self.water_molecules(water_model=water_model),
+    #         guests=self.guest_molecules(
+    #             guests=guests or {}, spot_guests=spot_guests or {}
+    #         ),
+    #         ions=self.substitutional_ions(),
+    #         cell=self.cell,
+    #     )
 
     @classmethod
     def get_public_api_properties(cls):
