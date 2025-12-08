@@ -4,13 +4,14 @@ import genice3.molecule
 
 class Molecule(genice3.molecule.Molecule):
     """
-    単一サイトの分子を定義するクラス。
+    空のケージ用のプレースホルダー。
     """
 
-    def __init__(self, label: str = "X", name: str = "X"):
-        sites = np.array([[0, 0, 0]])
-        labels = [
-            label,
-        ]
+    def __init__(self):
+        # placeholder for empty cage
+
+        sites = []
+        labels = []
+        name = "empty"
         is_water = False
         super().__init__(sites=sites, labels=labels, name=name, is_water=is_water)
