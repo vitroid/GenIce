@@ -325,9 +325,9 @@ def safe_import(category, name):
         sys.exit(0)
 
     usage = False
-    if name[-1:] == "?":
-        usage = True
-        name = name[:-1]
+    # if name[-1:] == "?":
+    #     usage = True
+    #     name = name[:-1]
 
     assert audit_name(name), f"Dubious {category} name: {name}"
 

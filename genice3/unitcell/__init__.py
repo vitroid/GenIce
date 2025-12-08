@@ -2,7 +2,7 @@ from logging import getLogger
 import numpy as np
 import networkx as nx
 import pairlist as pl
-from genice3.genice import ConfigurationError
+from genice2 import ConfigurationError
 import genice2.cage
 from typing import Dict, Any
 from genice3.molecule.one import Molecule
