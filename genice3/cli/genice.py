@@ -5,12 +5,21 @@ import numpy as np
 import sys
 from typing import Dict, List
 import json
-
-
-from genice2.cli.genice import get_version, HELP_VERSION
+from importlib.metadata import version, PackageNotFoundError
 
 from genice3.plugin import parse_plugin_specification, safe_import
 from genice3.genice import GenIce3
+
+
+HELP_VERSION = "Show the version and exit."
+
+
+def get_version():
+    """パッケージのバージョンを取得する。見つからない場合はデフォルト値を返す。"""
+    try:
+        return version("genice3")
+    except PackageNotFoundError:
+        return "3.*.*.*"
 
 
 # ============================================================================
