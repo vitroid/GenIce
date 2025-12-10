@@ -4,12 +4,17 @@ from io import TextIOWrapper
 from typing import Dict, List
 
 import numpy as np
+from genice2.cell import cellvectors
 from genice3.molecule import Molecule
-from genice3.genice import GenIce3, ConfigurationError, ShowUsageError, GuestSpec
-from genice3.plugin import safe_import
+from genice3.genice import GenIce3
+from genice3.exporter import (
+    guest_processor,
+    spot_guest_processor,
+    water_model_processor,
+)
 
 
-def to_gro(
+def _to_gro(
     cellmat: np.ndarray,
     waters: Dict[int, Molecule],
     guests: List[Molecule],
@@ -20,7 +25,7 @@ def to_gro(
 
     parametersには、hooksで指定したstageの結果が含まれる。
     """
-    logger = getLogger("to_gro")
+    logger = getLogger("_to_gro")
     logger.info("Generating .gro...")
 
     if not (cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0):
@@ -93,50 +98,6 @@ def to_gro(
     return s
 
 
-def guest_processor(arg: dict):
-    # 辞書のvaluesの特殊記法をparseする。
-    logger = getLogger("guest_processor")
-    logger.info(f"{arg=}")
-    result = {}
-    for cage, guest_specs in arg.items():
-        logger.info(f"{cage=} {guest_specs=}")
-        result[cage] = []
-        total_occupancy = 0
-        for guest_spec in guest_specs.split("+"):
-            if "*" in guest_spec:
-                occupancy, molecule = guest_spec.split("*")
-                occupancy = float(occupancy)
-            else:
-                molecule = guest_spec
-                occupancy = 1.0
-            # moleculeはオプションを含んでいるかもしれないが、今は処理しない。
-            molecule = safe_import("molecule", molecule).Molecule()
-            result[cage].append(GuestSpec(molecule, occupancy))
-            total_occupancy += occupancy
-        if total_occupancy > 1.0:
-            raise ConfigurationError(f"Total occupancy of {option} is greater than 1.0")
-    logger.debug(f"{result=}")
-    return result
-
-
-def spot_guest_processor(arg: dict) -> Dict[int, Molecule]:
-    # keyとvalueを変換するのみ
-    result: Dict[int, Molecule] = {}
-    for label, molecule in arg.items():
-        if label == "?":
-            raise ShowUsageError(
-                "Use '?' to display cage information. "
-                "This option triggers a survey of cage positions and types."
-            )
-        result[int(label)] = safe_import("molecule", molecule).Molecule()
-    return result
-
-
-def water_model_processor(arg: str) -> Molecule:
-    # オプション文字列は今のところないのでこれで動く。
-    return safe_import("molecule", arg).Molecule()
-
-
 # 水分子モデルもguestもdumpでしか必要としないので、gromacsの属性ではないか?
 # デコレータは不要：safe_importが自動的に適用する
 
@@ -164,7 +125,7 @@ def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
     ions = genice.substitutional_ions()
 
     command_line = options.get("command_line")
-    output = to_gro(
+    output = _to_gro(
         cellmat=genice.cell,
         waters=waters,
         guests=guests,

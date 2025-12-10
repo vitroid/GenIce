@@ -2,8 +2,8 @@ from logging import getLogger
 import numpy as np
 import networkx as nx
 import pairlist as pl
-from genice2 import ConfigurationError
-import genice2.cage
+from genice3 import ConfigurationError
+from genice3.util import assess_cages
 from typing import Dict, Any
 from genice3.molecule.one import Molecule
 
@@ -131,7 +131,7 @@ class UnitCell:
             # ケージの調査が必要になったときに実行
             # watersは既にshift済みなので、ケージ位置も既にshift済みの座標系で計算される
             self.logger.info("Assessing cages...")
-            self._cages = genice2.cage.assess_cages(self.graph, self.waters)
+            self._cages = assess_cages(self.graph, self.waters)
 
             # ケージ情報をログ出力
             if self._cages is not None:
