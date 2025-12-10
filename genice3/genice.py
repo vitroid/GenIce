@@ -1,12 +1,14 @@
 # Another plan of reactive GenIce3.
 
-from genice2 import ConfigurationError
-from genice2.molecules import Molecule
-from genice2.stage1 import replicate_positions
-from genice2.stage2 import grandcell_wrap
-from genice2.stage5 import assume_tetrahedral_vectors
-from genice2.cell import cellshape
-from genice2.cage import CageSpecs
+from genice3 import ConfigurationError
+from genice3.molecule import Molecule
+from genice3.util import (
+    replicate_positions,
+    grandcell_wrap,
+    assume_tetrahedral_vectors,
+    cellshape,
+    CageSpecs,
+)
 import genice_core
 import networkx as nx
 import numpy as np
@@ -50,6 +52,12 @@ class GuestSpec:
     molecule: Molecule
     occupancy: float
 
+    def __repr__(self) -> str:
+        return (
+            f"GuestSpec(molecule={self.molecule.name!r}, "
+            f"occupancy={self.occupancy:.3f})"
+        )
+
 
 @dataclass
 class AtomicStructure:
@@ -62,6 +70,14 @@ class AtomicStructure:
     guests: List[Molecule]
     ions: Dict[int, Molecule]
     cell: np.ndarray
+
+    def __repr__(self) -> str:
+        return (
+            f"AtomicStructure(n_waters={len(self.waters)}, "
+            f"n_guests={len(self.guests)}, "
+            f"n_ions={len(self.ions)}, "
+            f"cell_shape={self.cell.shape})"
+        )
 
 
 def _assume_water_orientations(
