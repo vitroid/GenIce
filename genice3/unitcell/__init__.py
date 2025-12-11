@@ -135,7 +135,9 @@ class UnitCell:
 
             # ケージ情報をログ出力
             if self._cages is not None:
-                for pos, label in zip(self._cages.positions, self._cages.specs):
-                    self.logger.info(f"  {label} @ {pos}")
+                for i, (pos, label) in enumerate(
+                    zip(self._cages.positions, self._cages.specs)
+                ):
+                    self.logger.info(f"cage {i}: {label} @ {pos}")
 
         return self._cages
