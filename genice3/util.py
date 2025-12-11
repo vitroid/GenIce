@@ -19,6 +19,9 @@ from genice3.molecule import Molecule
 
 def replicate_positions(positions1, replica_vectors, grand_cellmat):
     """レプリカ単位胞の数だけ、水分子位置を複製する。"""
+    # 空の配列の場合は空の配列を返す
+    if len(positions1) == 0:
+        return np.array([]).reshape(0, 3)
     inv = np.linalg.inv(grand_cellmat)
     reppositions = []
     for replica_vector in replica_vectors:
@@ -110,6 +113,9 @@ class CageSpec:
             f"faces={self.faces!r}, "
             f"n_nodes={self.graph.number_of_nodes()})"
         )
+
+    def __str__(self) -> str:
+        return f"{self.label} ({self.faces}) {self.graph.number_of_nodes()} nodes"
 
 
 @dataclass

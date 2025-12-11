@@ -424,6 +424,9 @@ def cages(
     """ケージ位置とタイプの複製"""
     if unitcell.cages is None:
         return None
+    # ケージが存在しない場合（空の配列）の処理
+    if len(unitcell.cages.positions) == 0:
+        return CageSpecs(positions=np.array([]).reshape(0, 3), specs=[])
     repcagepos = replicate_positions(
         unitcell.cages.positions, replica_vectors, replication_matrix
     )
