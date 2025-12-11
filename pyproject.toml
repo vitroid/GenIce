@@ -58,7 +58,6 @@ genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
-genice2-cage = ">=2.4.4"
 
 
 
@@ -69,4 +68,11 @@ genice2-cage = ">=2.4.4"
 # [tool.hatch.version]
 # path = "genice2/__init__.py"
 jinja2 = "^3.1.4"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 

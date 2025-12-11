@@ -5,7 +5,7 @@ import os
 # from genice2.tool import line_replacer
 # import distutils.core
 from logging import getLogger, INFO, basicConfig
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 import json
 import genice2
 from genice2.plugin import plugin_descriptors
@@ -76,6 +76,8 @@ project |= {
     "version": project["tool"]["poetry"]["version"],
 }
 
-t = Template(sys.stdin.read())
+env = Environment(loader=FileSystemLoader("."))
+template_content = sys.stdin.read()
+t = env.from_string(template_content)
 markdown_en = t.render(**project)
 print(markdown_en)
