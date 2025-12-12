@@ -1,0 +1,8 @@
+# GenIce3 設定ファイルの例（YAML形式）
+# コマンドライン引数で指定された値は、この設定ファイルの値を上書きします。
+
+unitcell:
+  name: A15
+
+exporter:
+  name: gromacs
