@@ -367,13 +367,17 @@ def fixedEdges(
     for label in spot_anions:
         for nei in graph.neighbors(label):
             if dg.has_edge(label, nei):
-                raise ConfigurationError(f"矛盾する辺の固定 at {label}.")
+                raise ConfigurationError(
+                    f"矛盾する辺の固定 at {label}; すでに({label} --> {nei})が固定されています。"
+                )
             else:
                 dg.add_edge(nei, label)
     for label in spot_cations:
         for nei in graph.neighbors(label):
             if dg.has_edge(nei, label):
-                raise ConfigurationError(f"矛盾する辺の固定 at {label}.")
+                raise ConfigurationError(
+                    f"矛盾する辺の固定 at {label}; すでに({nei} --> {label})が固定されています。"
+                )
             else:
                 dg.add_edge(label, nei)
     return dg
@@ -709,16 +713,16 @@ class GenIce3:
         # ならべかえはここではしない。formatterにまかせる。
         for label, molecule in self.anions.items():
             ions[label] = Molecule(
-                name=molecule.name,
-                sites=molecule.sites + self.lattice_sites[label] @ self.cell,
-                labels=molecule.labels,
+                name=molecule,
+                sites=[self.lattice_sites[label] @ self.cell],
+                labels=[molecule],
                 is_water=False,
             )
         for label, molecule in self.cations.items():
             ions[label] = Molecule(
-                name=molecule.name,
-                sites=molecule.sites + self.lattice_sites[label] @ self.cell,
-                labels=molecule.labels,
+                name=molecule,
+                sites=[self.lattice_sites[label] @ self.cell],
+                labels=[molecule],
                 is_water=False,
             )
         return ions

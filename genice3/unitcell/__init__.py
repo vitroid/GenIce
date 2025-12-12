@@ -12,7 +12,7 @@ def ion_processor(arg: dict) -> Dict[int, Molecule]:
     # keyとvalueを変換するのみ
     result: Dict[int, Molecule] = {}
     for label, molecule in arg.items():
-        result[int(label)] = Molecule(name=molecule, label=molecule)
+        result[int(label)] = molecule
     return result
 
 
@@ -42,7 +42,8 @@ class UnitCell:
         shift: tuple = (0.0, 0.0, 0.0),
         anion: dict = {},
         cation: dict = {},
-        **kwargs,
+        assess_cages: bool = False,
+        name: str = "",  # dummy
     ):
         anion = ion_processor(anion)
         cation = ion_processor(cation)

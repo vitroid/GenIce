@@ -5,7 +5,7 @@ from genice3.plugin import safe_import
 from genice3.molecule import Molecule
 
 
-def guest_processor(arg: dict):
+def parse_guest_option(arg: dict):
     # 辞書のvaluesの特殊記法をparseする。
     logger = getLogger("guest_processor")
     logger.info(f"{arg=}")
@@ -31,7 +31,7 @@ def guest_processor(arg: dict):
     return result
 
 
-def spot_guest_processor(arg: dict) -> Dict[int, Molecule]:
+def parse_spot_guest_option(arg: dict) -> Dict[int, Molecule]:
     # keyとvalueを変換するのみ
     result: Dict[int, Molecule] = {}
     for label, molecule in arg.items():
@@ -44,6 +44,6 @@ def spot_guest_processor(arg: dict) -> Dict[int, Molecule]:
     return result
 
 
-def water_model_processor(arg: str) -> Molecule:
+def parse_water_model_option(arg: str) -> Molecule:
     # オプション文字列は今のところないのでこれで動く。
     return safe_import("molecule", arg).Molecule()

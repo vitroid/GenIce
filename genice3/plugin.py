@@ -366,14 +366,10 @@ def safe_import(category, name):
             print(module.desc["usage"])
             sys.exit(0)
 
-    # exporterプラグインの場合、dump関数に自動的にデコレータを適用
-    if category == "exporter" and hasattr(module, "dump"):
-        module.dump = parse_plugin_options(module.dump)
-
     return module
 
 
-def parse_plugin_specification(spec_str: str) -> tuple[str, Dict[str, Any]]:
+def parse_plugin_options(spec_str: str) -> tuple[str, Dict[str, Any]]:
     """
     commandline文字列をパースして、プラグイン名とパース済みオプション辞書を返す
 

@@ -12,7 +12,7 @@ import numpy as np
 from genice3.util import cellshape
 from genice3.genice import GenIce3
 from genice3.exporter import (
-    guest_processor,
+    _parse_guest_option,
     spot_guest_processor,
     water_model_processor,
 )
@@ -42,9 +42,17 @@ def _format_cell_shape(a, b, c, A, B, C):
     return s
 
 
-def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
+def dump(
+    genice: GenIce3,
+    file: TextIOWrapper = sys.stdout,
+    guest: dict = {},
+    spot_guest: dict = {},
+    water_model: str = "3site",
+    name: str = "",
+):
     "Output in CIF format."
     logger = getLogger()
+    assert name in ["cif", ""]
 
     a, b, c, A, B, C = cellshape(genice.cell)
     s = _format_cell_shape(a, b, c, A, B, C)
@@ -62,9 +70,9 @@ _atom_site_fract_y
 _atom_site_fract_z
 """
     # オプションの処理
-    guest_info = guest_processor(options.get("guest", {}))
-    spot_guest_info = spot_guest_processor(options.get("spot_guest", {}))
-    water_model = water_model_processor(options.get("water_model", "4site"))
+    guest_info = parse_guest_option(guest)
+    spot_guest_info = parse_spot_guest_option(spot_guest)
+    water_model = parse_water_model_option(water_model)
 
     # 分子の取得
     waters = genice.water_molecules(water_model=water_model)

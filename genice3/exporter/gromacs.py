@@ -2,15 +2,17 @@ import sys
 from logging import getLogger
 from io import TextIOWrapper
 from typing import Dict, List
+from collections import defaultdict
 
 import numpy as np
-from genice2.cell import cellvectors
+
+from genice3.util import cellvectors
 from genice3.molecule import Molecule
 from genice3.genice import GenIce3
 from genice3.exporter import (
-    guest_processor,
-    spot_guest_processor,
-    water_model_processor,
+    parse_guest_option,
+    parse_spot_guest_option,
+    parse_water_model_option,
 )
 
 
@@ -46,21 +48,28 @@ def _to_gro(
     else:
         rotmat = np.eye(3)
 
+    # 分子種ごとにソートする必要がある。
+    molecules = defaultdict(list)
+    for water in waters.values():
+        molecules[water.name].append(water)
+    for guest in guests:
+        molecules[guest.name].append(guest)
+    for ion in ions.values():
+        molecules[ion.name].append(ion)
+
     atoms = []
     residue_count = 1
-    for water in waters.values():
-        for name, position in zip(water.labels, water.sites):
-            atoms.append([residue_count, water.name, name, position])
-        residue_count += 1
-    for guest in guests:
-        for name, position in zip(guest.labels, guest.sites):
-            atoms.append([residue_count, guest.name, name, position])
-        residue_count += 1
-    for ion in ions.values():
-        for name, position in zip(ion.labels, ion.sites):
-            atoms.append([residue_count, ion.name, name, position])
-        residue_count += 1
+    top_append = ""
+    for mol_name, mols in molecules.items():
+        for mol in mols:
+            for name, position in zip(mol.labels, mol.sites):
+                atoms.append([residue_count, mol.name, name, position])
+            residue_count += 1
+        top_append += f"{mol_name:5s}{len(mols):>8d}\n"
 
+    logger.info(
+        f"Append the following lines to the .top file:\n[ molecules ]\n{top_append}"
+    )
     logger.info("  Total number of atoms: {0}".format(len(atoms)))
     if len(atoms) > 99999:
         logger.warn(
@@ -102,7 +111,15 @@ def _to_gro(
 # デコレータは不要：safe_importが自動的に適用する
 
 
-def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
+def dump(
+    genice: GenIce3,
+    file: TextIOWrapper = sys.stdout,
+    guest: dict = {},
+    spot_guest: dict = {},
+    water_model: str = "3site",
+    command_line: str = "",
+    name: str = "",  # dummy
+):
     """
     Gromacs形式で出力
 
@@ -114,17 +131,14 @@ def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
             - プラグイン側では既に辞書形式になっている
     """
     logger = getLogger("gromacs.dump")
-    # 設定可能なオプションはguestとspot_guest。
-    guest_info = guest_processor(options.get("guest", {}))
-    spot_guest_info = spot_guest_processor(options.get("spot_guest", {}))
-    water_model = water_model_processor(options.get("water_model", "4site"))
-    # water = FourSiteWater()  # dummy
-
+    assert name in ["gromacs", ""]
+    guest_info = parse_guest_option(guest)
+    spot_guest_info = parse_spot_guest_option(spot_guest)
+    water_model = parse_water_model_option(water_model)
     waters = genice.water_molecules(water_model=water_model)
     guests = genice.guest_molecules(guests=guest_info, spot_guests=spot_guest_info)
     ions = genice.substitutional_ions()
 
-    command_line = options.get("command_line")
     output = _to_gro(
         cellmat=genice.cell,
         waters=waters,

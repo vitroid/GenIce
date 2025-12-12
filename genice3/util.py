@@ -12,7 +12,7 @@ import networkx as nx
 from cycless.cycles import centerOfMass, cycles_iter
 from cycless.polyhed import cage_to_graph, polyhedra_iter
 from graphstat import GraphStat
-from math import pi, acos, degrees
+from math import pi, acos, degrees, sin, cos
 
 from genice3.molecule import Molecule
 
@@ -96,6 +96,29 @@ def cellshape(cellmat):
     beta = degrees(acos((cellmat[2] @ cellmat[0]) / (c * a)))
     gamma = degrees(acos((cellmat[0] @ cellmat[1]) / (a * b)))
     return a, b, c, alpha, beta, gamma
+
+
+def cellvectors(a, b, c, A=90, B=90, C=90):
+    """
+    Generate cell vectors from a,b,c and alpha, beta, gamma.
+    """
+    # probably same as six2nine in rigid.py
+    logger = logging.getLogger()
+    A *= pi / 180
+    B *= pi / 180
+    C *= pi / 180
+    sA, cA = sin(A), cos(A)
+    sB, cB = sin(B), cos(B)
+    sC, cC = sin(C), cos(C)
+    ea = np.array([1.0, 0.0, 0.0])
+    eb = np.array([cC, sC, 0])
+    # ec.ea = ecx = cos(B)
+    # ec.eb = ecx*ebx + ecy*eby = cos(A)
+    ecx = cB
+    ecy = (cA - ecx * eb[0]) / eb[1]
+    ecz = (1 - ecx**2 - ecy**2) ** 0.5
+    ec = np.array([ecx, ecy, ecz])
+    return np.vstack([ea * a, eb * b, ec * c])
 
 
 @dataclass
