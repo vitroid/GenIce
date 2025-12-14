@@ -7,14 +7,11 @@ Reshaping the unit cell.
   k:[1 0 1]
 """
 
-desc = {"ref": {},
-        "usage": "No options available.",
-        "brief": "Ice V with orthogonal unit cell. (testing)"
-        }
+desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Ice V with orthogonal unit cell. (testing)'}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

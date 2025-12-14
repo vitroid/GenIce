@@ -1,12 +1,9 @@
-desc = {"ref": {"9": 'Londono 1993'},
-        "usage": "No options available.",
-        "brief": "Ice IX, a hydrogen-ordered counterpart of ice III."
-        }
+desc = {'ref': {'9': 'Londono 1993'}, 'usage': 'No options available.', 'brief': 'Ice IX, a hydrogen-ordered counterpart of ice III.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

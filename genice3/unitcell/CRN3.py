@@ -1,12 +1,9 @@
-desc = {"ref": {"CRN": 'Mousseau 2001'},
-        "usage": "No options available.",
-        "brief": "A continuous random network of Sillium."
-        }
+desc = {'ref': {'CRN': 'Mousseau 2001'}, 'usage': 'No options available.', 'brief': 'A continuous random network of Sillium.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

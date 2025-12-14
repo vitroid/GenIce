@@ -7,15 +7,11 @@ Reshaping the unit cell.
   k:[0 0 1]
 """
 
-desc = {
-    "ref": {"T2": "Yagasaki 2018"},
-    "usage": "No options available.",
-    "brief": "Hypothetical ice T2.",
-    "test": ({"options": "--depol=optimal"}
+desc = {'ref': {'T2': 'Yagasaki 2018'}, 'usage': 'No options available.', 'brief': 'Hypothetical ice T2.', 'test': ({'options': '--depol=optimal'},)}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

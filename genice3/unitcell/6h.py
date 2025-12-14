@@ -1,12 +1,8 @@
-desc = {
-    "ref": {},
-    "usage": "No options available.",
-    "brief": "Half lattice of ice VI.",
-    "test": ({"options": "-r 2 2 2"}
+desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Half lattice of ice VI.', 'test': ({'options': '-r 2 2 2'},)}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

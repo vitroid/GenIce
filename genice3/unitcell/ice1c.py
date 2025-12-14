@@ -3,15 +3,12 @@ Data sources
 
 """
 
-desc = {"ref": {"Ic": 'Vos 1993'},
-        "usage": "No options available.",
-        "brief": "Cubic type of ice I."
-        }
+desc = {'ref': {'Ic': 'Vos 1993'}, 'usage': 'No options available.', 'brief': 'Cubic type of ice I.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

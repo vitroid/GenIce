@@ -3,16 +3,12 @@ Data sources
 
 """
 
-desc = {
-    "ref": {"XIc": "Geiger 2014"},
-    "usage": "No options available.",
-    "brief": "A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1.",
-}
+desc = {'ref': {'XIc': 'Geiger 2014'}, 'usage': 'No options available.', 'brief': "A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1."}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

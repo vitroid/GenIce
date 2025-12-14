@@ -3,15 +3,12 @@ Cage composition:
  (12,14,15,16) = (2,6,0,0,)
 """
 
-desc = {"ref": {"CS1": 'Sikiric 2010'},
-        "usage": "No options available.",
-        "brief": "Cubic Structure I of clathrate hydrate."
-        }
+desc = {'ref': {'CS1': 'Sikiric 2010'}, 'usage': 'No options available.', 'brief': 'Cubic Structure I of clathrate hydrate.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

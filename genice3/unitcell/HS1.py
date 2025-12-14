@@ -4,16 +4,11 @@
 [HS1] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 """
 
-desc = {
-    "ref": {"HS1": "Kosyakov and Polyanskaya 1999"},
-    "usage": "No options available.",
-    "brief": "Hydrogen-disordered ice Ih.",
-    "test": (
-        {"options": "--assess_cages"}
+desc = {'ref': {'HS1': 'Kosyakov and Polyanskaya 1999'}, 'usage': 'No options available.', 'brief': 'Hydrogen-disordered ice Ih.', 'test': ({'options': '--assess_cages'}, {'options': '--guest 12=me'}, {'options': '--spot_guest 12=me'}, {'options': '--anion 1=Br --cation 3=N --depol=optimal -H 9=Bu:3 -H 11=Bu:3 -H 13=Bu:3 -H 7=Bu:3'})}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

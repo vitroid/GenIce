@@ -1,12 +1,8 @@
-desc = {"ref": {"sIII": 'Huang 2017',
-                "FAU": 'IZA Database'},
-        "usage": "No options available.",
-        "brief": "Hypothetical ice at negative pressure ice 'sIV'."
-        }
+desc = {'ref': {'sIII': 'Huang 2017', 'FAU': 'IZA Database'}, 'usage': 'No options available.', 'brief': "Hypothetical ice at negative pressure ice 'sIV'."}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

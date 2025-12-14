@@ -7,14 +7,11 @@ Reshaping the unit cell.
 
 """
 
-desc = {"ref": {"IV": 'Avogadro'},
-        "usage": "No options available.",
-        "brief": "Orthogonalized ice IV."
-        }
+desc = {'ref': {'IV': 'Avogadro'}, 'usage': 'No options available.', 'brief': 'Orthogonalized ice IV.'}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

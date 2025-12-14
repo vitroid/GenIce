@@ -5,15 +5,12 @@ Cage composition:
  (12,14,15,16) = (40,20,8,12,)
 """
 
-desc = {"ref": {"SpaceFullerene": 'Sikiric 2010'},
-        "usage": "No options available.",
-        "brief": "A space fullerene."
-        }
+desc = {'ref': {'SpaceFullerene': 'Sikiric 2010'}, 'usage': 'No options available.', 'brief': 'A space fullerene.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

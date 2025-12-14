@@ -1,16 +1,8 @@
-desc = {
-    "ref": {},
-    "usage": "No options available.",
-    "brief": (
-        "Most popular Ice I (hexagonal). "
-        + "NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. "
-        + "If you want the basal plane to be Z axis, please use 'one[hh]' instead."
-    ),
-}
+desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Most popular Ice I (hexagonal). ' + 'NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. ' + "If you want the basal plane to be Z axis, please use 'one[hh]' instead."}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

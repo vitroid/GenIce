@@ -1,12 +1,9 @@
-desc = {"ref": {},
-        "usage": "No options available.",
-        "brief": "Conventional high-pressure ice VII."
-        }
+desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Conventional high-pressure ice VII.'}
 
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

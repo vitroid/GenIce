@@ -1,18 +1,8 @@
-desc = {
-    "ref": {
-        "ice 16": "Falenty 2014",
-        "C15": "Sikiric 2010",
-        "sII": "Jeffrey 1984",
-        "CS2": "Kosyakov 1999",
-        "MTN": "IZA Database",
-    },
-    "usage": "No options available.",
-    "brief": "Ultralow-density Ice XVI.",
-}
+desc = {'ref': {'ice 16': 'Falenty 2014', 'C15': 'Sikiric 2010', 'sII': 'Jeffrey 1984', 'CS2': 'Kosyakov 1999', 'MTN': 'IZA Database'}, 'usage': 'No options available.', 'brief': 'Ultralow-density Ice XVI.'}
 
 import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):
