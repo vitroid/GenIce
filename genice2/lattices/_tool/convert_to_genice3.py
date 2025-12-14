@@ -83,6 +83,7 @@ def analyze_lattice_file(filepath: Path) -> Dict[str, Any]:
         "pairs_str": None,
         "waters": None,
         "waters_str": None,
+        "waters_array": None,
         "cell": None,
         "cell_str": None,
         "coord": "relative",
@@ -153,9 +154,41 @@ def analyze_lattice_file(filepath: Path) -> Dict[str, Any]:
 
                                     # self.waters
                                     elif attr_name == "waters":
-                                        info["waters_str"] = extract_string_value(
-                                            stmt.value
-                                        )
+                                        # 文字列の場合
+                                        waters_str = extract_string_value(stmt.value)
+                                        if waters_str:
+                                            info["waters_str"] = waters_str
+                                        # np.array([...])の場合
+                                        elif isinstance(stmt.value, ast.Call):
+                                            # np.array()呼び出しを検出
+                                            if (
+                                                isinstance(
+                                                    stmt.value.func, ast.Attribute
+                                                )
+                                                and stmt.value.func.attr == "array"
+                                            ) or (
+                                                isinstance(stmt.value.func, ast.Name)
+                                                and stmt.value.func.id == "array"
+                                            ):
+                                                # 引数がリストの場合
+                                                if stmt.value.args and isinstance(
+                                                    stmt.value.args[0], ast.List
+                                                ):
+                                                    # リストを文字列形式に変換
+                                                    if hasattr(ast, "unparse"):
+                                                        # ASTを文字列に変換してから評価
+                                                        list_str = ast.unparse(
+                                                            stmt.value.args[0]
+                                                        )
+                                                        info["waters_array"] = list_str
+                                                    else:
+                                                        # Python < 3.9: 手動で抽出
+                                                        info["waters_array"] = (
+                                                            stmt.value.args[0]
+                                                        )
+                                                else:
+                                                    # その他の場合は検出できず
+                                                    pass
 
                                     # self.cell
                                     elif attr_name == "cell":
@@ -243,25 +276,105 @@ def analyze_lattice_file(filepath: Path) -> Dict[str, Any]:
     return info
 
 
-def generate_unitcell_code(info: Dict[str, Any]) -> Optional[str]:
+def generate_unitcell_code(
+    info: Dict[str, Any], generate_skeleton: bool = True
+) -> Optional[str]:
     """解析結果からgenice3.unitcellコードを生成
 
-    自動変換できない場合はNoneを返す
+    自動変換できない場合でも、generate_skeletonがTrueの場合はスケルトンコードを生成
     """
     lines = []
 
-    # CIFパターンの場合は変換不可
+    # 変換可能かどうかを判定
+    can_convert = True
+    reason = []
+
     if info.get("has_cif"):
-        return None
+        can_convert = False
+        reason.append("CIFパターンを使用しているため")
 
-    # watersがない場合は変換不可
-    if not info.get("waters_str") and not info.get("has_cif"):
-        return None
+    if (
+        not info.get("waters_str")
+        and not info.get("waters_array")
+        and not info.get("has_cif")
+    ):
+        can_convert = False
+        reason.append("watersが定義されていないため")
 
-    # cellがない場合は変換不可
     if not info.get("cell") and not info.get("cell_str"):
+        can_convert = False
+        reason.append("cellが定義されていないため")
+
+    # 変換できない場合でもスケルトンを生成
+    if not can_convert and not generate_skeleton:
         return None
 
+    # 変換できない場合のスケルトンコード生成
+    if not can_convert:
+        # 旧コードをコメントとして含める
+        if info.get("original_content"):
+            lines.append(
+                "# ============================================================================"
+            )
+            lines.append("# Original code from genice2.lattices (for reference)")
+            lines.append(
+                "# ============================================================================"
+            )
+            original_lines = info["original_content"].split("\n")
+            for line in original_lines:
+                lines.append(f"# {line}")
+            lines.append("")
+            lines.append(
+                "# ============================================================================"
+            )
+            lines.append("# End of original code")
+            lines.append(
+                "# ============================================================================"
+            )
+            lines.append("")
+
+        # docstringをそのまま移植
+        if info.get("docstring"):
+            lines.append(info["docstring"])
+            lines.append("")
+
+        # descをそのまま移植
+        if info.get("desc"):
+            lines.append(f"desc = {info['desc']}")
+            lines.append("")
+
+        # imports
+        lines.append("import genice3.unitcell")
+        lines.append("import numpy as np")
+        lines.append("from genice2.cell import cellvectors")
+        lines.append("")
+
+        # クラス定義
+        lines.append("")
+        lines.append(f"class UnitCell(genice3.unitcell.UnitCell):")
+        lines.append(f'    """')
+        lines.append(f"    {info['module_name']}単位胞を定義するクラス。")
+        lines.append("")
+        lines.append("    NOTE: This unitcell is not yet implemented.")
+        lines.append("    Please contact the maintainer or implement it manually.")
+        lines.append(f'    """')
+        lines.append("")
+        lines.append("    def __init__(self, **kwargs):")
+        lines.append("        raise NotImplementedError(")
+        reason_str = ", ".join(reason) if reason else "自動変換できないため"
+        lines.append(
+            '            f"{self.__class__.__name__} is not yet implemented. "'
+        )
+        lines.append('            "This unitcell requires manual implementation. "')
+        lines.append(
+            '            "Please contact the maintainer or implement it manually. "'
+        )
+        lines.append(f'            f"Reason: {reason_str}"')
+        lines.append("        )")
+
+        return "\n".join(lines)
+
+    # 通常の変換処理（以下は既存のコード）
     # docstringをそのまま移植
     if info.get("docstring"):
         lines.append(info["docstring"])
@@ -356,6 +469,24 @@ def generate_unitcell_code(info: Dict[str, Any]) -> Optional[str]:
         lines.append('        """,')
         lines.append('            sep=" ",')
         lines.append("        ).reshape(-1, 3)")
+    elif info.get("waters_array"):
+        # np.array([...])形式の場合
+        lines.append("")
+        if isinstance(info["waters_array"], str):
+            # ast.unparseで生成された文字列の場合
+            # リストを整形して読みやすくする
+            # 簡易的な整形: 各行が3要素のリストになるように改行を入れる
+            array_str = info["waters_array"]
+            # リストの各要素を抽出して整形
+            # ただし、ast.unparseの結果をそのまま使う方が安全
+            lines.append(f"        waters = np.array({array_str})")
+        else:
+            # ASTノードの場合（Python < 3.9）
+            # 手動でリストを文字列に変換する必要がある
+            # 簡易的な実装: 元のコードから抽出
+            lines.append("        # np.array([...])形式のwaters")
+            lines.append("        # 元のコードから手動で変換してください")
+            lines.append("        waters = np.array([])  # TODO: 実装してください")
 
     # coord
     lines.append("")
@@ -456,10 +587,10 @@ def convert_file(input_path: Path, output_dir: Optional[Path] = None) -> bool:
                 / f"{input_path.stem}.py"
             )
             output_path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         # symlinkのターゲットを取得（元のファイル名）
         target = input_path.readlink()
-        
+
         # 相対パスに正規化
         if target.is_absolute():
             # 絶対パスの場合は、genice2/lattices/からの相対パスに変換
@@ -469,12 +600,14 @@ def convert_file(input_path: Path, output_dir: Optional[Path] = None) -> bool:
             except ValueError:
                 # 相対パスに変換できない場合はファイル名のみを使用
                 target = Path(target.name)
-        
+
         # 新しいディレクトリ内のファイルへのリンクにする
         # ターゲットファイル名のみを使用（同じディレクトリ内のファイルを指す）
-        target_name = target.name if hasattr(target, 'name') else str(target).split('/')[-1]
+        target_name = (
+            target.name if hasattr(target, "name") else str(target).split("/")[-1]
+        )
         new_target = Path(target_name)
-        
+
         # 新しいsymlinkを作成
         if output_path.exists():
             output_path.unlink()
@@ -486,9 +619,9 @@ def convert_file(input_path: Path, output_dir: Optional[Path] = None) -> bool:
     if not info:
         return False
 
-    code = generate_unitcell_code(info)
+    code = generate_unitcell_code(info, generate_skeleton=True)
 
-    # 自動変換できない場合は何も出力しない
+    # コードが生成できない場合は失敗
     if code is None:
         return False
 
