@@ -1,0 +1,68 @@
+desc = {"ref": {},
+        "usage": "No options available.",
+        "brief": "Monoclinic ice V (testing)."
+        }
+
+import genice3.unitcell
+import numpy as np
+from genice2.cell import cellvectors
+
+
+class UnitCell(genice3.unitcell.UnitCell):
+    """
+    ice5単位胞を定義するクラス。
+    """
+
+    def __init__(self, **kwargs):
+        graph = None  # pairsがない場合は自動生成
+
+        waters = np.fromstring(
+            """
+        0.8993 0.1404 0.4854
+        0.6007 0.1404 0.5146
+        0.1007 0.8596 0.5146
+        0.3993 0.8596 0.4854
+        0.8993 0.6404 0.9854
+        0.6007 0.6404 0.0146
+        0.1007 0.3596 0.0146
+        0.3993 0.3596 0.9854
+        0.7751 0.8475 0.7477
+        0.7249 0.8475 0.2523
+        0.2249 0.1525 0.2523
+        0.2751 0.1525 0.7477
+        0.7751 0.3475 0.2477
+        0.7249 0.3475 0.7523
+        0.2249 0.6525 0.7523
+        0.2751 0.6525 0.2477
+        0.9629 0.4435 0.6544
+        0.5371 0.4435 0.3456
+        0.0371 0.5565 0.3456
+        0.4629 0.5565 0.6544
+        0.9629 0.9435 0.1544
+        0.5371 0.9435 0.8456
+        0.0371 0.0565 0.8456
+        0.4629 0.0565 0.1544
+        0.75 0.6847 0.5
+        0.25 0.3153 0.5
+        0.75 0.1847 0.0
+        0.25 0.8153 0.0
+        """,
+            sep=" ",
+        ).reshape(-1, 3)
+
+        coord = "relative"
+
+        bondlen = 3.0
+
+        # density = 1.23983176668
+
+        cell = cellvectors(a=9.19977812589, b=7.52346280577, c=10.327299740014166, B=109.2)
+
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            coord=coord,
+            bondlen=bondlen,
+            # density=density,
+            **kwargs,
+        )
