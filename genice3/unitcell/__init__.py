@@ -34,7 +34,7 @@ class UnitCell:
         self,
         cell: np.ndarray,
         waters: np.ndarray,
-        bondlen: float,
+        bondlen: float = None,  # graphが与えられていればbondlenは不要
         coord: str = "relative",
         density: float = None,
         graph: nx.Graph = None,
