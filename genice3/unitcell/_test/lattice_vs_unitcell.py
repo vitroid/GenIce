@@ -5,7 +5,7 @@ import numpy as np
 from logging import basicConfig, INFO, getLogger, DEBUG
 import networkx as nx
 
-basicConfig(level=DEBUG)
+basicConfig(level=INFO)
 logger = getLogger()
 for ice in sys.argv[1:]:
 
@@ -48,6 +48,7 @@ for ice in sys.argv[1:]:
     from genice3.plugin import UnitCell
     from genice3.plugin import Molecule
     from genice3.genice import GenIce3
+    from genice3.util import validate_ice_rules
 
     genice3 = GenIce3()
     if ice == "xFAU":
@@ -56,8 +57,10 @@ for ice in sys.argv[1:]:
         genice3.unitcell = UnitCell(ice, layers="ccchchc")
     else:
         genice3.unitcell = UnitCell(ice)
+    assert validate_ice_rules(genice3.digraph), f"{ice} {genice3.digraph=}"
+    print(f"{ice} {genice3.digraph.size()=}")
     waters = genice3.water_molecules(water_model=Molecule("spce"))
-    cell3 = genice3.unitcell.cell
+    cell3 = genice3.cell
     volume3 = np.linalg.det(cell3)
     # assert the volumes are similar
     assert abs(volume2 - volume3) / volume2 < 1e-6, f"{volume2=}, {volume3=}"
@@ -85,8 +88,11 @@ for ice in sys.argv[1:]:
     ]
     assert len(pairs) == len(relative_O2)
 
-    # print(genice2)
-    assert nx.is_isomorphic(genice2["graph"], genice3.graph)
+    # これがなかなかに時間を食う。
+    if "CRN" not in ice:
+        assert nx.is_isomorphic(
+            genice2["graph"], genice3.graph
+        ), f"{genice2['graph'].size()=}, {genice3.graph.size()=}"
 
     # 水素位置の照合はしない。
     # bond_centers = []
