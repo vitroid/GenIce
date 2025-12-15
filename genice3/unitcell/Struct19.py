@@ -5,7 +5,11 @@ Cage composition:
  (12,14,15,16) = (16,0,0,8,)
 """
 
-desc = {'ref': {'SpaceFullerene': 'Sikiric 2010'}, 'usage': 'No options available.', 'brief': 'A space fullerene.'}
+desc = {
+    "ref": {"SpaceFullerene": "Sikiric 2010"},
+    "usage": "No options available.",
+    "brief": "A space fullerene.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -449,9 +453,11 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.6937617372557815
+        density = 0.6937617372557815
 
-        cell = cellvectors(a=18.028244506884192, b=18.028244506884192, c=18.028244506884192)
+        cell = cellvectors(
+            a=18.028244506884192, b=18.028244506884192, c=18.028244506884192
+        )
 
         super().__init__(
             cell=cell,
@@ -459,6 +465,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             graph=graph,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

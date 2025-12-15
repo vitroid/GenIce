@@ -7,7 +7,11 @@ Reshaping the unit cell.
   k:[1 0 1]
 """
 
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Ice V with orthogonal unit cell. (testing)'}
+desc = {
+    "ref": {},
+    "usage": "No options available.",
+    "brief": "Ice V with orthogonal unit cell. (testing)",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -116,7 +120,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.00000000000215
 
-        # density = 1.23983176668
+        density = 1.23983176668
 
         cell = cellvectors(a=9.19977813, b=7.52346281, c=29.25857353)
 
@@ -125,6 +129,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

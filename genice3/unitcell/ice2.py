@@ -19,9 +19,6 @@ import networkx as nx
 class UnitCell(genice3.unitcell.UnitCell):
     """
     ice2単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
     """
 
     def __init__(self, **kwargs):
@@ -73,7 +70,7 @@ class UnitCell(genice3.unitcell.UnitCell):
             cell=cell,
             waters=waters,
             graph=pairs,
+            fixed=fixed,
             density=density,
             coord=coord,
-            bondlen=0.3,
         )

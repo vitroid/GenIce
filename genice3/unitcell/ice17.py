@@ -1,4 +1,8 @@
-desc = {'ref': {'C0(a)': 'Smirnov 2013', 'C0(b)': 'Strobel 2016', 'Ice 17': 'Rosso 2016'}, 'usage': 'No options available.', 'brief': 'Ultralow-density Ice XVII.'}
+desc = {
+    "ref": {"C0(a)": "Smirnov 2013", "C0(b)": "Strobel 2016", "Ice 17": "Rosso 2016"},
+    "usage": "No options available.",
+    "brief": "Ultralow-density Ice XVII.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -10,9 +14,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     ice17単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
-
+    def __init__(self):
         waters = np.fromstring(
             """
         0.677211836339 -0.109412115924 0.692291816468
@@ -35,7 +37,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 1.2
 
-        # density = 0.88
+        density = 0.88
 
         cell = cellvectors(a=2.66453550129, b=4.69111124482, c=2.55091895393)
 
@@ -44,6 +46,5 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
         )

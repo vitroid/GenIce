@@ -1,11 +1,12 @@
 #!/usr/bin/python
 """
-Usage: genice2 c1te
+Usage: genice3 c1te
 """
-import genice2.lattices
+import genice3.unitcell
+from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
 from logging import getLogger
 import numpy as np
-
+import networkx as nx
 
 desc = {
     "ref": {"C1": "Teeratchanan 2015"},
@@ -24,7 +25,7 @@ def pick_atoms(atoms, names, repeat=(1, 1, 1)):
                         yield atomname, (fracpos + np.array([x, y, z])) / nrep
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self):
         logger = getLogger()
 
@@ -75,62 +76,25 @@ class Lattice(genice2.lattices.Lattice):
         c = 6.017 / 10.0  # nm
         C = 120
 
-        from genice2.cell import cellvectors
+        cell = cellvectors(a, a, c, C=C)
 
-        self.cell = cellvectors(a, a, c, C=C)
+        atomd = atomdic(atoms)
+        sops = symmetry_operators(symops)
+        waters, fixed = waters_and_pairs(cell, atomd, sops)
 
-        # helper routines to make from CIF-like data
-        from genice2 import CIF
+        # self.cagetype = []
+        # self.cagepos = []
+        # for name, pos in pick_atoms(atoms, ("Ne1",)):
+        #     self.cagetype.append(name)
+        #     self.cagepos.append(pos)
 
-        atomd = CIF.atomdic(atoms)
-        atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
-
-        self.cagetype = []
-        self.cagepos = []
-        for name, pos in pick_atoms(atoms, ("Ne1",)):
-            self.cagetype.append(name)
-            self.cagepos.append(pos)
-
-        sops = CIF.symmetry_operators(symops)
-        self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
-
-        # set pairs in this way for hydrogen-ordered ices.
-        self.pairs = self.fixed
-
-        self.density = (
-            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
-        )
-        self.coord = "relative"
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-"""
-Usage: genice2 c1te
-"""
-
-desc = {'ref': {'C1': 'Teeratchanan 2015'}, 'usage': '\nUsage: genice2 c1te\n', 'brief': 'Hydrogen-ordered hydrogen hydrate C1 by Teeratchanan. (Positions of guests are supplied.)'}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    c1te単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: CIFパターンを使用しているため"
+        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        coord = "relative"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            graph=nx.Graph(fixed),
+            fixed=nx.DiGraph(fixed),
         )

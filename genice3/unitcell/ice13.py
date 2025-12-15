@@ -1,16 +1,19 @@
 #!/usr/bin/python
 
 import numpy as np
-from genice2 import CIF
-from genice2.cell import cellvectors
-import genice2.lattices
-desc = {"ref": {"13": 'Salzmann 2006'},
-        "usage": "No options available.",
-        "brief": "Ice XIII, a hydrogen-ordered counterpart of ice V."
-        }
+from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
+import genice3.unitcell
+
+desc = {
+    "ref": {"13": "Salzmann 2006"},
+    "usage": "No options available.",
+    "brief": "Ice XIII, a hydrogen-ordered counterpart of ice V.",
+}
+
+import networkx as nx
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self):
         atoms = """
         O1 0.2541(6)  0.5629(5) 0.2517(5)
@@ -54,46 +57,22 @@ class Lattice(genice2.lattices.Lattice):
         B = 109.6873
         C = 90
 
-        self.cell = cellvectors(a, b, c, A, B, C)
+        cell = cellvectors(a, b, c, A, B, C)
 
         # helper routines to make from CIF-like data
-        atomd = CIF.atomdic(atoms)
-        sops = CIF.symmetry_operators(symops)
-        self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
+        atomd = atomdic(atoms)
+        sops = symmetry_operators(symops)
+        waters, fixed = waters_and_pairs(cell, atomd, sops)
 
-        # set self.pairs in this way for hydrogen-ordered ices.
-        self.pairs = self.fixed
+        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
-            (np.linalg.det(self.cell) * 1e-21)
+        coord = "relative"
 
-        self.coord = "relative"
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-desc = {'ref': {'13': 'Salzmann 2006'}, 'usage': 'No options available.', 'brief': 'Ice XIII, a hydrogen-ordered counterpart of ice V.'}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    ice13単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: CIFパターンを使用しているため"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            graph=nx.Graph(fixed),
+            fixed=nx.DiGraph(fixed),
         )

@@ -1,4 +1,4 @@
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Clathrate type H.'}
+desc = {"ref": {}, "usage": "No options available.", "brief": "Clathrate type H."}
 
 import genice3.unitcell
 import numpy as np
@@ -10,7 +10,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     DOH単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         graph = None  # pairsがない場合は自動生成
 
         waters = np.fromstring(
@@ -91,15 +91,20 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0000000000030558
 
-        # density = 0.755632278461
+        density = 0.755632278461
 
-        cell = cellvectors(a=12.4212113964, b=12.421211396338748, c=10.0656455142 * 2, C=120.0000000000566)
+        cell = cellvectors(
+            a=12.4212113964,
+            b=12.421211396338748,
+            c=10.0656455142 * 2,
+            C=120.0000000000566,
+        )
 
         super().__init__(
             cell=cell,
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )

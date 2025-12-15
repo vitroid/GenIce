@@ -1,21 +1,20 @@
-from genice2.cell import cellvectors
-import genice2.lattices
+from genice3.util import cellvectors
+import genice3.unitcell
 
-desc = {"ref": {"EMT(a)": "Liu 2019",
-                "EMT(b)": 'IZA Database'},
-        "usage": "No options available.",
-        "brief": "Hypothetical ice with a large cavity."
-        }
+desc = {
+    "ref": {"EMT(a)": "Liu 2019", "EMT(b)": "IZA Database"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice with a large cavity.",
+}
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self):
-        self.cell = cellvectors(a=15.621810598341442,
-                                b=15.621810598341442,
-                                c=25.483106896463806,
-                                C=120.0)
+        cell = cellvectors(
+            a=15.621810598341442, b=15.621810598341442, c=25.483106896463806, C=120.0
+        )
 
-        self.waters = [
+        waters = [
             [0.15499999999999936, 0.6664999999999992, 0.30429999999999957],
             [0.3335000000000008, 0.48850000000000016, 0.30429999999999957],
             [0.5114999999999998, 0.8450000000000006, 0.30429999999999957],
@@ -113,35 +112,13 @@ class Lattice(genice2.lattices.Lattice):
             [0.5703999999999994, 0.6069999999999993, 0.10749999999999993],
             [0.036599999999999966, 0.42960000000000065, 0.10749999999999993],
         ]
-        self.coord = "relative"
-        self.bondlen = 3
-        self.density = 0.5327914455045754
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-desc = {'ref': {'EMT(a)': 'Liu 2019', 'EMT(b)': 'IZA Database'}, 'usage': 'No options available.', 'brief': 'Hypothetical ice with a large cavity.'}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    EMT単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: watersが定義されていないため"
+        coord = "relative"
+        bondlen = 3
+        density = 0.5327914455045754
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            coord=coord,
+            bondlen=bondlen,
+            density=density,
         )

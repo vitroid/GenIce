@@ -1,4 +1,8 @@
-desc = {'ref': {'12(1)': 'Lobban 1998', '12(2)': 'Koza 2000'}, 'usage': 'No options available.', 'brief': 'Metastable high-pressure ice XII.'}
+desc = {
+    "ref": {"12(1)": "Lobban 1998", "12(2)": "Koza 2000"},
+    "usage": "No options available.",
+    "brief": "Metastable high-pressure ice XII.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -11,8 +15,6 @@ class UnitCell(genice3.unitcell.UnitCell):
     """
 
     def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
-
         waters = np.fromstring(
             """
         0.75 0.13356 0.1875
@@ -47,7 +49,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 1.4397
+        density = 1.4397
 
         cell = cellvectors(a=8.2816, b=8.2816, c=8.0722)
 
@@ -56,6 +58,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

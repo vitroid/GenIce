@@ -3,10 +3,11 @@
 Usage: genice2 c0te
 """
 
-import genice2.lattices
-from genice2.cell import cellvectors
+from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
+import genice3.unitcell
 from logging import getLogger
 import numpy as np
+import networkx as nx
 
 
 desc = {
@@ -17,7 +18,7 @@ desc = {
 }
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self):
         logger = getLogger()
 
@@ -43,59 +44,29 @@ class Lattice(genice2.lattices.Lattice):
         c = 6.054 / 10.0  # nm
         C = 120.0
 
-        self.cell = cellvectors(a, a, c, C=C)
+        cell = cellvectors(a, a, c, C=C)
 
         # helper routines to make from CIF-like data
-        from genice2 import CIF
 
-        atomd = CIF.atomdic(atoms)
-        atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
+        atomd = atomdic(atoms)
+        # atoms = fullatoms(atomd, symmetry_operators(symops))
+        sops = symmetry_operators(symops)
 
-        self.cagetype = []
-        self.cagepos = []
-        for atomname, pos in atoms:
-            if atomname == "Ne1":
-                self.cagetype.append(atomname)
-                self.cagepos.append(pos)
+        # cagetype = []
+        # cagepos = []
+        # for atomname, pos in atoms:
+        #     if atomname == "Ne1":
+        #         self.cagetype.append(atomname)
+        #         self.cagepos.append(pos)
 
-        self.waters, self.pairs = CIF.waters_and_pairs(
-            self.cell, atomd, CIF.symmetry_operators(symops)
-        )
+        waters, pairs = waters_and_pairs(cell, atomd, sops)
 
-        self.density = (
-            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
-        )
-        self.coord = "relative"
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-"""
-Usage: genice2 c0te
-"""
-
-desc = {'ref': {'C0': 'Teeratchanan 2015'}, 'usage': '\nUsage: genice2 c0te\n', 'brief': 'Filled ice C0 by Teeratchanan (Hydrogen-disordered.) (Positions of guests are supplied.)', 'test': ({'options': '-r 2 2 2'},)}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    c0te単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: CIFパターンを使用しているため"
+        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        coord = "relative"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            bondlen=0.3,
         )

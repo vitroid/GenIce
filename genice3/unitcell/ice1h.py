@@ -1,4 +1,10 @@
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Most popular Ice I (hexagonal). ' + 'NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. ' + "If you want the basal plane to be Z axis, please use 'one[hh]' instead."}
+desc = {
+    "ref": {},
+    "usage": "No options available.",
+    "brief": "Most popular Ice I (hexagonal). "
+    + "NOTE: Due to a historical reason, the crystal axes of hexagonal ice are exchanged. "
+    + "If you want the basal plane to be Z axis, please use 'one[hh]' instead.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -39,7 +45,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=7.84813412606925, b=7.37735062301457, c=9.06573834219084)
 
@@ -48,6 +54,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

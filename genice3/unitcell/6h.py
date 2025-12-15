@@ -1,4 +1,9 @@
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Half lattice of ice VI.', 'test': ({'options': '-r 2 2 2'},)}
+desc = {
+    "ref": {},
+    "usage": "No options available.",
+    "brief": "Half lattice of ice VI.",
+    "test": ({"options": "-r 2 2 2"},),
+}
 
 import genice3.unitcell
 import numpy as np
@@ -28,7 +33,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 2.3681227356441177
 
-        # density = 0.6865
+        density = 0.6865
 
         cell = cellvectors(a=4.87672629, b=4.87385128, c=4.49131038)
 
@@ -37,6 +42,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

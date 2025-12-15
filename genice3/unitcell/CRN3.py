@@ -1,4 +1,8 @@
-desc = {'ref': {'CRN': 'Mousseau 2001'}, 'usage': 'No options available.', 'brief': 'A continuous random network of Sillium.'}
+desc = {
+    "ref": {"CRN": "Mousseau 2001"},
+    "usage": "No options available.",
+    "brief": "A continuous random network of Sillium.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -11,7 +15,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     CRN3単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         pairs_str = """
         0 2143
         0 3105
@@ -12320,9 +12324,9 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         coord = "absolute"
 
-        bondlen = 3
+        # bondlen = 3
 
-        # density = 0.96
+        density = 0.96
 
         cell = cellvectors(a=43.274, b=43.274, c=43.274)
 
@@ -12331,7 +12335,7 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             graph=graph,
             coord=coord,
-            bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            # bondlen=bondlen,
+            density=density,
+            # **kwargs,
         )

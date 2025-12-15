@@ -1,4 +1,8 @@
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'Conventional high-pressure ice VII.'}
+desc = {
+    "ref": {},
+    "usage": "No options available.",
+    "brief": "Conventional high-pressure ice VII.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -82,7 +86,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3
 
-        # density = 1.6
+        density = 1.6
 
         cell = cellvectors(a=4.0, b=4.0, c=4.0)
 
@@ -92,6 +96,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             graph=graph,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

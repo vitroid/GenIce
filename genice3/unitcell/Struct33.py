@@ -3,7 +3,11 @@ Cage composition:
  (12,14,15,16) = (2,6,0,0,)
 """
 
-desc = {'ref': {'CS1': 'Sikiric 2010'}, 'usage': 'No options available.', 'brief': 'Cubic Structure I of clathrate hydrate.'}
+desc = {
+    "ref": {"CS1": "Sikiric 2010"},
+    "usage": "No options available.",
+    "brief": "Cubic Structure I of clathrate hydrate.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -177,9 +181,11 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.6637037332735554
+        density = 0.6637037332735554
 
-        cell = cellvectors(a=12.747893943706936, b=12.747893943706936, c=12.747893943706936)
+        cell = cellvectors(
+            a=12.747893943706936, b=12.747893943706936, c=12.747893943706936
+        )
 
         super().__init__(
             cell=cell,
@@ -187,6 +193,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             graph=graph,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

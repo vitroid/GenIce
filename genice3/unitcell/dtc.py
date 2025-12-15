@@ -8,8 +8,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     dtc単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
+    def __init__(self):
 
         waters = np.fromstring(
             """
@@ -61,15 +60,17 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.610666558384
+        density = 0.610666558384
 
-        cell = cellvectors(a=17.3705982487, b=17.370598248698347, c=7.49251160134, C=120.00000000004124)
+        cell = cellvectors(
+            a=17.3705982487, b=17.370598248698347, c=7.49251160134, C=120.00000000004124
+        )
 
         super().__init__(
             cell=cell,
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )

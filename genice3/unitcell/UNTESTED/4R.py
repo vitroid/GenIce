@@ -7,7 +7,11 @@ Reshaping the unit cell.
 
 """
 
-desc = {'ref': {'IV': 'Avogadro'}, 'usage': 'No options available.', 'brief': 'Orthogonalized ice IV.'}
+desc = {
+    "ref": {"IV": "Avogadro"},
+    "usage": "No options available.",
+    "brief": "Orthogonalized ice IV.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -800,7 +804,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0000000000000004
 
-        # density = 1.3072141048893433
+        density = 1.3072141048893433
 
         cell = cellvectors(a=16.919963345, b=8.65462208, c=14.99024516)
 
@@ -809,6 +813,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

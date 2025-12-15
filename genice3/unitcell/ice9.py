@@ -1,4 +1,8 @@
-desc = {'ref': {'9': 'Londono 1993'}, 'usage': 'No options available.', 'brief': 'Ice IX, a hydrogen-ordered counterpart of ice III.'}
+desc = {
+    "ref": {"9": "Londono 1993"},
+    "usage": "No options available.",
+    "brief": "Ice IX, a hydrogen-ordered counterpart of ice III.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -11,9 +15,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     ice9単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
-
+    def __init__(self):
         waters = np.fromstring(
             """
         0.895 0.105 0.750
@@ -36,7 +38,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 1.15672
+        density = 1.15672
 
         cell = cellvectors(a=6.67, b=6.67, c=6.97)
 
@@ -73,7 +75,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             fixed=fixed,
-            **kwargs,
         )

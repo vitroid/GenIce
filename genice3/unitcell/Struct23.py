@@ -5,7 +5,11 @@ Cage composition:
  (12,14,15,16) = (24,20,8,4,)
 """
 
-desc = {'ref': {'SpaceFullerene': 'Sikiric 2010'}, 'usage': 'No options available.', 'brief': 'A space fullerene.'}
+desc = {
+    "ref": {"SpaceFullerene": "Sikiric 2010"},
+    "usage": "No options available.",
+    "brief": "A space fullerene.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -18,7 +22,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     Struct23単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         pairs_str = """
         208 238
         205 216
@@ -999,18 +1003,20 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         coord = "relative"
 
-        bondlen = 3.0
+        # bondlen = 3.0
 
-        # density = 0.5245243856482863
+        density = 0.5245243856482863
 
-        cell = cellvectors(a=25.610527765228145, b=26.685332528187622, c=26.68240066618309)
+        cell = cellvectors(
+            a=25.610527765228145, b=26.685332528187622, c=26.68240066618309
+        )
 
         super().__init__(
             cell=cell,
             waters=waters,
             graph=graph,
             coord=coord,
-            bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            # bondlen=bondlen,
+            density=density,
+            # **kwargs,
         )

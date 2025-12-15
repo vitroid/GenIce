@@ -1,4 +1,8 @@
-desc = {'ref': {'11#19': 'Fan 2010', '11': 'Jackson 1997'}, 'usage': 'No options available.', 'brief': 'A candidate for an antiferroelectric Ice XI #19.'}
+desc = {
+    "ref": {"11#19": "Fan 2010", "11": "Jackson 1997"},
+    "usage": "No options available.",
+    "brief": "A candidate for an antiferroelectric Ice XI #19.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -11,7 +15,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     ice11単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         graph = None  # pairsがない場合は自動生成
 
         waters = np.fromstring(
@@ -38,8 +42,9 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         coord = "relative"
 
-        bondlen = 3
-
+        a = 4.4923 / 10 * 2
+        b = 7.7808 / 10
+        c = 7.3358 / 10
         cell = cellvectors(a, b, c)
 
         fixed_pairs = [
@@ -76,13 +81,11 @@ class UnitCell(genice3.unitcell.UnitCell):
             (15, 2),
             (15, 13),
         ]
-        fixed = nx.DiGraph(fixed_pairs)
 
         super().__init__(
             cell=cell,
             waters=waters,
             coord=coord,
-            bondlen=bondlen,
-            fixed=fixed,
-            **kwargs,
+            fixed=nx.DiGraph(fixed_pairs),
+            graph=nx.Graph(fixed_pairs),
         )

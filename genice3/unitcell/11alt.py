@@ -5,20 +5,21 @@ uとdを切りかえるために、間に自動的に遷移層が挿入される
 
 例えば、genice2 11alt[uuuddd] と指定すると、実際にはuとdの間に分極のない遷移層"_"をはさんだ_uuu_dddという形の結晶が生成する。
 """
-import genice2.lattices
+import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
+from genice3.util import cellvectors
 from logging import getLogger
+import networkx as nx
 
 desc = {
     "ref": {},
     "usage": "No options available.",
     "brief": "A layered ferroelectric Ice XI.",
-    "test": ({"args": "udud"},),
+    "test": ({"layers": "udud"},),
 }
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self, **kwargs):
         logger = getLogger()
 
@@ -36,16 +37,20 @@ class Lattice(genice2.lattices.Lattice):
         )
         # c軸方向に上向きまたは下向きに分極した単位胞をa軸方向に重ねる。
 
-        _layers = "uu"
+        if len(kwargs) == 0:
+            _layers = "uu"
+        elif "layers" in kwargs:
+            _layers = kwargs["layers"]
+        else:
+            for k, v in kwargs.items():
+                if v is not True:
+                    raise ValueError(f"Unknown option: {k}={v}")
+                _layers = k
+                # u, d以外の文字を含んでいればValueError
+                if any(c not in "ud" for c in _layers):
+                    raise ValueError(f"Invalid layer string: {_layers}")
 
         # parse options
-        for k, v in kwargs.items():
-            if k == "layers":
-                _layers = v
-            elif v is True:
-                # unlabeled option
-                _layers = k
-
         last = _layers[-1]
         layers = ""
         for layer in _layers:
@@ -147,55 +152,25 @@ class Lattice(genice2.lattices.Lattice):
                 edges.append([offset + 7, offset + 3])
             last = layer
 
-        self.waters = np.vstack(waters) / np.array([N_layers, 1, 1])
+        waters = np.vstack(waters) / np.array([N_layers, 1, 1])
         N_waters = N_layers * 8
-        logger.debug(self.waters.shape)
-        self.fixed = edges
-
-        self.pairs = self.fixed
+        logger.debug(waters.shape)
 
         a = 4.4923 / 10 * N_layers
         b = 7.7808 / 10
         c = 7.3358 / 10
 
-        self.cell = cellvectors(a, b, c)
+        cell = cellvectors(a, b, c)
 
-        self.density = 18 * N_waters / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        density = 18 * N_waters / 6.022e23 / (np.linalg.det(cell) * 1e-21)
 
-        self.coord = "relative"
+        coord = "relative"
 
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-"""
-c軸方向に分極した強誘電体氷11の単位胞を、a軸方向に上向き(u)または下向き(d)に並べ、a軸方向に長い単位胞を生成する。
-uとdを切りかえるために、間に自動的に遷移層が挿入される。
-
-例えば、genice2 11alt[uuuddd] と指定すると、実際にはuとdの間に分極のない遷移層"_"をはさんだ_uuu_dddという形の結晶が生成する。
-"""
-
-desc = {'ref': {}, 'usage': 'No options available.', 'brief': 'A layered ferroelectric Ice XI.', 'test': ({'args': 'udud'},)}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    11alt単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: watersが定義されていないため"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            graph=nx.Graph(edges),
+            fixed=nx.DiGraph(edges),
         )

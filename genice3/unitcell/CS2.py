@@ -1,4 +1,14 @@
-desc = {'ref': {'ice 16': 'Falenty 2014', 'C15': 'Sikiric 2010', 'sII': 'Jeffrey 1984', 'CS2': 'Kosyakov 1999', 'MTN': 'IZA Database'}, 'usage': 'No options available.', 'brief': 'Ultralow-density Ice XVI.'}
+desc = {
+    "ref": {
+        "ice 16": "Falenty 2014",
+        "C15": "Sikiric 2010",
+        "sII": "Jeffrey 1984",
+        "CS2": "Kosyakov 1999",
+        "MTN": "IZA Database",
+    },
+    "usage": "No options available.",
+    "brief": "Ultralow-density Ice XVI.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -10,7 +20,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     CS2単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         graph = None  # pairsがない場合は自動生成
 
         waters = np.fromstring(
@@ -159,7 +169,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 1.1
 
-        # density = 0.81
+        density = 0.81
 
         cell = cellvectors(a=6.20577, b=6.20577, c=6.20577)
 
@@ -168,6 +178,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )
