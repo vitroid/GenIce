@@ -3,12 +3,15 @@ Utility functions for genice3
 """
 
 import numpy as np
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Iterable
 from dataclasses import dataclass
 import string
 from logging import getLogger
+from collections import defaultdict
+import itertools as it
 
 import networkx as nx
+import pairlist as pl
 from cycless.cycles import centerOfMass, cycles_iter
 from cycless.polyhed import cage_to_graph, polyhedra_iter
 from graphstat import GraphStat
@@ -103,7 +106,7 @@ def cellvectors(a, b, c, A=90, B=90, C=90):
     Generate cell vectors from a,b,c and alpha, beta, gamma.
     """
     # probably same as six2nine in rigid.py
-    logger = logging.getLogger()
+    logger = getLogger()
     A *= pi / 180
     B *= pi / 180
     C *= pi / 180
@@ -253,3 +256,205 @@ def serialize(molecules: List[Molecule]):
         for name, position in zip(molecule.labels, molecule.sites):
             atoms.append([molecule.name, name, position])
     return atoms
+
+
+# ============================================================================
+# CIF-like data processing functions (moved from genice2.CIF)
+# ============================================================================
+
+
+def fullatoms(atomd, sops):
+    """Generate all atoms from atom dictionary and symmetry operations."""
+    global x, y, z
+    logger = getLogger()
+    # the variables to be evaluated by eval() must be global (?)
+    atoms = []
+    for sop in sops:
+        for name, pos in atomd.items():
+            x, y, z = pos
+            p = sop(x, y, z)
+            tooclose = False
+            for n, f in atoms:
+                d = f - p
+                d -= np.floor(d + 0.5)
+                L2 = d @ d
+                if L2 < 0.0001:
+                    logger.debug("Too close: {0} {1}".format(f, p))
+                    tooclose = True
+                    break
+            if not tooclose:
+                atoms.append((name, p))
+    return atoms
+
+
+def atomdic(atoms):
+    """Parse atom positions from a string format."""
+    atomd = dict()
+    for atom in atoms.split("\n"):
+        cols = atom.split()
+        if len(cols) == 0:
+            continue
+        # remove error digits from 1-3 cols.
+        xyz = []
+        for col in cols[1:4]:
+            p = col.find("(")
+            if p >= 0:
+                col = col[:p]
+            xyz.append(float(col))
+        name = cols[0]
+        atomd[name] = xyz
+    return atomd
+
+
+def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
+    """Generator of the symmetry operations
+
+    Args:
+        symops (str): The table of symmetry operators, e.g. http://img.chem.ucl.ac.uk/sgp/large/036az3.htm
+        offset (Iterable, optional): Offset to the origin. Defaults to ["+0", "+0", "+0"].
+    """
+
+    def _wrap(x):
+        return x
+        return x - np.floor(x + 0.5)
+
+    def eval_(v, x, y, z):
+        return eval(v)
+
+    symops = symops.translate(str.maketrans("XYZ", "xyz"))
+    for symop in symops.split("\n"):
+        cols = symop.split(",")
+        if len(cols) <= 1:
+            cols = symop.split()
+            if len(cols) <= 1:
+                continue
+        for offset in offsets:
+            ops = []
+            for col, offs in zip(cols, offset):
+                ops.append(col + offs)
+            yield lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops]))
+
+
+def waters_and_pairs(
+    cell,
+    atomd,
+    sops,
+    rep=(1, 1, 1),
+    O_labels=("O",),
+    H_labels="DH",
+    partial_order=False,
+):
+    """Generate water positions and pairs from CIF-like data.
+
+    Args:
+        cell: Cell matrix
+        atomd: Atom dictionary from atomdic()
+        sops: Symmetry operators from symmetry_operators()
+        rep: Replication factors (default: (1, 1, 1))
+        O_labels: Labels for oxygen atoms (default: ("O",))
+        H_labels: Labels for hydrogen atoms (default: "DH")
+        partial_order: Whether to return partial order information (default: False)
+
+    Returns:
+        waters: Water positions (numpy array)
+        pairs: Hydrogen bond pairs (list or None)
+        oo_pairs: O-O pairs (only if partial_order=True)
+    """
+    # 部分秩序の場合は、位置が確定している水素だけをatomdに入れ、未確定の水素は省く。
+    logger = getLogger()
+
+    oxygens = []
+    hydrogens = []
+    for name, pos in fullatoms(atomd, sops):
+        if name[0] in O_labels:
+            oxygens.append(pos)
+        elif name[0] in H_labels:
+            hydrogens.append(pos)
+
+    if not partial_order:
+        assert (
+            len(oxygens) * 2 == len(hydrogens) or len(hydrogens) == 0
+        ), f"H {len(oxygens) * 2}: O {len(hydrogens)}"
+    cell *= np.array(rep)
+
+    oo = [
+        [o[0] + x, o[1] + y, o[2] + z]
+        for o in oxygens
+        for x in range(rep[0])
+        for y in range(rep[1])
+        for z in range(rep[2])
+    ]
+    oxygens = np.array(oo)
+    oxygens /= np.array(rep)
+
+    # if no hydrogens are included in atomd,
+    if len(hydrogens) == 0:
+        return oxygens, None
+
+    hh = [
+        [h[0] + x, h[1] + y, h[2] + z]
+        for h in hydrogens
+        for x in range(rep[0])
+        for y in range(rep[1])
+        for z in range(rep[2])
+    ]
+    hydrogens = np.array(hh)
+    hydrogens /= np.array(rep)
+
+    oh = defaultdict(list)
+    parent = dict()
+    # find covalent OH bonds
+    for i, j in pl.pairs_iter(
+        oxygens, maxdist=0.15, cell=cell, pos2=hydrogens, distance=False  # nm
+    ):
+        oh[i].append(j)
+        parent[j] = i
+    logger.debug(parent)
+    pairs = []
+    # find HBs
+    for i, j in pl.pairs_iter(
+        oxygens, maxdist=0.20, cell=cell, pos2=hydrogens, distance=False  # nm
+    ):
+        if j not in oh[i]:
+            # H is on a different water molecule
+            p = parent[j]
+            pairs.append([p, i])
+
+    logger.debug(pairs)
+
+    if partial_order:
+        oo_pairs = [
+            (i, j)
+            for i, j in pl.pairs_iter(oxygens, maxdist=0.30, cell=cell, distance=False)
+        ]
+        # positions of the oxygen atoms, fixed edges, and unassigned edges.
+        return oxygens, pairs, oo_pairs
+
+    waters = []
+    for i in range(len(oh)):
+        logger.debug((i, oh[i]))
+        j, k = oh[i]
+        dhj = hydrogens[j] - oxygens[i]
+        dhk = hydrogens[k] - oxygens[i]
+        dhj -= np.floor(dhj + 0.5)
+        dhk -= np.floor(dhk + 0.5)
+        com = oxygens[i] + (dhj + dhk) / 18
+        waters.append(com)
+
+    return waters, pairs
+
+
+def shortest_distance(coord, cell):
+    dmin = 1e99
+    for i, j in it.combinations(coord, 2):
+        d = i - j
+        d -= np.floor(d + 0.5)
+        d = d @ cell
+        d = np.linalg.norm(d)
+        if d < dmin:
+            dmin = d
+    return dmin
+
+
+def density_in_g_cm3(nmol_water, cell):
+    return 18 * nmol_water / (np.linalg.det(cell) * 1e-21 * 6.022e23)
