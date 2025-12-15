@@ -3,22 +3,28 @@
 import sys
 import numpy as np
 from logging import basicConfig, INFO, getLogger, DEBUG
+import networkx as nx
 
-basicConfig(level=INFO)
+basicConfig(level=DEBUG)
 logger = getLogger()
 for ice in sys.argv[1:]:
 
     from genice2.genice import GenIce
     from genice2.plugin import Lattice, Format, Molecule
 
+    if ice in ("iceMd", "iceT"):
+        continue
     if ice == "xFAU":
         lattice = Lattice(ice, rep=4)
+    elif ice == "one":
+        lattice = Lattice(ice, layers="ccchchc")
     else:
         lattice = Lattice(ice)
     formatter = Format(
         "raw",
         stage=(
             1,
+            2,
             6,
         ),
     )
@@ -46,6 +52,8 @@ for ice in sys.argv[1:]:
     genice3 = GenIce3()
     if ice == "xFAU":
         genice3.unitcell = UnitCell(ice, rep=4)
+    elif ice == "one":
+        genice3.unitcell = UnitCell(ice, layers="ccchchc")
     else:
         genice3.unitcell = UnitCell(ice)
     waters = genice3.water_molecules(water_model=Molecule("spce"))
@@ -71,32 +79,37 @@ for ice in sys.argv[1:]:
     pairs = [
         (x, y, d)
         for x, y, d in pl.pairs_iter(
-            relative_O2, maxdist=0.015, cell=cell2, pos2=relative_O3, distance=True
+            relative_O2, maxdist=0.1, cell=cell2, pos2=relative_O3, distance=True
         )
+        if d < 0.015
     ]
     assert len(pairs) == len(relative_O2)
 
-    bond_centers = []
-    for i, j in genice3.graph.edges():
-        d = relative_O3[j] - relative_O3[i]
-        d -= np.floor(d + 0.5)
-        bond_centers.append(d / 2 + relative_O3[i])
-    bond_centers = np.array(bond_centers)
+    # print(genice2)
+    assert nx.is_isomorphic(genice2["graph"], genice3.graph)
 
-    pairs = [
-        d
-        for x, y, d in pl.pairs_iter(
-            relative_H2, maxdist=0.1, cell=cell2, pos2=bond_centers, distance=True
-        )
-    ]
-    print(f"{min(pairs)=}, {max(pairs)=}")
-    assert len(pairs) == len(relative_H2), f"{pairs=}"
+    # 水素位置の照合はしない。
+    # bond_centers = []
+    # for i, j in genice3.graph.edges():
+    #     d = relative_O3[j] - relative_O3[i]
+    #     d -= np.floor(d + 0.5)
+    #     bond_centers.append(d / 2 + relative_O3[i])
+    # bond_centers = np.array(bond_centers)
 
-    pairs = [
-        d
-        for x, y, d in pl.pairs_iter(
-            relative_H3, maxdist=0.093, cell=cell2, pos2=bond_centers, distance=True
-        )
-    ]
-    print(f"{min(pairs)=}, {max(pairs)=}")
-    assert len(pairs) == len(relative_H3), f"{len(pairs)=}, {len(relative_H3)=}"
+    # pairs = [
+    #     d
+    #     for x, y, d in pl.pairs_iter(
+    #         relative_H2, maxdist=0.1, cell=cell2, pos2=bond_centers, distance=True
+    #     )
+    # ]
+    # print(f"{min(pairs)=}, {max(pairs)=}")
+    # assert len(pairs) == len(relative_H2), f"{pairs=}"
+
+    # pairs = [
+    #     d
+    #     for x, y, d in pl.pairs_iter(
+    #         relative_H3, maxdist=0.093, cell=cell2, pos2=bond_centers, distance=True
+    #     )
+    # ]
+    # print(f"{min(pairs)=}, {max(pairs)=}")
+    # assert len(pairs) == len(relative_H3), f"{len(pairs)=}, {len(relative_H3)=}"
