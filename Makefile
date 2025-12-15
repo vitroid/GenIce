@@ -12,6 +12,12 @@ update-citations:
 	python Utilities/citation.py < old.citations.json > citations.json
 	-diff old.citations.json citations.json
 
+unitcell-test: $(patsubst genice3/unitcell/%.py, %.unitcell-test, $(wildcard genice3/unitcell/[0-9A-Za-z]*.py))
+
+%.unitcell-test:
+	python -m genice3.unitcell._test.lattice_vs_unitcell $*
+	touch $@
+
 
 # change symlinks to copies
 prepare:
