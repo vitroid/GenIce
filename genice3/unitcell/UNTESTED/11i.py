@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 from logging import getLogger
 
-import genice2.lattices
+import genice3.unitcell
 import numpy as np
-from genice2.cell import cellvectors
-from genice2.CIF import fullatoms, operations, waters_and_pairs
+from genice3.util import cellvectors, operations, waters_and_pairs, density_in_g_cm3
+import networkx as nx
 
 desc = {
     "ref": {"11i": "Hirsch 2004"},
@@ -237,7 +237,7 @@ Table1 = """
 """.splitlines()
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self, **kwargs):
         logger = getLogger()
 
@@ -270,12 +270,14 @@ class Lattice(genice2.lattices.Lattice):
         typ = 1
 
         # parse options
-        for k, v in kwargs.items():
-            if k == "type":
-                typ = int(v)
-            elif v is True:
-                # unlabeled option
-                typ = int(k)
+        if len(kwargs) == 1:
+            if "type" in kwargs:
+                typ = int(kwargs["type"])
+            else:
+                for k, v in kwargs.items():
+                    if v is True:
+                        typ = int(k)
+                        break
 
         data = elevens[typ]
         spaceg = data["spaceg"]
@@ -289,44 +291,20 @@ class Lattice(genice2.lattices.Lattice):
             rep = [2, 1, 2]
 
         # molecular positions and the HB network
-        self.waters, self.fixed = waters_and_pairs(
+        waters, fixed = waters_and_pairs(
             data["cell"], data["atomd"], operations(spaceg), rep=rep
         )
-        self.pairs = self.fixed
 
         # define other parameters
-        self.cell = data["cell"]
-        self.density = (
-            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
-        )
+        cell = data["cell"]
+        density = density_in_g_cm3(len(waters), cell)
+        coord = "relative"
 
-        self.coord = "relative"
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-desc = {'ref': {'11i': 'Hirsch 2004'}, 'usage': "genice2 11i[num]\n\n'num' specifies the structure in Table 1 of the Ref. [Hirsch 2004]", 'brief': 'Sixteen candidates for Ice XI.', 'test': ({'args': '1', 'options': '--depol=none'}, {'args': '2', 'options': '--depol=none'}, {'args': '3', 'options': '--depol=none'}, {'args': '4', 'options': '--depol=none'}, {'args': '5', 'options': '--depol=none'}, {'args': '6', 'options': '--depol=none'}, {'args': '7', 'options': '--depol=none'}, {'args': '8', 'options': '--depol=none'}, {'args': '9', 'options': '--depol=none'}, {'args': '10', 'options': '--depol=none'}, {'args': '11', 'options': '--depol=none'}, {'args': '12', 'options': '--depol=none'}, {'args': '13', 'options': '--depol=none'}, {'args': '14', 'options': '--depol=none'}, {'args': '15', 'options': '--depol=none'}, {'args': '16', 'options': '--depol=none'})}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    11i単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: watersが定義されていないため, cellが定義されていないため"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            graph=nx.Graph(fixed),
+            fixed=nx.DiGraph(fixed),
         )

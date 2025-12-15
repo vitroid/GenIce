@@ -12,8 +12,8 @@ Options:
                sites.
 """
 
-from genice2.cell import cellvectors
-import genice2.lattices
+from genice3.util import cellvectors, density_in_g_cm3
+import genice3.unitcell
 
 import networkx as nx
 import numpy as np
@@ -173,7 +173,7 @@ def relax(g, rpos, cell, cycles=None, k=1.0):
 #             plt.plot(seg[:,0], seg[:,1], "-")
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self, **kwargs):
         logger = getLogger()
 
@@ -182,14 +182,12 @@ class Lattice(genice2.lattices.Lattice):
 
         for k, v in kwargs.items():
             if k == "size":
-                NX, NY = [int(x) for x in v.split(",")]
+                NX, NY = [int(x) for x in v.split(" ")]  # ,は使えない。
                 assert NX % 3 == 0, "X must be a multiple of 3."
             elif k == "sw":
                 sw = float(v)
             elif v is True:
-                usage()
-                # unlabeled option
-                sys.exit(1)
+                raise ValueError("Unlabeled option is not allowed.")
 
         logger.info(f"Bilayer ice of size ({NX}x{NY})")
 
@@ -238,63 +236,30 @@ class Lattice(genice2.lattices.Lattice):
 
         relax(g, rpos, cell, cycles, k=0.1)
 
-        self.cell = cellvectors(a=cell[0], b=cell[1], c=10.0) * 0.276
+        cell = cellvectors(a=cell[0], b=cell[1], c=10.0) * 0.276
 
-        self.density = Nnode * 2 * 18 / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
+        density = density_in_g_cm3(Nnode * 2, cell)
 
-        self.coord = "relative"
-        self.waters = np.zeros([Nnode * 2, 3])
-        self.waters[:Nnode, 0:2] = rpos
-        self.waters[Nnode:, 0:2] = rpos
-        self.waters[Nnode:, 2] = 0.276 / self.cell[2, 2]
+        coord = "relative"
+        waters = np.zeros([Nnode * 2, 3])
+        waters[:Nnode, 0:2] = rpos
+        waters[Nnode:, 0:2] = rpos
+        waters[Nnode:, 2] = 0.276 / cell[2, 2]
         # self.bondlen = 1.1*0.276
 
-        self.pairs = []
+        pairs = []
         for i, j in g.edges():
-            self.pairs.append([i, j])
-            self.pairs.append([i + Nnode, j + Nnode])
+            pairs.append([i, j])
+            pairs.append([i + Nnode, j + Nnode])
         for i in range(Nnode):
-            self.pairs.append([i, i + Nnode])
+            pairs.append([i, i + Nnode])
 
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-"""
-Generate a hydrogen-disordered honeycomb bilayer ice.
-
-Usage:
-  genice2 bilayer                     Default size (6,6)
-  genice2 bilayer[size=6,10]          Larger size
-  genice2 bilayer[size=6,10:sw=0.2]   With Stone-Wales defects
-
-Options:
-  size=x,y   x must be a multiple of 3.
-  sw=0.0     Z specifies the ratio of Stone-Wales defects to the number of
-               sites.
-"""
-
-desc = {'ref': {'bilayer': 'Koga 1997'}, 'usage': '\nGenerate a hydrogen-disordered honeycomb bilayer ice.\n\nUsage:\n  genice2 bilayer                     Default size (6,6)\n  genice2 bilayer[size=6,10]          Larger size\n  genice2 bilayer[size=6,10:sw=0.2]   With Stone-Wales defects\n\nOptions:\n  size=x,y   x must be a multiple of 3.\n  sw=0.0     Z specifies the ratio of Stone-Wales defects to the number of\n               sites.\n', 'brief': 'A Bilayer Honeycomb Ice Phase in Hydrophobic Nanopores.', 'test': ({'args': {'size': '6,10'}}, {'args': {'size': '15,18', 'sw': '0.2'}, 'options': '-s 1000'})}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    bilayer単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: watersが定義されていないため, cellが定義されていないため"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            coord=coord,
+            density=density,
+            graph=nx.Graph(pairs),
+            # bondlen=0.276 * 1.2,
+            # **kwargs,
         )
