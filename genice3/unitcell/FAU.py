@@ -1,4 +1,8 @@
-desc = {'ref': {'sIII': 'Huang 2017', 'FAU': 'IZA Database'}, 'usage': 'No options available.', 'brief': "Hypothetical ice at negative pressure ice 'sIV'."}
+desc = {
+    "ref": {"sIII": "Huang 2017", "FAU": "IZA Database"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice at negative pressure ice 'sIV'.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -10,8 +14,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     FAU単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
+    def __init__(self):
 
         waters = np.fromstring(
             """
@@ -215,7 +218,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.535156176286
+        density = 0.535156176286
 
         cell = cellvectors(a=22.0521436845, b=22.0521436845, c=22.0521436845)
 
@@ -224,6 +227,5 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
         )

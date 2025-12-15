@@ -1,4 +1,8 @@
-desc = {'ref': {"sT'": 'Smirnov 2013'}, 'usage': 'No options available.', 'brief': "Filled ice sT'."}
+desc = {
+    "ref": {"sT'": "Smirnov 2013"},
+    "usage": "No options available.",
+    "brief": "Filled ice sT'.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -47,7 +51,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 1.2
 
-        # density = 1.2
+        density = 1.2
 
         cell = cellvectors(a=4.04345643838, b=3.18400949048, c=3.18412710497)
 
@@ -56,6 +60,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

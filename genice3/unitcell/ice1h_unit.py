@@ -37,7 +37,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=4.5328691711 * 2, b=7.84813412606925, c=7.37735062301457)
 
@@ -46,6 +46,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

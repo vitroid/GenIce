@@ -1,4 +1,8 @@
-desc = {'ref': {'0': 'Fennell 2005'}, 'usage': 'No options available.', 'brief': 'Hypothetical ice "i".'}
+desc = {
+    "ref": {"0": "Fennell 2005"},
+    "usage": "No options available.",
+    "brief": 'Hypothetical ice "i".',
+}
 
 import genice3.unitcell
 import numpy as np
@@ -10,8 +14,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     i単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
+    def __init__(self):
 
         waters = np.fromstring(
             """
@@ -39,7 +42,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 0.4
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=1.0, b=1.0, c=0.94)
 
@@ -48,6 +51,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )

@@ -3,7 +3,11 @@ Data sources
 
 """
 
-desc = {'ref': {'Ic': 'Vos 1993'}, 'usage': 'No options available.', 'brief': 'Cubic type of ice I.'}
+desc = {
+    "ref": {"Ic": "Vos 1993"},
+    "usage": "No options available.",
+    "brief": "Cubic type of ice I.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -63,7 +67,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 1.9
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=4.0, b=4.0, c=4.0)
 
@@ -73,6 +77,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             graph=graph,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )

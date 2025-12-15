@@ -3,7 +3,11 @@ Data sources
 
 """
 
-desc = {'ref': {'XIc': 'Geiger 2014'}, 'usage': 'No options available.', 'brief': "A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1."}
+desc = {
+    "ref": {"XIc": "Geiger 2014"},
+    "usage": "No options available.",
+    "brief": "A candidate for the proton-ordered counterpart of ice Ic. The structure 'a' in Figure 1.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -35,9 +39,9 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         coord = "relative"
 
-        bondlen = 1.9
+        # bondlen = 1.9
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=4.0, b=4.0, c=4.0)
 
@@ -59,14 +63,14 @@ class UnitCell(genice3.unitcell.UnitCell):
             (7, 0),
             (7, 1),
         ]
-        fixed = nx.DiGraph(fixed_pairs)
 
         super().__init__(
             cell=cell,
             waters=waters,
             coord=coord,
-            bondlen=bondlen,
-            # density=density,
-            fixed=fixed,
+            # bondlen=bondlen,
+            density=density,
+            fixed=nx.DiGraph(fixed_pairs),
+            graph=nx.Graph(fixed_pairs),
             **kwargs,
         )

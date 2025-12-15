@@ -3,8 +3,14 @@
 Usage: genice2 c0te
 """
 
-import genice2.lattices
-from genice2.cell import cellvectors
+import genice3.unitcell
+from genice3.util import (
+    cellvectors,
+    atomdic,
+    fullatoms,
+    symmetry_operators,
+    waters_and_pairs,
+)
 from logging import getLogger
 import numpy as np
 
@@ -17,11 +23,9 @@ desc = {
 }
 
 
-class Lattice(genice2.lattices.Lattice):
+class UnitCell(genice3.unitcell.UnitCell):
     def __init__(self):
-        logger = getLogger()
 
-        # Ref. 2atom
         atoms = """
         O1 0.3488 0.9861 0.3123
         O2 0.9710 0.6650 0.0774
@@ -48,52 +52,18 @@ class Lattice(genice2.lattices.Lattice):
         b = 7.24 / 10  # nm
         c = 11.88 / 10  # nm
 
-        self.cell = cellvectors(a, b, c)
+        cell = cellvectors(a, b, c)
 
-        # helper routines to make from CIF-like data
-        from genice2 import CIF
+        atomd = atomdic(atoms)
+        waters, _ = waters_and_pairs(cell, atomd, symmetry_operators(symops))
 
-        atomd = CIF.atomdic(atoms)
-        atoms = CIF.fullatoms(atomd, CIF.symmetry_operators(symops))
+        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
 
-        self.waters, self.pairs = CIF.waters_and_pairs(
-            self.cell, atomd, CIF.symmetry_operators(symops)
-        )
-
-        self.density = (
-            18 * len(self.waters) / 6.022e23 / (np.linalg.det(self.cell) * 1e-21)
-        )
-        self.coord = "relative"
-
-
-
-# ============================================================================
-# New genice3.unitcell implementation (TODO: implement manually)
-# ============================================================================
-
-"""
-Usage: genice2 c0te
-"""
-
-desc = {'ref': {'L': 'Lei 2025'}, 'usage': '\nUsage: genice2 c0te\n', 'brief': 'The hypothetical Ice L', 'test': ({'options': '-r 2 2 2'},)}
-
-import genice3.unitcell
-import numpy as np
-from genice3.util import cellvectors
-
-
-class UnitCell(genice3.unitcell.UnitCell):
-    """
-    iceL単位胞を定義するクラス。
-
-    NOTE: This unitcell is not yet implemented.
-    Please contact the maintainer or implement it manually.
-    """
-
-    def __init__(self, **kwargs):
-        raise NotImplementedError(
-            f"{self.__class__.__name__} is not yet implemented. "
-            "This unitcell requires manual implementation. "
-            "Please contact the maintainer or implement it manually. "
-            f"Reason: CIFパターンを使用しているため"
+        coord = "relative"
+        super().__init__(
+            cell=cell,
+            waters=waters,
+            density=density,
+            coord=coord,
+            bondlen=0.3,
         )

@@ -3,7 +3,11 @@ Data source:
 Huang, Y et al. “A New Phase Diagram of Water Under Negative Pressure: the Rise of the Lowest-Density Clathrate S-III.” Science Advances 2.2 (2016): e1501010–e1501010.
 """
 
-desc = {'ref': {'sIII': 'Huang 2016', 'RHO': 'IZA Database'}, 'usage': 'No options available.', 'brief': "Hypothetical ice at negative pressure ice 'sIII'."}
+desc = {
+    "ref": {"sIII": "Huang 2016", "RHO": "IZA Database"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice at negative pressure ice 'sIII'.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -76,7 +80,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.604398971981
+        density = 0.604398971981
 
         cell = cellvectors(a=13.339813507, b=13.339813507, c=13.339813507)
 
@@ -85,6 +89,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )

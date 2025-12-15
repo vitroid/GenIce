@@ -4,7 +4,19 @@
 [HS1] Kosyakov, Viktor I, and T M Polyanskaya. “Using Structural Data for Estimating the Stability of Water Networks in Clathrate and Semiclathrate Hydrates.” Journal of Structural Chemistry 40.2 (1999): 239–245.
 """
 
-desc = {'ref': {'HS1': 'Kosyakov and Polyanskaya 1999'}, 'usage': 'No options available.', 'brief': 'Hydrogen-disordered ice Ih.', 'test': ({'options': '--assess_cages'}, {'options': '--guest 12=me'}, {'options': '--spot_guest 12=me'}, {'options': '--anion 1=Br --cation 3=N --depol=optimal -H 9=Bu:3 -H 11=Bu:3 -H 13=Bu:3 -H 7=Bu:3'})}
+desc = {
+    "ref": {"HS1": "Kosyakov and Polyanskaya 1999"},
+    "usage": "No options available.",
+    "brief": "Hydrogen-disordered ice Ih.",
+    "test": (
+        {"options": "--assess_cages"},
+        {"options": "--guest 12=me"},
+        {"options": "--spot_guest 12=me"},
+        {
+            "options": "--anion 1=Br --cation 3=N --depol=optimal -H 9=Bu:3 -H 11=Bu:3 -H 13=Bu:3 -H 7=Bu:3"
+        },
+    ),
+}
 
 import genice3.unitcell
 import numpy as np
@@ -16,8 +28,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     HS1単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
+    def __init__(self):
 
         waters = np.fromstring(
             """
@@ -109,7 +120,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.8
+        density = 0.8
 
         cell = cellvectors(a=20.0715, b=11.588333333, c=11.754333333)
 
@@ -118,6 +129,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
-            **kwargs,
+            density=density,
+            # **kwargs,
         )

@@ -1,4 +1,8 @@
-desc = {'ref': {'IId': 'Nakamura 2015'}, 'usage': 'No options available.', 'brief': 'A hydrogen-disordered counterpart of ice II.'}
+desc = {
+    "ref": {"IId": "Nakamura 2015"},
+    "usage": "No options available.",
+    "brief": "A hydrogen-disordered counterpart of ice II.",
+}
 
 import genice3.unitcell
 import numpy as np
@@ -11,8 +15,7 @@ class UnitCell(genice3.unitcell.UnitCell):
     ice2rect単位胞を定義するクラス。
     """
 
-    def __init__(self, **kwargs):
-        graph = None  # pairsがない場合は自動生成
+    def __init__(self):
 
         waters = np.fromstring(
             """
@@ -364,13 +367,13 @@ class UnitCell(genice3.unitcell.UnitCell):
             (36, 14),
             (15, 36),
         ]
-        fixed = nx.DiGraph(fixed_pairs)
 
         super().__init__(
             cell=cell,
             waters=waters,
             coord=coord,
-            bondlen=bondlen,
-            fixed=fixed,
-            **kwargs,
+            # bondlen=bondlen,
+            density=(1.2 / 1.8156024347818442 * 1.7934241115908336),
+            fixed=nx.DiGraph(fixed_pairs),
+            graph=nx.Graph(fixed_pairs),
         )

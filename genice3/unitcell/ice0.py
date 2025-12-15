@@ -1,4 +1,8 @@
-desc = {'ref': {'0': 'Russo 2014'}, 'usage': 'No options available.', 'brief': 'Metastable ice "0".'}
+desc = {
+    "ref": {"0": "Russo 2014"},
+    "usage": "No options available.",
+    "brief": 'Metastable ice "0".',
+}
 
 import genice3.unitcell
 import numpy as np
@@ -35,7 +39,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         bondlen = 3.0
 
-        # density = 0.92
+        density = 0.92
 
         cell = cellvectors(a=5.85695813012517, b=5.85695813012517, c=10.4558393727084)
 
@@ -44,6 +48,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             coord=coord,
             bondlen=bondlen,
-            # density=density,
+            density=density,
             **kwargs,
         )
