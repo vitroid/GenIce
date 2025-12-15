@@ -65,8 +65,6 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         coord = "relative"
 
-        bondlen = 1.9
-
         density = 0.92
 
         cell = cellvectors(a=4.0, b=4.0, c=4.0)
@@ -76,7 +74,6 @@ class UnitCell(genice3.unitcell.UnitCell):
             waters=waters,
             graph=graph,
             coord=coord,
-            bondlen=bondlen,
             density=density,
             **kwargs,
         )

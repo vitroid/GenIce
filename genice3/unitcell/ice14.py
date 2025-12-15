@@ -2,7 +2,13 @@
 # coding: utf-8
 
 import numpy as np
-from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
+from genice3.util import (
+    cellvectors,
+    atomdic,
+    symmetry_operators,
+    waters_and_pairs,
+    density_in_g_cm3,
+)
 import genice3.unitcell
 from logging import getLogger
 import networkx as nx
@@ -64,7 +70,7 @@ D15 0.8472(3) 0.3248(3) 0.4010(6) 2.03(1) 1.0000
             cell, atomd, sops, rep=(1, 1, 2), partial_order=True
         )
 
-        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        density = density_in_g_cm3(len(waters), cell)
         coord = "relative"
         super().__init__(
             cell=cell,

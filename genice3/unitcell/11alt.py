@@ -7,7 +7,7 @@ uとdを切りかえるために、間に自動的に遷移層が挿入される
 """
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors
+from genice3.util import cellvectors, density_in_g_cm3
 from logging import getLogger
 import networkx as nx
 
@@ -162,7 +162,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         cell = cellvectors(a, b, c)
 
-        density = 18 * N_waters / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        density = density_in_g_cm3(N_waters, cell)
 
         coord = "relative"
 

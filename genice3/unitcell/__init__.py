@@ -3,7 +3,7 @@ import numpy as np
 import networkx as nx
 import pairlist as pl
 from genice3 import ConfigurationError
-from genice3.util import assess_cages
+from genice3.util import assess_cages, shortest_distance, density_in_g_cm3
 from typing import Dict, Any
 from genice3.molecule.one import Molecule
 
@@ -63,8 +63,26 @@ class UnitCell:
         self.waters += np.array(shift)
         self.waters -= np.floor(self.waters)
 
-        # もしkwargsに"pairs"がなければ、watersなどから再計算する。
-        # この時はまだ与えられたセルサイズのままで作業する。
+        nmol = len(waters)
+        volume = np.linalg.det(self.cell)
+        original_density = density_in_g_cm3(nmol, self.cell)
+        self.logger.info(f"{original_density=}")
+
+        # bondlenとgraphを同時に指定した場合はErrorとする。
+        if bondlen is not None and graph is not None:
+            raise ValueError("bondlen and graph cannot be specified at the same time.")
+
+        if bondlen is None:
+            short = shortest_distance(self.waters, self.cell)
+            bondlen = 1.1 * short
+
+            # densityが指定されていない場合は、ここで推定するが、採用はしない。(cellが正しいと信じる)
+            if density is None:
+                estimated_density = original_density * (short / 0.276) ** 3
+                self.logger.info(
+                    f"Neither bond length nor density is specified. Estimated density: {estimated_density}"
+                )
+
         if graph is None:
             self.graph = nx.Graph(
                 [
@@ -74,13 +92,12 @@ class UnitCell:
                     )
                 ]
             )
+            self.logger.info(
+                f"The HB graph is generated from the bond length: {bondlen}"
+            )
         else:
             self.graph = graph
-
-        nmol = len(waters)
-        volume = np.linalg.det(self.cell)
-        original_density = 18 * nmol / (volume * 1e-21 * 6.022e23)
-        self.logger.info(f"{original_density=}")
+        self.logger.debug(f"  {self.graph.size()=} {self.graph.number_of_nodes()=}")
 
         # 密度を指定した場合は、セルサイズを調整する。
         if density is not None:

@@ -12,7 +12,13 @@ desc = {
 import genice3.unitcell
 import numpy as np
 from logging import getLogger
-from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
+from genice3.util import (
+    cellvectors,
+    atomdic,
+    symmetry_operators,
+    waters_and_pairs,
+    density_in_g_cm3,
+)
 import networkx as nx
 
 
@@ -63,7 +69,7 @@ class UnitCell(genice3.unitcell.UnitCell):
         fixed = nx.DiGraph(fixed)
         pairs = nx.Graph(fixed)
 
-        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        density = density_in_g_cm3(len(waters), cell)
 
         coord = "relative"
         super().__init__(

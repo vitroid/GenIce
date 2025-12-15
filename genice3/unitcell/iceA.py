@@ -7,7 +7,7 @@ from genice3.util import (
     atomdic,
     symmetry_operators,
     waters_and_pairs,
-    fullatoms,
+    density_in_g_cm3,
 )
 import genice3.unitcell
 import networkx as nx
@@ -51,7 +51,7 @@ class UnitCell(genice3.unitcell.UnitCell):
         sops = symmetry_operators(symops)
         waters, fixed = waters_and_pairs(cell, atomd, sops)
 
-        density = 18 * len(waters) / 6.022e23 / (np.linalg.det(cell) * 1e-21)
+        density = density_in_g_cm3(len(waters), cell)
 
         coord = "relative"
 

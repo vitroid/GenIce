@@ -2,17 +2,19 @@
 
 import sys
 import numpy as np
-from logging import basicConfig, INFO, getLogger
+from logging import basicConfig, INFO, getLogger, DEBUG
 
-# confirmed:  "8", "iceA", "iceB", "9", "11"
-# basicConfig(level=INFO)
-# logger = getLogger()
+basicConfig(level=INFO)
+logger = getLogger()
 for ice in sys.argv[1:]:
 
     from genice2.genice import GenIce
     from genice2.plugin import Lattice, Format, Molecule
 
-    lattice = Lattice(ice)
+    if ice == "xFAU":
+        lattice = Lattice(ice, rep=4)
+    else:
+        lattice = Lattice(ice)
     formatter = Format(
         "raw",
         stage=(
@@ -26,6 +28,7 @@ for ice in sys.argv[1:]:
     volume2 = np.linalg.det(cell2)
     cell2i = np.linalg.inv(cell2)
     O2 = np.array([sites[0, :] for sites in genice2["mols"][0].positions])
+
     import numpy as np
 
     H2 = np.array(
@@ -41,7 +44,10 @@ for ice in sys.argv[1:]:
     from genice3.genice import GenIce3
 
     genice3 = GenIce3()
-    genice3.unitcell = UnitCell(ice)
+    if ice == "xFAU":
+        genice3.unitcell = UnitCell(ice, rep=4)
+    else:
+        genice3.unitcell = UnitCell(ice)
     waters = genice3.water_molecules(water_model=Molecule("spce"))
     cell3 = genice3.unitcell.cell
     volume3 = np.linalg.det(cell3)
@@ -89,8 +95,8 @@ for ice in sys.argv[1:]:
     pairs = [
         d
         for x, y, d in pl.pairs_iter(
-            relative_H3, maxdist=0.08, cell=cell2, pos2=bond_centers, distance=True
+            relative_H3, maxdist=0.093, cell=cell2, pos2=bond_centers, distance=True
         )
     ]
     print(f"{min(pairs)=}, {max(pairs)=}")
-    assert len(pairs) == len(relative_H3), f"{pairs=}"
+    assert len(pairs) == len(relative_H3), f"{len(pairs)=}, {len(relative_H3)=}"
