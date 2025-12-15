@@ -8,6 +8,7 @@ desc = {
     "usage": "No options available.",
     "brief": "A 6-site water model.",
 }
+water = 1  # Identify
 
 
 class Molecule(genice2.molecules.Molecule):
@@ -19,7 +20,7 @@ class Molecule(genice2.molecules.Molecule):
         hz = 0.512026264219221 / 10
         mz = 0.165996716972597 / 10
         lz = -0.567651708900964 / 10
-        self.sites = np.array(
+        self.sites_ = np.array(
             [
                 [0, 0, oz],
                 [0, hy, hz],
@@ -30,9 +31,8 @@ class Molecule(genice2.molecules.Molecule):
             ]
         )  # nm, OHHMLL
 
-        self.labels = ["O", "H", "H", "M", "L", "L"]
-        self.name = "SOL"
-        self.is_water = True
+        self.labels_ = ["O", "H", "H", "M", "L", "L"]
+        self.name_ = "SOL"
 
 
 #  0.000000000000000E+000  0.000000000000000E+000 -6.400328302740263E-002 16 O

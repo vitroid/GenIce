@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-from genice2.lattices.iceM import Lattice as LatticeM
+import genice2
 
 desc = {
     "ref": {"Md": "Mochizuki 2024"},
@@ -12,7 +12,7 @@ desc = {
 }
 
 
-class Lattice(LatticeM):
+class Lattice(genice2.lattices.iceM.Lattice):
     def __init__(self):
         super().__init__()
         del self.fixed

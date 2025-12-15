@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import string
 from logging import getLogger
 
@@ -9,33 +8,6 @@ from cycless.polyhed import cage_to_graph, polyhedra_iter
 
 # for cage assessment
 from graphstat import GraphStat
-
-
-@dataclass
-class CageSpec:
-    label: str  # A12, etc.
-    faces: str  # 5^12 6^2, etc.
-    graph: nx.Graph  # labels of water constituting the cage
-
-    def to_json_capable_data(self):
-        return {"label": self.label, "faces": self.faces, "nodes": list(self.graph)}
-
-
-@dataclass
-class CageSpecs:
-    specs: list[CageSpec]
-    positions: np.ndarray  # in fractional coordinates
-
-    def to_json_capable_data(self):
-        data = []
-        for position, specs in zip(self.positions, self.specs):
-            data.append(
-                {
-                    "frac_pos": position.tolist(),
-                    "specs": specs.to_json_capable_data(),
-                }
-            )
-        return dict(enumerate(data))
 
 
 def assign_unused_label(basename, labels):
@@ -76,10 +48,10 @@ def assess_cages(graph, node_pos):
     ]
 
     # Positions of the centers of the rings.
-    ringpos = np.array([centerOfMass(ringnodes, node_pos) for ringnodes in ringlist])
+    ringpos = [centerOfMass(ringnodes, node_pos) for ringnodes in ringlist]
 
     MaxCageSize = 22
-    positions = []
+    cagepos = []
     cagetypes = []
     # data storage of the found cages
     db = GraphStat()
@@ -88,11 +60,8 @@ def assess_cages(graph, node_pos):
 
     # Detect cages and classify
     cages = [cage for cage in polyhedra_iter(ringlist, MaxCageSize)]
-    positions = [centerOfMass(list(cage), ringpos) for cage in cages]
-
-    cagespecs = []
-    cage_positions = []
-    for cage, position in zip(cages, positions):
+    cagepos = [centerOfMass(list(cage), ringpos) for cage in cages]
+    for cage in cages:
         g = cage_to_graph(cage, ringlist)
         cagesize = len(cage)
         g_id = db.query_id(g)
@@ -108,14 +77,11 @@ def assess_cages(graph, node_pos):
             labels.add(label)
 
             # cage expression
+            index = make_cage_expression(cage, ringlist)
+            logger.info(f"    Cage type: {label} ({index})")
         else:
             label = g_id2label[g_id]
-        faces = make_cage_expression(cage, ringlist)
-        cagespecs.append(CageSpec(label=label, faces=faces, graph=g))
-        # print(f"{label=}, {faces=}, {ringlist=}")
-        # print([len(ringlist[ring]) for ring in cage])
-
-        cage_positions.append(position)
-    if len(cage_positions) == 0:
+        cagetypes.append(label)
+    if len(cagepos) == 0:
         logger.info("    No cages detected.")
-    return CageSpecs(specs=cagespecs, positions=np.array(cage_positions))
+    return np.array(cagepos), cagetypes

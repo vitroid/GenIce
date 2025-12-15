@@ -41,6 +41,6 @@ class Molecule(genice2.molecules.Molecule):
                 cols = line.split()
                 sites.append([float(x) for x in cols[:3]])
                 labels.append(cols[3])
-        self.sites = np.array(sites) / 10.0  # in nm
-        self.labels = labels
-        self.name = molname
+        self.sites_ = np.array(sites) / 10.0  # in nm
+        self.labels_ = labels
+        self.name_ = molname

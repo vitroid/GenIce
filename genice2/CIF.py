@@ -60,12 +60,6 @@ def atomdic(atoms):
 from typing import Iterable
 
 
-import deprecation
-from genice2 import get_version
-
-@deprecation.deprecated(deprecated_in="2.2.12", removed_in="2.3.0",
-                        current_version=get_version(),
-                        details="Use the symmetry_operator_functions() instead")
 def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
     """Generator of the symmetry operations
 
@@ -96,32 +90,6 @@ def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
                 ops.append(col + offs)
             yield lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops]))
     # return symfuncs
-
-
-def symmetry_operator_functions(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
-
-    def _wrap(x):
-        return x - np.floor(x)
-    
-    def eval_(v, x, y, z):
-        return eval(v)
-
-    # まず、座標変数を小文字に変換する
-    symops = symops.translate(str.maketrans("XYZ", "xyz"))
-    symfuncs = []
-    for symop in symops.split("\n"):
-        # コンマまたは空白で分割
-        cols = symop.split(",")
-        if len(cols) <= 1:
-            cols = symop.split()
-            if len(cols) <= 1:
-                continue
-        for offset in offsets:
-            ops = []
-            for col, offs in zip(cols, offset):
-                ops.append(col + offs)
-            symfuncs.append(lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops])))
-    return symfuncs
 
 
 def waters_and_pairs(
@@ -221,14 +189,14 @@ def waters_and_pairs(
 # {'P12_11', 'P2_12_12_1', 'Pca2_1', 'P1c1', 'Cmc2_1', 'C1c1', 'P12', 'Pbn2_1', 'Pna2_1'}
 def operations(spaceg, origin=0):
     symops = None
-    if spaceg in ("P12_11", "4", 4):
+    if spaceg == "P12_11" or spaceg == "4":
         symops = symmetry_operators(
             """
             x,            y,            z
             -x,          1/2+y,         -z
         """
         )
-    elif spaceg in ("P2_12_12_1", "19", 19):
+    elif spaceg == "P2_12_12_1" or spaceg == "19":
         # http://img.chem.ucl.ac.uk/sgp/large/019a.htm
         if origin == 0:
             symops = symmetry_operators(
@@ -239,7 +207,7 @@ def operations(spaceg, origin=0):
                 1/2-x,         -y,          1/2+z
             """
             )
-    elif spaceg in ("Pca2_1", "29", 29):
+    elif spaceg == "Pca2_1" or spaceg == 29:
         symops = symmetry_operators(
             """
             x,            y,            z
@@ -248,14 +216,14 @@ def operations(spaceg, origin=0):
             -x,           -y,          1/2+z
         """
         )
-    elif spaceg in ("P1c1", "7", 7):
+    elif spaceg == "P1c1" or spaceg == "7":
         symops = symmetry_operators(
             """
             x,            y,            z
             x,           -y,          1/2+z
         """
         )
-    elif spaceg in ("Cmc2_1", "36", 36):
+    elif spaceg == "Cmc2_1" or spaceg == "36":
         symops = symmetry_operators(
             """
             x,            y,            z
@@ -265,7 +233,7 @@ def operations(spaceg, origin=0):
         """,
             offsets=[("+0", "+0", "+0"), ("+1/2", "+1/2", "+0")],
         )
-    elif spaceg in ("C1c1", "9", 9):
+    elif spaceg == "C1c1" or spaceg == "9":
         symops = symmetry_operators(
             """
             x,            y,            z
@@ -273,7 +241,7 @@ def operations(spaceg, origin=0):
         """,
             offsets=[("+0", "+0", "+0"), ("+1/2", "+1/2", "+0")],
         )
-    elif spaceg in ("P1", "1", 1):
+    elif spaceg == "P1" or spaceg == "1":
         symops = symmetry_operators(
             """
             x,            y,            z

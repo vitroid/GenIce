@@ -15,7 +15,7 @@ desc = {
 
 class Molecule(genice2.molecules.Molecule):
     def __init__(self):
-        self.sites = np.array(
+        self.sites_ = np.array(
             [
                 [0.0, -0.119625, 0.0],
                 [0.116284, -0.039705, 0.0],
@@ -25,5 +25,6 @@ class Molecule(genice2.molecules.Molecule):
             ]
         )
 
-        self.labels = ["O", "CA", "CB", "CB", "CA"]
-        self.name = "THF"
+        self.atoms_ = ["O", "C", "C", "C", "C"]
+        self.labels_ = ["O", "CA", "CB", "CB", "CA"]
+        self.name_ = "THF"

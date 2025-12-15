@@ -4,11 +4,9 @@ from genice2.decorators import timeit, banner
 import genice2.formats
 from logging import getLogger
 import numpy as np
-from io import TextIOWrapper
-from genice2.genice import GenIce
-
 desc = {
-    "ref": {"K1939": "J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939)."},
+    "ref": {
+        "K1939": 'J. G. Kirkwood, J. Chem. Phys. 7, 911 (1939).'},
     "brief": "Kirkworrd G factor.",
     "usage": "Kirkwood G is a convenient index for testing the long-range order.",
 }
@@ -16,22 +14,24 @@ desc = {
 
 # It should be expressed as a function of distance.
 
-
 class Format(genice2.formats.Format):
     """
-    Calculate the Kirkwood G factor.
+Calculate the Kirkwood G factor.
     """
 
     def __init__(self, **kwargs):
-        pass
+        super().__init__(**kwargs)
+
+    def hooks(self):
+        return {5: self.Hook5}
 
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
+    def Hook5(self, ice):
         "Kirkwood G."
         logger = getLogger()
-        zvec = np.array([0.0, 0.0, 1.0])
-        dipoles = zvec @ genice.rotation_matrices()
+        zvec = np.array([0., 0., 1.])
+        dipoles = zvec @ ice.rotmatrices
         n = dipoles.shape[0]
         logger.info("  Inner products of the dipoles.")
         # inner products of dipole pairs
@@ -43,7 +43,7 @@ class Format(genice2.formats.Format):
         ip = np.sum(ip, axis=2).reshape(n * n)
         logger.info("  Pair distances.")
         # pair distances
-        coord = genice.water_positions()
+        coord = ice.reppositions
         delta = np.zeros((n, n, 3))
         for i in (0, 1, 2):
             x = coord[:, i]
@@ -51,7 +51,7 @@ class Format(genice2.formats.Format):
             d = x - xT
             d -= np.floor(d + 0.5)  # wrap
             delta[:, :, i] = d
-        delta = delta @ genice.cell_matrix()
+        delta = delta @ ice.repcell.mat
         delta = delta * delta
         delta = np.sum(delta, axis=2)
         delta = np.sqrt(delta).reshape(n * n)
@@ -66,4 +66,4 @@ class Format(genice2.formats.Format):
             filter = ip[delta < x]
             s += "{0:.5f} {1:.5f}\n".format(x, np.sum(filter) / n)
             x += 0.08
-        file.write(s)
+        self.output = s

@@ -8,22 +8,19 @@ Usage:
     genice2 III -f rings[openscad:max=5] > output.scad    # up to 5-membered rings.
 """
 
-from io import TextIOWrapper
+from genice2.decorators import timeit, banner
 from cycless.cycles import cycles_iter
+import genice2.formats
+from genice2 import rigid
 import colorsys
-from math import atan2, pi, degrees
-from logging import getLogger
-from collections import defaultdict
-
 from openpyscad import *
+from logging import getLogger
 import yaplotlib as yp
 import networkx as nx
 import numpy as np
-
-from genice2.genice import GenIce
-from genice2.decorators import timeit, banner
-import genice2.formats
-from genice2 import rigid
+from math import atan2, pi, degrees
+from collections import defaultdict
+import sys
 
 desc = {
     "ref": {
@@ -169,10 +166,14 @@ class Format(genice2.formats.Format):
             else:
                 logger.warn("Unknown keyword: {0}".format(k))
         logger.info("  Largest ring: {0}.".format(self.largestring))
+        super().__init__()
+
+    def hooks(self):
+        return {2: self.Hook2}
 
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
+    def Hook2(self, ice):
         "Show rings."
         logger = getLogger()
 
@@ -188,28 +189,27 @@ class Format(genice2.formats.Format):
             self.p.SetPalette(i, [r, g, b])
 
         # copied from svg_poly
-        graph = nx.Graph(genice.hydrogen_bond_graph())  # undirected
-        cellmat = genice.cell_matrix()
-        water_positions = genice.water_positions()
+        graph = nx.Graph(ice.graph)  # undirected
+        cellmat = ice.repcell.mat
         for i, j in graph.edges():
-            pi, pj = water_positions[i], water_positions[j]
+            pi, pj = ice.reppositions[i], ice.reppositions[j]
             d = pj - pi
             d -= np.floor(d + 0.5)
             self.p.Cylinder(
                 pi @ cellmat, (pi + d) @ cellmat, 0.01, color=0, layer=2  # 0.2 AA
             )
-        for ring in cycles_iter(graph, self.largestring, pos=water_positions):
+        for ring in cycles_iter(graph, self.largestring, pos=ice.reppositions):
             deltas = np.zeros((len(ring), 3))
             for k, i in enumerate(ring):
-                d = water_positions[i] - water_positions[ring[0]]
+                d = ice.reppositions[i] - ice.reppositions[ring[0]]
                 d -= np.floor(d + 0.5)
                 deltas[k] = d
             comofs = np.sum(deltas, axis=0) / len(ring)
             deltas -= comofs
-            com = water_positions[ring[0]] + comofs
+            com = ice.reppositions[ring[0]] + comofs
             com -= np.floor(com)
             # rel to abs
             com = com @ cellmat
             deltas = deltas @ cellmat
             face(self.p, com, deltas)
-        file.write(self.p.Render())
+        self.output = self.p.Render()

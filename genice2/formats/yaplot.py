@@ -1,10 +1,8 @@
 # coding: utf-8
 
 import itertools as it
-import sys
 from collections import defaultdict
 from logging import getLogger
-from io import TextIOWrapper
 
 import numpy as np
 import yaplotlib as yp
@@ -12,7 +10,6 @@ import yaplotlib as yp
 import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
-from genice2.genice import GenIce
 
 desc = {
     "ref": {"Codes": "https://github.com/vitroid/Yaplot"},
@@ -43,46 +40,61 @@ class Format(genice2.formats.Format):
                 self.size_H = float(v)
             else:
                 unknown[k] = v
+        super().__init__(**unknown)
+
+    def hooks(self):
+        return {1: self.Hook1, 2: self.Hook2, 6: self.Hook6, 7: self.Hook7}
 
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
+    def Hook1(self, ice):
         "Draw the cell in Yaplot format."
         logger = getLogger()
         s = yp.Layer(2)
-        x, y, z = genice.cell_matrix()
+        x, y, z = ice.repcell.mat
         for p, q, r in ((x, y, z), (y, z, x), (z, x, y)):
             for a in (np.zeros(3), p, q, p + q):
                 s += yp.Line(a, a + r)
+        self.output = s
 
-        if self.size_H == 0:
-            # 水素のサイズ指定がない場合
-            # prepare the reverse dict
-            waters = defaultdict(dict)
-            pos = ice.reppositions
-            s = ""
-            s += yp.Layer(4)
-            s += yp.Color(3)
-            s += yp.Size(0.03)
-            for p in pos:
-                s += yp.Circle(p @ ice.repcell.mat)
-            s += yp.Layer(5)
-            s += yp.Color(4)
-            # s += yp.Size(0.03)
-            for i, j in ice.graph.edges(data=False):
-                # if i in waters and j in waters:  # edge may connect to the dopant
-                O1, O2 = pos[i], pos[j]
-                d = O2 - O1
-                d -= np.floor(d + 0.5)
-                O2 = O1 + d
-                s += yp.Line(O1 @ ice.repcell.mat, O2 @ ice.repcell.mat)
-            self.output += s + yp.NewPage()
-            file.write(s)
+    @timeit
+    @banner
+    def Hook2(self, ice):
+        "Output CoM of water molecules in Yaplot format."
+        logger = getLogger()
+        if self.size_H > 0:
             return
+        # prepare the reverse dict
+        waters = defaultdict(dict)
+        pos = ice.reppositions
+        s = ""
+        s += yp.Layer(4)
+        s += yp.Color(3)
+        s += yp.Size(0.03)
+        for p in pos:
+            s += yp.Circle(p @ ice.repcell.mat)
+        s += yp.Layer(5)
+        s += yp.Color(4)
+        # s += yp.Size(0.03)
+        for i, j in ice.graph.edges(data=False):
+            # if i in waters and j in waters:  # edge may connect to the dopant
+            O1, O2 = pos[i], pos[j]
+            d = O2 - O1
+            d -= np.floor(d + 0.5)
+            O2 = O1 + d
+            s += yp.Line(O1 @ ice.repcell.mat, O2 @ ice.repcell.mat)
+        self.output += s + yp.NewPage()
+        return True
 
-        universe = genice.full_atomic_positions()
+    @timeit
+    @banner
+    def Hook6(self, ice):
+        "Output water molecules in Yaplot format."
+        logger = getLogger()
 
-        atoms = serialize(universe[0])
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
 
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
         # prepare the reverse dict
@@ -96,6 +108,7 @@ class Format(genice2.formats.Format):
                     waters[order]["H0"] = position
                 else:
                     waters[order]["H1"] = position
+        s = ""
         s += yp.Color(3)
         for order, water in waters.items():
             O = water["O"]
@@ -117,7 +130,7 @@ class Format(genice2.formats.Format):
         s += yp.Color(4)
         s += yp.ArrowType(1)
         s += yp.Size(0.03)
-        for i, j in genice.hydrogen_bond_digraph().edges(data=False):
+        for i, j in ice.digraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -130,12 +143,19 @@ class Format(genice2.formats.Format):
                     s += yp.Arrow(H0, O)
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += yp.Arrow(H1, O)
+        self.output += s
+        self.nwateratoms = len(atoms)
 
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output other molecules in Yaplot format."
+        logger = getLogger()
         gatoms = []
-        for mols in universe[1:]:  # 0 is water
+        for mols in ice.universe[1:]:  # 0 is water
             gatoms += serialize(mols)
         palettes = dict()
-
+        s = ""
         s += yp.Layer(4)
         s += yp.ArrowType(1)
         H = []
@@ -159,6 +179,6 @@ class Format(genice2.formats.Format):
             d = position1 - position2
             if d @ d < 0.16**2:
                 s += yp.Line(position1, position2)
-        s += "#" + "\n#Command line: " + " ".join(sys.argv) + "\n"
+        s = "#" + "\n#".join(ice.doc) + "\n" + s
         s += yp.NewPage()
-        file.write(s)
+        self.output += s

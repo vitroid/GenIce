@@ -1,76 +1,18 @@
 import sys
 import argparse as ap
 from collections import defaultdict
-import logging
-from typing import Optional
-
 from genice2.plugin import safe_import, descriptions
 
 # from genice2 import __version__
 from genice2.cli import SmartFormatter, logger_setup, help_water, help_format
-from genice2.genice import GenIce, GenIceConfig
+from genice2.genice import GenIce
 from genice2.valueparser import plugin_option_parser, parse_guest
 from genice2.decorators import timeit, banner
 import pickle
 import numpy as np
-from importlib.metadata import version, PackageNotFoundError
-import click
-from genice2.genice import GenIce, GenIceConfig
-
-from genice2.lattices import Lattice
-from genice2.molecules import Molecule
-from genice2.formats import Format
-
-# from genice2.water import water_models
-# from genice2.lattices import lattices
-# from genice2.decorators import SmartFormatter
+from importlib.metadata import version
 
 # 遅延評価。descriptions()関数は重いので、必要なければ呼びたくない。
-
-# ヘルプメッセージの定数定義
-HELP_VERSION = "Show the version and exit."
-HELP_REP = "Repeat the unit cell along a, b, and c axes. [1,1,1]"
-HELP_RESHAPE = (
-    "Convert the unit cell shape by specifying the new (a,b,c) set from the original (a,b,c) of the unit cell. "
-    "The combination of (a,b,c) is specified by nine integers. "
-    "For example, '--reshape 3,0,0,0,2,0,0,0,1' specifies that the new cell vectors are (3a, 2b, c), "
-    "which is equivalent to '--rep 3 2 1'."
-)
-HELP_SHIFT = "Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]"
-HELP_DENS = "Specify the ice density in g/cm3 (Guests are not included.)"
-HELP_NOISE = (
-    "Add a Gauss noise with given width (SD) to the molecular positions of water. "
-    "The value 1 corresponds to 1 percent of the molecular diameter of water."
-)
-HELP_SEED = "Random seed [1000]"
-HELP_FORMAT = "Output format"
-HELP_WATER = "Water model"
-HELP_GUEST = (
-    "Specify guest(s) in the cage type. (D=empty, T=co2*0.5+me*0.3, etc.)\n\n"
-    + descriptions("molecule", water=False, width=55)
-)
-HELP_SPOT_GUEST = "Specify guest in the specific cage. (13=me, 32=co2, etc.)"
-HELP_GROUP = "Specify the group. (-H 13=bu-:0, etc.)"
-HELP_ANION = (
-    "Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)"
-)
-HELP_CATION = (
-    "Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)"
-)
-HELP_DEPOL = 'Depolarization. (strict, optimal, or none) ["strict"]'
-HELP_ASIS = "Assumes all given HB pairs to be fixed. No shuffle and no depolarization."
-HELP_DEBUG = "Output debugging info."
-HELP_QUIET = "Do not output progress messages."
-HELP_ASSESS_CAGES = (
-    "Assess the locations of cages based on the HB network topology. "
-    "Note: it may fail when the unit cell is too small."
-)
-HELP_OUTPUT = "Output file name"
-# HELP_TYPE = (
-#     "R|Crystal type (1c, 1h, etc. See https://github.com/vitroid/GenIce for available ice structures.)\n\n"
-#     "If you want to analyze your own structures, please try analice tool.\n\n"
-#     + descriptions("lattice", width=55)
-# )
 
 
 def help_type():
@@ -87,195 +29,285 @@ def help_guest():
     )
 
 
-def get_version():
-    """パッケージのバージョンを取得する。見つからない場合はデフォルト値を返す。"""
+def getoptions():
     try:
-        return version("genice2")
-    except PackageNotFoundError:
-        return "2.*.*.*"
+        genice2_version = version("genice2")
+    except:
+        genice2_version = "2.*.*.*"
+    parser = ap.ArgumentParser(
+        description=f"GenIce is a swiss army knife to generate hydrogen-disordered ice structures. (version {genice2_version})",
+        prog="genice2",
+        formatter_class=SmartFormatter,
+    )
+    parser.add_argument(
+        "--version",
+        "-V",
+        action="version",
+        version="%(prog)s {0}".format(genice2_version),
+    ),
+    parser.add_argument(
+        "--rep",
+        "-r",
+        nargs=3,
+        type=int,
+        dest="rep",
+        default=[1, 1, 1],
+        help="Repeat the unit cell along a, b, and c axes. [1,1,1]",
+    )
+    parser.add_argument(
+        "--reshape",
+        "-R",
+        type=str,
+        dest="reshape",
+        default="",
+        help=(
+            "Convert the unit cell shape by specifying the new (a,b,c) set from the original (a,b,c) of the unit cell. "
+            + "The combination of (a,b,c) is specified by nine integers. "
+            + "For example, '--reshape 3,0,0,0,2,0,0,0,1' specifies that the new cell vectors are (3a, 2b, c), which is equivalent to '--rep 3 2 1'."
+        ),
+    )
+    parser.add_argument(
+        "--shift",
+        "-S",
+        nargs=3,
+        type=float,
+        dest="shift",
+        default=[0.0, 0.0, 0.0],
+        help="Shift the unit cell along a, b, and c axes. (0.5==half cell) [0,0,0]",
+    )
+    parser.add_argument(
+        "--dens",
+        "-d",
+        type=float,
+        dest="dens",
+        default=-1,
+        help="Specify the ice density in g/cm3 (Guests are not included.)",
+    )
+    parser.add_argument(
+        "--add_noise",
+        type=float,
+        dest="noise",
+        default=0.0,
+        metavar="percent",
+        help="Add a Gauss noise with given width (SD) to the molecular positions of water. The value 1 corresponds to 1 percent of the molecular diameter of water.",
+    )
+    parser.add_argument(
+        "--seed", "-s", type=int, dest="seed", default=1000, help="Random seed [1000]"
+    )
+    parser.add_argument(
+        "--format",
+        "-f",
+        dest="format",
+        default="gromacs",
+        metavar="name",
+        help=help_format(),
+    )
+    parser.add_argument(
+        "--water",
+        "-w",
+        dest="water",
+        default="tip3p",
+        metavar="model",
+        help=help_water(),
+    )
+    parser.add_argument(
+        "--guest",
+        "-g",
+        # nargs=1,
+        dest="guests",
+        metavar="14=me",
+        action="append",
+        help=help_guest(),
+    )
+    parser.add_argument(
+        "--Guest",
+        "-G",
+        # nargs=1,
+        dest="spot_guests",
+        metavar="13=me",
+        action="append",
+        help="Specify guest in the specific cage. (13=me, 32=co2, etc.)",
+    )
+    parser.add_argument(
+        "--Group",
+        "-H",
+        # nargs=1,
+        dest="groups",
+        metavar="13=bu-:0",
+        action="append",
+        help="Specify the group. (-H 13=bu-:0, etc.)",
+    )
+    parser.add_argument(
+        "--anion",
+        "-a",
+        # nargs=1,
+        dest="anions",
+        metavar="3=Cl",
+        action="append",
+        help="Specify a monatomic anion that replaces a water molecule. (3=Cl, 39=F, etc.)",
+    )
+    parser.add_argument(
+        "--cation",
+        "-c",
+        # nargs=1,
+        dest="cations",
+        metavar="3=Na",
+        action="append",
+        help="Specify a monatomic cation that replaces a water molecule. (3=Na, 39=NH4, etc.)",
+    )
+    # parser.add_argument('--visual',
+    #                     dest='visual',
+    #                     default="",
+    #                     metavar="visual",
+    # help='Specify the yaplot file to store the depolarization paths. [""]')
+    parser.add_argument(
+        "--depol",
+        dest="depol",
+        default="strict",
+        help='Depolarization. (strict, optimal, or none) ["strict"]',
+    )
+    parser.add_argument(
+        "--asis",
+        action="store_true",
+        dest="asis",
+        default=False,
+        help="Assumes all given HB pairs to be fixed. No shuffle and no depolarization.",
+    )
+    parser.add_argument(
+        "--debug",
+        "-D",
+        action="store_true",
+        dest="debug",
+        help="Output debugging info.",
+    )
+    parser.add_argument(
+        "--quiet",
+        "-q",
+        action="store_true",
+        dest="quiet",
+        help="Do not output progress messages.",
+    )
+    parser.add_argument(
+        "--assess_cages",
+        "-A",
+        action="store_true",
+        dest="assess_cages",
+        help="Assess the locations of cages based on the HB network topology. Note: it may fail when the unit cell is too small.",
+    )
+    parser.add_argument("Type", help=help_type())
+    return parser.parse_args()
 
 
-def setup_logging(debug: bool, quiet: bool) -> logging.Logger:
-    """ログレベルの設定を行う"""
-    logger = logging.getLogger()
-    if debug:
-        logging.basicConfig(level=logging.DEBUG)
-    elif quiet:
-        logging.basicConfig(level=logging.WARNING)
+@timeit
+@banner
+def main():
+    """
+    GenIce
+    """
+    # Module-loading paths
+    # 1. Look for the modules in the current working directory
+    sys.path.append(".")
+
+    # Parse options
+    options = getoptions()
+
+    # Set verbosity level
+    logger = logger_setup(options.debug, options.quiet)
+    logger.debug("Debug mode.")
+
+    lattice_type = options.Type
+
+    seed = options.seed
+    np.random.seed(seed)
+    # self.seed = seed  # used in tilecycles
+    if options.reshape != "":
+        reshape = np.array([int(x) for x in options.reshape.split(",")]).reshape(3, 3)
     else:
-        logging.basicConfig(level=logging.INFO)
-    return logger
+        reshape = np.diag(options.rep)
+    sh = options.shift
+    density = options.dens
+    asis = options.asis
+    anions = dict()
+    if options.anions is not None:
+        logger.info(options.anions)
+        for v in options.anions:
+            key, value = v.split("=")
+            anions[int(key)] = value
+    cations = dict()
+    if options.cations is not None:
+        for v in options.cations:
+            key, value = v.split("=")
+            cations[int(key)] = value
+    spot_guests = dict()
+    if options.spot_guests is not None:
+        for v in options.spot_guests:
+            key, value = v.split("=")
+            spot_guests[int(key)] = value
+    groups = dict()
+    if options.groups is not None:
+        for v in options.groups:
+            key, value = v.split("=")
+            groups[int(key)] = value
 
-
-def setup_water_model(water_spec: str, logger: logging.Logger) -> Molecule:
-    """水分子モデルの設定を行う"""
-    water_type, water_options = plugin_option_parser(water_spec)
-    logger.debug(f"Water type: {water_type}")
-    return safe_import("molecule", water_type).Molecule(**water_options)
-
-
-def setup_lattice(ice_type: str, logger: logging.Logger) -> Lattice:
-    """格子の設定を行う"""
-    lattice_type, lattice_options = plugin_option_parser(ice_type)
-    logger.debug(f"Lattice: {lattice_type}")
+    lattice_type, lattice_options = plugin_option_parser(options.Type)
+    logger.debug("Lattice: {0}".format(lattice_type))
     assert lattice_type is not None
-    return safe_import("lattice", lattice_type).Lattice(**lattice_options)
 
+    signature = "Command line: {0}".format(" ".join(sys.argv))
 
-def setup_formatter(format_spec: str, logger: logging.Logger) -> Format:
-    """フォーマッターの設定を行う"""
-    file_format, format_options = plugin_option_parser(format_spec)
-    logger.debug(f"Output file format: {file_format}")
-    formatter_module = safe_import("format", file_format)
-    return formatter_module.Format(**format_options)
-
-
-def create_config(kwargs: dict, water: Molecule) -> GenIceConfig:
-    """設定オブジェクトの作成"""
-    config = GenIceConfig(
-        water=water,
-        density=kwargs["dens"],
-        rep=tuple(kwargs["rep"]),
-        reshape=parse_reshape(kwargs["reshape"]),
-        shift=tuple(kwargs["shift"]),
-        noise=kwargs["add_noise"],
-        depol=kwargs["depol"],
-        asis=kwargs["asis"],
-        assess_cages=kwargs["assess_cages"],
+    # Initialize the Lattice class with arguments which are required for
+    # plugins.
+    lat = GenIce(
+        safe_import("lattice", lattice_type).Lattice(**lattice_options),
+        signature=signature,
+        density=density,
+        reshape=reshape,
+        cations=cations,
+        anions=anions,
+        spot_guests=spot_guests,
+        spot_groups=groups,
+        asis=asis,
+        shift=sh,
+        rep=None,
     )
 
-    # ゲスト分子の設定
-    if kwargs["guest"]:
-        config.guests = parse_guests(kwargs["guest"])
-    if kwargs["spot_guest"]:
-        config.spot_guests = parse_spot_guests(kwargs["spot_guest"])
-    if kwargs["group"]:
-        config.spot_groups = parse_groups(kwargs["group"])
-    if kwargs["anion"]:
-        config.anions = parse_ions(kwargs["anion"])
-    if kwargs["cation"]:
-        config.cations = parse_ions(kwargs["cation"])
+    guests = defaultdict(dict)
+    if options.guests is not None:
+        logger.info(options.guests)
+        for guest_spec in options.guests:
+            parse_guest(guests, guest_spec)
+    noise = options.noise
+    depol = options.depol
+    assess_cages = options.assess_cages
+    file_format, format_options = plugin_option_parser(options.format)
 
-    return config
+    water_type, water_options = plugin_option_parser(options.water)
+    logger.debug("Water type: {0}".format(water_type))
+    water = safe_import("molecule", water_type).Molecule(**water_options)
 
+    # Main part of the program is contained in th Formatter object. (See
+    # formats/)
+    logger.debug("Output file format: {0}".format(file_format))
+    formatter_module = safe_import("format", file_format)
+    formatter = formatter_module.Format(**format_options)
 
-def output_result(ice: GenIce, formatter: Format, output_file: Optional[str] = None):
-    """結果の出力"""
-    if output_file:
-        with open(output_file, "w") as f:
-            formatter.dump(ice, f)
-    else:
-        formatter.dump(ice, sys.stdout)
+    del options  # Dispose for safety.
 
-
-@click.command()
-@click.version_option(version=get_version(), prog_name="genice2", help=HELP_VERSION)
-@click.option("--rep", "-r", nargs=3, type=int, default=[1, 1, 1], help=HELP_REP)
-@click.option("--reshape", "-R", type=str, default="", help=HELP_RESHAPE)
-@click.option(
-    "--shift", "-S", nargs=3, type=float, default=[0.0, 0.0, 0.0], help=HELP_SHIFT
-)
-@click.option("--dens", "-d", type=float, default=-1, help=HELP_DENS)
-@click.option(
-    "--add_noise", type=float, default=0.0, metavar="percent", help=HELP_NOISE
-)
-@click.option("--seed", "-s", type=int, default=1000, help=HELP_SEED)
-@click.option("--format", "-f", default="gromacs", metavar="name", help=HELP_FORMAT)
-@click.option("--water", "-w", default="tip3p", metavar="model", help=HELP_WATER)
-@click.option("--guest", "-g", multiple=True, metavar="14=me", help=HELP_GUEST)
-@click.option(
-    "--spot_guest", "-G", multiple=True, metavar="13=me", help=HELP_SPOT_GUEST
-)
-@click.option("--group", "-H", multiple=True, metavar="13=bu-:0", help=HELP_GROUP)
-@click.option("--anion", "-a", multiple=True, metavar="3=Cl", help=HELP_ANION)
-@click.option("--cation", "-c", multiple=True, metavar="3=Na", help=HELP_CATION)
-@click.option("--depol", default="strict", help=HELP_DEPOL)
-@click.option("--asis", is_flag=True, default=False, help=HELP_ASIS)
-@click.option("--debug", "-D", is_flag=True, help=HELP_DEBUG)
-@click.option("--quiet", "-q", is_flag=True, help=HELP_QUIET)
-@click.option("--assess_cages", "-A", is_flag=True, help=HELP_ASSESS_CAGES)
-@click.option("--output", "-o", type=str, help=HELP_OUTPUT)
-@click.argument("ice_type", type=str)
-def main_click(ice_type, **kwargs):
-    """GenIce is a swiss army knife to generate hydrogen-disordered ice structures."""
-    # ログレベルの設定
-    logger = setup_logging(kwargs["debug"], kwargs["quiet"])
-
-    # ランダムシードの設定
-    if kwargs["seed"] is not None:
-        np.random.seed(kwargs["seed"])
-
-    # 水分子モデルの設定
-    water = setup_water_model(kwargs["water"], logger)
-
-    # 格子の設定
-    lattice = setup_lattice(ice_type, logger)
-
-    # フォーマッターの設定
-    formatter = setup_formatter(kwargs["format"], logger)
-
-    # 設定オブジェクトの作成
-    config = create_config(kwargs, water)
-
-    # 氷の生成
-    ice = GenIce(lattice, config)
-
-    # 結果の出力
-    output_result(ice, formatter, kwargs.get("output"))
-
-
-def parse_reshape(reshape_str):
-    if not reshape_str:
-        return np.eye(3, dtype=int)
-    try:
-        return np.array([int(x) for x in reshape_str.split(",")]).reshape(3, 3)
-    except:
-        raise click.BadParameter("reshape must be 9 integers separated by commas")
-
-
-def parse_guests(guests):
-    result = {}
-    for guest in guests:
-        try:
-            cage, molecule = guest.split("=")
-            result[int(cage)] = molecule
-        except:
-            raise click.BadParameter('guest must be in the format "cage=molecule"')
-    return result
-
-
-def parse_spot_guests(guests):
-    result = {}
-    for guest in guests:
-        try:
-            cage, molecule = guest.split("=")
-            result[int(cage)] = molecule
-        except:
-            raise click.BadParameter('spot_guest must be in the format "cage=molecule"')
-    return result
-
-
-def parse_groups(groups):
-    result = {}
-    for group in groups:
-        try:
-            cage, group_info = group.split("=")
-            result[int(cage)] = group_info
-        except:
-            raise click.BadParameter('group must be in the format "cage=group_info"')
-    return result
-
-
-def parse_ions(ions):
-    result = {}
-    for ion in ions:
-        try:
-            pos, element = ion.split("=")
-            result[int(pos)] = element
-        except:
-            raise click.BadParameter('ion must be in the format "position=element"')
-    return result
+    result = lat.generate_ice(
+        water=water,
+        guests=guests,
+        formatter=formatter,
+        noise=noise,
+        depol=depol,
+        assess_cages=assess_cages,
+    )
+    if isinstance(result, bytes):
+        sys.stdout.buffer.write(result)
+    elif isinstance(result, str):
+        sys.stdout.write(result)
+    elif result is not None:
+        pickle.dump(result, sys.stdout.buffer)
 
 
 if __name__ == "__main__":
-    main_click()
+    main()

@@ -1,14 +1,12 @@
 # coding: utf-8
 
 from logging import getLogger
-from io import TextIOWrapper
-import numpy as np
 
 import genice2.formats
 from genice2.decorators import banner, timeit
 from genice2.molecules import serialize
 from genice2.cell import cellvectors
-from genice2.genice import GenIce
+import numpy as np
 
 desc = {
     "ref": {"gro": "http://manual.gromacs.org/current/online/gro.html"},
@@ -24,18 +22,17 @@ class Format(genice2.formats.Format):
     """
 
     def __init__(self, **kwargs):
-        pass
+        super().__init__(**kwargs)
+
+    def hooks(self):
+        return {7: self.Hook7}
 
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
-        """Output in Gromacs format.
-
-        parametersには、hooksで指定したstageの結果が含まれる。
-        """
+    def Hook7(self, ice):
+        "Output in Gromacs format."
         logger = getLogger()
-
-        cellmat = genice.cell_matrix()
+        cellmat = ice.repcell.mat
 
         if not (cellmat[0, 1] == 0 and cellmat[0, 2] == 0 and cellmat[1, 2] == 0):
             logger.info(
@@ -50,13 +47,13 @@ class Format(genice2.formats.Format):
             A = np.degrees(np.arccos(eb @ ec))
             B = np.degrees(np.arccos(ec @ ea))
             C = np.degrees(np.arccos(ea @ eb))
-            rotmat = np.linalg.inv(cellmat) @ cellvectors(a, b, c, A, B, C)
+            rotmat = ice.repcell.inv @ cellvectors(a, b, c, A, B, C)
             logger.info("  The reshape matrix is reoriented.")
         else:
             rotmat = np.eye(3)
 
         atoms = []
-        for mols in genice.full_atomic_positions():
+        for mols in ice.universe:
             atoms += serialize(mols)
 
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
@@ -104,5 +101,5 @@ class Format(genice2.formats.Format):
                 cellmat[2, 0],
                 cellmat[2, 1],
             )
-        file.write(s)
         # s += '#' + "\n#".join(ice.doc) + "\n"
+        self.output = s

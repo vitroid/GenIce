@@ -1,12 +1,10 @@
 # coding: utf-8
 
-from logging import getLogger
-from io import TextIOWrapper
-
 from genice2.molecules import serialize
 import genice2.formats
 from genice2.decorators import timeit, banner
-from genice2.genice import GenIce
+from logging import getLogger
+import numpy as np
 
 desc = {
     "ref": {},
@@ -35,6 +33,7 @@ class Format(genice2.formats.Format):
     """
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         if __name__[-6:] == "mdv_au":
             self.conv = 1.0 / au
         else:
@@ -46,16 +45,19 @@ class Format(genice2.formats.Format):
             else:
                 self.conv = 1.0 / AA
 
+    def hooks(self):
+        return {7: self.Hook7}
+
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
+    def Hook7(self, ice):
         "Output in MDView format."
         logger = getLogger()
         atoms = []
-        for mols in genice.full_atomic_positions():
+        for mols in ice.universe:
             atoms += serialize(mols)
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
-        cellmat = genice.cell_matrix()
+        cellmat = ice.repcell.mat
         s = ""
         s += "# {0} {1} {2}\n".format(
             cellmat[0, 0] * self.conv,
@@ -70,4 +72,4 @@ class Format(genice2.formats.Format):
             s += "{0:5} {1:9.4f} {2:9.4f} {3:9.4f}\n".format(
                 atomname, *(position[:3] * self.conv)
             )
-        file.write(s)
+        self.output = s

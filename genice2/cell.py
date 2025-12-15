@@ -100,13 +100,13 @@ class Cell:
         alpha = acos((self.mat[1] @ self.mat[2]) / (Lb * Lc)) * 180 / pi
         beta = acos((self.mat[2] @ self.mat[0]) / (Lc * La)) * 180 / pi
         gamma = acos((self.mat[0] @ self.mat[1]) / (La * Lb)) * 180 / pi
-        logging.debug("Cell dimension:")
-        logging.debug("  a = {0}".format(La))
-        logging.debug("  b = {0}".format(Lb))
-        logging.debug("  c = {0}".format(Lc))
-        logging.debug("  A = {0}".format(alpha))
-        logging.debug("  B = {0}".format(beta))
-        logging.debug("  C = {0}".format(gamma))
+        logging.info("Cell dimension:")
+        logging.info("  a = {0}".format(La))
+        logging.info("  b = {0}".format(Lb))
+        logging.info("  c = {0}".format(Lc))
+        logging.info("  A = {0}".format(alpha))
+        logging.info("  B = {0}".format(beta))
+        logging.info("  C = {0}".format(gamma))
         self.inv = np.linalg.inv(self.mat)
 
     def serialize_BOX9(self):

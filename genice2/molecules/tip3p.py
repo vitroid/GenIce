@@ -8,6 +8,7 @@ desc = {
     "usage": "No options available.",
     "brief": "A typical 3-site model.",
 }
+water = 1  # Identify
 
 
 class Molecule(genice2.molecules.Molecule):
@@ -18,9 +19,8 @@ class Molecule(genice2.molecules.Molecule):
         ohz = oh * math.cos(hangle)
         ohy = oh * math.sin(hangle)
         oz = -ohz * 2 / mass
-        self.sites = np.array(
+        self.sites_ = np.array(
             [[0, 0, oz], [0, ohy, ohz + oz], [0, -ohy, ohz + oz]]
         )  # nm, OHHM
-        self.labels = ["O", "H", "H"]
-        self.name = "SOL"
-        self.is_water = True
+        self.labels_ = ["O", "H", "H"]
+        self.name_ = "SOL"

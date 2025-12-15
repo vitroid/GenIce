@@ -1,14 +1,12 @@
 # coding: utf-8
 
-from logging import getLogger
-from collections import defaultdict
-from io import TextIOWrapper
-import sys
-
 from genice2.molecules import serialize
 import genice2.formats
+from genice2 import rigid
 from genice2.decorators import timeit, banner
-from genice2.genice import GenIce
+from logging import getLogger
+import numpy as np
+from collections import defaultdict
 
 desc = {
     "ref": {},
@@ -67,17 +65,19 @@ class Format(genice2.formats.Format):
     """
 
     def __init__(self, **kwargs):
-        pass
+        super().__init__(**kwargs)
+
+    def hooks(self):
+        return {7: self.Hook7, 6: self.Hook6}
 
     @timeit
     @banner
-    def dump(self, genice: GenIce, file: TextIOWrapper):
+    def Hook6(self, ice):
         "Output water molecules in Povray format."
         logger = getLogger()
-
-        molecules = genice.full_atomic_positions()
-
-        atoms = serialize(molecules[0])
+        atoms = []
+        for mols in ice.universe:
+            atoms += serialize(mols)
 
         logger.info("  Total number of atoms: {0}".format(len(atoms)))
         # prepare the reverse dict
@@ -103,7 +103,7 @@ class Format(genice2.formats.Format):
             s += Atom("H", H1)
             s += Bond("OH", O, H0)
             s += Bond("OH", O, H1)
-        for i, j in genice.hydrogen_bond_digraph().edges(data=False):
+        for i, j in ice.digraph.edges(data=False):
             if i in waters and j in waters:  # edge may connect to the dopant
                 O = waters[j]["O"]
                 H0 = waters[i]["H0"]
@@ -116,20 +116,27 @@ class Format(genice2.formats.Format):
                     s += Bond("HB", H0, O)
                 if rr1 < rr0 and rr1 < 0.245**2:
                     s += Bond("HB", H1, O)
-        gatoms = []
-        for mols in molecules[1:]:
-            gatoms += serialize(mols)
+        self.output = s
 
-        cellmat = genice.cell_matrix()
+    @timeit
+    @banner
+    def Hook7(self, ice):
+        "Output guest molecules in Povray format."
+        logger = getLogger()
+        gatoms = []
+        for mols in ice.universe[1:]:
+            gatoms += serialize(mols)
+        cellmat = ice.repcell.mat
+        s = ""
         H = []
         O = ""
-        s += "//" + "\n//Command line: " + " ".join(sys.argv) + "\n"
         for atom in gatoms:
             resno, resname, atomname, position, order = atom
             s += Atom(atomname, position)
+        s = "//" + "\n//".join(ice.doc) + "\n" + s
         s += (
             "  translate "
             + Vector(-(cellmat[0, :] + cellmat[1, :] + cellmat[2, :]) / 2)
             + "\n}\n\n"
         )
-        file.write(s)
+        self.output += s
