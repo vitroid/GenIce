@@ -458,3 +458,103 @@ def shortest_distance(coord, cell):
 
 def density_in_g_cm3(nmol_water, cell):
     return 18 * nmol_water / (np.linalg.det(cell) * 1e-21 * 6.022e23)
+
+
+def validate_ice_rules(dg: nx.DiGraph):
+    logger = getLogger()
+    valid = True
+    for node in dg:
+        in_degree = dg.in_degree(node)
+        out_degree = dg.out_degree(node)
+        if in_degree != 2 or out_degree != 2:
+            valid = False
+            logger.info(
+                f"Node {node} has {dg.in_degree(node)} incoming edges"
+                f" and {dg.out_degree(node)} outgoing edges"
+            )
+    return valid
+
+
+# Candidates for ice XI
+# {'P12_11', 'P2_12_12_1', 'Pca2_1', 'P1c1', 'Cmc2_1', 'C1c1', 'P12', 'Pbn2_1', 'Pna2_1'}
+def operations(spaceg: str, origin: int = 0):
+    symops = None
+    if spaceg == "P12_11" or spaceg == "4":
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            -x,          1/2+y,         -z
+        """
+        )
+    elif spaceg == "P2_12_12_1" or spaceg == "19":
+        # http://img.chem.ucl.ac.uk/sgp/large/019a.htm
+        if origin == 0:
+            symops = symmetry_operators(
+                """
+                x,            y,            z
+                1/2+x,        1/2-y,         -z
+                -x,          1/2+y,        1/2-z
+                1/2-x,         -y,          1/2+z
+            """
+            )
+    elif spaceg == "Pca2_1" or spaceg == 29:
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            1/2-x,          y,          1/2+z
+            1/2+x,         -y,            z
+            -x,           -y,          1/2+z
+        """
+        )
+    elif spaceg == "P1c1" or spaceg == "7":
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            x,           -y,          1/2+z
+        """
+        )
+    elif spaceg == "Cmc2_1" or spaceg == "36":
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            -x,            y,            z
+            x,           -y,          1/2+z
+            -x,           -y,          1/2+z
+        """,
+            offsets=[("+0", "+0", "+0"), ("+1/2", "+1/2", "+0")],
+        )
+    elif spaceg == "C1c1" or spaceg == "9":
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            x,           -y,          1/2+z
+        """,
+            offsets=[("+0", "+0", "+0"), ("+1/2", "+1/2", "+0")],
+        )
+    elif spaceg == "P1" or spaceg == "1":
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+        """
+        )
+    elif spaceg == "Pbn2_1":
+        # there are two #33 (?)
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            1/2-x,        1/2+y,          z
+            1/2+x,        1/2-y,        1/2+z
+            -x,           -y,          1/2+z
+        """
+        )
+    elif spaceg == "Pna2_1":
+        # there are two #33 (?)
+        symops = symmetry_operators(
+            """
+            x,            y,            z
+            1/2-x,        1/2+y,        1/2+z
+            1/2+x,        1/2-y,          z
+            -x,           -y,          1/2+z
+        """
+        )
+    return symops

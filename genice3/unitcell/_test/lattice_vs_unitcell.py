@@ -4,95 +4,109 @@ import sys
 import numpy as np
 from logging import basicConfig, INFO, getLogger, DEBUG
 import networkx as nx
+from dataclasses import dataclass
 
-basicConfig(level=INFO)
-logger = getLogger()
-for ice in sys.argv[1:]:
+
+@dataclass
+class Product:
+    oxygens: np.ndarray
+    graph: nx.Graph
+    volume: float
+    cell: np.ndarray
+
+
+def genice2_generate_ice(ice, options):
 
     from genice2.genice import GenIce
     from genice2.plugin import Lattice, Format, Molecule
 
-    if ice in ("iceMd", "iceT"):
-        continue
-    if ice == "xFAU":
-        lattice = Lattice(ice, rep=4)
-    elif ice == "one":
-        lattice = Lattice(ice, layers="ccchchc")
-    else:
-        lattice = Lattice(ice)
+    lattice = Lattice(ice, **options)
     formatter = Format(
         "raw",
         stage=(
-            1,
-            2,
-            6,
+            1,  # replicated molecular positions
+            2,  # replicated graph
+            6,  # atomic positions of water
         ),
     )
     water = Molecule("spce")
     genice2 = GenIce(lattice).generate_ice(formatter, water=water)
-    cell2 = genice2["repcell"]
-    volume2 = np.linalg.det(cell2)
-    cell2i = np.linalg.inv(cell2)
-    O2 = np.array([sites[0, :] for sites in genice2["mols"][0].positions])
+    cell = genice2["repcell"]
+    volume = np.linalg.det(cell)
+    oxygens = np.array([sites[0, :] for sites in genice2["mols"][0].positions])
+    return Product(oxygens=oxygens, graph=genice2["graph"], volume=volume, cell=cell)
 
-    import numpy as np
 
-    H2 = np.array(
-        [sites[1, :] for sites in genice2["mols"][0].positions]
-        + [sites[2, :] for sites in genice2["mols"][0].positions]
-    )
-    relative_O2 = O2 @ cell2i
-    relative_H2 = H2 @ cell2i
-    assert len(relative_O2) * 2 == len(relative_H2), f"{relative_O2=}, {relative_H2=}"
-
+def GenIce3_generate_ice(ice, options):
     from genice3.plugin import UnitCell
     from genice3.plugin import Molecule
     from genice3.genice import GenIce3
     from genice3.util import validate_ice_rules
 
     genice3 = GenIce3()
-    if ice == "xFAU":
-        genice3.unitcell = UnitCell(ice, rep=4)
-    elif ice == "one":
-        genice3.unitcell = UnitCell(ice, layers="ccchchc")
-    else:
-        genice3.unitcell = UnitCell(ice)
-    assert validate_ice_rules(genice3.digraph), f"{ice} {genice3.digraph=}"
-    print(f"{ice} {genice3.digraph.size()=}")
+    genice3.unitcell = UnitCell(ice, **options)
+
+    if not validate_ice_rules(genice3.digraph):
+        # ice rulesに従わない
+        raise ValueError(f"Violation of the ice rules in {ice} {options=}")
+
     waters = genice3.water_molecules(water_model=Molecule("spce"))
-    cell3 = genice3.cell
-    volume3 = np.linalg.det(cell3)
+    cell = genice3.cell
+    volume = np.linalg.det(cell)
+    oxygens = np.array([mol.sites[0] for mol in waters.values()])
     # assert the volumes are similar
-    assert abs(volume2 - volume3) / volume2 < 1e-6, f"{volume2=}, {volume3=}"
-    cell3i = np.linalg.inv(cell3)
-    O3 = [mol.sites[0] for mol in waters.values()]
-    H3 = np.vstack(
-        [
-            [mol.sites[1] for mol in waters.values()],
-            [mol.sites[2] for mol in waters.values()],
+    return Product(oxygens=oxygens, graph=genice3.graph, volume=volume, cell=cell)
+
+
+basicConfig(level=INFO)
+logger = getLogger()
+for ice in sys.argv[1:]:
+
+    if ice in ("iceMd", "iceT"):
+        continue
+    if ice == "xFAU":
+        options = [dict(rep=4), dict(rep=8)]
+    elif ice in ("one", "eleven"):
+        options = [dict(layers="ccchchc"), dict(layers="ccchh")]
+    elif ice == "11i":
+        options = [dict(type=x) for x in range(1, 17)]
+    elif ice == "bilayer":
+        options = [dict(sw=0.1)]
+    else:
+        options = [dict()]
+
+    for op in options:
+        product2 = genice2_generate_ice(ice, op)
+        product3 = GenIce3_generate_ice(ice, op)
+
+        assert (
+            abs(product2.volume - product3.volume) / product2.volume < 1e-6
+        ), f"{product2.volume=}, {product3.volume=}"
+        # 酸素原子位置を比較
+        # 酸素の一対一対応を確認する(順序が変わっているかもしれないので。)
+        import pairlist as pl
+
+        pairs = [
+            d
+            for _, _, d in pl.pairs_iter(
+                product2.oxygens,
+                maxdist=0.1,
+                cell=product2.cell,
+                pos2=product3.oxygens,
+                distance=True,
+            )
+            if d < 0.015
         ]
-    )
-    relative_O3 = O3 @ cell3i
-    relative_H3 = H3 @ cell3i
-    assert len(relative_O3) * 2 == len(relative_H3), f"{relative_O3=}, {relative_H3=}"
-    # 酸素原子位置を比較
-    # 酸素の一対一対応を確認する(順序が変わっているかもしれないので。)
-    import pairlist as pl
+        logger.info(f"{min(pairs)=}, {max(pairs)=}")
+        assert len(pairs) == len(
+            product2.oxygens
+        ), f"{len(pairs)=}, {len(product2.oxygens)=}"
 
-    pairs = [
-        (x, y, d)
-        for x, y, d in pl.pairs_iter(
-            relative_O2, maxdist=0.1, cell=cell2, pos2=relative_O3, distance=True
-        )
-        if d < 0.015
-    ]
-    assert len(pairs) == len(relative_O2)
-
-    # これがなかなかに時間を食う。
-    if "CRN" not in ice:
-        assert nx.is_isomorphic(
-            genice2["graph"], genice3.graph
-        ), f"{genice2['graph'].size()=}, {genice3.graph.size()=}"
+        # これがなかなかに時間を食う。
+        if "CRN" not in ice:
+            assert nx.is_isomorphic(
+                product2.graph, product3.graph
+            ), f"{product2.graph.size()=}, {product3.graph.size()=}"
 
     # 水素位置の照合はしない。
     # bond_centers = []
