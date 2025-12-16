@@ -13,13 +13,13 @@ import genice3.unitcell
 import numpy as np
 from logging import getLogger
 from genice3.util import (
-    cellvectors,
     atomdic,
     symmetry_operators,
     waters_and_pairs,
     density_in_g_cm3,
 )
 import networkx as nx
+from cif2ice import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

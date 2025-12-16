@@ -2,13 +2,13 @@
 
 import numpy as np
 from genice3.util import (
-    cellvectors,
     atomdic,
     symmetry_operators,
     waters_and_pairs,
     density_in_g_cm3,
 )
 import genice3.unitcell
+from cif2ice import cellvectors
 
 desc = {
     "ref": {"13": "Salzmann 2006"},

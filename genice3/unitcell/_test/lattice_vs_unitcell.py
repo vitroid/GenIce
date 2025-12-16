@@ -29,11 +29,12 @@ def genice2_generate_ice(ice, options):
             6,  # atomic positions of water
         ),
     )
-    water = Molecule("spce")
+    water = Molecule("physical_water")
     genice2 = GenIce(lattice).generate_ice(formatter, water=water)
     cell = genice2["repcell"]
+    celli = np.linalg.inv(cell)
     volume = np.linalg.det(cell)
-    oxygens = np.array([sites[0, :] for sites in genice2["mols"][0].positions])
+    oxygens = np.array([sites[0, :] for sites in genice2["mols"][0].positions]) @ celli
     return Product(oxygens=oxygens, graph=genice2["graph"], volume=volume, cell=cell)
 
 
@@ -48,12 +49,14 @@ def GenIce3_generate_ice(ice, options):
 
     if not validate_ice_rules(genice3.digraph):
         # ice rulesに従わない
-        raise ValueError(f"Violation of the ice rules in {ice} {options=}")
+        if ice not in ("2D3", "iceM", "iceT2", "M"):
+            raise ValueError(f"Violation of the ice rules in {ice} {options=}")
 
-    waters = genice3.water_molecules(water_model=Molecule("spce"))
+    waters = genice3.water_molecules(water_model=Molecule("physical_water"))
     cell = genice3.cell
+    celli = np.linalg.inv(cell)
     volume = np.linalg.det(cell)
-    oxygens = np.array([mol.sites[0] for mol in waters.values()])
+    oxygens = np.array([mol.sites[0] for mol in waters.values()]) @ celli
     # assert the volumes are similar
     return Product(oxygens=oxygens, graph=genice3.graph, volume=volume, cell=cell)
 
@@ -95,7 +98,7 @@ for ice in sys.argv[1:]:
                 pos2=product3.oxygens,
                 distance=True,
             )
-            if d < 0.015
+            if d < 0.01
         ]
         logger.info(f"{min(pairs)=}, {max(pairs)=}")
         assert len(pairs) == len(

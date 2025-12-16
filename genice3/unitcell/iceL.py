@@ -5,7 +5,6 @@ Usage: genice2 c0te
 
 import genice3.unitcell
 from genice3.util import (
-    cellvectors,
     atomdic,
     fullatoms,
     symmetry_operators,
@@ -14,6 +13,7 @@ from genice3.util import (
 )
 from logging import getLogger
 import numpy as np
+from cif2ice import cellvectors
 
 
 desc = {

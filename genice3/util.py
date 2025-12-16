@@ -465,7 +465,6 @@ def waters_and_pairs(
     """
     # 部分秩序の場合は、位置が確定している水素だけをatomdに入れ、未確定の水素は省く。
     logger = getLogger()
-
     oxygens = []
     hydrogens = []
     for name, pos in fullatoms(atomd, sops):
@@ -504,7 +503,7 @@ def waters_and_pairs(
     hydrogens = np.array(hh)
     hydrogens /= np.array(rep)
 
-    return atoms_to_waters(oxygens, hydrogens, cell)
+    return atoms_to_waters(oxygens, hydrogens, cell, partial_order=partial_order)
 
 
 def shortest_distance(coord, cell):

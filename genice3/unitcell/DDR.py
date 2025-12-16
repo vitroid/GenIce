@@ -2,7 +2,6 @@
 
 import numpy as np
 from genice3.util import (
-    cellvectors,
     atomdic,
     symmetry_operators,
     waters_and_pairs,
@@ -10,6 +9,7 @@ from genice3.util import (
 )
 import genice3.unitcell
 import networkx as nx
+from cif2ice import cellvectors
 
 desc = {
     "ref": {"engel17": "Engel 2018", "DDR": "IZA Database"},
