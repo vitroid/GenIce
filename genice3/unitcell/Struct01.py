@@ -12,7 +12,8 @@ desc = {
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice3.util import cellvectors, shortest_distance
+from cif2ice import cellvectors
+from genice3.util import shortest_distance
 
 
 class UnitCell(genice3.unitcell.UnitCell):

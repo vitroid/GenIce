@@ -88,42 +88,6 @@ def assume_tetrahedral_vectors(v):
     return []
 
 
-def cellshape(cellmat):
-    """
-    From cell matrix to a, b, c, alpha, beta, and gamma.
-    """
-    a = np.linalg.norm(cellmat[0])
-    b = np.linalg.norm(cellmat[1])
-    c = np.linalg.norm(cellmat[2])
-    alpha = degrees(acos((cellmat[1] @ cellmat[2]) / (b * c)))
-    beta = degrees(acos((cellmat[2] @ cellmat[0]) / (c * a)))
-    gamma = degrees(acos((cellmat[0] @ cellmat[1]) / (a * b)))
-    return a, b, c, alpha, beta, gamma
-
-
-def cellvectors(a, b, c, A=90, B=90, C=90):
-    """
-    Generate cell vectors from a,b,c and alpha, beta, gamma.
-    """
-    # probably same as six2nine in rigid.py
-    logger = getLogger()
-    A *= pi / 180
-    B *= pi / 180
-    C *= pi / 180
-    sA, cA = sin(A), cos(A)
-    sB, cB = sin(B), cos(B)
-    sC, cC = sin(C), cos(C)
-    ea = np.array([1.0, 0.0, 0.0])
-    eb = np.array([cC, sC, 0])
-    # ec.ea = ecx = cos(B)
-    # ec.eb = ecx*ebx + ecy*eby = cos(A)
-    ecx = cB
-    ecy = (cA - ecx * eb[0]) / eb[1]
-    ecz = (1 - ecx**2 - ecy**2) ** 0.5
-    ec = np.array([ecx, ecy, ecz])
-    return np.vstack([ea * a, eb * b, ec * c])
-
-
 @dataclass
 class CageSpec:
     label: str  # A12, etc.
@@ -335,6 +299,145 @@ def symmetry_operators(symops: str, offsets: Iterable = [("+0", "+0", "+0")]):
             yield lambda x, y, z: _wrap(np.array([eval_(op, x, y, z) for op in ops]))
 
 
+# def atoms_to_waters(oxygens, hydrogens, cell, partial_order=False):
+#     logger = getLogger("atoms_to_waters")
+#     oh = defaultdict(list)
+#     parent = dict()
+#     # find covalent OH bonds
+#     for i, j in pl.pairs_iter(
+#         oxygens, maxdist=0.15, cell=cell, pos2=hydrogens, distance=False  # nm
+#     ):
+#         oh[i].append(j)
+#         parent[j] = i
+#     logger.debug(parent)
+#     pairs = []
+#     # find HBs
+#     for i, j in pl.pairs_iter(
+#         oxygens, maxdist=0.20, cell=cell, pos2=hydrogens, distance=False  # nm
+#     ):
+#         if j not in oh[i]:
+#             # H is on a different water molecule
+#             p = parent[j]
+#             pairs.append([p, i])
+
+#     logger.debug(pairs)
+
+#     if partial_order:
+#         oo_pairs = [
+#             (i, j)
+#             for i, j in pl.pairs_iter(oxygens, maxdist=0.30, cell=cell, distance=False)
+#         ]
+#         # positions of the oxygen atoms, fixed edges, and unassigned edges.
+#         return oxygens, pairs, oo_pairs
+
+#     waters = []
+#     for i in range(len(oh)):
+#         logger.debug((i, oh[i]))
+#         j, k = oh[i]
+#         dhj = hydrogens[j] - oxygens[i]
+#         dhk = hydrogens[k] - oxygens[i]
+#         dhj -= np.floor(dhj + 0.5)
+#         dhk -= np.floor(dhk + 0.5)
+#         com = oxygens[i] + (dhj + dhk) / 18
+#         waters.append(com)
+
+#     return waters, pairs
+
+
+def atoms_to_waters(oxygens, hydrogens, cell, partial_order=False):
+    """
+    原子座標 (O, H) から水分子の重心座標と水素結合ペアを求める。
+
+    Parameters
+    ----------
+    oxygens : np.ndarray
+        O原子の分数座標 (shape: (n_O, 3))
+    hydrogens : np.ndarray
+        H原子の分数座標 (shape: (n_H, 3))
+    cell : np.ndarray
+        セル行列
+    partial_order : bool, default False
+        True のときは、重心計算をせず、O–O ペアも返す（秩序化用）。
+
+    Returns
+    -------
+    if partial_order is False:
+        waters : list[np.ndarray]
+            水分子の重心座標のリスト
+        pairs : list[list[int, int]]
+            水素結合ペア (donor_O_index, acceptor_O_index) のリスト
+
+    if partial_order is True:
+        oxygens : np.ndarray
+        pairs   : list[list[int, int]]  (O–O 間のHB由来ペア)
+        oo_pairs: list[tuple[int, int]] (距離しきい値以内の O–O ペア)
+    """
+    logger = getLogger("atoms_to_waters")
+
+    # --- Step 1: 共有結合 OH（親Oを決める） ------------------------------------
+    oh = defaultdict(list)  # Oインデックス -> 共有結合しているHインデックスのリスト
+    parent = {}  # Hインデックス -> 親Oインデックス
+
+    for o_idx, h_idx in pl.pairs_iter(
+        oxygens, maxdist=0.15, cell=cell, pos2=hydrogens, distance=False  # nm
+    ):
+        oh[o_idx].append(h_idx)
+        parent[h_idx] = o_idx
+
+    logger.debug("covalent OH parent map: %s", parent)
+
+    # --- Step 2: 水素結合ペア (O_donor, O_acceptor) を集める --------------------
+    pairs = []
+    for o_idx, h_idx in pl.pairs_iter(
+        oxygens, maxdist=0.20, cell=cell, pos2=hydrogens, distance=False  # nm
+    ):
+        # 共有結合しているHは除外（別の水分子に属するHだけを使う）
+        if h_idx not in oh[o_idx]:
+            donor = parent[h_idx]  # このHの親O
+            acceptor = o_idx
+            pairs.append([donor, acceptor])
+
+    logger.debug("HB pairs (donor, acceptor): %s", pairs)
+
+    # --- Step 3: 秩序化用の部分情報だけ欲しい場合 ------------------------------
+    if partial_order:
+        oo_pairs = [
+            (i, j)
+            for i, j in pl.pairs_iter(oxygens, maxdist=0.30, cell=cell, distance=False)
+        ]
+        # oxygens: O原子座標
+        # pairs  : HBペア (donor, acceptor)
+        # oo_pairs: 近接 O–O ペア
+        return oxygens, pairs, oo_pairs
+
+    # --- Step 4: 各Oごとに水分子重心を計算 ------------------------------------
+
+    def _water_com(o_index, h_indices):
+        """1つのOと2つのHから、水分子重心の分数座標を計算する。"""
+        h1_index, h2_index = h_indices
+
+        o = oxygens[o_index]
+        h1 = hydrogens[h1_index]
+        h2 = hydrogens[h2_index]
+
+        # 近接イメージを選ぶ（周期境界考慮）
+        dh1 = h1 - o
+        dh2 = h2 - o
+        dh1 -= np.floor(dh1 + 0.5)
+        dh2 -= np.floor(dh2 + 0.5)
+
+        # O質量:16, H質量:1 として COM = (16*O + H1 + H2)/18
+        return o + (dh1 + dh2) / 18.0
+
+    waters = []
+    for o_index in range(len(oh)):
+        logger.debug("O %d has Hs %s", o_index, oh[o_index])
+        # ここでは H がちょうど2個ある前提（既存コードと同じ前提）
+        waters.append(_water_com(o_index, oh[o_index]))
+
+    return waters, pairs
+
+
 def waters_and_pairs(
     cell,
     atomd,
@@ -401,47 +504,7 @@ def waters_and_pairs(
     hydrogens = np.array(hh)
     hydrogens /= np.array(rep)
 
-    oh = defaultdict(list)
-    parent = dict()
-    # find covalent OH bonds
-    for i, j in pl.pairs_iter(
-        oxygens, maxdist=0.15, cell=cell, pos2=hydrogens, distance=False  # nm
-    ):
-        oh[i].append(j)
-        parent[j] = i
-    logger.debug(parent)
-    pairs = []
-    # find HBs
-    for i, j in pl.pairs_iter(
-        oxygens, maxdist=0.20, cell=cell, pos2=hydrogens, distance=False  # nm
-    ):
-        if j not in oh[i]:
-            # H is on a different water molecule
-            p = parent[j]
-            pairs.append([p, i])
-
-    logger.debug(pairs)
-
-    if partial_order:
-        oo_pairs = [
-            (i, j)
-            for i, j in pl.pairs_iter(oxygens, maxdist=0.30, cell=cell, distance=False)
-        ]
-        # positions of the oxygen atoms, fixed edges, and unassigned edges.
-        return oxygens, pairs, oo_pairs
-
-    waters = []
-    for i in range(len(oh)):
-        logger.debug((i, oh[i]))
-        j, k = oh[i]
-        dhj = hydrogens[j] - oxygens[i]
-        dhk = hydrogens[k] - oxygens[i]
-        dhj -= np.floor(dhj + 0.5)
-        dhk -= np.floor(dhk + 0.5)
-        com = oxygens[i] + (dhj + dhk) / 18
-        waters.append(com)
-
-    return waters, pairs
+    return atoms_to_waters(oxygens, hydrogens, cell)
 
 
 def shortest_distance(coord, cell):

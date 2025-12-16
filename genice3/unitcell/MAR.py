@@ -11,7 +11,7 @@ desc = {'ref': {'engel29': 'Engel 2018', 'MAR': 'IZA Database'}, 'usage': 'No op
 
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

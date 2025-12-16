@@ -2,7 +2,8 @@
 # coding: utf-8
 
 import numpy as np
-from genice3.util import cellvectors, atomdic, symmetry_operators, waters_and_pairs
+from cif2ice import cellvectors
+from genice3.util import atomdic, symmetry_operators, waters_and_pairs
 import genice3.unitcell
 from logging import getLogger
 import networkx as nx

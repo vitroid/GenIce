@@ -3,7 +3,7 @@ desc = {"ref": {}, "usage": "No options available.", "brief": "Trilayer honeycom
 import genice3.unitcell
 import numpy as np
 import networkx as nx
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

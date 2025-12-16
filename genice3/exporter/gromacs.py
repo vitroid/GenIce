@@ -6,7 +6,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from genice3.util import cellvectors
+from cif2ice import cellshape, cellvectors
 from genice3.molecule import Molecule
 from genice3.genice import GenIce3
 from genice3.exporter import (
@@ -34,15 +34,7 @@ def _to_gro(
         logger.info(
             "  The specified reshaping matrix does not obey the requirements for Gromacs' unit cell convention."
         )
-        a = np.linalg.norm(cellmat[0])
-        b = np.linalg.norm(cellmat[1])
-        c = np.linalg.norm(cellmat[2])
-        ea = cellmat[0] / a
-        eb = cellmat[1] / b
-        ec = cellmat[2] / c
-        A = np.degrees(np.arccos(eb @ ec))
-        B = np.degrees(np.arccos(ec @ ea))
-        C = np.degrees(np.arccos(ea @ eb))
+        a, b, c, A, B, C = cellshape(cellmat)
         rotmat = np.linalg.inv(cellmat) @ cellvectors(a, b, c, A, B, C)
         logger.info("  The reshape matrix is reoriented.")
     else:
@@ -88,7 +80,12 @@ def _to_gro(
         else:
             s += f"{resno:5d}{resname:5s}{atomname:>5s}{i + 1:5d}{position[0]:8.3f}{position[1]:8.3f}{position[2]:8.3f}\n"
     cellmat = cellmat @ rotmat
-    if cellmat[1, 0] == 0 and cellmat[2, 0] == 0 and cellmat[2, 1] == 0:
+    # if all close to zero (not exactly zero,)
+    if (
+        abs(cellmat[1, 0]) < 1e-8
+        and abs(cellmat[2, 0]) < 1e-8
+        and abs(cellmat[2, 1]) < 1e-8
+    ):
         s += "    {0:.8f} {1:.8f} {2:.8f}\n".format(
             cellmat[0, 0], cellmat[1, 1], cellmat[2, 2]
         )
@@ -111,9 +108,8 @@ def _to_gro(
 # デコレータは不要：safe_importが自動的に適用する
 
 
-def dump(
+def dumps(
     genice: GenIce3,
-    file: TextIOWrapper = sys.stdout,
     guest: dict = {},
     spot_guest: dict = {},
     water_model: str = "3site",
@@ -139,11 +135,14 @@ def dump(
     guests = genice.guest_molecules(guests=guest_info, spot_guests=spot_guest_info)
     ions = genice.substitutional_ions()
 
-    output = _to_gro(
+    return _to_gro(
         cellmat=genice.cell,
         waters=waters,
         guests=guests,
         ions=ions,
         command_line=command_line,
     )
-    file.write(output)
+
+
+def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
+    file.write(dumps(genice, **options))

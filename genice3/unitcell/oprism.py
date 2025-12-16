@@ -14,7 +14,7 @@ Options:
 
 
 import genice3.unitcell
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 from logging import getLogger
 from math import sin, pi, cos
 import networkx as nx

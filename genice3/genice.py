@@ -6,9 +6,9 @@ from genice3.util import (
     replicate_positions,
     grandcell_wrap,
     assume_tetrahedral_vectors,
-    cellshape,
     CageSpecs,
 )
+from cif2ice import cellshape, cellvectors
 import genice_core
 import networkx as nx
 import numpy as np

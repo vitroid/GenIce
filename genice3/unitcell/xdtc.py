@@ -11,7 +11,7 @@ desc = {'ref': {'xdtc': 'Matsumoto 2021'}, 'usage': 'No options available.', 'br
 
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):

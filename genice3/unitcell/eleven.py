@@ -10,7 +10,7 @@ Usage:
 
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 from logging import getLogger
 import networkx as nx
 

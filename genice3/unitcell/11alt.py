@@ -7,7 +7,8 @@ uとdを切りかえるために、間に自動的に遷移層が挿入される
 """
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors, density_in_g_cm3
+from cif2ice import cellvectors
+from genice3.util import density_in_g_cm3
 from logging import getLogger
 import networkx as nx
 

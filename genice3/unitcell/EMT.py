@@ -1,4 +1,4 @@
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 import genice3.unitcell
 
 desc = {

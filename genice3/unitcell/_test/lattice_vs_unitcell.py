@@ -62,7 +62,7 @@ basicConfig(level=INFO)
 logger = getLogger()
 for ice in sys.argv[1:]:
 
-    if ice in ("iceMd", "iceT"):
+    if ice in ("iceMd", "iceT", "CIF"):
         continue
     if ice == "xFAU":
         options = [dict(rep=4), dict(rep=8)]
