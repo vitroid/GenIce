@@ -5,11 +5,16 @@ Data Source
 [ice R] Mochizuki, K., Himoto, K. & Matsumoto, M. Diversity of transition pathways in the course of crystallization into ice VII. Phys. Chem. Chem. Phys. 16, 16419–16425 (2014).
 """
 
-desc = {'ref': {'Methane A': 'Maynard-Casely 2010', 'R': 'Mochizuki 2014'}, 'usage': 'No options available.', 'brief': 'Hypothetical ice R.', 'test': ({'options': '--depol=optimal'},)}
+desc = {
+    "ref": {"Methane A": "Maynard-Casely 2010", "R": "Mochizuki 2014"},
+    "usage": "No options available.",
+    "brief": "Hypothetical ice R.",
+    "test": ({"options": "--depol=optimal"},),
+}
 
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors
+from cif2ice import cellvectors
 
 
 class UnitCell(genice3.unitcell.UnitCell):
@@ -53,7 +58,14 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         # density = 1.5
 
-        cell = cellvectors(a=7.547382417065826, b=7.547382417065826, c=7.547382417065826, A=89.31999999999998, B=89.31999999999998, C=89.31999999999998)
+        cell = cellvectors(
+            a=7.547382417065826,
+            b=7.547382417065826,
+            c=7.547382417065826,
+            A=89.31999999999998,
+            B=89.31999999999998,
+            C=89.31999999999998,
+        )
 
         super().__init__(
             cell=cell,

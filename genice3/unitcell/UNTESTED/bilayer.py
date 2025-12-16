@@ -12,7 +12,8 @@ Options:
                sites.
 """
 
-from genice3.util import cellvectors, density_in_g_cm3
+from cif2ice import cellvectors
+from genice3.util import density_in_g_cm3
 import genice3.unitcell
 
 import networkx as nx

@@ -12,7 +12,8 @@ Options:
 
 from genice3.unitcell import ice1c as ic  # base topology
 import genice3.unitcell
-from genice3.util import cellvectors, shortest_distance
+from cif2ice import cellvectors
+from genice3.util import shortest_distance
 import re
 from logging import getLogger
 import numpy as np

@@ -3,7 +3,8 @@ from logging import getLogger
 
 import genice3.unitcell
 import numpy as np
-from genice3.util import cellvectors, operations, waters_and_pairs, density_in_g_cm3
+from genice3.util import operations, waters_and_pairs, density_in_g_cm3
+from cif2ice import cellvectors
 import networkx as nx
 
 desc = {
