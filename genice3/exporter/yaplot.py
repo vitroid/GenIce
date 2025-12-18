@@ -9,12 +9,11 @@ from io import TextIOWrapper
 import numpy as np
 import yaplotlib as yp
 
-import genice3.exporter
 from genice3.genice import GenIce3
 from genice3.exporter import (
-    _parse_guest_option,
-    spot_guest_processor,
-    water_model_processor,
+    parse_guest_option,
+    parse_spot_guest_option,
+    parse_water_model_option,
 )
 from genice3.util import serialize
 
@@ -65,11 +64,11 @@ def dump(genice: GenIce3, file: TextIOWrapper = sys.stdout, **options):
             s += yp.Line(O1 @ genice.cell, O2 @ genice.cell)
 
     # 設定可能なオプションはguestとspot_guest。
-    guest_info = _parse_guest_option(options.get("guest", {}))
-    spot_guest_info = spot_guest_processor(options.get("spot_guest", {}))
+    guest_info = parse_guest_option(options.get("guest", {}))
+    spot_guest_info = parse_spot_guest_option(options.get("spot_guest", {}))
     # waterとwater_modelの両方をサポート（後方互換性のため）
     water_model_name = options.get("water_model") or options.get("water", "4site")
-    water_model = water_model_processor(water_model_name)
+    water_model = parse_water_model_option(water_model_name)
     # water = FourSiteWater()  # dummy
 
     waters = genice.water_molecules(water_model=water_model)
