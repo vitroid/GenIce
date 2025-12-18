@@ -1,6 +1,43 @@
 [project]
 name="genice3"
-dynamic=["version"]
+version = "3.0.a1"
+description = "A Swiss army knife to generate hydrogen-disordered ice structures."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Masakazu Matsumoto", email = "vitroid@gmail.com"}
+]
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "networkx>=2.0.dev20160901144005",
+    "numpy>=2.0",
+    "pairlist>=0.6",
+    "cycless>=0.4.2",
+    "graphstat>=0.3.3",
+    "yaplotlib>=0.1.2",
+    "openpyscad>=0.5.0",
+    "genice-core>=1.1",
+    "pyyaml>=6.0",
+    "jinja2>=3.1.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "toml>=0.10.2",
+    "ipykernel>=6.27.1",
+    "py3dmol>=2.0.4",
+    "matplotlib>=3.8.2",
+    "genice2-svg>=2.2",
+    "plotly>=5.18.0",
+    "nbformat>=5.9.2",
+    "genice2-mdanalysis>=0.6.5",
+    "requests>=2.31.0",
+    "pytest>=8.1.1",
+    "genice2-cif>=2.2.1",
+]
+
+[project.scripts]
+genice3 = "genice3.cli.genice:main"
 
 [project.urls]
 "Homepage" = "https://github.com/vitroid/GenIce"
@@ -24,15 +61,14 @@ authors = [
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 readme = "README.md"
 license = "MIT"
-# a kind of src-layout; .genice2 is generated automatically.
+# genice3 package
 packages = [
-  { include = "genice2", from = ".genice2", to = "" }
+  { include = "genice3" }
 ]
 
 # poetry install to make them work
 [tool.poetry.scripts]
-genice2 = "genice2.cli.genice:main"
-analice2 = "genice2.cli.analice:main"
+genice3 = "genice3.cli.genice:main"
 
 [tool.poetry.dependencies]
 "networkx" = ">=2.0.dev20160901144005"
@@ -44,31 +80,30 @@ graphstat = ">=0.3.3"
 yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
 genice-core = ">=1.1"
-icecream = "^2.1.4"
 pyyaml = "^6.0"
 
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
 ipykernel = "^6.27.1"
-py3dmol = "^2.0.4"
 matplotlib = "^3.8.2"
-genice2-svg = "^2.2"
 plotly = "^5.18.0"
 nbformat = "^5.9.2"
-genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
-genice2-cif = "^2.2.1"
 
 
 
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
-# [tool.hatch.version]
-# path = "genice2/__init__.py"
-jinja2 = "^3.1.4"
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["genice3*"]
+exclude = ["tests*", "examples*", "docs*", "Utilities*", "*.tests*", "*.test*", "genice2*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
