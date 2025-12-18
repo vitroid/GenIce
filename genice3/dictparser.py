@@ -287,3 +287,4 @@ def parse_dict_options(
             result[key] = default_value
 
     return ParsedOptions(result, unprocessed)
+

@@ -235,3 +235,4 @@ options = parse_dict_options(data, type_map=type_map, defaults=defaults)
 
 - `get(name, default=None)`: 辞書のように値を取得
 - 属性として直接アクセス可能（例: `options.width`）
+

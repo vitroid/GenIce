@@ -138,3 +138,4 @@ if __name__ == "__main__":
 
     print("\n=== 方法3: click（参考） ===")
     example_with_click()
+
