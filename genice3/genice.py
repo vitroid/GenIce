@@ -1,4 +1,4 @@
-# Another plan of reactive GenIce3.
+# Another plan of reactive GenIce3 (リアクティブプロパティによる実装).
 
 from genice3 import ConfigurationError
 from genice3.molecule import Molecule
@@ -19,7 +19,7 @@ from enum import Enum
 import inspect
 import json
 
-from genice3.makefileengine import MakefileEngine
+from genice3.dependencyengine import DependencyEngine
 from genice3.unitcell import UnitCell
 
 
@@ -242,7 +242,7 @@ def _replicate_fixed_edges(
 
 
 # ============================================================================
-# MakefileEngineタスク関数定義: 依存関係は引数名から自動推論される
+# DependencyEngineタスク関数定義: 依存関係は引数名から自動推論される
 # ============================================================================
 
 _genice3_logger = getLogger("GenIce3")
@@ -254,7 +254,18 @@ def cell(unitcell: UnitCell, replication_matrix: np.ndarray) -> np.ndarray:
 
 
 def replica_vectors(replication_matrix: np.ndarray) -> np.ndarray:
-    """レプリカベクトルの計算"""
+    """レプリカベクトルを計算する。
+
+    拡大単位胞を構成するために必要な、元の単位胞のグリッド位置を表す
+    整数ベクトルのリストを生成します。各ベクトルは、拡大単位胞内での
+    単位胞の相対位置を表します。
+
+    Args:
+        replication_matrix: 単位胞を複製するための3x3整数行列
+
+    Returns:
+        np.ndarray: レプリカベクトルの配列（Nx3配列、Nは拡大単位胞内の単位胞数）
+    """
     i, j, k = np.array(replication_matrix)
     corners = np.array(
         [a * i + b * j + c * k for a in (0, 1) for b in (0, 1) for c in (0, 1)]
@@ -284,7 +295,17 @@ def replica_vectors(replication_matrix: np.ndarray) -> np.ndarray:
 
 
 def replica_vector_labels(replica_vectors: np.ndarray) -> Dict[Tuple[int, ...], int]:
-    """レプリカベクトルラベルの生成"""
+    """レプリカベクトルラベルの辞書を生成する。
+
+    各レプリカベクトル（整数タプル）を一意のインデックスにマッピングします。
+    このマッピングは、拡大単位胞内での単位胞の位置を効率的に管理するために使用されます。
+
+    Args:
+        replica_vectors: レプリカベクトルの配列
+
+    Returns:
+        Dict[Tuple[int, ...], int]: レプリカベクトル座標タプルからインデックスへのマッピング
+    """
     return {tuple(xyz): i for i, xyz in enumerate(replica_vectors)}
 
 
@@ -294,7 +315,21 @@ def graph(
     replica_vector_labels: Dict[Tuple[int, ...], int],
     replication_matrix: np.ndarray,
 ) -> nx.Graph:
-    """グラフの複製"""
+    """拡大単位胞に対応するグラフを生成する。
+
+    基本単位胞のグラフ（水分子間の水素結合ネットワーク）を、
+    拡大単位胞全体に複製して統合したグラフを生成します。
+    このグラフは、拡大単位胞内のすべての水分子間の接続関係を表します。
+
+    Args:
+        unitcell: 基本単位胞オブジェクト
+        replica_vectors: レプリカベクトルの配列
+        replica_vector_labels: レプリカベクトルラベルの辞書
+        replication_matrix: 単位胞を複製するための3x3整数行列
+
+    Returns:
+        nx.Graph: 拡大単位胞全体の水素結合ネットワークを表す無向グラフ
+    """
     g = _replicate_graph(
         unitcell.graph,
         unitcell.waters,
@@ -310,14 +345,38 @@ def lattice_sites(
     replica_vectors: np.ndarray,
     replication_matrix: np.ndarray,
 ) -> np.ndarray:
-    """格子サイト位置の複製"""
+    """格子サイト位置を拡大単位胞全体に複製する。
+
+    基本単位胞内の水分子の座標を、拡大単位胞全体に複製します。
+    各水分子の位置は、単位胞の周期境界条件に従って配置されます。
+
+    Args:
+        unitcell: 基本単位胞オブジェクト
+        replica_vectors: レプリカベクトルの配列
+        replication_matrix: 単位胞を複製するための3x3整数行列
+
+    Returns:
+        np.ndarray: 拡大単位胞内のすべての水分子の座標（Nx3配列、Nは水分子数）
+    """
     return replicate_positions(unitcell.waters, replica_vectors, replication_matrix)
 
 
 def anions(
     unitcell: UnitCell, replica_vectors: np.ndarray, spot_anions: Dict[int, str]
 ) -> Dict[int, str]:
-    """アニオンの複製"""
+    """アニオンイオンの配置情報を拡大単位胞全体に複製する。
+
+    基本単位胞内で定義されたアニオンイオンと、spot_anionsで指定された
+    特定位置のアニオンを統合し、拡大単位胞全体でのアニオン配置を返します。
+
+    Args:
+        unitcell: 基本単位胞オブジェクト
+        replica_vectors: レプリカベクトルの配列
+        spot_anions: 特定の格子サイト位置に配置するアニオンの辞書（サイトインデックス -> イオン名）
+
+    Returns:
+        Dict[int, str]: 拡大単位胞全体でのアニオン配置（サイトインデックス -> イオン名）
+    """
     anion_dict: Dict[int, str] = {}
     Z = len(unitcell.waters)
     for label, ion_name in unitcell.anions.items():
@@ -332,7 +391,19 @@ def anions(
 def cations(
     unitcell: UnitCell, replica_vectors: np.ndarray, spot_cations: Dict[int, str]
 ) -> Dict[int, str]:
-    """カチオンの複製"""
+    """カチオンイオンの配置情報を拡大単位胞全体に複製する。
+
+    基本単位胞内で定義されたカチオンイオンと、spot_cationsで指定された
+    特定位置のカチオンを統合し、拡大単位胞全体でのカチオン配置を返します。
+
+    Args:
+        unitcell: 基本単位胞オブジェクト
+        replica_vectors: レプリカベクトルの配列
+        spot_cations: 特定の格子サイト位置に配置するカチオンの辞書（サイトインデックス -> イオン名）
+
+    Returns:
+        Dict[int, str]: 拡大単位胞全体でのカチオン配置（サイトインデックス -> イオン名）
+    """
     cation_dict: Dict[int, str] = {}
     Z = len(unitcell.waters)
     for label, ion_name in unitcell.cations.items():
@@ -347,7 +418,19 @@ def cations(
 def site_occupants(
     anions: Dict[int, str], cations: Dict[int, str], lattice_sites: np.ndarray
 ) -> List[str]:
-    """サイト占有種のリスト"""
+    """各格子サイトの占有種（水分子またはイオン）のリストを生成する。
+
+    各格子サイトが水分子、アニオン、カチオンのいずれで占有されているかを
+    判定し、サイトインデックス順にリストとして返します。
+
+    Args:
+        anions: アニオン配置の辞書
+        cations: カチオン配置の辞書
+        lattice_sites: 格子サイト位置の配列
+
+    Returns:
+        List[str]: 各サイトの占有種のリスト（"water"またはイオン名）
+    """
     occupants = ["water"] * len(lattice_sites)
     for site, ion_name in anions.items():
         occupants[site] = ion_name
@@ -362,7 +445,22 @@ def fixedEdges(
     spot_anions: Dict[int, str],
     spot_cations: Dict[int, str],
 ) -> nx.DiGraph:
-    """固定エッジの複製"""
+    """固定エッジ（水素結合の方向が固定されたエッジ）を拡大単位胞全体に複製する。
+
+    基本単位胞で定義された固定エッジと、spot_anions/spot_cationsで指定された
+    イオン位置に基づく固定エッジを統合し、拡大単位胞全体での固定エッジを返します。
+    固定エッジは、水素結合の方向が既に決定されている（プロトンが固定されている）
+    エッジを表します。
+
+    Args:
+        graph: 拡大単位胞全体のグラフ
+        unitcell: 基本単位胞オブジェクト
+        spot_anions: 特定位置のアニオン配置
+        spot_cations: 特定位置のカチオン配置
+
+    Returns:
+        nx.DiGraph: 拡大単位胞全体での固定エッジを表す有向グラフ
+    """
     dg = _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
     for label in spot_anions:
         for nei in graph.neighbors(label):
@@ -389,7 +487,21 @@ def digraph(
     lattice_sites: np.ndarray,
     fixedEdges: nx.DiGraph,
 ) -> nx.DiGraph:
-    """有向グラフの生成"""
+    """水素結合ネットワークの有向グラフを生成する。
+
+    無向グラフ（水素結合ネットワーク）から、各水素結合の方向（プロトンの向き）
+    を決定して有向グラフを生成します。固定エッジで指定された方向は維持され、
+    それ以外のエッジは双極子最適化アルゴリズムにより方向が決定されます。
+
+    Args:
+        graph: 拡大単位胞全体の無向グラフ
+        depol_loop: 双極子最適化の反復回数
+        lattice_sites: 格子サイト位置の配列
+        fixedEdges: 固定エッジの有向グラフ
+
+    Returns:
+        nx.DiGraph: 水素結合の方向が決定された有向グラフ
+    """
     for edge in fixedEdges.edges():
         _genice3_logger.debug(f"+ {edge=}")
     dg = genice_core.ice_graph(
@@ -411,7 +523,22 @@ def orientations(
     anions: Dict[int, str],
     cations: Dict[int, str],
 ) -> np.ndarray:
-    """分子の配向行列の計算"""
+    """各水分子の配向行列を計算する。
+
+    有向グラフで決定された水素結合の方向に基づいて、各水分子の
+    配向（回転行列）を計算します。水分子のOHベクトルの方向から
+    分子全体の配向を決定します。
+
+    Args:
+        lattice_sites: 格子サイト位置の配列
+        digraph: 水素結合の方向が決定された有向グラフ
+        cell: 拡大単位胞のセル行列
+        anions: アニオン配置の辞書
+        cations: カチオン配置の辞書
+
+    Returns:
+        np.ndarray: 各水分子の配向行列（Nx3x3配列、Nは水分子数）
+    """
     return _assume_water_orientations(
         lattice_sites,
         digraph,
@@ -425,7 +552,20 @@ def cages(
     replica_vectors: np.ndarray,
     replication_matrix: np.ndarray,
 ) -> CageSpecs:
-    """ケージ位置とタイプの複製"""
+    """ケージ位置とタイプを拡大単位胞全体に複製する。
+
+    基本単位胞内で定義されたゲスト分子を配置するためのケージ（空隙）の
+    位置とタイプを、拡大単位胞全体に複製します。
+
+    Args:
+        unitcell: 基本単位胞オブジェクト
+        replica_vectors: レプリカベクトルの配列
+        replication_matrix: 単位胞を複製するための3x3整数行列
+
+    Returns:
+        CageSpecs: 拡大単位胞全体でのケージ位置とタイプの情報
+                   （unitcell.cagesがNoneの場合はNoneを返す）
+    """
     if unitcell.cages is None:
         return None
     # ケージが存在しない場合（空の配列）の処理
@@ -446,24 +586,93 @@ def cages(
 def cage_survey(
     cages: CageSpecs,
 ) -> str:
+    """ケージ情報をJSON形式の文字列として返す。
+
+    Args:
+        cages: ケージ位置とタイプの情報
+
+    Returns:
+        str: ケージ情報をJSON形式でシリアライズした文字列
+    """
     # JSONで返せばいい。ただ、graphなどは、もっと噛みくだいた形にしたいし、座標はnumpy arrayのままではJSONにならない。
     data = cages.to_json_capable_data()
     return json.dumps(data, indent=4)
 
 
 # ============================================================================
-# GenIce3クラス: MakefileEngineをラップ
+# GenIce3クラス: DependencyEngineをラップ
 # ============================================================================
 
 
 class GenIce3:
-    # __init__で与える基本的な情報以外を可能な限りreactiveにする。
-    # たとえば、digraphが必要になったら、それを生成するために必要な変数をどんどんさかのぼって計算していく。
-    # 依存関係を指示し、一旦計算したpropertyは変更がなければcacheして利用する。
-    # たとえばこんな感じかな。
-    # genice = GenIce(lattice="Ih", water="TIP4P")
-    # digraph = genice.digraph
-    # geniceの引数も省略可能とするが、不可欠であればエラーとする。
+    """GenIce3のメインクラス：リアクティブプロパティによる氷構造生成システム
+
+    GenIce3は、依存関係エンジン（DependencyEngine）を使用して、必要な時に
+    自動的に計算されるリアクティブプロパティを提供します。これにより、ユーザーは
+    必要なプロパティにアクセスするだけで、そのプロパティに依存するすべての
+    計算が自動的に実行されます。
+
+    リアクティブプロパティの仕組み:
+        - 各プロパティ（digraph, graph, lattice_sitesなど）は、アクセス時に
+          必要に応じて自動的に計算されます
+        - 依存関係は関数の引数名から自動的に推論されます
+        - 一度計算されたプロパティはキャッシュされ、依存する入力が変更されるまで
+          再利用されます
+        - 入力プロパティ（unitcell, replication_matrix, depol_loopなど）が
+          変更されると、それに依存するすべてのプロパティのキャッシュが自動的に
+          クリアされます
+
+    使用例:
+        >>> genice = GenIce3(unitcell=my_unitcell)
+        >>> digraph = genice.digraph  # 自動的に必要な計算が実行される
+        >>> orientations = genice.orientations  # digraphに依存するため、digraphが先に計算される
+
+    Attributes:
+        digraph (nx.DiGraph): 水素結合の方向が決定された有向グラフ。
+            無向グラフから双極子最適化アルゴリズムにより各水素結合の方向を決定した
+            有向グラフです。固定エッジで指定された方向は維持され、それ以外のエッジは
+            最適化により決定されます。このプロパティにアクセスすると、必要な依存関係
+            （graph, lattice_sites, fixedEdgesなど）が自動的に計算されます。
+
+        graph (nx.Graph): 水素結合ネットワークの無向グラフ。
+            拡大単位胞全体の水分子間の水素結合ネットワークを表す無向グラフです。
+            基本単位胞のグラフを拡大単位胞全体に複製して統合したものです。
+
+        lattice_sites (np.ndarray): 格子サイト位置の配列。
+            拡大単位胞内のすべての水分子の座標を表すNx3配列です（Nは水分子数）。
+            基本単位胞内の水分子の座標を、単位胞の周期境界条件に従って拡大単位胞全体に
+            複製したものです。
+
+        orientations (np.ndarray): 各水分子の配向行列。
+            各水分子の配向（回転行列）を表すNx3x3配列です（Nは水分子数）。
+            有向グラフで決定された水素結合の方向に基づいて、各水分子のOHベクトルの
+            方向から分子全体の配向を決定します。
+
+        unitcell (UnitCell): 基本単位胞オブジェクト。
+            氷構造の基本単位胞を表すオブジェクトです。格子構造、水分子の配置、
+            水素結合ネットワーク、固定エッジなどの情報を含みます。
+
+        replication_matrix (np.ndarray): 単位胞複製行列。
+            基本単位胞をどのように積み重ねて拡大単位胞を作成するかを指定する3x3整数行列です。
+            単位行列の場合は基本単位胞のみを使用します。
+
+        depol_loop (int): 双極子最適化の反復回数。
+            有向グラフを生成する際の双極子最適化アルゴリズムの反復回数です。
+            値が大きいほどより最適化された構造が得られますが、計算時間も増加します。
+
+        seed (int): 乱数シード。
+            乱数生成器のシード値です。digraphの生成などで使用される乱数の初期化に使用されます。
+            このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+            キャッシュが自動的にクリアされます。
+
+        spot_anions (Dict[int, str]): 特定の格子サイト位置に配置するアニオンイオンの辞書。
+            サイトインデックスからイオン名へのマッピングです。このプロパティを変更すると、
+            それに依存するすべてのリアクティブプロパティのキャッシュが自動的にクリアされます。
+
+        spot_cations (Dict[int, str]): 特定の格子サイト位置に配置するカチオンイオンの辞書。
+            サイトインデックスからイオン名へのマッピングです。このプロパティを変更すると、
+            それに依存するすべてのリアクティブプロパティのキャッシュが自動的にクリアされます。
+    """
 
     # Class名でlog表示したい。
     logger = getLogger("GenIce3")
@@ -478,6 +687,7 @@ class GenIce3:
         "unitcell",
         "replication_matrix",
         "depol_loop",
+        "seed",
         "spot_anions",
         "spot_cations",
     ]
@@ -491,11 +701,24 @@ class GenIce3:
         spot_cations: Dict[int, str] = {},
         **kwargs: Any,
     ) -> None:
-        # MakefileEngineインスタンスを作成
-        self.engine = MakefileEngine()
+        """GenIce3インスタンスを初期化する。
+
+        Args:
+            depol_loop: 双極子最適化の反復回数（デフォルト: 1000）
+            replication_matrix: 単位胞複製行列（デフォルト: 単位行列）
+            seed: 乱数シード（デフォルト: 1）
+            spot_anions: 特定位置のアニオン配置（デフォルト: {}）
+            spot_cations: 特定位置のカチオン配置（デフォルト: {}）
+            **kwargs: その他のリアクティブプロパティ（unitcellなど）
+
+        Raises:
+            ConfigurationError: 無効なキーワード引数が指定された場合
+        """
+        # DependencyEngineインスタンスを作成
+        self.engine = DependencyEngine()
 
         # Default値が必要なもの
-        np.random.seed(seed)
+        self.seed = seed  # reactive propertyとして設定（setterでnp.random.seed()も実行される）
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
         self.spot_anions = spot_anions
@@ -512,7 +735,7 @@ class GenIce3:
             raise ConfigurationError(f"Invalid keyword arguments: {kwargs}.")
 
     def _register_tasks(self):
-        """MakefileEngineにモジュールレベルのタスク関数を登録する"""
+        """DependencyEngineにモジュールレベルのタスク関数を登録する"""
         engine = self.engine
         # モジュールから関数を取得して登録
         import sys
@@ -542,12 +765,25 @@ class GenIce3:
     # spot_anions
     @property
     def spot_anions(self):
+        """特定の格子サイト位置に配置するアニオンイオンの辞書。
+
+        Returns:
+            Dict[int, str]: サイトインデックスからイオン名へのマッピング
+        """
         if not hasattr(self, "_spot_anions"):
             self._spot_anions = {}
         return self._spot_anions
 
     @spot_anions.setter
     def spot_anions(self, spot_anions):
+        """特定の格子サイト位置に配置するアニオンイオンを設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            spot_anions: サイトインデックスからイオン名へのマッピング
+        """
         self._spot_anions = spot_anions
         self.logger.debug(f"  {spot_anions=}")
         self.engine.cache.clear()
@@ -555,22 +791,73 @@ class GenIce3:
     # spot_cations
     @property
     def spot_cations(self):
+        """特定の格子サイト位置に配置するカチオンイオンの辞書。
+
+        Returns:
+            Dict[int, str]: サイトインデックスからイオン名へのマッピング
+        """
         if not hasattr(self, "_spot_cations"):
             self._spot_cations = {}
         return self._spot_cations
 
     @spot_cations.setter
     def spot_cations(self, spot_cations):
+        """特定の格子サイト位置に配置するカチオンイオンを設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            spot_cations: サイトインデックスからイオン名へのマッピング
+        """
         self._spot_cations = spot_cations
         self.logger.debug(f"  {spot_cations=}")
         self.engine.cache.clear()
 
     @property
+    def seed(self):
+        """乱数シード。
+
+        Returns:
+            int: 乱数シード値
+        """
+        return self._seed
+
+    @seed.setter
+    def seed(self, seed):
+        """乱数シードを設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            seed: 乱数シード値
+        """
+        self._seed = seed
+        np.random.seed(seed)
+        self.logger.debug(f"  {seed=}")
+        # キャッシュをクリア（seedに依存するすべてのタスクを再計算させる）
+        self.engine.cache.clear()
+
+    @property
     def depol_loop(self):
+        """双極子最適化の反復回数。
+
+        Returns:
+            int: 双極子最適化アルゴリズムの反復回数
+        """
         return self._depol_loop
 
     @depol_loop.setter
     def depol_loop(self, depol_loop):
+        """双極子最適化の反復回数を設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            depol_loop: 双極子最適化アルゴリズムの反復回数
+        """
         self._depol_loop = depol_loop
         self.logger.debug(f"  {depol_loop=}")
         # キャッシュをクリア（depol_loopに依存するすべてのタスクを再計算させる）
@@ -578,12 +865,28 @@ class GenIce3:
 
     @property
     def unitcell(self):
+        """基本単位胞オブジェクト。
+
+        Returns:
+            UnitCell: 基本単位胞オブジェクト
+
+        Raises:
+            ConfigurationError: 単位胞が設定されていない場合
+        """
         if not hasattr(self, "_unitcell") or self._unitcell is None:
             raise ConfigurationError("Unitcell is not set.")
         return self._unitcell
 
     @unitcell.setter
     def unitcell(self, unitcell):
+        """基本単位胞オブジェクトを設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            unitcell: 基本単位胞オブジェクト
+        """
         self._unitcell = unitcell
         self.logger.debug(f"  {unitcell=}")
         self.logger.debug(f"  {unitcell.waters=}")
@@ -599,10 +902,26 @@ class GenIce3:
 
     @property
     def replication_matrix(self):
+        """単位胞を複製するための3x3整数行列。
+
+        この行列により、基本単位胞をどのように積み重ねて拡大単位胞を
+        作成するかを指定します。
+
+        Returns:
+            np.ndarray: 3x3整数行列
+        """
         return self._replication_matrix
 
     @replication_matrix.setter
     def replication_matrix(self, replication_matrix):
+        """単位胞複製行列を設定する。
+
+        このプロパティを変更すると、それに依存するすべてのリアクティブプロパティの
+        キャッシュが自動的にクリアされます。
+
+        Args:
+            replication_matrix: 3x3整数行列
+        """
         self._replication_matrix = replication_matrix
         i, j, k = np.array(replication_matrix)
         self.logger.debug(f"    {i=}")
@@ -622,11 +941,27 @@ class GenIce3:
         }
 
     def __getattr__(self, name: str):
+        """リアクティブプロパティへのアクセスを自動解決する。
+
+        このメソッドにより、DependencyEngineに登録されたタスク関数が
+        プロパティとしてアクセス可能になります。プロパティにアクセスすると、
+        依存関係が自動的に解決され、必要な計算が実行されます。
+
+        例:
+            >>> genice = GenIce3(unitcell=my_unitcell)
+            >>> digraph = genice.digraph  # この時点でdigraphとその依存関係が計算される
+
+        Args:
+            name: アクセスするプロパティ名（タスク関数名）
+
+        Returns:
+            計算されたプロパティの値
+
+        Raises:
+            AttributeError: 指定された名前のプロパティが存在しない場合
+            ConfigurationError: 必要な入力が設定されていない場合
         """
-        登録されているタスクに対してプロパティアクセスを自動解決する。
-        これにより、タスク関数を定義するだけでプロパティとしてアクセス可能になる。
-        """
-        # MakefileEngineに登録されているタスクかチェック
+        # DependencyEngineに登録されているタスクかチェック
         if name in self.engine.registry:
             return self.engine.resolve(name, self._get_inputs())
 
@@ -775,7 +1110,7 @@ class GenIce3:
 
     def list_all_reactive_properties(self):
         """
-        すべてのreactive property（MakefileEngineに登録されたタスク）を列挙する。
+        すべてのリアクティブプロパティ（DependencyEngineに登録されたタスク）を列挙する。
 
         Returns:
             dict: property名をキー、タスク関数を値とする辞書
@@ -784,7 +1119,7 @@ class GenIce3:
 
     def list_public_reactive_properties(self):
         """
-        ユーザー向けAPIとして公開されているreactive propertyのみを列挙する。
+        ユーザー向けAPIとして公開されているリアクティブプロパティのみを列挙する。
 
         Returns:
             dict: property名をキー、タスク関数を値とする辞書
@@ -797,7 +1132,7 @@ class GenIce3:
 
     @classmethod
     def list_settable_reactive_properties(cls):
-        """setterを持つreactiveな変数を列挙する"""
+        """setterを持つリアクティブな変数を列挙する"""
         return {
             name: prop
             for name, prop in inspect.getmembers(
