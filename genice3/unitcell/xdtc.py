@@ -142,7 +142,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=waters,
             coord=coord,
             bondlen=bondlen,
             # density=density,

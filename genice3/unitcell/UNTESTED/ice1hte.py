@@ -84,7 +84,7 @@ class UnitCell(genice3.unitcell.UnitCell):
         coord = "relative"
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=waters,
             density=density,
             coord=coord,
             bondlen=0.3,

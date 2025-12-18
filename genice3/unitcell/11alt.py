@@ -168,7 +168,7 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=waters,
             density=density,
             coord=coord,
             graph=nx.Graph(edges),

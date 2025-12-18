@@ -52,12 +52,12 @@ class Lattice(genice2.lattices.Lattice):
         # helper routines to make from CIF-like data
         atomd = CIF.atomdic(atoms)
         sops = CIF.symmetry_operators(symops)
-        self.waters, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
+        self.lattice_sites, self.fixed = CIF.waters_and_pairs(self.cell, atomd, sops)
 
         # set self.pairs in this way for hydrogen-ordered ices.
         self.pairs = self.fixed
 
-        self.density = 18 * len(self.waters) / 6.022e23 / \
+        self.density = 18 * len(self.lattice_sites) / 6.022e23 / \
             (np.linalg.det(self.cell) * 1e-21)
 
         self.coord = "relative"

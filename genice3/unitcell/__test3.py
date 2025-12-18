@@ -27,10 +27,10 @@ class Lattice(genice2.lattices.Lattice):
                                 b=12.747893943706936,
                                 c=12.747893943706936)
         cagepos, cagetype = parse_cages(self.cages)
-        self.waters = [w for w in FrankKasper.toWater(cagepos, self.cell)]
+        self.lattice_sites = [w for w in FrankKasper.toWater(cagepos, self.cell)]
         self.coord = "relative"
         self.density = FrankKasper.estimate_density(
-            self.waters, self.cell, 2.76)
+            self.lattice_sites, self.cell, 2.76)
         self.bondlen = 2.76 * 1.2
 
 
@@ -61,5 +61,5 @@ class UnitCell(genice3.unitcell.UnitCell):
             f"{self.__class__.__name__} is not yet implemented. "
             "This unitcell requires manual implementation. "
             "Please contact the maintainer or implement it manually. "
-            f"Reason: watersが定義されていないため"
+            f"Reason: lattice_sitesが定義されていないため"
         )

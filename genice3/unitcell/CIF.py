@@ -40,7 +40,7 @@ class UnitCell(genice3.unitcell.UnitCell):
             # 水素位置は指定されていないので、genice3にまかせる。
             super().__init__(
                 cell=cell,  # nm
-                waters=oatoms,
+                lattice_sites=oatoms,
                 coord="relative",
             )
         else:
@@ -50,7 +50,7 @@ class UnitCell(genice3.unitcell.UnitCell):
             )
             super().__init__(
                 cell=cell,
-                waters=waters,
+                lattice_sites=waters,
                 graph=nx.Graph(oo_pairs),
                 fixed=nx.DiGraph(pairs),
                 coord="relative",

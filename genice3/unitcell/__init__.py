@@ -33,7 +33,7 @@ class UnitCell:
     def __init__(
         self,
         cell: np.ndarray,
-        waters: np.ndarray,
+        lattice_sites: np.ndarray,
         bondlen: float = None,  # graphが与えられていればbondlenは不要
         coord: str = "relative",
         density: float = None,
@@ -55,15 +55,15 @@ class UnitCell:
 
         # 格子点の位置をfractional coordinateにする。
         if coord == "absolute":
-            self.waters = waters @ celli
+            self.lattice_sites = lattice_sites @ celli
         else:
-            self.waters = waters
+            self.lattice_sites = lattice_sites
 
         self.logger.debug(f"  {shift=}")
-        self.waters += np.array(shift)
-        self.waters -= np.floor(self.waters)
+        self.lattice_sites += np.array(shift)
+        self.lattice_sites -= np.floor(self.lattice_sites)
 
-        nmol = len(waters)
+        nmol = len(lattice_sites)
         volume = np.linalg.det(self.cell)
         original_density = density_in_g_cm3(nmol, self.cell)
         self.logger.info(f"{original_density=}")
@@ -73,7 +73,7 @@ class UnitCell:
             raise ValueError("bondlen and graph cannot be specified at the same time.")
 
         if bondlen is None:
-            short = shortest_distance(self.waters, self.cell)
+            short = shortest_distance(self.lattice_sites, self.cell)
             bondlen = 1.1 * short
 
             # densityが指定されていない場合は、ここで推定するが、採用はしない。(cellが正しいと信じる)
@@ -88,7 +88,7 @@ class UnitCell:
                 [
                     (i, j)
                     for i, j in pl.pairs_iter(
-                        self.waters, bondlen, self.cell, distance=False
+                        self.lattice_sites, bondlen, self.cell, distance=False
                     )
                 ]
             )
@@ -112,11 +112,11 @@ class UnitCell:
         self._cages = None  # 遅延評価用
 
         # anion, cationは単位胞内でのイオンの位置を示すので、番号が単位胞の水分子数未満でなければならない。
-        if any(label >= len(self.waters) for label in anion):
+        if any(label >= len(self.lattice_sites) for label in anion):
             raise ValueError(
                 "Anion labels must be less than the number of water molecules."
             )
-        if any(label >= len(self.waters) for label in cation):
+        if any(label >= len(self.lattice_sites) for label in cation):
             raise ValueError(
                 "Cation labels must be less than the number of water molecules."
             )
@@ -147,9 +147,9 @@ class UnitCell:
         """
         if self._cages is None:
             # ケージの調査が必要になったときに実行
-            # watersは既にshift済みなので、ケージ位置も既にshift済みの座標系で計算される
+            # lattice_sitesは既にshift済みなので、ケージ位置も既にshift済みの座標系で計算される
             self.logger.info("Assessing cages...")
-            self._cages = assess_cages(self.graph, self.waters)
+            self._cages = assess_cages(self.graph, self.lattice_sites)
 
             # ケージ情報をログ出力
             if self._cages is not None:

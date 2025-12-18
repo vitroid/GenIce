@@ -74,7 +74,7 @@ D15 0.8472(3) 0.3248(3) 0.4010(6) 2.03(1) 1.0000
         coord = "relative"
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=waters,
             coord=coord,
             density=density,
             graph=nx.Graph(pairs),

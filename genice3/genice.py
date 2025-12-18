@@ -332,7 +332,7 @@ def graph(
     """
     g = _replicate_graph(
         unitcell.graph,
-        unitcell.waters,
+        unitcell.lattice_sites,
         replica_vectors,
         replica_vector_labels,
         replication_matrix,
@@ -358,7 +358,7 @@ def lattice_sites(
     Returns:
         np.ndarray: 拡大単位胞内のすべての水分子の座標（Nx3配列、Nは水分子数）
     """
-    return replicate_positions(unitcell.waters, replica_vectors, replication_matrix)
+    return replicate_positions(unitcell.lattice_sites, replica_vectors, replication_matrix)
 
 
 def anions(
@@ -378,7 +378,7 @@ def anions(
         Dict[int, str]: 拡大単位胞全体でのアニオン配置（サイトインデックス -> イオン名）
     """
     anion_dict: Dict[int, str] = {}
-    Z = len(unitcell.waters)
+    Z = len(unitcell.lattice_sites)
     for label, ion_name in unitcell.anions.items():
         for i in range(len(replica_vectors)):
             site = i * Z + label
@@ -405,7 +405,7 @@ def cations(
         Dict[int, str]: 拡大単位胞全体でのカチオン配置（サイトインデックス -> イオン名）
     """
     cation_dict: Dict[int, str] = {}
-    Z = len(unitcell.waters)
+    Z = len(unitcell.lattice_sites)
     for label, ion_name in unitcell.cations.items():
         for i in range(len(replica_vectors)):
             site = i * Z + label
@@ -461,7 +461,7 @@ def fixedEdges(
     Returns:
         nx.DiGraph: 拡大単位胞全体での固定エッジを表す有向グラフ
     """
-    dg = _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.waters))
+    dg = _replicate_fixed_edges(graph, unitcell.fixed, len(unitcell.lattice_sites))
     for label in spot_anions:
         for nei in graph.neighbors(label):
             if dg.has_edge(label, nei):
@@ -889,7 +889,7 @@ class GenIce3:
         """
         self._unitcell = unitcell
         self.logger.debug(f"  {unitcell=}")
-        self.logger.debug(f"  {unitcell.waters=}")
+        self.logger.debug(f"  {unitcell.lattice_sites=}")
         self.logger.debug(f"  {unitcell.graph=}")
         self.logger.debug(f"  {unitcell.fixed=}")
 

@@ -117,7 +117,7 @@ class UnitCell(genice3.unitcell.UnitCell):
         density = 0.5327914455045754
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=waters,
             coord=coord,
             bondlen=bondlen,
             density=density,

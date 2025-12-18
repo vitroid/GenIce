@@ -20,17 +20,18 @@ import numpy as np
 from collections import defaultdict
 from math import acos, pi, sin, cos
 import networkx as nx
+import pairlist as pl
 
 desc = {
     "ref": {"xFAU": "Matsui 2017"},
     "usage": __doc__,
     "brief": "Aeroice xFAU.",
-    "test": (
-        {"args": "0"},
-        {"args": "1"},
-        {"args": "2"},
-        {"args": "4"},
-        {"args": "8"},
+    "test": ( # genice3-style options 
+        {"rep": "0"},
+        {"rep": "1"},
+        {"rep": "2"},
+        {"rep": "4"},
+        {"rep": "8"},
     ),
 }
 # FAU Decoration of a 4-network
@@ -76,27 +77,29 @@ def tune_angles(sixvecs, pivot):
 class decorate:
     def __init__(self, atoms, cell, graph, Ncyl):
         """
-        Ncyl is the number of cylinders to be inserted (>0)
+        Ncyl is the number of cylinders to be inserted (>=0)
         """
         # make netghbor list
-        self.graph = graph
-        self.atoms = atoms
-        self.cell = cell
+        self.diamond_graph = graph
+        self.diamond_vertices = atoms
+        self.diamond_cell = cell
         self.Ncyl = Ncyl
         self.vertices = []
         self.fixedEdges = []
         for edge in graph.edges():
-            self.one(edge)
+            self.hexagonal_piller(edge)
 
-    def one(self, edge):
+    def hexagonal_piller(self, edge):
         logger = getLogger()
         i, j = edge
-        dij = self.atoms[j] - self.atoms[i]
+        dij = self.diamond_vertices[j] - self.diamond_vertices[i]
         dij -= np.floor(dij + 0.5)
-        dij = dij @ self.cell
+        dij = dij @ self.diamond_cell
         scale = np.linalg.norm(dij)
+        # dijは六角軸方向の単位ベクター
         dij /= scale
-        rests = list(self.graph.neighbors(i))
+        # restsはiの隣接ノードのうちjを除いたもの
+        rests = list(self.diamond_graph.neighbors(i))
         rests.remove(j)
         logger.debug(f"Rests: {rests}")
         # print(f"Rests: {list(rests)}")
@@ -105,9 +108,9 @@ class decorate:
         # by adding an offset
         vecs = []
         for k in rests:
-            vec = self.atoms[k] - self.atoms[i]
+            vec = self.diamond_vertices[k] - self.diamond_vertices[i]
             vec -= np.floor(vec + 0.5)
-            vec = vec @ self.cell
+            vec = vec @ self.diamond_cell
             # orthogonalize
             shadow = dij @ vec
             vec -= shadow * dij
@@ -132,16 +135,19 @@ class decorate:
         r = 1 / L  # edge len = radius of cyl
         rp = (3 / 2) ** 0.5 / L  # = radius of polyhed
         #
-        icell = np.linalg.inv(self.cell)
-        a = self.atoms[i] @ self.cell
+        icell = np.linalg.inv(self.diamond_cell)
+        a = self.diamond_vertices[i] @ self.diamond_cell
         s = ""
         for j in range(0, self.Ncyl + 1):
             vec0 = dij * (rp + j * r) * scale + a
             for vec in sixvecs:
                 rpos = vec0 + vec * r * scale
                 pos = rpos @ icell
+                # 水分子の位置。
                 self.vertices.append(pos)
+
             first = len(self.vertices) - 6
+            # 六角の結合を追加する。
             if j % 2 == 0:
                 for k in range(5):
                     self.fixedEdges.append((first + k, first + k + 1))
@@ -150,6 +156,7 @@ class decorate:
                 for k in range(5):
                     self.fixedEdges.append((first + k + 1, first + k))
                 self.fixedEdges.append((first, first + 5))
+            # 縦方向の結合を追加する交互に。
             if j > 0:
                 for k in range(6):
                     if k % 2 == 0:
@@ -168,17 +175,14 @@ class UnitCell(genice3.unitcell.UnitCell):
 
     def __init__(self, **kwargs):
         logger = getLogger()
-        assert (
-            False
-        ), "L欠陥が生じている。構造に誤りがある。genice2では正しい構造を生成しているように見えるので、移植の失敗と思われる。"
         ice1c = ic.UnitCell()
         cell1c = ice1c.cell
-        waters1c = ice1c.waters
+        waters1c = ice1c.lattice_sites
         graph1c = ice1c.graph
         #
         # 0..3を黒、4..7を白とする。もともと二部グラフになっているようだ。
         #
-        Ncyl = -1
+        Ncyl = None
         if len(kwargs) == 1:
             if "rep" in kwargs:
                 Ncyl = int(kwargs["rep"])
@@ -187,24 +191,28 @@ class UnitCell(genice3.unitcell.UnitCell):
                     if re.match("^[0-9]+$", k) is not None and v is True:
                         Ncyl = int(k)
                         break
-        if Ncyl < 0:
+        if Ncyl is None:
             raise ValueError("rep=n is required")
         logger.info("Superlattice {0}xFAU".format(Ncyl))
         dec = decorate(waters1c, cell1c, graph1c, Ncyl)
 
         coord = "relative"
-        cell = cellvectors(a=dec.cell[0, 0], b=dec.cell[1, 1], c=dec.cell[2, 2])
-        waters = dec.vertices
+        cell = cellvectors(a=dec.diamond_cell[0, 0], b=dec.diamond_cell[1, 1], c=dec.diamond_cell[2, 2])
+        lattice_sites = np.array(dec.vertices)
+        lattice_sites -= np.floor(lattice_sites)
 
         # 自力で密度を推定する。
-        bondlen = shortest_distance(waters, cell)
+        bondlen = shortest_distance(lattice_sites, cell)
         # 結合の長さはどんなに短くても0.276 nm。
         cell *= 0.276 / bondlen
+        
+        graph = nx.Graph([(i, j) for i, j in pl.pairs_iter(lattice_sites, maxdist=0.3, cell=cell, distance=False)])
 
+        logger.info("after pairs_iter")
         super().__init__(
             cell=cell,
-            waters=waters,
+            lattice_sites=lattice_sites,
             coord=coord,
             fixed=nx.DiGraph(dec.fixedEdges),
-            graph=nx.Graph(dec.fixedEdges),
+            graph=graph,
         )
