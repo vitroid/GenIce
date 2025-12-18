@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from logging import getLogger
 
 import genice3.unitcell

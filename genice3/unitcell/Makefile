@@ -11,6 +11,6 @@ add:
 	for f in *.py; do grep genice2.lattices $$f || git add $$f; done
 
 %.py: lattices/%.py $(CMD)
-	python $(CMD) $< .
+	python3 $(CMD) $< .
 
 
