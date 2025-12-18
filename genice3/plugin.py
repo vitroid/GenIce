@@ -16,7 +16,6 @@ from typing import Any, Callable, Dict, Tuple
 
 # import pkg_resources as pr
 
-# from genice2.decorators import banner, timeit
 from genice3.optionparser import parse_options
 
 if sys.version_info < (3, 10):
@@ -125,7 +124,7 @@ def scan(category):
             pass
 
     logger.info(f"Extra {category}")
-    groupname = f"genice2_{category}"
+    groupname = f"genice3_{category}"
     mods = []
     # for ep in pr.iter_entry_points(group=groupname):
     for ep in entry_points(group=groupname):
@@ -294,7 +293,7 @@ def audit_name(name):
 def import_extra(category, name):
     logger = getLogger()
     logger.info(f"Extra {category} plugin: {name}")
-    groupname = f"genice2_{category}"
+    groupname = f"genice3_{category}"
     module = None
     # for ep in pr.iter_entry_points(group=groupname):
     for ep in entry_points(group=groupname):
