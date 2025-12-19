@@ -36,12 +36,22 @@ def draw_graph(g: nx.Graph, pos: dict, fixed: nx.DiGraph = None, dopant: list = 
         for i, j in g.edges()
         if fixed is None or not fixed.has_edge(i, j) or not fixed.has_edge(j, i)
     ]
+    normal_edge_vectors = []
+    for i, j in normal_edges:
+        d = pos[j] - pos[i]
+        d -= np.floor(d + 0.5)
+        normal_edge_vectors.append([pos[i], pos[i] + d])
+
     # 固定された辺のリスト
     fixed_edges = [edge for edge in fixed.edges()] if fixed is not None else []
+    fixed_edge_vectors = []
+    for i, j in fixed_edges:
+        d = pos[j] - pos[i]
+        d -= np.floor(d + 0.5)
+        fixed_edge_vectors.append([pos[i], pos[i] + d])
 
-    # 周期境界条件の場合は、ノードと辺を追加する必要がある。
-
-
+    normal_edge_vectors = np.array(normal_edge_vectors)
+    fixed_edge_vectors = np.array(fixed_edge_vectors)
 
     normal_nodes = [i for i in g.nodes() if i not in dopant]
     dopant_nodes = [i for i in dopant]
@@ -71,45 +81,58 @@ def draw_graph(g: nx.Graph, pos: dict, fixed: nx.DiGraph = None, dopant: list = 
                 textposition="top center",
             ),
             # 通常の辺の表示
-            *[
-                go.Scatter3d(
-                    x=[pos[i, 0], pos[j, 0]],
-                    y=[pos[i, 1], pos[j, 1]],
-                    z=[pos[i, 2], pos[j, 2]],
-                    mode="lines",
-                    line=dict(color="gray", width=2),
-                    hoverinfo="none",
-                )
-                for i, j in normal_edges
-            ],
+            *(
+                [
+                    go.Scatter3d(
+                        x=edge_vector[:, 0],
+                        y=edge_vector[:, 1],
+                        z=edge_vector[:, 2],
+                        mode="lines",
+                        line=dict(color="gray", width=2),
+                        hoverinfo="none",
+                    )
+                    for edge_vector in normal_edge_vectors
+                ]
+                if len(normal_edge_vectors) > 0
+                else []
+            ),
             # 固定された辺（矢印）の表示
-            *[
-                go.Scatter3d(
-                    x=[pos[i, 0], pos[j, 0]],
-                    y=[pos[i, 1], pos[j, 1]],
-                    z=[pos[i, 2], pos[j, 2]],
-                    mode="lines",
-                    line=dict(color="green", width=3),
-                    hoverinfo="none",
-                )
-                for i, j in fixed_edges
-            ],
+            *(
+                [
+                    go.Scatter3d(
+                        x=edge_vector[:, 0],
+                        y=edge_vector[:, 1],
+                        z=edge_vector[:, 2],
+                        mode="lines",
+                        line=dict(color="green", width=3),
+                        hoverinfo="none",
+                    )
+                    for edge_vector in fixed_edge_vectors
+                ]
+                if len(fixed_edge_vectors) > 0
+                else []
+            ),
             # 矢印の先端（コーン）の表示
-            *[
-                go.Cone(
-                    x=[(pos[j, 0] - pos[i, 0]) * 0.8 + pos[i, 0]],
-                    y=[(pos[j, 1] - pos[i, 1]) * 0.8 + pos[i, 1]],
-                    z=[(pos[j, 2] - pos[i, 2]) * 0.8 + pos[i, 2]],
-                    u=[(pos[j, 0] - pos[i, 0]) * 0.4],
-                    v=[(pos[j, 1] - pos[i, 1]) * 0.4],
-                    w=[(pos[j, 2] - pos[i, 2]) * 0.4],
-                    colorscale=[[0, "green"], [1, "green"]],
-                    showscale=False,
-                )
-                for i, j in fixed_edges
-            ],
+            *(
+                [
+                    go.Cone(
+                        x=fixed_edge_vectors[:, 1, 0],
+                        y=fixed_edge_vectors[:, 1, 1],
+                        z=fixed_edge_vectors[:, 1, 2],
+                        u=fixed_edge_vectors[:, 1, 0] - fixed_edge_vectors[:, 0, 0],
+                        v=fixed_edge_vectors[:, 1, 1] - fixed_edge_vectors[:, 0, 1],
+                        w=fixed_edge_vectors[:, 1, 2] - fixed_edge_vectors[:, 0, 2],
+                        colorscale=[[0, "green"], [1, "green"]],
+                        showscale=False,
+                        anchor="tip",
+                    )
+                ]
+                if len(fixed_edge_vectors) > 0
+                else []
+            ),
         ]
     )
+
 
 def figure(genice: GenIce3, **options):
     "Draw the topology in the cell with Plotly."
@@ -119,11 +142,16 @@ def figure(genice: GenIce3, **options):
     if graph_type == "full" or graph_type == "digraph":
         fixed_edges = genice.digraph
     elif graph_type == "fixed":
-        fixed_edges = genice.fixed
+        fixed_edges = genice.fixedEdges
     elif graph_type == "frame" or graph_type == "graph":
         fixed_edges = nx.DiGraph()
     else:
         raise ValueError(f"Invalid graph type: {graph_type}")
 
     # plotのしかたはgenice-coreにあったぞ。
-    return draw_graph(genice.graph, genice.lattice_sites, fixed_edges, genice.substitutional_ions().keys())
+    return draw_graph(
+        genice.graph,
+        genice.lattice_sites,
+        fixed_edges,
+        genice.substitutional_ions().keys(),
+    )
