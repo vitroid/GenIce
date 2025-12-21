@@ -1,6 +1,6 @@
 [project]
 name="genice3"
-version = "3.0.a1"
+version = "3.0a1"
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 readme = "README.md"
 license = {text = "MIT"}
@@ -16,7 +16,7 @@ dependencies = [
     "graphstat>=0.3.3",
     "yaplotlib>=0.1.2",
     "openpyscad>=0.5.0",
-    "genice-core>=1.1",
+    "genice-core>=1.1.4",
     "pyyaml>=6.0",
     "jinja2>=3.1.4",
     "cif2ice (>=0.4.1,<0.5.0)",
@@ -51,7 +51,7 @@ logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.
 
 [tool.poetry]
 name = "genice3"
-version = "3.0.a1" # master version variable
+version = "3.0a1" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
