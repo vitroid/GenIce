@@ -358,7 +358,9 @@ def lattice_sites(
     Returns:
         np.ndarray: 拡大単位胞内のすべての水分子の座標（Nx3配列、Nは水分子数）
     """
-    return replicate_positions(unitcell.lattice_sites, replica_vectors, replication_matrix)
+    return replicate_positions(
+        unitcell.lattice_sites, replica_vectors, replication_matrix
+    )
 
 
 def anions(
@@ -510,6 +512,7 @@ def digraph(
         isPeriodicBoundary=True,
         dipoleOptimizationCycles=depol_loop,
         fixedEdges=fixedEdges,
+        pairingAttempts=1000,
     )
     if not dg:
         raise ConfigurationError("Failed to generate a directed graph.")
@@ -718,7 +721,9 @@ class GenIce3:
         self.engine = DependencyEngine()
 
         # Default値が必要なもの
-        self.seed = seed  # reactive propertyとして設定（setterでnp.random.seed()も実行される）
+        self.seed = (
+            seed  # reactive propertyとして設定（setterでnp.random.seed()も実行される）
+        )
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
         self.spot_anions = spot_anions
@@ -922,8 +927,8 @@ class GenIce3:
         Args:
             replication_matrix: 3x3整数行列
         """
-        self._replication_matrix = replication_matrix
-        i, j, k = np.array(replication_matrix)
+        self._replication_matrix = np.array(replication_matrix).reshape(3, 3)
+        i, j, k = self._replication_matrix
         self.logger.debug(f"    {i=}")
         self.logger.debug(f"    {j=}")
         self.logger.debug(f"    {k=}")

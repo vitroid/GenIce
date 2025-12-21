@@ -4,8 +4,14 @@ import networkx as nx
 import pairlist as pl
 from genice3 import ConfigurationError
 from genice3.util import assess_cages, shortest_distance, density_in_g_cm3
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from genice3.molecule.one import Molecule
+from genice3.cli.pool_parser import (
+    parse_options_generic,
+    OPTION_TYPE_STRING,
+    OPTION_TYPE_TUPLE,
+    OPTION_TYPE_KEYVALUE,
+)
 
 
 def ion_processor(arg: dict) -> Dict[int, Molecule]:
@@ -29,6 +35,43 @@ class UnitCell:
     REQUIRED_CELL_PARAMS: set[str] = set()
 
     logger = getLogger()
+
+    @staticmethod
+    def parse_options(options: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """
+        unitcellプラグインの共通オプションを処理
+
+        この関数は、動的プラグインチェーン実行システムから呼び出されます。
+        すべてのunitcellプラグインが基底クラスのUnitCell.__init__に受け取る
+        オプション（shift, density, anion, cation）を処理します。
+
+        Args:
+            options: オプションの辞書（設定ファイルの値が初期値として含まれる可能性がある）
+                - shift: 単位胞のシフト（タプル形式、例: (0.1, 0.1, 0.1)）
+                - density: 密度（文字列形式、例: "0.8"）
+                - anion: アニオン置換（key=value形式、例: "15=Cl" または {"15": "Cl"}）
+                - cation: カチオン置換（key=value形式、例: "21=Na" または {"21": "Na"}）
+
+        Returns:
+            (処理したオプション, 処理しなかったオプション) のタプル
+            - 処理したオプション: unitcellプラグインが処理したオプション（shift, density, anion, cation）
+            - 処理しなかったオプション: 次のプラグイン（例: exporterプラグイン）に渡すオプション
+        """
+        # オプションの型定義
+        option_specs = {
+            "shift": OPTION_TYPE_TUPLE,
+            "density": OPTION_TYPE_STRING,
+            "anion": OPTION_TYPE_KEYVALUE,
+            "cation": OPTION_TYPE_KEYVALUE,
+        }
+
+        # 後処理関数（数値への変換など）
+        post_processors = {
+            "shift": lambda x: tuple(float(v) for v in x),
+            "density": lambda x: float(x) if isinstance(x, str) else x,
+        }
+
+        return parse_options_generic(options, option_specs, post_processors)
 
     def __init__(
         self,

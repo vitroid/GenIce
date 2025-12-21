@@ -1,7 +1,7 @@
 import sys
 from logging import getLogger
 from io import TextIOWrapper
-from typing import Dict, List
+from typing import Dict, List, Any, Tuple
 from collections import defaultdict
 
 import numpy as np
@@ -13,6 +13,11 @@ from genice3.exporter import (
     parse_guest_option,
     parse_spot_guest_option,
     parse_water_model_option,
+)
+from genice3.cli.pool_parser import (
+    parse_options_generic,
+    OPTION_TYPE_STRING,
+    OPTION_TYPE_KEYVALUE,
 )
 
 
@@ -106,6 +111,45 @@ def _to_gro(
 
 # 水分子モデルもguestもdumpでしか必要としないので、gromacsの属性ではないか?
 # デコレータは不要：safe_importが自動的に適用する
+
+
+def parse_options(options: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """
+    gromacsプラグインのオプションを処理
+
+    この関数は、動的プラグインチェーン実行システムから呼び出されます。
+    コマンドライン引数や設定ファイルから受け取ったオプションのうち、
+    gromacsプラグインが処理すべきオプション（guest, spot_guest, water_model）を
+    処理し、それ以外は次のプラグイン（例: moleculeプラグイン）に渡すために返します。
+
+    Args:
+        options: オプションの辞書（設定ファイルの値が初期値として含まれる可能性がある）
+            - guest: ゲスト分子の指定（例: {"A12": "me", "A14": "et"} または ["A12=me", "A14=et"]）
+            - spot_guest: 特定のケージに配置するゲスト分子（例: {"0": "foursite"} または "0=foursite"）
+            - water_model: 水分子モデル名（例: "3site", "foursite"）
+
+    Returns:
+        (処理したオプション, 処理しなかったオプション) のタプル
+        - 処理したオプション: gromacsプラグインが処理したオプション（guest, spot_guest, water_model）
+        - 処理しなかったオプション: 次のプラグインに渡すオプション（例: type）
+
+    注意:
+        - typeオプションはfoursiteなどのmoleculeプラグインのオプションであり、
+          この関数では処理せず、処理しなかったオプションとして返します。
+        - water_modelが"foursite"などのmoleculeプラグイン名の場合、
+          チェーン実行システムが自動的に該当するmoleculeプラグインを呼び出します。
+    """
+    # オプションの型定義
+    option_specs = {
+        "guest": OPTION_TYPE_KEYVALUE,  # "A12=me" または {"A12": "me"} 形式
+        "spot_guest": OPTION_TYPE_KEYVALUE,  # "0=foursite" または {"0": "foursite"} 形式
+        "water_model": OPTION_TYPE_STRING,  # "3site", "foursite" など
+    }
+
+    # parse_options_genericを使用してオプションを処理
+    # これにより、guestとspot_guestは辞書形式に変換され、
+    # water_modelは文字列として処理されます
+    return parse_options_generic(options, option_specs)
 
 
 def dumps(

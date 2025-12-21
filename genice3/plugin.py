@@ -7,84 +7,17 @@ import importlib
 import os
 import re
 import sys
-import inspect
 from collections import defaultdict
-from functools import wraps
 from logging import DEBUG, INFO, basicConfig, getLogger
 from textwrap import fill
 from typing import Any, Callable, Dict, Tuple
 
 # import pkg_resources as pr
 
-from genice3.optionparser import parse_options
-
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
 else:
     from importlib.metadata import entry_points
-
-
-def parse_plugin_options(func: Callable) -> Callable:
-    """
-    プラグイン関数のオプション引数を自動的にパースするデコレータ
-
-    このデコレータを使用すると、プラグイン関数に文字列のオプションを渡した場合、
-    自動的に辞書形式にパースされます。
-
-    使用方法:
-        @parse_plugin_options
-        def dump(genice: GenIce3, file: TextIOWrapper, options: str = ""):
-            # optionsは自動的に辞書に変換されている
-            guest = options.get("guest", {})
-            ...
-
-    または、キーワード引数として:
-        @parse_plugin_options
-        def dump(genice: GenIce3, file: TextIOWrapper, **options):
-            # optionsは自動的に辞書に変換されている（options引数が文字列の場合）
-            guest = options.get("guest", {})
-            ...
-
-    Args:
-        func: デコレートするプラグイン関数
-
-    Returns:
-        ラップされた関数（オプション引数が自動的にパースされる）
-
-    Examples:
-        >>> @parse_plugin_options
-        ... def dump(genice, file, options=""):
-        ...     return options
-        ...
-        >>> dump(None, None, options="guest.A12=me,shift=(0.1,0.1,0.1)")
-        {'guest': {'A12': 'me'}, 'shift': [0.1, 0.1, 0.1]}
-    """
-    sig = inspect.signature(func)
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        # genice3.optionparserを遅延インポート（循環インポートを避けるため）
-        from genice3.optionparser import parse_options
-
-        # 関数の引数をバインド
-        bound_args = sig.bind(*args, **kwargs)
-        bound_args.apply_defaults()
-
-        # 'options'という名前の引数が文字列の場合はパース
-        if "options" in bound_args.arguments:
-            options_value = bound_args.arguments["options"]
-            if isinstance(options_value, str):
-                # 文字列をパースして辞書に変換（空文字列の場合は空辞書）
-                parsed_options = parse_options(options_value) if options_value else {}
-                bound_args.arguments["options"] = parsed_options
-                # kwargsにも反映
-                if "options" in kwargs:
-                    kwargs["options"] = parsed_options
-
-        # 元の関数を呼び出し
-        return func(*bound_args.args, **bound_args.kwargs)
-
-    return wrapper
 
 
 def scan(category):
@@ -283,11 +216,17 @@ def plugin_descriptors(category, water=False, groups=("system", "extra", "local"
     return catalog
 
 
-def audit_name(name):
+def audit_name(name) -> str:
     """
-    Audit the mol name to avoid the access to external files
+    Audit the mol name to avoid the access to unexpected files
     """
-    return re.match("^[A-Za-z0-9-_]+$", name) is not None
+    match = re.match("^[A-Za-z0-9-_]+$", name)
+    if match is not None:
+        return name
+    match = re.match("^\[([A-Za-z0-9-_]+) .*\]$", name)
+    if match is not None:
+        return match.group(1)
+    raise ValueError(f"Dubious {category} name: {name}")
 
 
 def import_extra(category, name):
@@ -301,7 +240,8 @@ def import_extra(category, name):
         if ep.name == name:
             logger.debug(f"      Loading {name}...")
             module = ep.load()
-    assert module is not None, f"Nonexistent or failed to load the module: {name}"
+    if module is None:
+        raise ValueError(f"Nonexistent or failed to load the module: {name}")
     return module
 
 
@@ -328,10 +268,10 @@ def safe_import(category, name):
     #     usage = True
     #     name = name[:-1]
 
-    assert audit_name(name), f"Dubious {category} name: {name}"
+    module_name = audit_name(name)
 
     module = None
-    fullname = f"{category}.{name}"
+    fullname = f"{category}.{module_name}"
     logger.debug(f"Try to Load a local module: {fullname}")
     try:
         module = importlib.import_module(fullname)  # at ~/.genice
@@ -343,7 +283,7 @@ def safe_import(category, name):
         logger.error(f"Error importing module {fullname}: {str(e)}")
         raise
     if module is None:
-        fullname = f"genice3.{category}.{name}"
+        fullname = f"genice3.{category}.{module_name}"
         logger.debug(f"Try to load a system module: {fullname}")
         try:
             module = importlib.import_module(fullname)
@@ -356,7 +296,7 @@ def safe_import(category, name):
             raise
     if module is None:
         logger.debug(f"Try to load an extra module: {fullname}")
-        module = import_extra(category, name)
+        module = import_extra(category, module_name)
         logger.debug("Succeeded.")
 
     if usage:
@@ -366,40 +306,6 @@ def safe_import(category, name):
             sys.exit(0)
 
     return module
-
-
-def parse_plugin_options(spec_str: str) -> tuple[str, Dict[str, Any]]:
-    """
-    commandline文字列をパースして、プラグイン名とパース済みオプション辞書を返す
-
-    Args:
-        commandline: プラグイン名、または "plugin[options]" 形式の文字列
-
-    Returns:
-        (plugin_name, parsed_options)
-        - parsed_options はパース済みのオプション辞書
-
-    Examples:
-        >>> parse_exporter_spec("gromacs")
-        ('gromacs', {})
-
-        >>> parse_exporter_spec("gromacs[guest.A12=me,shift=(0.1,0.1,0.1)]")
-        ('gromacs', {'guest': {'A12': 'me'}, 'shift': [0.1, 0.1, 0.1]})
-    """
-    # 括弧形式からオプション文字列を抽出
-    if "[" in spec_str and "]" in spec_str:
-        left = spec_str.find("[")
-        right = spec_str.rfind("]")  # 最後の ] を取得
-        plugin_name = spec_str[:left]
-        option_string = spec_str[left + 1 : right]
-
-        # オプション文字列をパース
-
-        parsed_options = parse_options(option_string) if option_string else {}
-        return plugin_name, parsed_options
-    else:
-        # プラグイン名のみの場合
-        return spec_str, {}
 
 
 def UnitCell(name, **kwargs):

@@ -1,15 +1,20 @@
-import click
 from logging import getLogger, basicConfig, DEBUG, INFO
 from typing import Optional, Tuple, Dict, Any
 import numpy as np
 import sys
 from typing import Dict, List
-import json
 from importlib.metadata import version, PackageNotFoundError
 
-from genice3.plugin import parse_plugin_options, safe_import
+from genice3.plugin import safe_import
 from genice3.genice import GenIce3
-from genice3.config import load_config, parse_config, merge_config_with_args
+from genice3.cli.pool_parser import (
+    PoolBasedParser,
+    parse_options_generic,
+    OPTION_TYPE_FLAG,
+    OPTION_TYPE_STRING,
+    OPTION_TYPE_TUPLE,
+    OPTION_TYPE_KEYVALUE,
+)
 from genice3.unitcell import ion_processor
 
 HELP_VERSION = "Show the version and exit."
@@ -23,8 +28,80 @@ def get_version():
         return "3.*.*.*"
 
 
+def parse_base_options(
+    options: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    GenIce3のbaseレベルオプションを処理
+
+    この関数は、動的プラグインチェーン実行システムから呼び出されます。
+    GenIce3クラスが受け取るbaseレベルのオプション（seed, depol_loop, replication_matrix,
+    replication_factors, assess_cages, debug, spot_anion, spot_cation）を処理します。
+
+    Args:
+        options: オプションの辞書（設定ファイルの値が初期値として含まれる可能性がある）
+            - seed: 乱数シード（文字列形式、例: "123"）
+            - depol_loop: 双極子最適化の反復回数（文字列形式、例: "1000"）
+            - replication_factors: 複製ファクター（タプル形式、例: (2, 2, 2)）
+            - replication_matrix: 複製行列（タプル形式、例: (2, 0, 0, 0, 2, 0, 0, 0, 2)）
+            - assess_cages: ケージ調査を行うかどうか（文字列形式、例: "true"）
+            - debug: デバッグモード（文字列形式、例: "true"）
+            - spot_anion: アニオン配置（key=value形式、例: "15=Cl" または {"15": "Cl"}）
+            - spot_cation: カチオン配置（key=value形式、例: "21=Na" または {"21": "Na"}）
+
+    Returns:
+        統合されたオプション辞書（baseレベルで処理されたオプション（型変換済み）と
+        処理されなかったオプション（プラグインに渡す）の両方を含む）
+    """
+    option_specs = {
+        "seed": OPTION_TYPE_STRING,  # 文字列として取得し、後処理で整数に変換
+        "depol_loop": OPTION_TYPE_STRING,  # 文字列として取得し、後処理で整数に変換
+        "replication_factors": OPTION_TYPE_TUPLE,  # タプルとして取得し、後処理で整数タプルに変換
+        "replication_matrix": OPTION_TYPE_TUPLE,  # タプルとして処理（9要素のリスト）
+        "assess_cages": OPTION_TYPE_STRING,  # 文字列として取得し、後処理でブール値に変換（Falseの値を正しく処理するため）
+        "debug": OPTION_TYPE_FLAG,  # フラグ型（引数なし）
+        "spot_anion": OPTION_TYPE_KEYVALUE,  # key=value形式として処理
+        "spot_cation": OPTION_TYPE_KEYVALUE,  # key=value形式として処理
+    }
+
+    # 後処理関数で型変換
+    def to_int(x):
+        """文字列または数値を整数に変換"""
+        if isinstance(x, int):
+            return x
+        return int(x)
+
+    def to_int_tuple(x):
+        """タプルまたはリストの各要素を整数に変換"""
+        if isinstance(x, (tuple, list)):
+            return tuple(int(v) for v in x)
+        return (int(x),)
+
+    def to_bool(x):
+        """文字列または数値をブール値に変換"""
+        if isinstance(x, bool):
+            return x
+        if isinstance(x, str):
+            return x.lower() in ("true", "1", "yes", "on")
+        return bool(x)
+
+    post_processors = {
+        "seed": to_int,
+        "depol_loop": to_int,
+        "replication_factors": to_int_tuple,
+        "assess_cages": to_bool,
+        # debugはフラグ型なのでpost_processor不要
+    }
+
+    processed, unprocessed = parse_options_generic(
+        options, option_specs, post_processors
+    )
+    # processed（型変換済み）とunprocessed（プラグインで処理される可能性）の両方を統合
+    return {**processed, **unprocessed}
+
+
 # ============================================================================
-# Clickヘルプ文章の定義
+# ヘルプ文章の定義
 # ============================================================================
 
 HELP_DEBUG = "Enable debug mode"
@@ -114,215 +191,107 @@ HELP_CONFIG = (
 )
 
 
-# def _ion_parser(ion_options: List[str]) -> Dict[int, str]:
-#     """イオンオプションをパースする。常にDict[int, str]を返す。"""
-#     from genice3.molecule.one import Molecule
-
-#     result: Dict[int, Molecule] = {}
-#     for ion_option in ion_options:
-#         label, ion_name = ion_option.split("=")
-#         result[int(label)] = Molecule(name=ion_name, label=ion_name)
-#     return result
-
-
-def _merge_hierarchical_dict(
-    base: Dict[str, Any], override: Dict[str, Any]
-) -> Dict[str, Any]:
-    """
-    階層構造の辞書をマージする（overrideが優先）
-
-    Args:
-        base: ベースとなる辞書（設定ファイルから）
-        override: 上書きする辞書（コマンドライン引数から）
-
-    Returns:
-        マージされた辞書
-
-    Examples:
-        >>> base = {"guest": {"A12": "me"}, "shift": [0.1, 0.1, 0.1]}
-        >>> override = {"guest": {"A14": "et"}}
-        >>> _merge_hierarchical_dict(base, override)
-        {"guest": {"A12": "me", "A14": "et"}, "shift": [0.1, 0.1, 0.1]}
-    """
-    result = base.copy()
-    for key, value in override.items():
-        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
-            # 両方とも辞書の場合は再帰的にマージ
-            result[key] = _merge_hierarchical_dict(result[key], value)
-        else:
-            # それ以外の場合は上書き
-            result[key] = value
-    return result
+def print_help():
+    """ヘルプメッセージを表示"""
+    print("Usage: genice3 [OPTIONS] UNITCELL")
+    print()
+    print("Options:")
+    print(f"  -h, --help                Show this message and exit.")
+    print(f"  --version, -V             {HELP_VERSION}")
+    print(f"  -D, --debug               {HELP_DEBUG}")
+    print(f"  --depol_loop INTEGER      {HELP_DEPOL_LOOP}")
+    print(f"  --replication_matrix INT INT INT INT INT INT INT INT INT")
+    print(f"                           {HELP_REPLICATION_MATRIX}")
+    print(f"  --rep, --replication_factors INT INT INT")
+    print(f"                           {HELP_REPLICATION_FACTORS}")
+    print(f"  -s, --seed INTEGER        {HELP_SEED}")
+    print(
+        f"  -e, --exporter TEXT       Exporter plugin name (e.g., 'gromacs' or 'gromacs[options]')"
+    )
+    print(f"  -A, --assess_cages        {HELP_ASSESS_CAGES}")
+    print(f"  -a, --spot_anion TEXT     {HELP_SPOT_ANION}")
+    print(f"  -c, --spot_cation TEXT    {HELP_SPOT_CATION}")
+    print(f"  -C, --config PATH         {HELP_CONFIG}")
+    print()
+    print("Arguments:")
+    print("  UNITCELL                  Unitcell plugin name (required)")
 
 
-# プラグインのオプションと設定を統合する。
-def _plugin_settings(plugin_type: str, cmdline: str, config: dict, default=None):
-    # pluginオプションを統合
-    # configをcmdlineが上書きする
+def main() -> None:
+    """メイン関数"""
+    # --helpと--versionを先に処理
+    if "--help" in sys.argv or "-h" in sys.argv:
+        print_help()
+        sys.exit(0)
+    if "--version" in sys.argv or "-V" in sys.argv:
+        print(f"genice3 {get_version()}")
+        sys.exit(0)
+
+    # ロギングを初期化（デフォルトはINFOレベル）
+    basicConfig(level=INFO)
     logger = getLogger()
 
-    name = ""
-    options = None
+    # PoolBasedParserを使ってコマンドライン引数をパース
+    parser = PoolBasedParser()
+    try:
+        parser.parse_args(sys.argv[1:])
+    except Exception as e:
+        logger.error(f"パースエラー: {e}")
+        import traceback
 
-    if config and isinstance(config, dict) and "name" in config:
-        # 設定ファイルから取得
-        name = config["name"]
-        options = config
-        logger.debug(f"config: {name} {options}")
+        traceback.print_exc()
+        sys.exit(1)
 
-    if cmdline:
-        name, options = parse_plugin_options(cmdline)
-        logger.debug(f"cmdline: {name} {options}")
-    elif name == "":
-        if default:
-            name, options = parse_plugin_options(default)
-            logger.debug(f"default: {name} {options}")
-        else:
-            raise ValueError(f"Invalid type for {plugin_type}: {type(cmdline)}")
+    result = parser.get_result()
 
-    logger.debug(f"finally: {name} {options}")
-    return name, options
+    # バリデーション
+    is_valid, errors = parser.validate()
+    if not is_valid:
+        for error in errors:
+            logger.error(error)
+        sys.exit(1)
 
+    # 基底レベルのオプションを取得
+    base_options = result["base_options"]
+    # debugオプションが指定されていればloggerのlevelをDEBUGにする
+    if base_options.get("debug"):
+        logger.setLevel(DEBUG)
+        for handler in logger.handlers:
+            handler.setLevel(DEBUG)
 
-# clickを用い、-dオプションでデバッグレベルを指定できるようにする。
-@click.command()
-@click.help_option()
-@click.version_option(version=get_version(), prog_name="genice3", help=HELP_VERSION)
-@click.argument("unitcell", type=str, required=False)
-@click.option("--debug", "-D", is_flag=True, help=HELP_DEBUG)
-@click.option("--depol_loop", type=int, default=None, help=HELP_DEPOL_LOOP)
-@click.option(
-    "--replication_matrix",
-    type=click.Tuple([int, int, int, int, int, int, int, int, int]),
-    default=None,
-    help=HELP_REPLICATION_MATRIX,
-)
-@click.option(
-    "--replication_factors",
-    "--rep",
-    type=click.Tuple([int, int, int]),
-    default=None,
-    help=HELP_REPLICATION_FACTORS,
-)
-@click.option("--seed", "-s", type=int, default=None, help=HELP_SEED)
-@click.option(
-    "--exporter",
-    "-e",
-    default=None,
-    help="Exporter plugin name (e.g., 'gromacs' or 'gromacs[options]')",
-)
-# assess_cagesをGenIce3のオプションに戻す。
-@click.option(
-    "--assess_cages", "-A", is_flag=True, default=False, help=HELP_ASSESS_CAGES
-)
-@click.option("--spot_anion", "-a", multiple=True, default=None, help=HELP_SPOT_ANION)
-@click.option("--spot_cation", "-c", multiple=True, default=None, help=HELP_SPOT_CATION)
-@click.option(
-    "--config", "-C", type=click.Path(exists=True), default=None, help=HELP_CONFIG
-)
-def main(
-    unitcell: Optional[str],
-    debug: bool,
-    depol_loop: int,
-    replication_matrix: Optional[Tuple[int, int, int, int, int, int, int, int, int]],
-    replication_factors: Tuple[int, int, int],
-    seed: int,
-    exporter: str,
-    assess_cages: Optional[bool],
-    spot_anion: List[str],
-    spot_cation: List[str],
-    config: Optional[str],
-) -> None:
-    basicConfig(level=DEBUG if debug else INFO)
-    logger = getLogger()
+    seed = base_options.get("seed", 1)
+    depol_loop = base_options.get("depol_loop", 1000)
+    assess_cages = base_options.get("assess_cages", False)
+    spot_anion_dict = base_options.get("spot_anion", {}) or {}
+    spot_cation_dict = base_options.get("spot_cation", {}) or {}
 
-    # 設定ファイルを読み込む（存在する場合）
-    config_options = {}
-    if config:
-        try:
-            config_data = load_config(config)
-            logger.info(f"設定ファイルから読み込んだデータ: {config_data}")
-            config_options = parse_config(config_data)
-            logger.info(f"設定ファイルから読み込んだオプション: {config_options}")
-        except Exception as e:
-            logger.warning(f"設定ファイルの読み込みに失敗しました: {e}")
-            logger.warning("設定ファイルを無視して続行します。")
-
-    # コマンドライン引数を辞書に変換
-    args_dict = {
-        "seed": seed,
-        "depol_loop": depol_loop,
-        "replication_matrix": replication_matrix,
-        "replication_factors": replication_factors,
-        "assess_cages": assess_cages,
-        "debug": debug,
-        "spot_anion": dict([keyvalue.split("=") for keyvalue in spot_anion]),
-        "spot_cation": dict([keyvalue.split("=") for keyvalue in spot_cation]),
-        "exporter": exporter,
-        "unitcell": unitcell,
-    }
-
-    # 設定ファイルからunitcellとexporterセクションを直接取得（プラグインにそのまま渡す）
-    unitcell_config = config_options.get("unitcell")
-    exporter_config = config_options.get("exporter")
-
-    if spot_anion:
-        spot_anion = dict([keyvalue.split("=") for keyvalue in spot_anion])
+    # replication_matrixとreplication_factorsの処理
+    replication_matrix = base_options.get("replication_matrix")
+    replication_factors = base_options.get("replication_factors", (1, 1, 1))
+    if replication_matrix is None:
+        # replication_factorsがリストの場合はタプルに変換
+        if isinstance(replication_factors, list):
+            replication_factors = tuple(replication_factors)
+        replication_matrix = np.diag(replication_factors)
     else:
-        spot_anion = None
-    if spot_cation:
-        spot_cation = dict([keyvalue.split("=") for keyvalue in spot_cation])
-    else:
-        spot_cation = None
-
-    # 設定ファイルとコマンドライン引数を統合（コマンドライン引数が優先）
-    # unitcellとexporterは除外（プラグイン側で処理するため）
-    args_dict_without_plugins = {
-        "seed": seed,
-        "depol_loop": depol_loop,
-        "replication_matrix": replication_matrix,
-        "replication_factors": replication_factors,
-        "assess_cages": assess_cages,
-        "debug": debug,
-        "spot_anion": spot_anion,
-        "spot_cation": spot_cation,
-    }
-    merged_options = merge_config_with_args(config_options, args_dict_without_plugins)
-
-    # 統合されたオプションから値を取得
-    seed = merged_options.get("seed", 1)
-    depol_loop = merged_options.get("depol_loop", 1000)
-    assess_cages = merged_options.get("assess_cages", False)
-    debug = merged_options.get("debug", False)
-    spot_anion_dict = merged_options.get("spot_anion", {}) or {}
-    spot_cation_dict = merged_options.get("spot_cation", {}) or {}
+        replication_matrix = np.array(replication_matrix)
     logger.debug(
-        f"Raw settings for main(): {seed=} {depol_loop=} {assess_cages=} {debug=} {spot_anion_dict=} {spot_cation_dict=} {replication_matrix=} {replication_factors=}"
+        f"Settings: {seed=} {depol_loop=} {assess_cages=} {spot_anion_dict=} {spot_cation_dict=} {replication_matrix=}"
     )
 
     # indexを数字に変換する。
     spot_anion_dict = ion_processor(spot_anion_dict)
     spot_cation_dict = ion_processor(spot_cation_dict)
 
-    # replication_matrixとreplication_factorsの処理
-    replication_matrix = merged_options.get("replication_matrix")
-    replication_factors = merged_options.get("replication_factors", (1, 1, 1))
-    if replication_matrix is None:
-        replication_matrix = np.diag(replication_factors)
-    else:
-        replication_matrix = np.array(replication_matrix)
-    logger.debug(
-        f"Cooked settings for main(): {seed=} {depol_loop=} {assess_cages=} {debug=} {spot_anion_dict=} {spot_cation_dict=} {replication_matrix=}"
-    )
+    # unitcellプラグインの処理結果
+    unitcell_name = result["unitcell"]["name"]
+    unitcell_processed = result["unitcell"]["processed"]
 
-    exporter_name, exporter_options = _plugin_settings(
-        "exporter", exporter, exporter_config, default="gromacs"
-    )
-    unitcell_name, unitcell_options = _plugin_settings(
-        "unitcell", unitcell, unitcell_config
-    )
+    # exporterプラグインの処理結果
+    exporter_name = result["exporter"]["name"] or "gromacs"  # デフォルトはgromacs
+    exporter_processed = result["exporter"]["processed"]
 
-    logger.debug("Debug mode enabled")
+    # GenIce3インスタンスを作成
     genice = GenIce3(
         depol_loop=depol_loop,
         replication_matrix=replication_matrix,
@@ -330,9 +299,10 @@ def main(
         spot_anions=spot_anion_dict,
         spot_cations=spot_cation_dict,
     )
-    # genice.unitcell = Ice1h(shift=shift, assess_cages=assess_cages)
+
+    # unitcellプラグインを設定
     genice.unitcell = safe_import("unitcell", unitcell_name).UnitCell(
-        **unitcell_options
+        **unitcell_processed
     )
 
     # unitcellを設定したので、cage調査ができる。
@@ -343,8 +313,12 @@ def main(
 
     # コマンドライン全体を取得
     command_line = " ".join(sys.argv)
-    exporter_options["command_line"] = command_line
-    safe_import("exporter", exporter_name).dump(genice, sys.stdout, **exporter_options)
+    exporter_processed["command_line"] = command_line
+
+    # exporterプラグインを実行
+    safe_import("exporter", exporter_name).dump(
+        genice, sys.stdout, **exporter_processed
+    )
 
 
 if __name__ == "__main__":

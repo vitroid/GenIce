@@ -181,7 +181,8 @@ class UnitCell(genice3.unitcell.UnitCell):
 
         # bondlen = 3.0
 
-        density = 0.6637037332735554
+        # kwargsからdensityを取得（デフォルト値を使用）
+        density = kwargs.pop("density", 0.6637037332735554)
 
         cell = cellvectors(
             a=12.747893943706936, b=12.747893943706936, c=12.747893943706936
