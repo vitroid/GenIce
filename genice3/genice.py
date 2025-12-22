@@ -6,15 +6,15 @@ from genice3.util import (
     replicate_positions,
     grandcell_wrap,
     assume_tetrahedral_vectors,
-    CageSpecs,
 )
-from cif2ice import cellshape, cellvectors
+from genice3.cage import CageSpecs
+from cif2ice import cellshape
 import genice_core
 import networkx as nx
 import numpy as np
 from dataclasses import dataclass
-from logging import getLogger, DEBUG, INFO, WARNING, ERROR, CRITICAL, basicConfig
-from typing import Optional, Dict, Tuple, List, Any
+from logging import getLogger
+from typing import Dict, Tuple, List, Any
 from enum import Enum
 import inspect
 import json

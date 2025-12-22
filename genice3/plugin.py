@@ -10,7 +10,6 @@ import sys
 from collections import defaultdict
 from logging import DEBUG, INFO, basicConfig, getLogger
 from textwrap import fill
-from typing import Any, Callable, Dict, Tuple
 
 # import pkg_resources as pr
 
@@ -241,7 +240,7 @@ def import_extra(category, name):
             logger.debug(f"      Loading {name}...")
             module = ep.load()
     if module is None:
-        raise ValueError(f"Nonexistent or failed to load the module: {name}")
+        raise ValueError(f"Nonexistent or failed to load the {category} module: {name}")
     return module
 
 
