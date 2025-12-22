@@ -3,7 +3,8 @@ import numpy as np
 import networkx as nx
 import pairlist as pl
 from genice3 import ConfigurationError
-from genice3.util import assess_cages, shortest_distance, density_in_g_cm3
+from genice3.util import shortest_distance, density_in_g_cm3
+from genice3.cage import assess_cages
 from typing import Dict, Any, Tuple
 from genice3.molecule.one import Molecule
 from genice3.cli.pool_parser import (

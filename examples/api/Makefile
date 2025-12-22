@@ -1,7 +1,11 @@
-3.compare: 3flat.sh.out 3.py.out 3.yaml.out 3.sh.out
-	-diff 3.py.out 3.yaml.out
-	-diff 3.py.out 3flat.sh.out
-	-diff 3.py.out 3.sh.out
+all: 3.compare 4.compare
+%.compare: %flat.sh.out %.py.out %.yaml.out %.sh.out
+	-diff $*.py.out $*.yaml.out
+	-diff $*.py.out $*flat.sh.out
+	-diff $*.py.out $*.sh.out
+	-diff $*.py.log $*flat.sh.log
+	-diff $*.py.log $*.yaml.log
+	-diff $*.py.log $*.sh.log
 
 
 %.sh.out: %.sh Makefile

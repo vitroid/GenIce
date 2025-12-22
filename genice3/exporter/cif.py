@@ -6,16 +6,45 @@ Crude Cif file format
 from logging import getLogger
 from io import TextIOWrapper
 import sys
+from typing import Dict, List, Any, Tuple
 
 import numpy as np
 
-from genice3.util import cellshape
+from cif2ice import cellshape
 from genice3.genice import GenIce3
 from genice3.exporter import (
-    _parse_guest_option,
-    spot_guest_processor,
-    water_model_processor,
+    parse_guest_option,
+    parse_spot_guest_option,
+    parse_water_model_option,
 )
+from genice3.cli.pool_parser import (
+    parse_options_generic,
+)
+
+
+def parse_options(options: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """
+    exporter.cifプラグインのオプションを処理
+
+    この関数は、動的プラグインチェーン実行システムから呼び出されます。
+    cifにはオプションはありません。
+
+    Returns:
+        (処理したオプション, 処理しなかったオプション) のタプル
+        - 処理したオプション: gromacsプラグインが処理したオプション（osite, file, water_model）
+        - 処理しなかったオプション: 次のプラグインに渡すオプション
+
+    注意:
+        - water_modelが"foursite"などのmoleculeプラグイン名の場合、
+          チェーン実行システムが自動的に該当するmoleculeプラグインを呼び出します。
+    """
+    # オプションの型定義
+    option_specs = {}
+
+    # parse_options_genericを使用してオプションを処理
+    # これにより、guestとspot_guestは辞書形式に変換され、
+    # water_modelは文字列として処理されます
+    return parse_options_generic(options, option_specs)
 
 
 def _format_cell_shape(a, b, c, A, B, C):
@@ -49,6 +78,7 @@ def dump(
     spot_guest: dict = {},
     water_model: str = "3site",
     name: str = "",
+    command_line: str = "",
 ):
     "Output in CIF format."
     logger = getLogger()
