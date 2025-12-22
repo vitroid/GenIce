@@ -181,6 +181,23 @@ def parse_bracketed_plugin(arg: str) -> Tuple[str, Dict[str, Any]]:
     return plugin_name, options
 
 
+# 短縮形オプションから長い形式へのマッピング
+SHORT_OPTION_MAP: Dict[str, str] = {
+    "-D": "debug",
+    "-s": "seed",
+    "-A": "assess_cages",
+    "-a": "spot_anion",
+    "-c": "spot_cation",
+    "-C": "config",
+    "-e": "exporter",
+    "-h": "help",
+    "-V": "version",
+}
+
+# フラグ型のオプション（値を持たない）
+FLAG_OPTIONS: Set[str] = {"debug"}
+
+
 def parse_command_line_to_dict(args: List[str]) -> Tuple[Dict[str, Any], Set[str]]:
     """
     コマンドライン引数をパースしてフラットな辞書に変換
@@ -208,26 +225,36 @@ def parse_command_line_to_dict(args: List[str]) -> Tuple[Dict[str, Any], Set[str
 
         # unitcell名の位置引数を処理（最初の位置引数のみ）
         # bracket形式などはパースせず、そのまま辞書に入れる
-        if unitcell_arg is None and not arg.startswith("--"):
+        # - または -- で始まる場合は位置引数ではない
+        if unitcell_arg is None and not arg.startswith("-"):
             cmdline_dict["unitcell"] = arg
             unitcell_arg = arg
             i += 1
             continue
 
-        # --で始まるオプションを処理
+        # --で始まるオプション（長い形式）を処理
         if arg.startswith("--"):
             key = arg[2:]  # --を削除
             cmdline_specified_keys.add(key)
             i += 1
 
-            # 値を取得（次の引数が--で始まっていなければ値として扱う）
+            # 値を取得（次の引数が-で始まっていなければ値として扱う）
             values: List[Any] = []
-            while i < len(args) and not args[i].startswith("--"):
+            while i < len(args) and not args[i].startswith("-"):
                 values.append(args[i])
                 i += 1
 
             # 値が1つの場合はそのまま、複数の場合はタプル
-            value = values[0] if len(values) == 1 else tuple(values)
+            # フラグ型オプションの場合はTrue、それ以外で値がない場合はNone
+            if len(values) == 0:
+                if key in FLAG_OPTIONS:
+                    value = True  # フラグ型オプション
+                else:
+                    value = None  # 値が必要だが指定されていない
+            elif len(values) == 1:
+                value = values[0]
+            else:
+                value = tuple(values)
 
             # 同じオプションが複数回指定された場合はリストに変換
             if key in cmdline_dict:
@@ -237,6 +264,45 @@ def parse_command_line_to_dict(args: List[str]) -> Tuple[Dict[str, Any], Set[str
                 cmdline_dict[key].append(value)
             else:
                 cmdline_dict[key] = value
+        # -で始まるオプション（短縮形式）を処理
+        elif arg.startswith("-") and arg != "-":
+            # 短縮形オプションを長い形式に変換
+            short_arg = arg
+            if short_arg in SHORT_OPTION_MAP:
+                key = SHORT_OPTION_MAP[short_arg]
+                cmdline_specified_keys.add(key)
+                i += 1
+
+                # 値を取得（次の引数が-で始まっていなければ値として扱う）
+                # フラグ型のオプション（-D, -Aなど）は値なし
+                values: List[Any] = []
+                while i < len(args) and not args[i].startswith("-"):
+                    values.append(args[i])
+                    i += 1
+
+                # 値が1つの場合はそのまま、複数の場合はタプル
+                # フラグ型オプションの場合はTrue、それ以外で値がない場合はNone
+                if len(values) == 0:
+                    if key in FLAG_OPTIONS:
+                        value = True  # フラグ型オプション
+                    else:
+                        value = None  # 値が必要だが指定されていない
+                elif len(values) == 1:
+                    value = values[0]
+                else:
+                    value = tuple(values)
+
+                # 同じオプションが複数回指定された場合はリストに変換
+                if key in cmdline_dict:
+                    existing = cmdline_dict[key]
+                    if not isinstance(existing, list):
+                        cmdline_dict[key] = [existing]
+                    cmdline_dict[key].append(value)
+                else:
+                    cmdline_dict[key] = value
+            else:
+                # 認識されない短縮形オプションはスキップ
+                i += 1
         else:
             i += 1
 
@@ -516,7 +582,7 @@ def build_options_dict(
 
         options_dict[plugin_type] = plugin_config
 
-    logger.info(f"options_dict: {options_dict}")
+    logger.debug(f"options_dict: {options_dict}")
 
     return options_dict
 
@@ -545,11 +611,14 @@ def execute_plugin(
         - unprocessed: 処理されなかったオプション（次のプラグインに渡す）
         - executed: プラグインが実行されたかどうか
     """
+    logger = getLogger()
     if not plugin_name:
+        logger.debug(f"no plugin name {plugin_name}")
         return {}, current_options, False
 
     parse_func = load_plugin(category, plugin_name)
     if not parse_func:
+        logger.debug(f"Failed to load the plugin {plugin_name}")
         return {}, current_options, False
 
     processed, unprocessed = parse_func(current_options)
@@ -616,10 +685,10 @@ def execute_plugin_chain(
         )
         for option in processed_genice3_options:
             genice3_options.pop(option, None)
-        logger.info(
+        logger.debug(
             f"genice3オプションのうち{plugin_type}.{plugin_name}に処理されたオプション: {list(processed_genice3_options.keys())}"
         )
-        logger.info(
+        logger.debug(
             f"genice3オプションのうち{plugin_type}.{plugin_name}に処理されなかったオプション: {list(unprocessed_genice3_options.keys())}"
         )
 
@@ -631,13 +700,13 @@ def execute_plugin_chain(
         plugin_results.append(
             (f"{plugin_type}.{plugin_name}", processed_options, unprocessed_options)
         )
-        logger.info(
+        logger.debug(
             f"プラグイン{plugin_type}.{plugin_name}のオプション: {plugin_options}"
         )
-        logger.info(
+        logger.debug(
             f"プラグインオプションのうち{plugin_type}.{plugin_name}に処理されたオプション: {list(processed_options.keys())}"
         )
-        logger.info(
+        logger.debug(
             f"プラグインオプションのうち{plugin_type}.{plugin_name}に処理されなかったオプション: {list(unprocessed_options.keys())}"
         )
 
@@ -681,7 +750,7 @@ def parse_args(
         else:
             i += 1
 
-    logger.info(f"config_dict: {config_dict}")
+    logger.debug(f"config_dict: {config_dict}")
 
     # コマンドライン引数をフラットな辞書に変換
     cmdline_dict, cmdline_specified_keys = parse_command_line_to_dict(args)
