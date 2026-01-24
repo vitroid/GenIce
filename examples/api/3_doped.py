@@ -11,8 +11,7 @@ from genice3.plugin import UnitCell, Exporter, Molecule
 #   --spot_anion 1=Cl --spot_anion 35=Br \
 #   --spot_cation 1=Na --spot_cation 35=K
 
-# デバッグモードを有効化
-basicConfig(level=INFO)  # -D
+basicConfig(level=INFO)
 
 # GenIce3インスタンスを作成
 # seed: 乱数シード
@@ -55,7 +54,5 @@ genice.unitcell = UnitCell(
 # water: 水分子モデル（文字列で指定）
 Exporter("gromacs").dump(
     genice,
-    guest={"A12": "me", "A14": "et"},
-    spot_guest={0: "4site"},
     water_model="4site",
 )

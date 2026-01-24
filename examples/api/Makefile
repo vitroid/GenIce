@@ -1,5 +1,7 @@
-all: 3.compare 4.compare
-%.compare: %flat.sh.out %.py.out %.yaml.out %.sh.out
+# run them from the root dir with: poetry run make -f examples/api/Makefile
+
+all: examples/api/3_doped.compare examples/api/4_from_cif.compare examples/api/5_to_cif.compare examples/api/6_with_guests.compare
+%.compare: %_flat.sh.out %.py.out %.yaml.out %.sh.out
 	-diff $*.py.out $*.yaml.out
 	-diff $*.py.out $*flat.sh.out
 	-diff $*.py.out $*.sh.out
@@ -16,4 +18,4 @@ all: 3.compare 4.compare
 	python3 -m genice3.cli.genice --config $< > $@ 2> $<.log
 
 clean:
-	\rm *.out
+	cd examples/api && \rm *.out *.log
