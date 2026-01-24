@@ -4,7 +4,7 @@ test:
 
  
 Makefile.rules: $(wildcard ../../genice2/*.py) mkmk.py
-	python mkmk.py > $@
+	python3 mkmk.py > $@
 
 # 比較元(autotest-ref)のbranchで実行してファイルを準備する。
 prepare: Makefile.rules

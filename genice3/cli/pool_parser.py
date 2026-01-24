@@ -658,6 +658,9 @@ def execute_plugin_chain(
             handler.setLevel(DEBUG)
     plugin_results: List[Tuple[str, Dict[str, Any], Dict[str, Any]]] = []
 
+    logger.debug(
+        f"The original genice3オプション: {genice3_options}"
+        )
     # options_dictをコピーして作業
     updated_options_dict = options_dict.copy()
     updated_options_dict["genice3"] = genice3_options
@@ -673,6 +676,9 @@ def execute_plugin_chain(
             continue
 
         # まずgenice3内のオプションを処理し、消費したオプションは消す。
+        logger.debug(
+            f"genice3オプション: {genice3_options}"
+        )
         processed_genice3_options, unprocessed_genice3_options, _ = execute_plugin(
             plugin_type, plugin_name, genice3_options
         )
@@ -709,6 +715,10 @@ def execute_plugin_chain(
         logger.debug(
             f"プラグインオプションのうち{plugin_type}.{plugin_name}に処理されなかったオプション: {list(unprocessed_options.keys())}"
         )
+        # if len(unprocessed_options):
+        #     raise ValueError(
+        #         f"Unknown option for {plugin_type}.{plugin_name}: {list(unprocessed_options.keys())} ."
+        #     )
 
     updated_options_dict["genice3"] = genice3_options
     return updated_options_dict, plugin_results
@@ -766,6 +776,10 @@ def parse_args(
 
     # オプション辞書を構築（階層的な辞書を作成）
     options_dict = build_options_dict(config_dict, cmdline_dict, cmdline_specified_keys)
+
+    logger.info(
+        f"The original options_dict: {cmdline_dict}\n{cmdline_specified_keys}\n{config_dict}\n{options_dict}"
+        )
 
     # プラグインチェーンを動的に実行
     options_dict, plugin_results = execute_plugin_chain(options_dict)

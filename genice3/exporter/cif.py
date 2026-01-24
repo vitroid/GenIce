@@ -17,34 +17,10 @@ from genice3.exporter import (
     parse_spot_guest_option,
     parse_water_model_option,
 )
-from genice3.cli.pool_parser import (
-    parse_options_generic,
-)
 
 
-def parse_options(options: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    """
-    exporter.cifプラグインのオプションを処理
-
-    この関数は、動的プラグインチェーン実行システムから呼び出されます。
-    cifにはオプションはありません。
-
-    Returns:
-        (処理したオプション, 処理しなかったオプション) のタプル
-        - 処理したオプション: gromacsプラグインが処理したオプション（osite, file, water_model）
-        - 処理しなかったオプション: 次のプラグインに渡すオプション
-
-    注意:
-        - water_modelが"foursite"などのmoleculeプラグイン名の場合、
-          チェーン実行システムが自動的に該当するmoleculeプラグインを呼び出します。
-    """
-    # オプションの型定義
-    option_specs = {}
-
-    # parse_options_genericを使用してオプションを処理
-    # これにより、guestとspot_guestは辞書形式に変換され、
-    # water_modelは文字列として処理されます
-    return parse_options_generic(options, option_specs)
+# def parse_options(options: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+# オプションがないので関数自体を準備しない。呼ぶ側が判断してくれ。
 
 
 def _format_cell_shape(a, b, c, A, B, C):

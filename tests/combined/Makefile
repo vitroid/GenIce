@@ -1,7 +1,7 @@
 SEED=1234
 
 $(SEED).makefile: make_makefile.py
-	python make_makefile.py $(SEED) > $@
+	python3 make_makefile.py $(SEED) > $@
 
 
 # 比較したいブランチを(手動で)チェックアウトしてから、make tag.[label]するとテスト実行してファイルがlabel/に作られる。
