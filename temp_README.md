@@ -1,18 +1,25 @@
 ![Logo]({{tool.genice.urls.logo}})
 
-# GenIce2
+# GenIce3
 
 {{tool.poetry.description}}
 
 Version {{version}}
 
-## New in GenIce2.2
+## New in GenIce3
 
-- The core algorithm and its API are in a separate module, [`genice-core`](https://github.com/genice-dev/genice-core).
+- コマンドライン
+  - オプションの指定方法が統一されました。
+  - オプションを config ファイルからも読みこめるようになりました。
+- API
+  - API 経由の利用が大幅に改善されました。
+- アルゴリズム
+  - Reactive プログラムの書法を採用。そのために`DependencyEngine`を開発しました。
+  - 必要なデータを指示するだけで、データ生成プロセスが Automagically に準備され実行されます。
 
 ## Demo
 
-The new GenIce works very well with interactive execution.
+The new GenIce3 works very well with interactive execution.
 [Try instantly](https://colab.research.google.com/github/vitroid/GenIce/blob/main/jupyter.ipynb) on Google Colaboratory.
 
 ## Requirements
