@@ -1,1 +1,1 @@
-Struct24.py
+from .Struct24 import *

@@ -1,1 +1,1 @@
-gromacs.py
+from .gromacs import *

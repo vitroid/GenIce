@@ -1,1 +1,1 @@
-Struct19.py
+from .Struct19 import *

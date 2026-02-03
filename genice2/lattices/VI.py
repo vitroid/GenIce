@@ -1,1 +1,1 @@
-ice6.py
+from .ice6 import *

@@ -1,1 +1,1 @@
-TS1.py
+from .TS1 import *

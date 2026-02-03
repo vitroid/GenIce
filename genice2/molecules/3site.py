@@ -1,1 +1,1 @@
-tip3p.py
+from .tip3p import *

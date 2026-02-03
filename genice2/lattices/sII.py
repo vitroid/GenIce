@@ -1,1 +1,1 @@
-CS2.py
+from .CS2 import *

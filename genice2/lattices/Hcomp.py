@@ -1,1 +1,1 @@
-Struct37.py
+from .Struct37 import *

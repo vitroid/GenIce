@@ -1,1 +1,1 @@
-Struct54.py
+from .Struct54 import *

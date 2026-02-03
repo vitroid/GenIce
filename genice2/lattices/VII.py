@@ -1,1 +1,1 @@
-ice7.py
+from .ice7 import *

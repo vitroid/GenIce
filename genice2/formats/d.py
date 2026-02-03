@@ -1,1 +1,1 @@
-digraph.py
+from .digraph import *

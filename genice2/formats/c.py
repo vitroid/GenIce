@@ -1,1 +1,1 @@
-com.py
+from .com import *

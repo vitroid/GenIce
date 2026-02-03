@@ -1,1 +1,1 @@
-HS1.py
+from .HS1 import *

@@ -14,23 +14,23 @@ update-citations:
 
 
 # change symlinks to copies
-prepare:
-	-rm -rf .genice2/genice2
-	rsync -avL --exclude="__pycache__" genice2/ .genice2/genice2/
+# prepare:
+# 	-rm -rf .genice2/genice2
+# 	rsync -avL --exclude="__pycache__" genice2/ .genice2/genice2/
 
 
 test:
 	make -C tests all
 
-test-deploy: clean prepare build
+test-deploy: clean build
 	poetry publish -r testpypi
 test-install:
 	pip install --index-url https://test.pypi.org/simple/ $(PIPNAME)
 uninstall:
 	-pip uninstall -y $(PIPNAME)
-build: README.md $(wildcard genice2/*.py) prepare
+build: README.md $(wildcard genice2/*.py)
 	poetry build -f wheel
-deploy: clean prepare build
+deploy: clean build
 	poetry publish
 check:
 	poetry check

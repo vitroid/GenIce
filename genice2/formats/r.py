@@ -1,1 +1,1 @@
-rcom.py
+from .rcom import *

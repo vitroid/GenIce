@@ -1,1 +1,1 @@
-tip4p.py
+from .tip4p import *

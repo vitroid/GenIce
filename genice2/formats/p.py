@@ -1,1 +1,1 @@
-python.py
+from .python import *

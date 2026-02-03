@@ -1,1 +1,1 @@
-Struct25.py
+from .Struct25 import *

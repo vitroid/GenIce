@@ -1,1 +1,1 @@
-Struct04.py
+from .Struct04 import *

@@ -1,1 +1,1 @@
-Struct38.py
+from .Struct38 import *

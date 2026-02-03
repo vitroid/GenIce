@@ -1,1 +1,1 @@
-tip5p.py
+from .tip5p import *

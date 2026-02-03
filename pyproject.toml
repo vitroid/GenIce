@@ -1,16 +1,3 @@
-[project]
-name="genice2"
-dynamic=["version"]
-
-[project.urls]
-"Homepage" = "https://github.com/vitroid/GenIce"
-"Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
-"manual" = "https://vitroid.github.io/GenIce"
-
-[tool.genice.urls]
-repository = "https://github.com/vitroid/GenIce"
-logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
-
 [tool.poetry]
 name = "genice2"
 version = "2.2.12.4" # master version variable
@@ -24,12 +11,23 @@ authors = [
 description = "A Swiss army knife to generate hydrogen-disordered ice structures."
 readme = "README.md"
 license = "MIT"
+homepage = "https://github.com/vitroid/GenIce"
+repository = "https://github.com/vitroid/GenIce"
+documentation = "https://vitroid.github.io/GenIce"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/vitroid/GenIce/issues"
+
+[tool.genice.urls]
+repository = "https://github.com/vitroid/GenIce"
+logo = "https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png"
+
 # symlinkを実ファイルに変換
 packages = [
-  { include = "genice2", from = ".genice2" }
+  { include = "genice2" }
 ]
 # .gitignoreで除外するが、ビルドには必要。
-include = [".genice2/genice2/*",".genice2/genice2/*/*"]
+include = ["genice2/*","genice2/*/*"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

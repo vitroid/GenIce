@@ -1,1 +1,1 @@
-Struct33.py
+from .Struct33 import *

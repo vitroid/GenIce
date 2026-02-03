@@ -1,1 +1,1 @@
-ice2d.py
+from .ice2d import *
