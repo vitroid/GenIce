@@ -165,6 +165,13 @@ def getoptions():
         help='Depolarization. (strict, optimal, or none) ["strict"]',
     )
     parser.add_argument(
+        "--target_polarization",
+        default=[0.0, 0.0, 0.0],
+        nargs=3,
+        type=float,
+        help='Target polarization. [0.0, 0.0, 0.0]',
+    )
+    parser.add_argument(
         "--asis",
         action="store_true",
         dest="asis",
@@ -277,6 +284,7 @@ def main():
     noise = options.noise
     depol = options.depol
     assess_cages = options.assess_cages
+    target_polarization = options.target_polarization
     file_format, format_options = plugin_option_parser(options.format)
 
     water_type, water_options = plugin_option_parser(options.water)
@@ -298,6 +306,7 @@ def main():
         noise=noise,
         depol=depol,
         assess_cages=assess_cages,
+        target_polarization=target_polarization,
     )
     if isinstance(result, bytes):
         sys.stdout.buffer.write(result)

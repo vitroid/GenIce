@@ -396,6 +396,7 @@ class GenIce:
     as_is:   Avoids shuffling of the orientations of water molecules.
     signature: A text that is inserted in the output.
     reshape: reshape matrix.
+    target_polarization: Target polarization. A tuple of three floats.
     """
 
     @timeit
@@ -440,7 +441,6 @@ class GenIce:
         self.anions1 = anions
         self.spot_guests = spot_guests
         self.spot_groups = spot_groups
-
         # 変数名に1がついているのはunit cell
 
         # ================================================================
@@ -683,6 +683,7 @@ class GenIce:
         depol="strict",
         noise=0.0,
         assess_cages=False,
+        target_polarization=(0.0, 0.0, 0.0),
     ):
         """
         Generate an ice structure and dump it with the aid of a formatter plugin.
@@ -742,7 +743,7 @@ class GenIce:
                     return
 
             # GenIce-core
-            self.Stage34E(depol=depol)
+            self.Stage34E(depol=depol, target_polarization=target_polarization)
             if not self.digraph:
                 raise ConfigurationError("Failed to generate a directed graph.")
 
@@ -932,7 +933,7 @@ class GenIce:
 
     @timeit
     @banner
-    def Stage34E(self, depol: str = "none"):
+    def Stage34E(self, depol: str = "none", target_polarization=(0.0, 0.0, 0.0)):
         """
         Make a directed ice graph from an undirected ice graph.
         """
@@ -945,10 +946,11 @@ class GenIce:
             iter = 1000
         self.digraph = genice_core.ice_graph(
             self.graph.to_undirected(),
-            vertexPositions=self.reppositions,
+            vertex_positions=self.reppositions,
             isPeriodicBoundary=True,
             dipoleOptimizationCycles=iter,
             fixedEdges=self.fixedEdges,
+            target_pol=target_polarization,
         )
 
         # self.digraph = nx.compose(d, self.fixedEdges)
