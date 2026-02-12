@@ -6,5 +6,5 @@ from logging import basicConfig, INFO
 # genice3 'CIF[file=cif/MEP.cif, osite=T]' --exporter gromacs
 basicConfig(level=INFO)
 genice = GenIce3()
-genice.unitcell = UnitCell("cif", file="cif/MEP.cif", osite="T")
+genice.unitcell = UnitCell("CIF", file="cif/MEP.cif", osite="T")
 Exporter("gromacs").dump(genice)
