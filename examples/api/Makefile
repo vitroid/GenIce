@@ -1,6 +1,6 @@
 # run them from the root dir with: poetry run make -f examples/api/Makefile
 
-all: examples/api/3_doped.compare examples/api/4_from_cif.compare examples/api/5_to_cif.compare examples/api/6_with_guests.compare
+all: examples/api/3_doped.compare examples/api/4_from_cif.compare examples/api/5_to_cif.compare examples/api/6_with_guests.compare examples/api/7_polarized.compare
 %.compare: %_flat.sh.out %.py.out %.yaml.out %.sh.out
 	-diff $*.py.out $*.yaml.out
 	-diff $*.py.out $*flat.sh.out

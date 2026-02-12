@@ -79,6 +79,7 @@ BASE_LEVEL_OPTIONS: Set[str] = {
     "replication_matrix",
     "seed",
     "depol_loop",
+    "target_polarization",
     "assess_cages",
     "debug",
     "spot_anion",

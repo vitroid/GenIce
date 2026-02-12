@@ -58,6 +58,7 @@ def parse_base_options(
         "depol_loop": OPTION_TYPE_STRING,  # 文字列として取得し、後処理で整数に変換
         "replication_factors": OPTION_TYPE_TUPLE,  # タプルとして取得し、後処理で整数タプルに変換
         "replication_matrix": OPTION_TYPE_TUPLE,  # タプルとして処理（9要素のリスト）
+        "target_polarization": OPTION_TYPE_TUPLE,  # 3要素のタプルとして取得し、後処理でnp.ndarrayに変換
         "assess_cages": OPTION_TYPE_STRING,  # 文字列として取得し、後処理でブール値に変換（Falseの値を正しく処理するため）
         "debug": OPTION_TYPE_FLAG,  # フラグ型（引数なし）
         "spot_anion": OPTION_TYPE_KEYVALUE,  # key=value形式として処理
@@ -85,10 +86,19 @@ def parse_base_options(
             return x.lower() in ("true", "1", "yes", "on")
         return bool(x)
 
+    def to_float3(x):
+        """3要素のタプル/リストを float の np.ndarray に変換"""
+        if isinstance(x, np.ndarray) and x.shape == (3,):
+            return np.asarray(x, dtype=float)
+        if isinstance(x, (tuple, list)) and len(x) == 3:
+            return np.array([float(v) for v in x])
+        raise ValueError(f"target_polarization must be 3 numbers, got: {x}")
+
     post_processors = {
         "seed": to_int,
         "depol_loop": to_int,
         "replication_factors": to_int_tuple,
+        "target_polarization": to_float3,
         "assess_cages": to_bool,
         # debugはフラグ型なのでpost_processor不要
     }
@@ -113,6 +123,11 @@ HELP_DEPOL_LOOP = (
     "Number of iterations for the depolarization optimization loop. "
     "Larger values may improve the quality of the hydrogen bond network. "
     "Default is 1000."
+)
+HELP_TARGET_POLARIZATION = (
+    "Target polarization vector (three floats: Px Py Pz). "
+    "The dipole optimization will aim to make the net polarization close to this value. "
+    "Example: --target_polarization 0 0 0 (default)."
 )
 HELP_REPLICATION_MATRIX = (
     "Replication matrix as 9 integers (3x3 matrix). "
@@ -200,6 +215,8 @@ def print_help():
     print(f"  --version, -V             {HELP_VERSION}")
     print(f"  -D, --debug               {HELP_DEBUG}")
     print(f"  --depol_loop INTEGER      {HELP_DEPOL_LOOP}")
+    print(f"  --target_polarization FLOAT FLOAT FLOAT")
+    print(f"                           {HELP_TARGET_POLARIZATION}")
     print(f"  --replication_matrix INT INT INT INT INT INT INT INT INT")
     print(f"                           {HELP_REPLICATION_MATRIX}")
     print(f"  --rep, --replication_factors INT INT INT")
@@ -261,6 +278,9 @@ def main() -> None:
 
     seed = base_options.get("seed", 1)
     depol_loop = base_options.get("depol_loop", 1000)
+    target_polarization = base_options.get("target_polarization")
+    if target_polarization is None:
+        target_polarization = np.array([0.0, 0.0, 0.0])
     assess_cages = base_options.get("assess_cages", False)
     spot_anion_dict = base_options.get("spot_anion", {}) or {}
     spot_cation_dict = base_options.get("spot_cation", {}) or {}
@@ -276,7 +296,7 @@ def main() -> None:
     else:
         replication_matrix = np.array(replication_matrix)
     logger.debug(
-        f"Settings: {seed=} {depol_loop=} {assess_cages=} {spot_anion_dict=} {spot_cation_dict=} {replication_matrix=}"
+        f"Settings: {seed=} {depol_loop=} {target_polarization=} {assess_cages=} {spot_anion_dict=} {spot_cation_dict=} {replication_matrix=}"
     )
 
     # indexを数字に変換する。
@@ -295,6 +315,7 @@ def main() -> None:
     genice = GenIce3(
         depol_loop=depol_loop,
         replication_matrix=replication_matrix,
+        target_pol=target_polarization,
         seed=seed,
         spot_anions=spot_anion_dict,
         spot_cations=spot_cation_dict,

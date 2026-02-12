@@ -488,6 +488,7 @@ def digraph(
     depol_loop: int,
     lattice_sites: np.ndarray,
     fixedEdges: nx.DiGraph,
+    target_pol: np.ndarray,
 ) -> nx.DiGraph:
     """水素結合ネットワークの有向グラフを生成する。
 
@@ -500,6 +501,7 @@ def digraph(
         depol_loop: 双極子最適化の反復回数
         lattice_sites: 格子サイト位置の配列
         fixedEdges: 固定エッジの有向グラフ
+        target_pol: 分極の目標値
 
     Returns:
         nx.DiGraph: 水素結合の方向が決定された有向グラフ
@@ -508,11 +510,12 @@ def digraph(
         _genice3_logger.debug(f"+ {edge=}")
     dg = genice_core.ice_graph(
         graph,
-        vertexPositions=lattice_sites,
-        isPeriodicBoundary=True,
-        dipoleOptimizationCycles=depol_loop,
-        fixedEdges=fixedEdges,
-        pairingAttempts=1000,
+        vertex_positions=lattice_sites,
+        is_periodic_boundary=True,
+        dipole_optimization_cycles=depol_loop,
+        fixed_edges=fixedEdges,
+        pairing_attempts=1000,
+        target_pol=target_pol,
     )
     if not dg:
         raise ConfigurationError("Failed to generate a directed graph.")
@@ -690,6 +693,7 @@ class GenIce3:
         "unitcell",
         "replication_matrix",
         "depol_loop",
+        "target_pol",
         "seed",
         "spot_anions",
         "spot_cations",
@@ -699,6 +703,7 @@ class GenIce3:
         self,
         depol_loop: int = 1000,
         replication_matrix: np.ndarray = np.eye(3, dtype=int),
+        target_pol: np.ndarray = np.array([0.0, 0.0, 0.0]),
         seed: int = 1,
         spot_anions: Dict[int, str] = {},
         spot_cations: Dict[int, str] = {},
@@ -709,6 +714,7 @@ class GenIce3:
         Args:
             depol_loop: 双極子最適化の反復回数（デフォルト: 1000）
             replication_matrix: 単位胞複製行列（デフォルト: 単位行列）
+            target_pol: 分極の目標値（デフォルト: [0, 0, 0]）
             seed: 乱数シード（デフォルト: 1）
             spot_anions: 特定位置のアニオン配置（デフォルト: {}）
             spot_cations: 特定位置のカチオン配置（デフォルト: {}）
@@ -726,6 +732,7 @@ class GenIce3:
         )
         self.depol_loop = depol_loop
         self.replication_matrix = replication_matrix
+        self.target_pol = target_pol
         self.spot_anions = spot_anions
         self.spot_cations = spot_cations
 
@@ -869,6 +876,18 @@ class GenIce3:
         self.engine.cache.clear()
 
     @property
+    def target_pol(self):
+        """分極の目標値（3要素のベクトル）。"""
+        return self._target_pol
+
+    @target_pol.setter
+    def target_pol(self, target_pol):
+        """分極の目標値を設定する。変更時は依存するキャッシュをクリアする。"""
+        self._target_pol = np.asarray(target_pol, dtype=float).reshape(3)
+        self.logger.debug(f"  {target_pol=}")
+        self.engine.cache.clear()
+
+    @property
     def unitcell(self):
         """基本単位胞オブジェクト。
 
@@ -941,6 +960,7 @@ class GenIce3:
             "unitcell": self.unitcell,
             "replication_matrix": self.replication_matrix,
             "depol_loop": self.depol_loop,
+            "target_pol": self.target_pol,
             "spot_anions": self.spot_anions,
             "spot_cations": self.spot_cations,
         }
