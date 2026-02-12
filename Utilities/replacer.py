@@ -23,7 +23,8 @@ def system_ices(markdown=True, citations=None):
     desc = plugin_descriptors("lattice", groups=["system"])
     documented, undocumented, refss = desc["system"]
 
-    s = ""
+    s = "| Symbol | <div style='width:300px'>Description</div> |\n"
+    s += "| ------ | ------------------------------------------ |\n"
     for description, ices in documented.items():
         citation = make_citations(refss[description])
         s += ", ".join(ices) + " | " + description + citation + "\n"
@@ -38,7 +39,9 @@ def system_molecules(markdown=True, water=False, citations=None):
     desc = plugin_descriptors("molecule", water=water, groups=["system"])
     documented, undocumented, refss = desc["system"]
 
-    s = ""
+    s = "| Symbol | Type |\n"
+    s += "| ------ | ---- |\n"
+
     for description, ices in documented.items():
         citation = make_citations(refss[description])
         s += ", ".join(ices) + " | " + description + citation + "\n"
@@ -74,6 +77,12 @@ project |= {
     "guests": system_molecules(water=False),
     "citationlist": prefix(citationlist, "- "),
     "version": project["tool"]["poetry"]["version"],
+    # テンプレートの {{ project.urls.Homepage }} 用
+    "project": {
+        "urls": {
+            "Homepage": project["tool"]["poetry"]["homepage"],
+        }
+    },
 }
 
 t = Template(sys.stdin.read())

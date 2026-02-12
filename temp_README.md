@@ -234,8 +234,6 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 ## Ice structures
 
-| Symbol | <div style="width:300px">Description</div> |
-| ------ | ------------------------------------------ |
 {{ices}}
 
 Ice names with double quotations are not experimentally verified.
@@ -271,14 +269,10 @@ Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structur
 
 A water model can be chosen with `--water` option.
 
-| symbol | type |
-| ------ | ---- |
 {{waters}}
 
 ## Guest molecules
 
-| symbol | type |
-| ------ | ---- |
 {{guests}}
 
 You can prepare your own guest molecules. Create a folder named `molecules` in the current working directory and put the plugins in it.

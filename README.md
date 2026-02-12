@@ -4,7 +4,7 @@
 
 A Swiss army knife to generate hydrogen-disordered ice structures.
 
-Version 2.2.12.4
+Version 2.2.13.0
 
 ## New in GenIce2.2
 
@@ -20,12 +20,12 @@ The new GenIce works very well with interactive execution.
 - networkx>=2.0.dev20160901144005
 - python^3.10
 - numpy^2.0
-- pairlist>=0.6
+- pairlist>=0.6.4
 - cycless>=0.4.2
 - graphstat>=0.3.3
 - yaplotlib>=0.1.2
 - openpyscad>=0.5.0
-- genice-core>=1.1
+- genice-core>=1.2
 - deprecation^2.1.0
 
 
@@ -52,13 +52,14 @@ Install with pip3.
     usage: genice2 [-h] [--version] [--rep REP REP REP] [--reshape RESHAPE]
                    [--shift SHIFT SHIFT SHIFT] [--dens DENS] [--add_noise percent]
                    [--seed SEED] [--format name] [--water model] [--guest 14=me]
-                   [--topo 14,16] [--Guest 13=me] [--Group 13=bu-:0]
-                   [--anion 3=Cl] [--cation 3=Na] [--depol DEPOL] [--asis]
-                   [--debug] [--quiet] [--assess_cages]
+                   [--Guest 13=me] [--Group 13=bu-:0] [--anion 3=Cl]
+                   [--cation 3=Na] [--depol DEPOL]
+                   [--target_polarization TARGET_POLARIZATION TARGET_POLARIZATION TARGET_POLARIZATION]
+                   [--asis] [--debug] [--quiet] [--assess_cages]
                    Type
     
     GenIce is a swiss army knife to generate hydrogen-disordered ice structures.
-    (version 2.2.12.4)
+    (version unknown)
     
     positional arguments:
       Type                  Crystal type (1c, 1h, etc. See
@@ -218,26 +219,25 @@ Install with pip3.
     options:
       -h, --help            show this help message and exit
       --version, -V         show program's version number and exit
-      --rep REP REP REP, -r REP REP REP
+      --rep, -r REP REP REP
                             Repeat the unit cell along a, b, and c axes. [1,1,1]
-      --reshape RESHAPE, -R RESHAPE
+      --reshape, -R RESHAPE
                             Convert the unit cell shape by specifying the new
                             (a,b,c) set from the original (a,b,c) of the unit
                             cell. The combination of (a,b,c) is specified by nine
                             integers. For example, '--reshape 3,0,0,0,2,0,0,0,1'
                             specifies that the new cell vectors are (3a, 2b, c),
                             which is equivalent to '--rep 3 2 1'.
-      --shift SHIFT SHIFT SHIFT, -S SHIFT SHIFT SHIFT
+      --shift, -S SHIFT SHIFT SHIFT
                             Shift the unit cell along a, b, and c axes. (0.5==half
                             cell) [0,0,0]
-      --dens DENS, -d DENS  Specify the ice density in g/cm3 (Guests are not
+      --dens, -d DENS       Specify the ice density in g/cm3 (Guests are not
                             included.)
       --add_noise percent   Add a Gauss noise with given width (SD) to the
                             molecular positions of water. The value 1 corresponds
                             to 1 percent of the molecular diameter of water.
-      --seed SEED, -s SEED  Random seed [1000]
-      --format name, -f name
-                            Specify the output file format. [gromacs]
+      --seed, -s SEED       Random seed [1000]
+      --format, -f name     Specify the output file format. [gromacs]
     
     
                             [Available formatters]
@@ -245,6 +245,7 @@ Install with pip3.
                             1. Formatters served with GenIce
     
                             _KG             Kirkworrd G factor.
+                            _pol            Polarization check.
                             _ringstat       Bond direction statistics.
                             d, digraph      Directed graph of HBs.
                             e, euler        Rigid rotor (Euler angle).
@@ -252,8 +253,8 @@ Install with pip3.
                             exyz            Extended XYZ format.
                             g, gromacs      Gromacs .gro file.
                             graph           Undirected graph of HBs.
-                            m, mdview       MDView file (in Angdtrom).
-                            mdv_au          MDView file (in au).
+                            m, mdv_au, mdview               MDView file (in
+                                            Angdtrom).
                             p, python       A formatter plugin to produce a python
                                             lattice plugin.
                             povray          Povray.
@@ -268,7 +269,6 @@ Install with pip3.
                             2. Formatters served by external plugins
     
                             cage            Cage analysis.
-                            mdanalysis      MDAnalysis integration.
                             png             PNG (Portable Network Graphics).
                             svg             SVG (Standard Vector Graphics).
                             ----
@@ -280,8 +280,7 @@ Install with pip3.
                             ----
     
     
-      --water model, -w model
-                            Specify the water model. [tip3p]
+      --water, -w model     Specify the water model. [tip3p]
     
     
                             [Available molecules]
@@ -293,9 +292,6 @@ Install with pip3.
                             5site, tip5p    A typical 5-site model.
                             6site, NvdE     A 6-site water model.
                             7site           A seven-site water model.
-                            ideal_water     Ideal model of water; Oxygen atom is on
-                                             the lattice point and the H-O-H angle
-                                            is 109.5 degrees.
                             physical_water  Physical model of water; Oxygen atom is
                                              on the lattice point.
                             ----
@@ -314,8 +310,7 @@ Install with pip3.
                             ----
     
     
-      --guest 14=me, -g 14=me
-                            Specify guest(s) in the cage type. (D=empty,
+      --guest, -g 14=me     Specify guest(s) in the cage type. (D=empty,
                             T=co2*0.5+me*0.3, etc.)
     
     
@@ -349,21 +344,16 @@ Install with pip3.
                             ----
     
     
-      --topo 14,16, -T 14,16
-                            Specify the position of a pair of topological defects
-                            (H3O and OH-).
-      --Guest 13=me, -G 13=me
-                            Specify guest in the specific cage. (13=me, 32=co2,
+      --Guest, -G 13=me     Specify guest in the specific cage. (13=me, 32=co2,
                             etc.)
-      --Group 13=bu-:0, -H 13=bu-:0
-                            Specify the group. (-H 13=bu-:0, etc.)
-      --anion 3=Cl, -a 3=Cl
-                            Specify a monatomic anion that replaces a water
+      --Group, -H 13=bu-:0  Specify the group. (-H 13=bu-:0, etc.)
+      --anion, -a 3=Cl      Specify a monatomic anion that replaces a water
                             molecule. (3=Cl, 39=F, etc.)
-      --cation 3=Na, -c 3=Na
-                            Specify a monatomic cation that replaces a water
+      --cation, -c 3=Na     Specify a monatomic cation that replaces a water
                             molecule. (3=Na, 39=NH4, etc.)
       --depol DEPOL         Depolarization. (strict, optimal, or none) ["strict"]
+      --target_polarization TARGET_POLARIZATION TARGET_POLARIZATION TARGET_POLARIZATION
+                            Target polarization. [0.0, 0.0, 0.0]
       --asis                Assumes all given HB pairs to be fixed. No shuffle and
                             no depolarization.
       --debug, -D           Output debugging info.
@@ -565,7 +555,7 @@ In the format plugin, you define the hook functions that are invoked after proce
 
 ## Ice structures
 
-| Symbol | <div style="width:300px">Description</div> |
+| Symbol | <div style='width:300px'>Description</div> |
 | ------ | ------------------------------------------ |
 0, ice0 | Metastable ice "0". [Russo 2014]
 11, XI, ice11 | A candidate for an antiferroelectric Ice XI #19. [Jackson 1997, Fan 2010]
@@ -662,21 +652,20 @@ Please ask [vitroid@gmail.com](mailto:vitroid@gmail.com) to add new ice structur
 
 A water model can be chosen with `--water` option.
 
-| symbol | type |
+| Symbol | Type |
 | ------ | ---- |
 3site, tip3p | A typical 3-site model.
 4site, tip4p | A typical 4-site model. [Jorgensen 1983, Jorgensen 1985]
 5site, tip5p | A typical 5-site model.
 6site, NvdE | A 6-site water model. [Nada 2003]
 7site | A seven-site water model. [Zhao 2019]
-ideal_water | Ideal model of water; Oxygen atom is on the lattice point and the H-O-H angle is 109.5 degrees. [Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983).]
 physical_water | Physical model of water; Oxygen atom is on the lattice point. [Jorgensen, Chandrasekhar, Madura, Impey, Klein, J Chem Phys, 79, 926 (1983).]
 ice, spce | (Undocumented)
 
 
 ## Guest molecules
 
-| symbol | type |
+| Symbol | Type |
 | ------ | ---- |
 H2 | Hydrogen molecule. [https://www.britannica.com/science/hydrogen]
 ch4 | An all-atom methane model.

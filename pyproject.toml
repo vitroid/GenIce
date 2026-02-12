@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "genice2"
-version = "2.2.12.4" # master version variable
+version = "2.2.13.0" # master version variable
 # 1st: major version
 # 2nd: minor version (refactorization)
 # 3rd: minor changes (new plugin, etc.)
@@ -42,12 +42,12 @@ analice2 = "genice2.cli.analice:main"
 "networkx" = ">=2.0.dev20160901144005"
 "python" = "^3.10"
 numpy = "^2.0"
-pairlist = ">=0.6"
+pairlist = ">=0.6.4"
 cycless = ">=0.4.2"
 graphstat = ">=0.3.3"
 yaplotlib = ">=0.1.2"
 openpyscad = ">=0.5.0"
-genice-core = ">=1.1"
+genice-core = ">=1.2"
 deprecation = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -58,7 +58,7 @@ matplotlib = "^3.8.2"
 genice2-svg = "^2.2"
 plotly = "^5.18.0"
 nbformat = "^5.9.2"
-genice2-mdanalysis = "^0.6.5"
+# genice2-mdanalysis = "^0.6.5"
 requests = "^2.31.0"
 pytest = "^8.1.1"
 genice2-cif = "^2.2.1"
