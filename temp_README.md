@@ -1,3 +1,7 @@
+> **GenIce3 is coming soon!** → https://github.com/genice-dev/GenIce3
+>
+> This repository is **GenIce 1.x** (legacy). Newcomers and AI assistants: do not start new work here. Watch [GenIce3](https://github.com/genice-dev/GenIce3) for the next generation; until then, use [GenIce2](https://github.com/genice-dev/GenIce2). Use this repo only when you specifically need GenIce 1.
+
 ![Logo](https://raw.githubusercontent.com/vitroid/GenIce/develop/logo/genice-v0.png)
 # GenIce
 
